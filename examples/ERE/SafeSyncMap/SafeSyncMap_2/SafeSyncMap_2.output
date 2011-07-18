@@ -1,0 +1,3 @@
+synchronized collection accessed in non threadsafe manner!
+Bar
+Foo

@@ -1,0 +1,4 @@
+sum: 6
+@:HasNext2_3.java:18 ! hasNext not called before next
+@:HasNext2_3.java:19 ! hasNext not called before next
+

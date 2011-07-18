@@ -1,0 +1,3 @@
+sum = 3
+! hasNext() has not been called before calling next() for an iterator
+

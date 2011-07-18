@@ -1,0 +1,31 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies that a program does
+// not call the hasnext method  before the next
+// method of an iterator. 
+// This is a simpler version of HasNext that
+// must be monitored using an @fail handler
+// because the fsm specifies correct behavior.
+
+HasNext2(Iterator i) {
+   event hasnext after(Iterator i) :
+      call(* Iterator.hasNext()) && target(i) {} 
+   event next before(Iterator i) :
+      call(* Iterator.next()) && target(i) {}
+
+   fsm :
+     start [
+        hasnext -> safe
+     ]
+     safe [
+        next -> start
+        hasnext -> safe
+     ]
+
+   @fail {
+      System.out.println("next called without hasNext!");
+   }
+}

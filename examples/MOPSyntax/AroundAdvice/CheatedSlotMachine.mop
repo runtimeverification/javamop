@@ -1,0 +1,33 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+import casino.*;
+
+// The UnsafeIterator property is designed 
+// to match a case where a Collection that 
+// is in the process of iteration is modified 
+// and iteration continues.  
+
+CheatedSlotMachine(SlotMachine machine) {
+	int num_try = 0;
+
+	event insert_coin after(SlotMachine machine) : 
+		call(* SlotMachine.insertCoin()) && target(machine) {}
+	event push_button after(SlotMachine machine) : 
+		call(* SlotMachine.push()) && target(machine) { num_try++; }
+	event result Integer around(SlotMachine machine) : 
+		call(Integer SlotMachine.getResult()) && target(machine) {}
+
+	ere : insert_coin push_button result
+
+	@match {
+		if((__MONITOR.num_try % 3) == 0) __SKIP;
+	}
+}
+
+
+
+
+
+

@@ -1,0 +1,3 @@
+sum = 3
+! hasNext() not called before calling next()
+

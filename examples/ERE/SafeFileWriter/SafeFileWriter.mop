@@ -1,0 +1,40 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// The SafeFile property is designed to 
+// match a case where a file is written 
+// after it is closed. 
+
+SafeFileWriter(FileWriter f) {
+	static int counter = 0;
+	int writes = 0;
+
+	event open after() returning(FileWriter f) : 
+		call(FileWriter.new(..)) {
+			this.writes = 0;
+		}
+	event write before(FileWriter f) : 
+		call(* write(..)) && target(f) {
+			this.writes ++;
+		}
+	event close after(FileWriter f) : 
+		call(* close(..)) && target(f) {}
+ 		
+	ere : (open write write* close)*
+
+	@fail {
+		System.out.println("write after close");
+		__RESET;
+	}
+	@match {
+	   System.out.println((++(__MONITOR.counter)) 
+             + ":" + __MONITOR.writes);
+	}
+}
+
+
+
+
+

@@ -1,0 +1,43 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// The UnsafeIterator property is designed 
+// to match a case where a Collection that 
+// is in the process of iteration is modified 
+// and iteration continues.  
+
+UnsafeIterator(Collection c, Iterator i) {
+
+	event create after(Collection c) 
+		returning(Iterator i) : 
+		call(Iterator Collection+.iterator()) && target(c) {}
+
+	event updatesource after(Collection c) : 
+		(call(* Collection+.remove*(..)) || call(* Collection+.add*(..))) && target(c) {}
+
+	event next void around(Iterator i) : 
+		call(* Iterator.next()) && target(i) {}
+
+	event next boolean around(Iterator i) : 
+		call(* Iterator.next()) && target(i) {}
+
+	event next Object around(Iterator i) : 
+		call(* Iterator.next()) && target(i) {}
+
+	event next double around(Iterator i) : 
+		call(void Iterator.next()) && target(i) {}
+
+	ere : create next* updatesource updatesource* next
+
+	@match {
+		System.out.println("improper iterator usage");
+	}
+}
+
+
+
+
+
+

@@ -1,0 +1,28 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// This property requires that hasnext be called before next
+// and that hasnext return true.  It is a modification of the
+// HasNext property from tracematches 
+// (see ECOOP'07 http://abc.comlab.ox.ac.uk/papers),
+// with the modification requiring hasnext to return true
+
+HasNext(Iterator i) {
+
+  event hasnexttrue after(Iterator i) returning(boolean b) : 
+              call(* Iterator.hasNext()) 
+              && target(i) && condition(b) { } 
+  event hasnextfalse after(Iterator i) returning(boolean b) : 
+              call(* Iterator.hasNext()) 
+              && target(i) && condition(!b) { } 
+  event next before(Iterator i) : 
+              call(* Iterator.next()) 
+              && target(i) { } 
+
+  ltl: [](next => (*) hasnexttrue)
+
+  @violation { System.out.println("ltl violated!");}
+ 
+}

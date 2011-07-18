@@ -1,0 +1,2 @@
+Make sure not to delete Token.java without copying the realKind variable and the main_parser.Token constructor that takes an aspectj_parser.Token.  
+realKind is a hack needed by the main_parser.  The other constructor is needed because we link together two parsers here.

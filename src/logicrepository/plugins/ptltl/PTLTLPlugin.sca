@@ -1,0 +1,23 @@
+import logicrepository.plugins.ptltl._
+import logicrepository.plugins.ptltl.main._
+import logicrepository._ // ~/FSL/projects/MOP/trunk/lib/logicrepository.jar
+import logicrepository.LogicException._
+import logicrepository.Main._
+import logicrepository.parser.logicrepositorysyntax._
+import logicrepository.plugins._
+
+package logicrepository.plugins.ptltl {
+  class PTLTLPlugin extends LogicPlugin {
+
+    def process(logicInputXML: LogicRepositoryType) : LogicRepositoryType = {
+      val logicStr = logicInputXML.getProperty.getFormula.trim
+
+      var ret = logicInputXML
+      ret.getProperty.setLogic("fsm")
+      ret.getProperty.setFormula(PTLTL.mkFSM(logicStr))
+
+      ret
+    }
+
+  }
+}
