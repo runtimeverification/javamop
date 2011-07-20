@@ -29,8 +29,8 @@ SafeFileWriter(FileWriter f) {
 		__RESET;
 	}
 	@match {
-	   System.out.println((++(__MONITOR.counter)) 
-             + ":" + __MONITOR.writes);
+	   System.out.println((++(counter)) 
+             + ":" + writes);
 	}
 }
 

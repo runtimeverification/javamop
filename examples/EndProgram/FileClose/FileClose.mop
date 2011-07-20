@@ -21,7 +21,7 @@ FileClose(FileWriter f) {
 	@fail {
 		System.err.println("You should close the file you wrote.");
 		try{
-			__MONITOR.saved_fw.close();
+			saved_fw.close();
 		} catch(Exception e){
 			System.err.println(e.getMessage());
 		}

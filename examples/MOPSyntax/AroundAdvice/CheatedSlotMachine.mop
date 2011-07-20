@@ -22,7 +22,7 @@ CheatedSlotMachine(SlotMachine machine) {
 	ere : insert_coin push_button result
 
 	@match {
-		if((__MONITOR.num_try % 3) == 0) __SKIP;
+		if((num_try % 3) == 0) __SKIP;
 	}
 }
 
