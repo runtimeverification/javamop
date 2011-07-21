@@ -5,7 +5,8 @@
    <property name="lib" value="lib" />
    <property name="plugins" value="lib/plugins" />
    <property name="src" value="src" />
-   <property name="scala.home" value="/usr/local/scala" />
+   <property environment="env"/>
+   <property name="scala.home" value="${env.SCALA_HOME}" />
    <property name="scala-compiler.jar" value="${scala.home}/lib/scala-compiler.jar" />
    <property name="scala-library.jar" value="${scala.home}/lib/scala-library.jar" />
    <path id="scala.classpath">
@@ -22,7 +23,7 @@
    <property name="javamop" value="javamop" />
    <property name="lr" value="logicrepository" />
    <property name="test" value="javamoptestsuite" />
-	<property name="javamoprt" value="javamoprt" />
+   <property name="javamoprt" value="javamoprt" />
 
    <target name="init">
      <mkdir dir="${build}"/>
