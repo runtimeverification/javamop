@@ -252,7 +252,8 @@ public class Main {
 	 * testSuite Dir Path is either of a testcase directory or a collection
 	 * containing several testcases.
 	 */
-	static public void process(String testSuiteDirPath) {
+	static public boolean process(String testSuiteDirPath) {
+	   	boolean success = false;
 		// TestCaseDir rootDir = getTestCaseDir(testSuiteDirPath, "");
 
 		TestCaseDir rootDir = null;
@@ -261,7 +262,7 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			System.out.println("[Error] testsuite directory is corrupted");
-			return;
+			return false;
 		}
 
 		try {
@@ -353,14 +354,16 @@ public class Main {
 			int numPassedTestCases = rootDir.numTestCasesOfStatus(true);
 			int numFailedTestCases = rootDir.numTestCasesOfStatus(false);
 			System.out.println(numPassedTestCases + " test case(s) passed, " + numFailedTestCases + " test case(s) failed.");
-			if (numFailedTestCases != 0)
+			if (numFailedTestCases == 0)
+				success = true;
+			else
 				System.out.println(" - Use -v option for more detailed output of failed test cases.");
 			System.out.println();
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
+		return success;
 	}
 
 	public static void main(String[] args) {
@@ -505,7 +508,7 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		process(testSuiteDir);
+		boolean success = process(testSuiteDir);
 
 		System.out.print("Press enter key to terminate ..."); 
 		try {
@@ -513,6 +516,9 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		if (!success)
+			System.exit(1);
 	}
 }
 
