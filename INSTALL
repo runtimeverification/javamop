@@ -164,12 +164,12 @@ directories in the TestSuite for examples.
 
 To execute the TestSuite with the remote Logic Repository, type
 
-'testjavamop -remote' in Linux and Mac or 'testjavamop.bat -remote' in Windows
+'javamoptestsuite -remote' in Linux and Mac or 'javamoptestsuite.bat -remote' in Windows
 
 To execute the test suite with the local Logic Repository, type
 
-'testjavamop' or 'testjavamop -local' in Linux and Mac
-or 'testjavamop.bat' or 'testjavamop.bat -local' in Windows
+'javamoptestsuite' or 'javamoptestsuite -local' in Linux and Mac
+or 'javamoptestsuite.bat' or 'javamoptestsuite.bat -local' in Windows
 
 If you want the verbose mode pass the -v flag to the script of your choice.
 
