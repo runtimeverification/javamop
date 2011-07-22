@@ -166,6 +166,7 @@ public class WrapperMonitor extends Monitor{
 
 	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint) {
 		String ret = "";
+		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
 			return suffixMonitor.Monitoring(monitorVar, event, thisJoinPoint);
@@ -186,7 +187,7 @@ public class WrapperMonitor extends Monitor{
 
 		if (!suffixMonitor.isDoingHandlers()){
 			MOPVariable subMonitor = new MOPVariable(monitorVar, "monitor");
-			ret += suffixMonitor.doHandlers(subMonitor, monitorVar, thisJoinPoint, subMonitor);
+			ret += suffixMonitor.callHandlers(subMonitor, monitorVar, event, event.getMOPParametersOnSpec(), thisJoinPoint, subMonitor, checkSkip);
 		}
 
 		ret += "}\n";
@@ -194,8 +195,8 @@ public class WrapperMonitor extends Monitor{
 		return ret;
 	}
 
-	public String doHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor) {
-		return suffixMonitor.doHandlers(monitorVar, monitorVarForReset, thisJoinPoint, monitorVarForMonitor);
+	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
+		return suffixMonitor.callHandlers(monitorVar, monitorVarForReset, event, eventParam, thisJoinPoint, monitorVarForMonitor, checkSkip);
 	}
 
 	public String toString() {

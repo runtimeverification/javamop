@@ -14,6 +14,7 @@ import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public class MultiMonitor extends Monitor {
@@ -28,12 +29,15 @@ public class MultiMonitor extends Monitor {
 	HashMap<BaseMonitor, MOPVariable> monitorVars = new HashMap<BaseMonitor, MOPVariable>();
 	RawMonitor rawMonitor = null;
 
+	MOPParameters specParam;
+
 	UserJavaCode monitorDeclaration;
 
 	public MultiMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost, doActions);
 
 		this.isDefined = mopSpec.getPropertiesAndHandlers().size() > 1;
+		this.specParam = mopSpec.getParameters();
 
 		if (this.isDefined) {
 			monitorName = new MOPVariable(mopSpec.getName() + "MultiMonitor");
@@ -204,11 +208,11 @@ public class MultiMonitor extends Monitor {
 				ret += "}\n";
 
 				ret += baseMonitor.Monitoring(monitorVars.get(baseMonitor), event, thisJoinPoint);
-				ret += baseMonitor.doHandlers(monitorVars.get(baseMonitor), new MOPVariable("this"), thisJoinPoint, new MOPVariable("this"));
+				ret += baseMonitor.callHandlers(monitorVars.get(baseMonitor), new MOPVariable("this"), event, event.getMOPParametersOnSpec(), thisJoinPoint, new MOPVariable("this"), isAround);
 			} else {
 				ret += "if (" + monitorVars.get(baseMonitor) + " != null){\n";
 				ret += baseMonitor.Monitoring(monitorVars.get(baseMonitor), event, thisJoinPoint);
-				ret += baseMonitor.doHandlers(monitorVars.get(baseMonitor), new MOPVariable("this"), thisJoinPoint, new MOPVariable("this"));
+				ret += baseMonitor.callHandlers(monitorVars.get(baseMonitor), new MOPVariable("this"), event, event.getMOPParametersOnSpec(), thisJoinPoint, new MOPVariable("this"), isAround);
 				ret += "}\n";
 			}
 		}
@@ -258,14 +262,14 @@ public class MultiMonitor extends Monitor {
 		return ret;
 	}
 
-	public String doHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor) {
+	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
 		String ret = "";
 
 		if (!isDefined) {
 			if (!baseMonitors.isEmpty())
-				return baseMonitors.get(0).doHandlers(monitorVar, monitorVarForReset, thisJoinPoint, monitorVarForMonitor);
+				return baseMonitors.get(0).callHandlers(monitorVar, monitorVarForReset, event, eventParam, thisJoinPoint, monitorVarForMonitor, checkSkip);
 			else if (rawMonitor != null)
-				return rawMonitor.doHandlers(monitorVar, monitorVarForReset, thisJoinPoint, monitorVarForMonitor);
+				return rawMonitor.callHandlers(monitorVar, monitorVarForReset, event, eventParam, thisJoinPoint, monitorVarForMonitor, checkSkip);
 			else
 				return ret;
 		}

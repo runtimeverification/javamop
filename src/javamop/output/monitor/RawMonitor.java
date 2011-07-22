@@ -9,9 +9,9 @@ import javamop.output.MOPJavaCode;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
-import javamop.output.aspect.MOPStatistics;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameters;
 
 public class RawMonitor extends Monitor{
 
@@ -150,7 +150,7 @@ public class RawMonitor extends Monitor{
 		return ret;
 	}
 
-	public String doHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor) {
+	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
 		String ret = "";
 		
 		//There is no handler!!

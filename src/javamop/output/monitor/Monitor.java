@@ -8,6 +8,7 @@ import javamop.output.OptimizedCoenableSet;
 import javamop.output.aspect.MOPStatistics;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
 
@@ -64,7 +65,7 @@ public abstract class Monitor {
 
 	public abstract String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint);
 
-	public abstract String doHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor);
+	public abstract String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip);
 
 	public abstract String toString();
 

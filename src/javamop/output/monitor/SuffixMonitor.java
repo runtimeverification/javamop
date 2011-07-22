@@ -8,9 +8,9 @@ import java.util.Set;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
-import javamop.output.aspect.MOPStatistics;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameters;
 
 public class SuffixMonitor extends Monitor {
 
@@ -143,7 +143,7 @@ public class SuffixMonitor extends Monitor {
 
 		ret += multiMonitor.Monitoring(monitor, event, thisJoinPoint);
 		if (!multiMonitor.isDoingHandlers()) {
-			ret += multiMonitor.doHandlers(monitor, monitor, thisJoinPoint, monitor);
+			ret += multiMonitor.callHandlers(monitor, monitor, event, event.getMOPParametersOnSpec(), thisJoinPoint, monitor, isReturningSKIP(event));
 		}
 
 		if (multiMonitor.isDoingHandlers()) {
@@ -198,9 +198,9 @@ public class SuffixMonitor extends Monitor {
 		return ret;
 	}
 
-	public String doHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor) {
+	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
 		if (!isDefined)
-			return multiMonitor.doHandlers(monitorVar, monitorVarForReset, thisJoinPoint, monitorVarForMonitor);
+			return multiMonitor.callHandlers(monitorVar, monitorVarForReset, event, eventParam, thisJoinPoint, monitorVarForMonitor, checkSkip);
 		else
 			return ""; // handlers will be taken care of inside of suffixMonitor
 	}

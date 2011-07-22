@@ -185,6 +185,24 @@ public class MOPParameters implements Iterable<MOPParameter> {
 		return ret;
 	}
 
+	public String parameterStringIn(MOPParameters all) {
+		String ret = "";
+
+		for (MOPParameter param : all) {
+			if(this.contains(param)){
+				ret += ", " + param.getName();
+			} else {
+				ret += ", null"; 
+			}
+			
+		}
+		
+		if (ret.length() != 0)
+			ret = ret.substring(2);
+
+		return ret;
+	}
+	
 	public String parameterDeclString() {
 		String ret = "";
 

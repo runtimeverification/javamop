@@ -3,8 +3,8 @@ package javamop.output.monitor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javamop.MOPException;
 import javamop.Main;
@@ -13,9 +13,9 @@ import javamop.output.MOPJavaCodeNoNewLine;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
-import javamop.output.aspect.MOPStatistics;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
 
@@ -25,6 +25,7 @@ public class BaseMonitor extends Monitor {
 	MOPVariable reset = new MOPVariable("reset");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+	MOPVariable conditionFail = new MOPVariable("MOP_conditionFail");
 
 	PropertyAndHandlers prop;
 
@@ -38,10 +39,14 @@ public class BaseMonitor extends Monitor {
 	MOPJavaCode equalsCode;
 	UserJavaCode monitorDeclaration;
 	HashMap<String, MOPVariable> categoryVars;
+	HashMap<String, HandlerMethod> handlerMethods;
 	MOPJavaCode initilization;
-	HashMap<String, BlockStmt> handlers;
 	
 	String systemAspectName;
+	
+	MOPParameters specParam;
+	
+	boolean existCondition = false;
 
 	public BaseMonitor(String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop, OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions)
 			throws MOPException {
@@ -52,7 +57,6 @@ public class BaseMonitor extends Monitor {
 		this.isDefined = true;
 
 		this.prop = prop;
-		this.handlers = prop.getHandlers();
 
 		this.monitorName = new MOPVariable(mopSpec.getName() + "Monitor_" + prop.getPropertyId());
 
@@ -69,8 +73,18 @@ public class BaseMonitor extends Monitor {
 
 		monitorDeclaration = new UserJavaCode(mopSpec.getDeclarationsStr());
 		categoryVars = new HashMap<String, MOPVariable>();
-		for (String key : prop.getHandlers().keySet()) {
-			categoryVars.put(key, new MOPVariable("Category_" + key));
+		handlerMethods = new HashMap<String, HandlerMethod>();
+
+		this.specParam = mopSpec.getParameters();
+
+		HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
+		for (String category : prop.getHandlers().keySet()) {
+			MOPVariable categoryVar = new MOPVariable("Category_" + category);
+			categoryVars.put(category, categoryVar);
+			
+			BlockStmt handlerBody = handlerBodies.get(category);
+			if(handlerBody.toString().length() != 0) // if there is a handler for this cateory
+				handlerMethods.put(category, new HandlerMethod(prop, category, specParam, handlerBody, categoryVar, this)); // register the method name for the category
 		}
 
 		initilization = new MOPJavaCode(prop.getLogicProperty("initialization"));
@@ -81,6 +95,14 @@ public class BaseMonitor extends Monitor {
 			if(mopSpec.isFullBinding() || mopSpec.isConnected())
 				monitorInfo = new MonitorInfo(mopSpec);
 		}
+		
+		for(EventDefinition event : events){
+			if(event.getCondition() != null && event.getCondition().length() != 0){
+				existCondition = true;
+				break;
+			}
+		}
+		
 	}
 
 	public MOPVariable getOutermostName() {
@@ -164,8 +186,11 @@ public class BaseMonitor extends Monitor {
 		if (event.has__SKIP())
 			ret += "boolean " + skipAroundAdvice + " = false;\n";
 
-		if (doActions && !condition.isEmpty()) {
+		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
+			
+			ret += conditionFail + " = true;\n";
+			
 			if (isAround && event.has__SKIP()) {
 				ret += "return false;\n";
 			} else {
@@ -223,6 +248,7 @@ public class BaseMonitor extends Monitor {
 
 	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint) {
 		String ret = "";
+		boolean checkSkip = event.getPos().equals("around");
 
 		if (doActions) {
 			if (has__LOC) {
@@ -230,42 +256,50 @@ public class BaseMonitor extends Monitor {
 			}
 		}
 
-		if (event.getPos().equals("around") && event.has__SKIP()) {
+		if (checkSkip && event.has__SKIP()) {
 			ret += skipAroundAdvice + " |= ";
 		}
 		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
 
-		if (isOutermost)
-			ret += this.doHandlers(monitorVar, monitorVar, thisJoinPoint, monitorVar);
+		if (isOutermost){
+			ret += this.callHandlers(monitorVar, monitorVar, event, event.getMOPParametersOnSpec(), thisJoinPoint, monitorVar, checkSkip);
+		}
 
 		return ret;
 	}
 
-	public String doHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor) {
+	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
 		String ret = "";
 
-		for (String handlerName : categoryVars.keySet()) {
-			String handlerBody = handlers.get(handlerName).toString();
-			if (handlerBody.length() != 0) {
+		if(event.getCondition() != null && event.getCondition().length() != 0){
+			ret += "if(" + monitorVar + "." + conditionFail + "){\n";
+			ret += monitorVar + "." + conditionFail + " = false;\n";
+			ret += "} else {";
+		}
+		
+		for (String category : handlerMethods.keySet()) {
+			HandlerMethod handlerMethod = handlerMethods.get(category);
+			
+			ret += "if(" + monitorVar + "." + categoryVars.get(category) + ") {\n";
 
-				if (Main.statistics) {
-					ret += "if(" + monitorVar + "." + categoryVars.get(handlerName) + ") {\n";
-					ret += stat.categoryInc(prop, handlerName);
-					ret += "}\n";
-				}
-
-				ret += "if(" + monitorVar + "." + categoryVars.get(handlerName) + ") ";
-
-				handlerBody = handlerBody.replaceAll("__RESET", monitorVarForReset + ".reset()");
-				handlerBody = handlerBody.replaceAll("__LOC", thisJoinPoint + ".getSourceLocation().toString()");
-				handlerBody = handlerBody.replaceAll("__SKIP", skipAroundAdvice + " = true");
-
-				ret += handlerBody + "\n";
+			if(checkSkip && handlerMethod.has__SKIP()){
+				ret += skipAroundAdvice + " |= ";
 			}
+			
+			ret += monitorVar + "." + handlerMethod.getMethodName() + "(";
+			ret += eventParam.parameterStringIn(specParam);
+			ret += ");\n";
+
+			ret += "}\n";
 		}
 
+		if(event.getCondition() != null && event.getCondition().length() != 0){
+			ret += "}\n";
+		}
+
+		
 		return ret;
 	}
 
@@ -301,6 +335,10 @@ public class BaseMonitor extends Monitor {
 				ret += "org.aspectj.lang.JoinPoint " + thisJoinPoint + ";\n";
 		}
 
+		if(existCondition){
+			ret += "boolean " + conditionFail + " = false;\n";
+		}
+
 		// state declaration
 		ret += stateDeclaration + "\n";
 
@@ -330,6 +368,11 @@ public class BaseMonitor extends Monitor {
 		// events
 		for (EventDefinition event : this.events) {
 			ret += this.doEvent(event) + "\n";
+		}
+		
+		// handlers
+		for (HandlerMethod handlerMethod : this.handlerMethods.values()){
+			ret += handlerMethod + "\n";
 		}
 
 		// reset
