@@ -1,5 +1,8 @@
+@echo off
 
-java -cp "$INSTALL_PATH\lib\javamop.jar;$INSTALL_PATH\lib\logicrepository.jar;$INSTALL_PATH\lib\plugins\*.jar;$INSTALL_PATH\lib\mysql-connector-java-3.0.9-stable-bin.jar" javamop.Main %*
+set SRC_ROOT=%~dp0..
+
+java -cp "%SRC_ROOT%\lib\javamop.jar;%SRC_ROOT%\lib\logicrepository.jar;%SRC_ROOT%\lib\plugins\*.jar;%SRC_ROOT%\lib\mysql-connector-java-3.0.9-stable-bin.jar" javamop.Main %*
 
 
 

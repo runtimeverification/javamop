@@ -1,3 +1,6 @@
+@echo off
 
-java -cp "$INSTALL_PATH/lib/javamoptestsuite.jar;$INSTALL_PATH/lib/javamop.jar;$INSTALL_PATH/lib/logicrepository.jar:$INSTALL_PATH/lib/*.jar" javamoptestsuite.Main -local "$INSTALL_PATH/examples" %*
+set SRC_ROOT=%~dp0..
+
+java -cp "%SRC_ROOT%/lib/javamoptestsuite.jar;%SRC_ROOT%/lib/javamop.jar;%SRC_ROOT%/lib/logicrepository.jar:%SRC_ROOT%/lib/*.jar" javamoptestsuite.Main -local "%SRC_ROOT%/examples" %*
 
