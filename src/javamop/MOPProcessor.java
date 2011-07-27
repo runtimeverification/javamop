@@ -18,7 +18,7 @@ import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.visitor.CollectUserVar;
+import javamop.parser.ast.visitor.CollectUserVarVisitor;
 import javamop.parser.logicrepositorysyntax.LogicRepositoryType;
 import javamop.util.Tool;
 import javamop.Main;
@@ -44,7 +44,7 @@ public class MOPProcessor {
 		}
 		MOPNameSpace.addUserVariable(mopSpec.getName());
 		for (BodyDeclaration bd : mopSpec.getDeclarations()) {
-			List<String> vars = bd.accept(new CollectUserVar(), null);
+			List<String> vars = bd.accept(new CollectUserVarVisitor(), null);
 
 			if (vars != null)
 				MOPNameSpace.addUserVariables(vars);

@@ -27,6 +27,8 @@ public class EventDefinition extends Node {
 	MOPParameters mopParameters;
 
 	BlockStmt block;
+	MOPParameters usedParameter = null;
+
 
 	// will be modified by JavaMOPSpec when creation events are not specified
 	boolean startEvent = false;
@@ -245,6 +247,17 @@ public class EventDefinition extends Node {
 	public BlockStmt getAction() {
 		return block;
 	}
+	
+	public MOPParameters getUsedParametersIn(MOPParameters specParam){
+		//if cached, return it.
+		if(usedParameter != null)
+			return usedParameter;
+		
+		usedParameter = block.accept(new CollectMOPVarVisitor(), specParam);
+		
+		return usedParameter;
+	}
+
 
 	public boolean hasReturning() {
 		return hasReturning;

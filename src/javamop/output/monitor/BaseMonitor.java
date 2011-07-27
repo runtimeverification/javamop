@@ -15,6 +15,7 @@ import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
@@ -41,19 +42,21 @@ public class BaseMonitor extends Monitor {
 	HashMap<String, MOPVariable> categoryVars;
 	HashMap<String, HandlerMethod> handlerMethods;
 	MOPJavaCode initilization;
-	
+
 	String systemAspectName;
-	
+
 	MOPParameters specParam;
-	
+
 	boolean existCondition = false;
 
-	public BaseMonitor(String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop, OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions)
-			throws MOPException {
+	HashMap<MOPParameter, MOPVariable> varsToSave;
+
+	public BaseMonitor(String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop, OptimizedCoenableSet coenableSet, boolean isOutermost,
+			boolean doActions) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost, doActions);
 
-		this.systemAspectName = name + "SystemAspect"; 
-		
+		this.systemAspectName = name + "SystemAspect";
+
 		this.isDefined = true;
 
 		this.prop = prop;
@@ -77,32 +80,40 @@ public class BaseMonitor extends Monitor {
 
 		this.specParam = mopSpec.getParameters();
 
+		if (doActions) {
+			varsToSave = new HashMap<MOPParameter, MOPVariable>();
+
+			for (MOPParameter p : mopSpec.getVarsToSave()) {
+				varsToSave.put(p, new MOPVariable("Ref_" + p.getName()));
+			}
+		}
+
 		HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
 		for (String category : prop.getHandlers().keySet()) {
 			MOPVariable categoryVar = new MOPVariable("Category_" + category);
 			categoryVars.put(category, categoryVar);
-			
+
 			BlockStmt handlerBody = handlerBodies.get(category);
-			if(handlerBody.toString().length() != 0) // if there is a handler for this cateory
-				handlerMethods.put(category, new HandlerMethod(prop, category, specParam, handlerBody, categoryVar, this)); // register the method name for the category
+			if (handlerBody.toString().length() != 0) // if there is a handler for this cateory
+				// register the method name for the category
+				handlerMethods.put(category, new HandlerMethod(prop, category, specParam, mopSpec.getCommonParamInEvents(), varsToSave, handlerBody, categoryVar, this)); 
 		}
 
 		initilization = new MOPJavaCode(prop.getLogicProperty("initialization"));
 
 		events = mopSpec.getEvents();
 
-		if (this.isDefined && mopSpec.isGeneral()){
-			if(mopSpec.isFullBinding() || mopSpec.isConnected())
+		if (this.isDefined && mopSpec.isGeneral()) {
+			if (mopSpec.isFullBinding() || mopSpec.isConnected())
 				monitorInfo = new MonitorInfo(mopSpec);
 		}
-		
-		for(EventDefinition event : events){
-			if(event.getCondition() != null && event.getCondition().length() != 0){
+
+		for (EventDefinition event : events) {
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
 				existCondition = true;
 				break;
 			}
 		}
-		
 	}
 
 	public MOPVariable getOutermostName() {
@@ -156,12 +167,12 @@ public class BaseMonitor extends Monitor {
 
 		for (String handlerName : prop.getHandlers().keySet()) {
 			String conditionStr = prop.getLogicProperty(handlerName + " condition");
-			if(conditionStr.contains(":{")){
+			if (conditionStr.contains(":{")) {
 				HashMap<String, String> conditions = new HashMap<String, String>();
 				prop.parseMonitoredEvent(conditions, conditionStr);
 				conditionStr = conditions.get(event.getId());
 			}
-			
+
 			if (conditionStr != null) {
 				categoryConditions.put(handlerName, new MOPJavaCodeNoNewLine(conditionStr, monitorName));
 			}
@@ -188,9 +199,9 @@ public class BaseMonitor extends Monitor {
 
 		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
-			
+
 			ret += conditionFail + " = true;\n";
-			
+
 			if (isAround && event.has__SKIP()) {
 				ret += "return false;\n";
 			} else {
@@ -199,25 +210,38 @@ public class BaseMonitor extends Monitor {
 			ret += "}\n";
 		}
 
+		if (doActions) {
+			for (MOPParameter p : varsToSave.keySet()) {
+				if (event.getMOPParametersOnSpec().contains(p)) {
+					MOPVariable v = varsToSave.get(p);
+
+					ret += "if(" + v + " == null){\n";
+					ret += v + " = new WeakReference(" + p.getName() + ");\n";
+					ret += "}\n";
+				}
+			}
+
+		}
+
 		if (isOutermost) {
 			ret += lastevent + " = " + idnum + ";\n";
 		}
-		
+
 		if (monitorInfo != null)
 			ret += monitorInfo.union(event.getMOPParametersOnSpec());
 
 		ret += localDeclaration;
 
-		if(prop.getVersionedStack()){
+		if (prop.getVersionedStack()) {
 			MOPVariable global_depth = new MOPVariable("global_depth");
 			MOPVariable version = new MOPVariable("version");
-			
+
 			ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
 			ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
 		}
 
 		ret += stackManage + "\n";
-		
+
 		ret += eventMonitoringCode;
 
 		ret += monitoringBody;
@@ -226,7 +250,7 @@ public class BaseMonitor extends Monitor {
 		for (Entry<String, MOPJavaCode> entry : categoryConditions.entrySet()) {
 			categoryCode += categoryVars.get(entry.getKey()) + " = " + entry.getValue() + ";\n";
 		}
-		
+
 		if (monitorInfo != null)
 			ret += monitorInfo.computeCategory(categoryCode);
 		else
@@ -234,8 +258,22 @@ public class BaseMonitor extends Monitor {
 
 		ret += aftereventMonitoringCode;
 
-		if (eventAction != null)
+		if (eventAction != null){
+			
+			for (MOPParameter p : event.getUsedParametersIn(specParam)) {
+				if(!event.getMOPParametersOnSpec().contains(p)){
+					MOPVariable v = this.varsToSave.get(p);
+
+					ret += p.getType() + " " + p.getName() + " = null;\n";
+					ret += "if(" + v + " != null){\n";
+					ret += p.getName() + " = (" + p.getType() + ")" + v + ".get();\n";
+					ret += "}\n";
+				}
+			}
+
+			
 			ret += eventAction;
+		}
 
 		if (isAround && event.has__SKIP()) {
 			ret += "return " + skipAroundAdvice + ";\n";
@@ -263,31 +301,32 @@ public class BaseMonitor extends Monitor {
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
 
-		if (isOutermost){
+		if (isOutermost) {
 			ret += this.callHandlers(monitorVar, monitorVar, event, event.getMOPParametersOnSpec(), thisJoinPoint, monitorVar, checkSkip);
 		}
 
 		return ret;
 	}
 
-	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
+	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam,
+			MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
 		String ret = "";
 
-		if(event.getCondition() != null && event.getCondition().length() != 0){
+		if (event.getCondition() != null && event.getCondition().length() != 0) {
 			ret += "if(" + monitorVar + "." + conditionFail + "){\n";
 			ret += monitorVar + "." + conditionFail + " = false;\n";
 			ret += "} else {";
 		}
-		
+
 		for (String category : handlerMethods.keySet()) {
 			HandlerMethod handlerMethod = handlerMethods.get(category);
-			
+
 			ret += "if(" + monitorVar + "." + categoryVars.get(category) + ") {\n";
 
-			if(checkSkip && handlerMethod.has__SKIP()){
+			if (checkSkip && handlerMethod.has__SKIP()) {
 				ret += skipAroundAdvice + " |= ";
 			}
-			
+
 			ret += monitorVar + "." + handlerMethod.getMethodName() + "(";
 			ret += eventParam.parameterStringIn(specParam);
 			ret += ");\n";
@@ -295,11 +334,10 @@ public class BaseMonitor extends Monitor {
 			ret += "}\n";
 		}
 
-		if(event.getCondition() != null && event.getCondition().length() != 0){
+		if (event.getCondition() != null && event.getCondition().length() != 0) {
 			ret += "}\n";
 		}
 
-		
 		return ret;
 	}
 
@@ -333,9 +371,15 @@ public class BaseMonitor extends Monitor {
 			ret += monitorDeclaration + "\n";
 			if (this.has__LOC)
 				ret += "org.aspectj.lang.JoinPoint " + thisJoinPoint + ";\n";
+
+			// references for saved parameters
+			for (MOPVariable v : varsToSave.values()) {
+				ret += "WeakReference " + v + " = null;\n";
+			}
+
 		}
 
-		if(existCondition){
+		if (existCondition) {
 			ret += "boolean " + conditionFail + " = false;\n";
 		}
 
@@ -350,10 +394,10 @@ public class BaseMonitor extends Monitor {
 
 		// constructor
 		ret += "public " + monitorName + " () {\n";
-		if(prop.getVersionedStack()){
+		if (prop.getVersionedStack()) {
 			MOPVariable global_depth = new MOPVariable("global_depth");
 			MOPVariable version = new MOPVariable("version");
-			
+
 			ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
 			ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
 		}
@@ -369,9 +413,9 @@ public class BaseMonitor extends Monitor {
 		for (EventDefinition event : this.events) {
 			ret += this.doEvent(event) + "\n";
 		}
-		
+
 		// handlers
-		for (HandlerMethod handlerMethod : this.handlerMethods.values()){
+		for (HandlerMethod handlerMethod : this.handlerMethods.values()) {
 			ret += handlerMethod + "\n";
 		}
 
@@ -380,14 +424,14 @@ public class BaseMonitor extends Monitor {
 		if (monitorInfo != null)
 			ret += monitorInfo.initConnected();
 
-		if(prop.getVersionedStack()){
+		if (prop.getVersionedStack()) {
 			MOPVariable global_depth = new MOPVariable("global_depth");
 			MOPVariable version = new MOPVariable("version");
-			
+
 			ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
 			ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
 		}
-		
+
 		ret += localDeclaration;
 		ret += resetCode;
 		if (isOutermost) {

@@ -11,7 +11,7 @@ import javamop.parser.ast.aspectj.*;
 
 ;
 
-public class CollectUserVar implements GenericVisitor<List<String>, Object> {
+public class CollectUserVarVisitor implements GenericVisitor<List<String>, Object> {
 
 	public List<String> visit(Node n, Object arg) {
 		return null;

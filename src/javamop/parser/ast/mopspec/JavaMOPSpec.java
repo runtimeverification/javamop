@@ -21,6 +21,9 @@ public class JavaMOPSpec extends Node {
 	List<EventDefinition> events = null;
 	List<PropertyAndHandlers> properties = null;
 	List<String> eventNames = null;
+	
+	MOPParameters commonParamInEvents;
+	MOPParameters varsToSave;
 
 	public JavaMOPSpec(int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
 			List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
@@ -33,6 +36,7 @@ public class JavaMOPSpec extends Node {
 		this.events = events;
 		this.properties = properties;
 		this.eventNames = new ArrayList<String>();
+		this.commonParamInEvents = new MOPParameters(this.parameters);
 
 		for (EventDefinition event : this.events) {
 			if (!this.eventNames.contains(event.getId()))
@@ -51,6 +55,37 @@ public class JavaMOPSpec extends Node {
 			setVarsInEvents();
 		} catch (MOPException e) {
 			throw new javamop.parser.main_parser.ParseException(e.getMessage());
+		}
+		
+		for (EventDefinition event : this.events) {
+			MOPParameters param = event.getMOPParametersOnSpec();
+			
+			this.commonParamInEvents = MOPParameters.intersectionSet(param, this.commonParamInEvents);
+		}
+		
+		this.varsToSave = new MOPParameters();
+		
+		for (PropertyAndHandlers prop : properties){
+			for(String category: prop.getHandlers().keySet()){
+				MOPParameters param = prop.getUsedParametersIn(category, this.parameters);
+				
+				for(MOPParameter p : param){
+					if(!this.commonParamInEvents.contains(p)){
+						varsToSave.add(p);
+					}
+				}
+			}
+		}
+		
+		for (EventDefinition event : events){
+			MOPParameters eventParam = event.getMOPParametersOnSpec();
+			MOPParameters param = event.getUsedParametersIn(this.parameters);
+			
+			for(MOPParameter p : param){
+				if(!eventParam.contains(p)){
+					varsToSave.add(p);
+				}
+			}
 		}
 	}
 
@@ -111,6 +146,14 @@ public class JavaMOPSpec extends Node {
 
 	public MOPParameters getParameters() {
 		return parameters;
+	}
+	
+	public MOPParameters getCommonParamInEvents(){
+		return commonParamInEvents;
+	}
+	
+	public MOPParameters getVarsToSave(){
+		return varsToSave;
 	}
 
 	public String getInMethod() {

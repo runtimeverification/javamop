@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javamop.logicpluginshells.LogicPluginShellResult;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.stmt.BlockStmt;
+import javamop.parser.ast.visitor.CollectMOPVarVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 
@@ -15,6 +16,7 @@ public class PropertyAndHandlers extends Node {
 	
 	Property property;
 	HashMap<String, BlockStmt> handlers;
+	HashMap<String, MOPParameters> usedParameters = new HashMap<String, MOPParameters>();
 
 	//things that should be defined afterward
 	int propertyId; //will be defined in JavaMOPSpec
@@ -45,6 +47,22 @@ public class PropertyAndHandlers extends Node {
 
 	public HashMap<String, BlockStmt> getHandlers() {
 		return handlers;
+	}
+	
+	public MOPParameters getUsedParametersIn(String category, MOPParameters specParam){
+		MOPParameters ret;
+		
+		//if cached, return it.
+		if((ret = usedParameters.get(category)) != null)
+			return ret;
+		
+		BlockStmt handler = handlers.get(category);
+		
+		ret = handler.accept(new CollectMOPVarVisitor(), specParam);
+		
+		usedParameters.put(category, ret);
+		
+		return ret;
 	}
 	
 	public int getPropertyId(){
