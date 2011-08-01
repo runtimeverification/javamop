@@ -4,6 +4,7 @@
 This file contains instructions for installing JavaMOP.
 
 1. Prerequisites
+
 1.1 Install JDK 6 if needed.
 
 We expect java 1.6.x or newer (JDK 6). If you already have an installed JDK
@@ -66,7 +67,13 @@ Section 4.1) will not work.
 --- To test: run 'ajc' from the command line, this should display usage
 information for ajc. (ajc is the AspectJ compiler)
 
-1.3 Install Ant if needed.
+2. Build JavaMOP from Source
+
+Building JavaMOP is necessary only if you need to make modifications to JavaMOP.
+It is recommended for end users to use the JavaMOP binary installer from the
+project website and skip this section.
+
+2.1 Install Ant if needed.
 
 Download ant from the following URL:
   http://ant.apache.org/bindownload.cgi
@@ -80,7 +87,7 @@ created where xxxx is the version number.
 The scripts to run ant are in apache-ant-xxxx/bin. If you wish to execute them
 anywhere add this directory to your PATH environment variable.
 
-1.4 Install Scala if needed.
+2.2 Install Scala if needed.
 
 If it is already installed make sure to set your environment variables correctly
 as outlined below.
@@ -104,16 +111,14 @@ Also add 'bin' directory under SCALA_HOME to the PATH environment variable.
 --- To test: run 'scalac' from the command line, this should display usage
 information.
 
-2. JavaMOP Build
-
-2.1 Download the JavaMOP source
+2.3 Download the JavaMOP source
 
 As the tool is still under active development, it is recommended that you 
 download JavaMOP directly from the SVN repository, as follows:
 
   svn checkout http://javamop.googlecode.com/svn/trunk/ javamop
 
-2.2 Build JavaMOP
+2.4 Build JavaMOP
 
 From the top level directory of JavaMOP (i.e. the directory this file is in) run
 
