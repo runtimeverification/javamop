@@ -45,7 +45,7 @@ public class AspectJCode {
 			enableSets.put(mopSpec, enableSet);
 			coenableSets.put(mopSpec, optimizedCoenableSet);
 
-			WrapperMonitor monitor = new WrapperMonitor(name, mopSpec, optimizedCoenableSet, true, true);
+			WrapperMonitor monitor = new WrapperMonitor(name, mopSpec, optimizedCoenableSet, true);
 
 			monitors.put(mopSpec, monitor);
 

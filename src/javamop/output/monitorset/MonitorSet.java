@@ -23,10 +23,10 @@ public class MonitorSet {
 	ArrayList<EventDefinition> events;
 	List<PropertyAndHandlers> properties;
 	boolean has__LOC;
-	boolean handlersHave__SKIP;
+	boolean existSkip = false;
 	
-	MOPVariable thisJoinPoint = new MOPVariable("MOP_thisJoinPoint");
-	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 	MOPStatistics stat;
 	
@@ -40,12 +40,17 @@ public class MonitorSet {
 		
 		this.has__LOC = mopSpec.has__LOC();
 		
-		this.handlersHave__SKIP = false; 
 		for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
 			for (BlockStmt handler : prop.getHandlers().values()) {
 				if (handler.toString().indexOf("__SKIP") != -1){
-					this.handlersHave__SKIP = true; 
+					existSkip = true;
 				}
+			}
+		}
+		for (EventDefinition event : events) {
+			if (event.has__SKIP()){
+				existSkip = true;
+				break;
 			}
 		}
 		
@@ -84,22 +89,31 @@ public class MonitorSet {
 		return ret;
 	}
 	
-	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable thisJoinPoint){
+	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc){
 		String ret = "";
+		
+		boolean isAround = event.getPos().equals("around");
 
 		ret += "if (" + monitorSetVar + " != null) {\n";
 		
 		if (has__LOC) {
-			ret += monitorSetVar + "." + this.thisJoinPoint + " = " + thisJoinPoint + ";\n";
+			if(loc != null)
+				ret += monitorSetVar + "." + this.loc + " = " + loc + ";\n";
+			else
+				ret += monitorSetVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
-		if (monitor.isReturningSKIP(event)) {
-			ret += skipAroundAdvice + " |= ";
+		if (isAround && event.has__SKIP()) {
+			ret += monitorSetVar + "." + skipAroundAdvice + " = false;\n";
 		}
-		
+
 		ret += "((" + setName + ")" + monitorSetVar + ").event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
+		
+		if (isAround && event.has__SKIP()) {
+			ret += skipAroundAdvice + " |= " + monitorSetVar + "." + skipAroundAdvice + ";\n";
+		}
 		
 		ret += "}\n";
 		
@@ -111,7 +125,6 @@ public class MonitorSet {
 
 		MOPVariable monitor = new MOPVariable("monitor");
 		MOPVariable num_terminated_monitors = new MOPVariable("num_terminated_monitors");
-		MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
 		MOPVariable i = new MOPVariable("i");
 		// elementData and size are safe since they will be accessed by the prefix "this.".
 
@@ -122,7 +135,11 @@ public class MonitorSet {
 		ret += "public int size;\n";
 
 		if (has__LOC)
-			ret += "org.aspectj.lang.JoinPoint " + thisJoinPoint + " = null;\n";
+			ret += "String " + loc + " = null;\n";
+		
+		if (existSkip){
+			ret += "boolean " + skipAroundAdvice + " = false;\n";
+		}
 
 		ret += "\n";
 
@@ -234,16 +251,9 @@ public class MonitorSet {
 
 			ret += "\n";
 
-			if (isAround && (this.monitor.isReturningSKIP(event) || (!this.monitor.isDoingHandlers() && handlersHave__SKIP))) {
-				ret += "public final boolean event_" + eventName + "(";
-			} else {
-				ret += "public final void event_" + eventName + "(";
-			}
+			ret += "public final void event_" + eventName + "(";
 			ret += parameters.parameterDeclString();
 			ret += ") {\n";
-
-			if (this.monitor.isReturningSKIP(event) || (!this.monitor.isDoingHandlers() && handlersHave__SKIP))
-				ret += "boolean " + skipAroundAdvice + " = false;\n";
 
 			ret += "int " + num_terminated_monitors + " = 0 ;\n";
 			ret += "for(int " + i + " = 0; " + i + " + " + num_terminated_monitors + " < this.size; " + i + " ++){\n";
@@ -267,7 +277,7 @@ public class MonitorSet {
 			ret += "this.elementData[" + i + "] = " + monitor + ";\n";
 			ret += "}\n";
 
-			ret += this.monitor.Monitoring(monitor, event, thisJoinPoint);
+			ret += this.monitor.Monitoring(monitor, event, loc);
 			
 			ret += "}\n";
 
@@ -279,10 +289,6 @@ public class MonitorSet {
 			ret += "this.elementData[" + i + "] = null;\n";
 			ret += "}\n";
 			ret += "}\n";
-
-			if (isAround && (this.monitor.isReturningSKIP(event) || (!this.monitor.isDoingHandlers() && handlersHave__SKIP))) {
-				ret += "return " + skipAroundAdvice + ";\n";
-			}
 			
 			ret += "}\n";
 		}

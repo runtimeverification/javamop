@@ -7,7 +7,7 @@ public class AroundAdviceLocalDecl {
 	MOPVariable skipAroundAdvice;
 	
 	public AroundAdviceLocalDecl(){
-		skipAroundAdvice = new MOPVariable("skipAroundAdvice");	
+		skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");	
 	}
 	
 	

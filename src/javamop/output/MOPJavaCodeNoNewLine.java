@@ -1,5 +1,7 @@
 package javamop.output;
 
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
+
 public class MOPJavaCodeNoNewLine extends MOPJavaCode {
 
 	public MOPJavaCodeNoNewLine(String code) {
@@ -8,6 +10,10 @@ public class MOPJavaCodeNoNewLine extends MOPJavaCode {
 
 	public MOPJavaCodeNoNewLine(String code, MOPVariable monitorName) {
 		super(code, monitorName);
+	}
+
+	public MOPJavaCodeNoNewLine(PropertyAndHandlers prop, String code, MOPVariable monitorName) {
+		super(prop, code, monitorName);
 	}
 
 	public String toString() {

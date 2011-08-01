@@ -12,7 +12,7 @@ public class AroundAdviceReturn {
 	Type type;
 
 	public AroundAdviceReturn(Type type, MOPParameters parameters) {
-		skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+		skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 		this.parameters = parameters;
 		
 		this.type = type;

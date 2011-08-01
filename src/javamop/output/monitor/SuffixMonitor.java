@@ -1,7 +1,7 @@
 package javamop.output.monitor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11,22 +11,24 @@ import javamop.output.OptimizedCoenableSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.parser.ast.stmt.BlockStmt;
 
 public class SuffixMonitor extends Monitor {
-
-	MOPVariable thisJoinPoint = new MOPVariable("MOP_thisJoinPoint");
+	MOPVariable loc = new MOPVariable("MOP_loc");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
-	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 	List<EventDefinition> events;
 
-	MultiMonitor multiMonitor = null;
+	Monitor innerMonitor = null;
 
 	ArrayList<String> categories;
 	MOPVariable monitorList = new MOPVariable("monitorList");
+	boolean existSkip = false;
 
-	public SuffixMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions) throws MOPException {
-		super(name, mopSpec, coenableSet, isOutermost, doActions);
+	public SuffixMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
+		super(name, mopSpec, coenableSet, isOutermost);
 
 		this.isDefined = mopSpec.isSuffixMatching();
 
@@ -35,14 +37,37 @@ public class SuffixMonitor extends Monitor {
 
 			if (isOutermost) {
 				monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
-				multiMonitor = new MultiMonitor(name, mopSpec, coenableSet, false, doActions);
-			} else {
-				multiMonitor = new MultiMonitor(name, mopSpec, coenableSet, false, doActions);
 			}
+			
+			if (mopSpec.getPropertiesAndHandlers().size() == 0)
+				innerMonitor = new RawMonitor(name, mopSpec, coenableSet, false);
+			else		
+				innerMonitor = new BaseMonitor(name, mopSpec, coenableSet, false);
 
 			events = mopSpec.getEvents();
+			
+			for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
+				if(!existSkip){
+					for (BlockStmt handler : prop.getHandlers().values()) {
+						if (handler.toString().indexOf("__SKIP") != -1){
+							existSkip = true;
+							break;
+						}
+					}
+				}
+			}
+
+			for (EventDefinition event : events) {
+				if (event.has__SKIP()){
+					existSkip = true;
+					break;
+				}
+			}
 		} else {
-			multiMonitor = new MultiMonitor(name, mopSpec, coenableSet, isOutermost, doActions);
+			if (mopSpec.getPropertiesAndHandlers().size() == 0)
+				innerMonitor = new RawMonitor(name, mopSpec, coenableSet, isOutermost);
+			else		
+				innerMonitor = new BaseMonitor(name, mopSpec, coenableSet, isOutermost);
 		}
 
 		if (this.isDefined && mopSpec.isGeneral()){
@@ -55,46 +80,18 @@ public class SuffixMonitor extends Monitor {
 		if (isDefined)
 			return monitorName;
 		else
-			return multiMonitor.getOutermostName();
+			return innerMonitor.getOutermostName();
 	}
 
 	public Set<String> getNames() {
-		Set<String> ret = multiMonitor.getNames();
+		Set<String> ret = innerMonitor.getNames();
 		if (isDefined)
 			ret.add(monitorName.toString());
 		return ret;
 	}
 
-	/*
-	 * Whether handlers are done when event methods are called.
-	 * 
-	 * If it is not true, handlers need to be done outside of monitor by calling
-	 * doHandlers.
-	 * 
-	 * If this monitor is the outermost monitor, calling Monitoring will do the
-	 * job.
-	 */
-	public boolean isDoingHandlers() {
-		if (isDefined) {
-			return true;
-		} else {
-			return multiMonitor.isDoingHandlers();
-		}
-	}
-
-	public Set<String> getCategories() {
-		return multiMonitor.getCategories();
-	}
-
-	public boolean isReturningSKIP(EventDefinition event) {
-		if (!isDefined) {
-			return multiMonitor.isReturningSKIP(event);
-		}
-
-		boolean isAround = event.getPos().equals("around");
-		boolean anyReturningSKIP = multiMonitor.isReturningSKIP(event);
-
-		return isAround && (anyReturningSKIP || handlersHave__SKIP);
+	public Set<MOPVariable> getCategoryVars() {
+		return innerMonitor.getCategoryVars();
 	}
 
 	public String doEvent(EventDefinition event) {
@@ -102,26 +99,16 @@ public class SuffixMonitor extends Monitor {
 
 		String uniqueId = event.getUniqueId();
 		int idnum = event.getIdNum();
-		boolean anyReturningSKIP = multiMonitor.isReturningSKIP(event);
 
 		MOPVariable monitor = new MOPVariable("monitor");
 		MOPVariable monitorSet = new MOPVariable("monitorSet");
 		MOPVariable newMonitor = new MOPVariable("newMonitor");
 		MOPVariable it = new MOPVariable("it");
-		HashMap<String, MOPVariable> categoryVars = new HashMap<String, MOPVariable>();
+		HashSet<MOPVariable> categoryVars = new HashSet<MOPVariable>();
 
-		for (String category : multiMonitor.getCategories()) {
-			categoryVars.put(category, new MOPVariable("Category_" + category));
-		}
+		categoryVars.addAll(innerMonitor.getCategoryVars());
 
-		if (isReturningSKIP(event)) {
-			ret += "public final boolean event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
-		} else {
-			ret += "public final void event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
-		}
-
-		if (anyReturningSKIP || handlersHave__SKIP)
-			ret += "boolean " + skipAroundAdvice + " = false;\n";
+		ret += "public final void event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
 
 		if (isOutermost) {
 			ret += lastevent + " = " + idnum + ";\n";
@@ -130,7 +117,7 @@ public class SuffixMonitor extends Monitor {
 		ret += "HashSet " + monitorSet + " = new HashSet();\n";
 
 		if (event.isStartEvent()) {
-			ret += multiMonitor.getOutermostName() + " " + newMonitor + " = new " + multiMonitor.getOutermostName() + "();\n";
+			ret += innerMonitor.getOutermostName() + " " + newMonitor + " = new " + innerMonitor.getOutermostName() + "();\n";
 			if (monitorInfo != null){
 				ret += monitorInfo.copy(newMonitor);
 			}
@@ -139,70 +126,54 @@ public class SuffixMonitor extends Monitor {
 
 		ret += "Iterator " + it + " = " + monitorList + ".iterator();\n";
 		ret += "while (" + it + ".hasNext()){\n";
-		ret += multiMonitor.getOutermostName() + " " + monitor + " = (" + multiMonitor.getOutermostName() + ")" + it + ".next();\n";
+		ret += innerMonitor.getOutermostName() + " " + monitor + " = (" + innerMonitor.getOutermostName() + ")" + it + ".next();\n";
 
-		ret += multiMonitor.Monitoring(monitor, event, thisJoinPoint);
-		if (!multiMonitor.isDoingHandlers()) {
-			ret += multiMonitor.callHandlers(monitor, monitor, event, event.getMOPParametersOnSpec(), thisJoinPoint, monitor, isReturningSKIP(event));
+		ret += innerMonitor.Monitoring(monitor, event, loc);
+
+		ret += "if(" + monitorSet + ".contains(" + monitor + ")";
+		for (MOPVariable categoryVar : categoryVars) {
+			ret += " || " + monitor + "." + categoryVar;
 		}
-
-		if (multiMonitor.isDoingHandlers()) {
-			ret += "if(" + monitorSet + ".contains(" + monitor + ") ) {\n";
-			ret += it + ".remove();\n";
-			ret += "} else {\n";
-			ret += monitorSet + ".add(" + monitor + ");\n";
-			ret += "}\n";
-		} else {
-			ret += "if(" + monitorSet + ".contains(" + monitor + ")";
-			for (MOPVariable categoryVar : categoryVars.values()) {
-				ret += " || " + monitor + "." + categoryVar;
-			}
-			ret += " ) {\n";
-			ret += it + ".remove();\n";
-			ret += "} else {\n";
-			ret += monitorSet + ".add(" + monitor + ");\n";
-			ret += "}\n";
-		}
-
+		ret += " ) {\n";
+		ret += it + ".remove();\n";
+		ret += "} else {\n";
+		ret += monitorSet + ".add(" + monitor + ");\n";
 		ret += "}\n";
 
-		if (isReturningSKIP(event)) {
-			ret += "return " + skipAroundAdvice + ";\n";
-		}
+		ret += "}\n";
 
 		ret += "}\n";
 
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
 		String ret = "";
+		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return multiMonitor.Monitoring(monitorVar, event, thisJoinPoint);
+			return innerMonitor.Monitoring(monitorVar, event, loc);
 
-		if (doActions) {
-			if (has__LOC) {
-				ret += monitorVar + "." + this.thisJoinPoint + " = " + thisJoinPoint + ";\n";
-			}
+		if (has__LOC) {
+			if(loc != null)
+				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
+			else
+				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
-		if (isReturningSKIP(event)) {
-			ret += skipAroundAdvice + " |= ";
+		if (checkSkip && event.has__SKIP()) {
+			ret += monitorVar + "." + skipAroundAdvice + " = false;\n";
 		}
 
 		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
+		
+		if (checkSkip && event.has__SKIP()) {
+			ret += skipAroundAdvice + " |= " + monitorVar + "." + skipAroundAdvice + ";\n";
+		}
 
 		return ret;
-	}
-
-	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
-		if (!isDefined)
-			return multiMonitor.callHandlers(monitorVar, monitorVarForReset, event, eventParam, thisJoinPoint, monitorVarForMonitor, checkSkip);
-		else
-			return ""; // handlers will be taken care of inside of suffixMonitor
 	}
 
 	public String toString() {
@@ -217,11 +188,12 @@ public class SuffixMonitor extends Monitor {
 				ret += " extends javamoprt.MOPMonitor";
 			ret += " implements Cloneable, javamoprt.MOPObject {\n";
 
-			ret += "Vector<" + multiMonitor.getOutermostName() + "> " + monitorList + " = new Vector<" + multiMonitor.getOutermostName() + ">();\n";
+			ret += "Vector<" + innerMonitor.getOutermostName() + "> " + monitorList + " = new Vector<" + innerMonitor.getOutermostName() + ">();\n";
 
-			if (doActions) {
-				if (this.has__LOC)
-					ret += "org.aspectj.lang.JoinPoint " + thisJoinPoint + ";\n";
+			if (this.has__LOC)
+				ret += "String " + loc + ";\n";
+			if (existSkip){
+				ret += "boolean " + skipAroundAdvice + " = false;\n";
 			}
 
 			// clone()
@@ -230,10 +202,10 @@ public class SuffixMonitor extends Monitor {
 			ret += monitorName + " ret = (" + monitorName + ") super.clone();\n";
 			if (monitorInfo != null)
 				ret += monitorInfo.copy("ret", "this");
-			ret += "ret." + monitorList + " = new Vector<" + multiMonitor.getOutermostName() + ">();\n";
-			ret += "for(" + multiMonitor.getOutermostName() + " " + monitor + " : this." + monitorList + "){\n";
-			ret += multiMonitor.getOutermostName() + " " + newMonitor + " = ";
-			ret += "(" + multiMonitor.getOutermostName() + ")" + monitor + ".clone()" + ";\n";
+			ret += "ret." + monitorList + " = new Vector<" + innerMonitor.getOutermostName() + ">();\n";
+			ret += "for(" + innerMonitor.getOutermostName() + " " + monitor + " : this." + monitorList + "){\n";
+			ret += innerMonitor.getOutermostName() + " " + newMonitor + " = ";
+			ret += "(" + innerMonitor.getOutermostName() + ")" + monitor + ".clone()" + ";\n";
 			if (monitorInfo != null)
 				ret += monitorInfo.copy(newMonitor, monitor);
 			ret += "ret." + monitorList + ".add(" + newMonitor + ");\n";
@@ -264,7 +236,7 @@ public class SuffixMonitor extends Monitor {
 			ret += "\n";
 		}
 
-		ret += multiMonitor;
+		ret += this.innerMonitor;
 
 		return ret;
 	}

@@ -134,18 +134,18 @@ public class SpecialAdviceBody extends AdviceBody {
 			}
 
 			if (event.isStartEvent()) {
-				ret += monitorClass.Monitoring(monitor, event, thisJoinPoint);
+				ret += monitorClass.Monitoring(monitor, event, null);
 			} else if (mopSpec.getParameters().size() == event.getMOPParametersOnSpec().size()) {
 
 				ret += monitor + " = (" + monitorName + ")" + obj + ";\n";
 				ret += "if(" + monitor + " != null) {\n";
-				ret += monitorClass.Monitoring(monitor, event, thisJoinPoint);
+				ret += monitorClass.Monitoring(monitor, event, null);
 				ret += "}\n";
 
 			} else if (event.getMOPParametersOnSpec().size() == 0) {
-				ret += monitorSet.Monitoring(indexingTree.getName(), event, thisJoinPoint);
+				ret += monitorSet.Monitoring(indexingTree.getName(), event, null);
 			} else {
-				ret += monitorSet.Monitoring(obj, event, thisJoinPoint);
+				ret += monitorSet.Monitoring(obj, event, null);
 			}
 
 			if (mopSpec.isSync())

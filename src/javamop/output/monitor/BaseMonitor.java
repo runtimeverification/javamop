@@ -20,92 +20,113 @@ import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
 
-public class BaseMonitor extends Monitor {
-
-	MOPVariable thisJoinPoint = new MOPVariable("MOP_thisJoinPoint");
-	MOPVariable reset = new MOPVariable("reset");
-	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
-	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
-	MOPVariable conditionFail = new MOPVariable("MOP_conditionFail");
-
-	PropertyAndHandlers prop;
-
-	List<EventDefinition> events;
-
+class PropMonitor {
 	MOPJavaCode cloneCode;
 	MOPJavaCode localDeclaration;
 	MOPJavaCode stateDeclaration;
 	MOPJavaCode resetCode;
 	MOPJavaCode hashcodeCode;
 	MOPJavaCode equalsCode;
-	UserJavaCode monitorDeclaration;
-	HashMap<String, MOPVariable> categoryVars;
-	HashMap<String, HandlerMethod> handlerMethods;
 	MOPJavaCode initilization;
+	
+	MOPVariable hashcodeMethod = null;
 
-	String systemAspectName;
+	HashMap<String, MOPVariable> categoryVars = new HashMap<String, MOPVariable>();
+	HashMap<String, HandlerMethod> handlerMethods = new HashMap<String, HandlerMethod>();
+	HashMap<String, MOPVariable> eventMethods = new HashMap<String, MOPVariable>();
+}
 
+public class BaseMonitor extends Monitor {
+	// fields
+	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
+	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
+	MOPVariable conditionFail = new MOPVariable("MOP_conditionFail");
+
+	// methods
+	MOPVariable reset = new MOPVariable("reset");
+
+	// info about spec
+	List<PropertyAndHandlers> props;
+	List<EventDefinition> events;
 	MOPParameters specParam;
-
+	UserJavaCode monitorDeclaration;
+	String systemAspectName;
 	boolean existCondition = false;
-
+	boolean existSkip = false;
 	HashMap<MOPParameter, MOPVariable> varsToSave;
 
-	public BaseMonitor(String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop, OptimizedCoenableSet coenableSet, boolean isOutermost,
-			boolean doActions) throws MOPException {
-		super(name, mopSpec, coenableSet, isOutermost, doActions);
+	HashMap<PropertyAndHandlers, PropMonitor> propMonitors = new HashMap<PropertyAndHandlers, PropMonitor>();
 
-		this.systemAspectName = name + "SystemAspect";
+	// done
+	public BaseMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
+		super(name, mopSpec, coenableSet, isOutermost);
 
 		this.isDefined = true;
-
-		this.prop = prop;
-
-		this.monitorName = new MOPVariable(mopSpec.getName() + "Monitor_" + prop.getPropertyId());
+		this.monitorName = new MOPVariable(mopSpec.getName() + "Monitor");
+		this.systemAspectName = name + "SystemAspect";
+		this.events = mopSpec.getEvents();
+		this.props = mopSpec.getPropertiesAndHandlers();
+		this.monitorDeclaration = new UserJavaCode(mopSpec.getDeclarationsStr());
+		this.specParam = mopSpec.getParameters();
 
 		if (isOutermost) {
 			monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
 		}
 
-		cloneCode = new MOPJavaCode(prop.getLogicProperty("clone"), monitorName);
-		localDeclaration = new MOPJavaCode(prop.getLogicProperty("local declaration"), monitorName);
-		stateDeclaration = new MOPJavaCode(prop.getLogicProperty("state declaration"), monitorName);
-		resetCode = new MOPJavaCode(prop.getLogicProperty("reset"), monitorName);
-		hashcodeCode = new MOPJavaCode(prop.getLogicProperty("hashcode"), monitorName);
-		equalsCode = new MOPJavaCode(prop.getLogicProperty("equals"), monitorName);
+		for (PropertyAndHandlers prop : props) {
+			PropMonitor propMonitor = new PropMonitor();
 
-		monitorDeclaration = new UserJavaCode(mopSpec.getDeclarationsStr());
-		categoryVars = new HashMap<String, MOPVariable>();
-		handlerMethods = new HashMap<String, HandlerMethod>();
+			HashSet<String> cloneLocal = new HashSet<String>();
+			cloneLocal.add("ret");
+			
+			propMonitor.cloneCode = new MOPJavaCode(prop, prop.getLogicProperty("clone"), monitorName, cloneLocal);
+			propMonitor.localDeclaration = new MOPJavaCode(prop, prop.getLogicProperty("local declaration"), monitorName);
+			propMonitor.stateDeclaration = new MOPJavaCode(prop, prop.getLogicProperty("state declaration"), monitorName);
+			propMonitor.resetCode = new MOPJavaCode(prop, prop.getLogicProperty("reset"), monitorName);
+			propMonitor.hashcodeCode = new MOPJavaCode(prop, prop.getLogicProperty("hashcode"), monitorName);
+			propMonitor.equalsCode = new MOPJavaCode(prop, prop.getLogicProperty("equals"), monitorName);
+			propMonitor.initilization = new MOPJavaCode(prop, prop.getLogicProperty("initialization"), monitorName);
 
-		this.specParam = mopSpec.getParameters();
+			HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
+			for (String category : prop.getHandlers().keySet()) {
+				MOPVariable categoryVar = new MOPVariable("Prop_" + prop.getPropertyId() + "_Category_" + category);
+				propMonitor.categoryVars.put(category, categoryVar);
 
-		if (doActions) {
-			varsToSave = new HashMap<MOPParameter, MOPVariable>();
+				BlockStmt handlerBody = handlerBodies.get(category);
 
-			for (MOPParameter p : mopSpec.getVarsToSave()) {
-				varsToSave.put(p, new MOPVariable("Ref_" + p.getName()));
+				if (handlerBody.toString().length() != 0)
+					propMonitor.handlerMethods.put(category, new HandlerMethod(prop, category, specParam, mopSpec.getCommonParamInEvents(), varsToSave, handlerBody, categoryVar, this));
 			}
+			
+			for(EventDefinition event : events){
+				MOPVariable eventMethod = new MOPVariable("Prop_" + prop.getPropertyId() + "_event_" + event.getUniqueId());
+				
+				propMonitor.eventMethods.put(event.getUniqueId(), eventMethod);
+			}			
+
+			propMonitors.put(prop, propMonitor);
 		}
 
-		HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
-		for (String category : prop.getHandlers().keySet()) {
-			MOPVariable categoryVar = new MOPVariable("Category_" + category);
-			categoryVars.put(category, categoryVar);
-
-			BlockStmt handlerBody = handlerBodies.get(category);
-			if (handlerBody.toString().length() != 0) // if there is a handler for this cateory
-				// register the method name for the category
-				handlerMethods.put(category, new HandlerMethod(prop, category, specParam, mopSpec.getCommonParamInEvents(), varsToSave, handlerBody, categoryVar, this)); 
+		varsToSave = new HashMap<MOPParameter, MOPVariable>();
+		for (MOPParameter p : mopSpec.getVarsToSave()) {
+			varsToSave.put(p, new MOPVariable("Ref_" + p.getName()));
 		}
-
-		initilization = new MOPJavaCode(prop.getLogicProperty("initialization"));
-
-		events = mopSpec.getEvents();
 
 		if (this.isDefined && mopSpec.isGeneral()) {
 			if (mopSpec.isFullBinding() || mopSpec.isConnected())
 				monitorInfo = new MonitorInfo(mopSpec);
+		}
+		
+		for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
+			if(!existSkip){
+				for (BlockStmt handler : prop.getHandlers().values()) {
+					if (handler.toString().indexOf("__SKIP") != -1){
+						existSkip = true;
+						break;
+					}
+				}
+			}
 		}
 
 		for (EventDefinition event : events) {
@@ -113,13 +134,19 @@ public class BaseMonitor extends Monitor {
 				existCondition = true;
 				break;
 			}
+			if (event.has__SKIP()){
+				existSkip = true;
+				break;
+			}
 		}
 	}
 
+	// done
 	public MOPVariable getOutermostName() {
 		return monitorName;
 	}
 
+	// done
 	public Set<String> getNames() {
 		Set<String> ret = new HashSet<String>();
 
@@ -127,41 +154,35 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
-	/*
-	 * Whether handlers are done when event methods are called.
-	 * 
-	 * If it is not true, handlers need to be done outside of monitor by calling
-	 * doHandlers.
-	 * 
-	 * If this monitor is the outermost monitor, calling Monitoring will do the
-	 * job.
-	 */
-	public boolean isDoingHandlers() {
-		return false;
-	}
+	// done
+	public Set<MOPVariable> getCategoryVars() {
+		HashSet<MOPVariable> ret = new HashSet<MOPVariable>();
 
-	public Set<String> getCategories() {
-		HashSet<String> ret = new HashSet<String>(categoryVars.keySet());
+		for (PropertyAndHandlers prop : props) {
+			ret.addAll(propMonitors.get(prop).categoryVars.values());
+		}
 
 		return ret;
 	}
 
+	// done, but will be obsolete
 	public boolean isReturningSKIP(EventDefinition event) {
 		boolean isAround = event.getPos().equals("around");
 		return isAround && event.has__SKIP();
 	}
 
-	public String doEvent(EventDefinition event) {
+	public String printEventMethod(PropertyAndHandlers prop, EventDefinition event) {
 		String ret = "";
 
-		boolean isAround = event.getPos().equals("around");
+		PropMonitor propMonitor = propMonitors.get(prop);
+		
 		String uniqueId = event.getUniqueId();
 		int idnum = event.getIdNum();
 		MOPJavaCode condition = new MOPJavaCode(event.getCondition(), monitorName);
-		MOPJavaCode eventMonitoringCode = new MOPJavaCode(prop.getEventMonitoringCode(event.getId()), monitorName);
-		MOPJavaCode aftereventMonitoringCode = new MOPJavaCode(prop.getAfterEventMonitoringCode(event.getId()), monitorName);
-		MOPJavaCode monitoringBody = new MOPJavaCode(prop.getLogicProperty("monitoring body"), monitorName);
-		MOPJavaCode stackManage = new MOPJavaCode(prop.getLogicProperty("stack manage"), monitorName);
+		MOPJavaCode eventMonitoringCode = new MOPJavaCode(prop, prop.getEventMonitoringCode(event.getId()), monitorName);
+		MOPJavaCode aftereventMonitoringCode = new MOPJavaCode(prop, prop.getAfterEventMonitoringCode(event.getId()), monitorName);
+		MOPJavaCode monitoringBody = new MOPJavaCode(prop, prop.getLogicProperty("monitoring body"), monitorName);
+		MOPJavaCode stackManage = new MOPJavaCode(prop, prop.getLogicProperty("stack manage"), monitorName);
 		HashMap<String, MOPJavaCode> categoryConditions = new HashMap<String, MOPJavaCode>();
 		MOPJavaCode eventAction = null;
 
@@ -174,53 +195,41 @@ public class BaseMonitor extends Monitor {
 			}
 
 			if (conditionStr != null) {
-				categoryConditions.put(handlerName, new MOPJavaCodeNoNewLine(conditionStr, monitorName));
+				categoryConditions.put(handlerName, new MOPJavaCodeNoNewLine(prop, conditionStr, monitorName));
 			}
 		}
 
-		if (doActions && event.getAction() != null && event.getAction().getStmts() != null && event.getAction().getStmts().size() != 0) {
-			String eventActionStr = event.getAction().toString();
-
-			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
-			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + thisJoinPoint + ".getSourceLocation().toString()");
-			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");
-
-			eventAction = new MOPJavaCode(eventActionStr);
+		if(prop == props.get(props.size() - 1)){
+			if (event.getAction() != null && event.getAction().getStmts() != null && event.getAction().getStmts().size() != 0) {
+				String eventActionStr = event.getAction().toString();
+	
+				eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
+				eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
+				eventActionStr = eventActionStr.replaceAll("__SKIP", "this." + skipAroundAdvice + " = true");
+	
+				eventAction = new MOPJavaCode(eventActionStr);
+			}
 		}
 
-		if (isAround && event.has__SKIP()) {
-			ret += "public final boolean event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
-		} else {
-			ret += "public final void event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
-		}
-
-		if (event.has__SKIP())
-			ret += "boolean " + skipAroundAdvice + " = false;\n";
+		ret += "public final void " + propMonitor.eventMethods.get(uniqueId) + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
 
 		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
 
 			ret += conditionFail + " = true;\n";
 
-			if (isAround && event.has__SKIP()) {
-				ret += "return false;\n";
-			} else {
-				ret += "return;\n";
-			}
+			ret += "return;\n";
 			ret += "}\n";
 		}
 
-		if (doActions) {
-			for (MOPParameter p : varsToSave.keySet()) {
-				if (event.getMOPParametersOnSpec().contains(p)) {
-					MOPVariable v = varsToSave.get(p);
+		for (MOPParameter p : varsToSave.keySet()) {
+			if (event.getMOPParametersOnSpec().contains(p)) {
+				MOPVariable v = varsToSave.get(p);
 
-					ret += "if(" + v + " == null){\n";
-					ret += v + " = new WeakReference(" + p.getName() + ");\n";
-					ret += "}\n";
-				}
+				ret += "if(" + v + " == null){\n";
+				ret += v + " = new WeakReference(" + p.getName() + ");\n";
+				ret += "}\n";
 			}
-
 		}
 
 		if (isOutermost) {
@@ -230,7 +239,7 @@ public class BaseMonitor extends Monitor {
 		if (monitorInfo != null)
 			ret += monitorInfo.union(event.getMOPParametersOnSpec());
 
-		ret += localDeclaration;
+		ret += propMonitors.get(prop).localDeclaration;
 
 		if (prop.getVersionedStack()) {
 			MOPVariable global_depth = new MOPVariable("global_depth");
@@ -248,7 +257,7 @@ public class BaseMonitor extends Monitor {
 
 		String categoryCode = "";
 		for (Entry<String, MOPJavaCode> entry : categoryConditions.entrySet()) {
-			categoryCode += categoryVars.get(entry.getKey()) + " = " + entry.getValue() + ";\n";
+			categoryCode += propMonitors.get(prop).categoryVars.get(entry.getKey()) + " = " + entry.getValue() + ";\n";
 		}
 
 		if (monitorInfo != null)
@@ -258,10 +267,9 @@ public class BaseMonitor extends Monitor {
 
 		ret += aftereventMonitoringCode;
 
-		if (eventAction != null){
-			
+		if (prop == props.get(props.size() - 1) && eventAction != null) {
 			for (MOPParameter p : event.getUsedParametersIn(specParam)) {
-				if(!event.getMOPParametersOnSpec().contains(p)){
+				if (!event.getMOPParametersOnSpec().contains(p)) {
 					MOPVariable v = this.varsToSave.get(p);
 
 					ret += p.getType() + " " + p.getName() + " = null;\n";
@@ -271,12 +279,7 @@ public class BaseMonitor extends Monitor {
 				}
 			}
 
-			
 			ret += eventAction;
-		}
-
-		if (isAround && event.has__SKIP()) {
-			ret += "return " + skipAroundAdvice + ";\n";
 		}
 
 		ret += "}\n";
@@ -284,58 +287,57 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
-		if (doActions) {
-			if (has__LOC) {
-				ret += monitorVar + "." + this.thisJoinPoint + " = " + thisJoinPoint + ";\n";
-			}
+		if (has__LOC) {
+			if(loc != null)
+				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
+			else
+				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
-
+		
 		if (checkSkip && event.has__SKIP()) {
-			ret += skipAroundAdvice + " |= ";
+			ret += monitorVar + "." + skipAroundAdvice + " = false;\n";
 		}
-		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
-		ret += event.getMOPParameters().parameterString();
-		ret += ");\n";
-
-		if (isOutermost) {
-			ret += this.callHandlers(monitorVar, monitorVar, event, event.getMOPParametersOnSpec(), thisJoinPoint, monitorVar, checkSkip);
-		}
-
-		return ret;
-	}
-
-	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam,
-			MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
-		String ret = "";
-
-		if (event.getCondition() != null && event.getCondition().length() != 0) {
-			ret += "if(" + monitorVar + "." + conditionFail + "){\n";
-			ret += monitorVar + "." + conditionFail + " = false;\n";
-			ret += "} else {";
-		}
-
-		for (String category : handlerMethods.keySet()) {
-			HandlerMethod handlerMethod = handlerMethods.get(category);
-
-			ret += "if(" + monitorVar + "." + categoryVars.get(category) + ") {\n";
-
-			if (checkSkip && handlerMethod.has__SKIP()) {
-				ret += skipAroundAdvice + " |= ";
-			}
-
-			ret += monitorVar + "." + handlerMethod.getMethodName() + "(";
-			ret += eventParam.parameterStringIn(specParam);
+		
+		for(PropertyAndHandlers prop : props){
+			PropMonitor propMonitor = propMonitors.get(prop);
+			
+			ret += monitorVar + "." + propMonitor.eventMethods.get(event.getUniqueId()) + "(";
+			ret += event.getMOPParameters().parameterString();
 			ret += ");\n";
 
-			ret += "}\n";
-		}
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
+				ret += "if(" + monitorVar + "." + conditionFail + "){\n";
+				ret += monitorVar + "." + conditionFail + " = false;\n";
+				ret += "} else {\n";
+			}
+			
+			if (checkSkip && event.has__SKIP()) {
+				ret += skipAroundAdvice + " |= " + monitorVar + "." + skipAroundAdvice + ";\n";
+			}
 
-		if (event.getCondition() != null && event.getCondition().length() != 0) {
-			ret += "}\n";
+			for (String category : propMonitor.handlerMethods.keySet()) {
+				HandlerMethod handlerMethod = propMonitor.handlerMethods.get(category);
+
+				ret += "if(" + monitorVar + "." + propMonitor.categoryVars.get(category) + ") {\n";
+
+				ret += monitorVar + "." + handlerMethod.getMethodName() + "(";
+				ret += event.getMOPParametersOnSpec().parameterStringIn(specParam);
+				ret += ");\n";
+
+				if (checkSkip && handlerMethod.has__SKIP()) {
+					ret += skipAroundAdvice + " |= " + monitorVar + "." + skipAroundAdvice + ";\n";
+				}
+				
+				ret += "}\n";
+			}
+
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
+				ret += "}\n";
+			}
 		}
 
 		return ret;
@@ -358,7 +360,8 @@ public class BaseMonitor extends Monitor {
 		ret += monitorName + " ret = (" + monitorName + ") super.clone();\n";
 		if (monitorInfo != null)
 			ret += monitorInfo.copy("ret", "this");
-		ret += cloneCode;
+		for(PropertyAndHandlers prop : props)
+			ret += propMonitors.get(prop).cloneCode;
 		ret += "return ret;\n";
 		ret += "}\n";
 		ret += "catch (CloneNotSupportedException e) {\n";
@@ -366,43 +369,56 @@ public class BaseMonitor extends Monitor {
 		ret += "}\n";
 		ret += "}\n";
 
-		if (doActions) {
-			// monitor variables
-			ret += monitorDeclaration + "\n";
-			if (this.has__LOC)
-				ret += "org.aspectj.lang.JoinPoint " + thisJoinPoint + ";\n";
+		// monitor variables
+		ret += monitorDeclaration + "\n";
+		if (this.has__LOC)
+			ret += "String " + loc + ";\n";
 
-			// references for saved parameters
-			for (MOPVariable v : varsToSave.values()) {
-				ret += "WeakReference " + v + " = null;\n";
-			}
-
+		// references for saved parameters
+		for (MOPVariable v : varsToSave.values()) {
+			ret += "WeakReference " + v + " = null;\n";
 		}
 
 		if (existCondition) {
 			ret += "boolean " + conditionFail + " = false;\n";
 		}
+		if (existSkip){
+			ret += "boolean " + skipAroundAdvice + " = false;\n";
+		}
 
 		// state declaration
-		ret += stateDeclaration + "\n";
+		for(PropertyAndHandlers prop : props){
+			ret += propMonitors.get(prop).stateDeclaration;
+		}
+		ret += "\n";
 
 		// category condition
-		for (String category : categoryVars.keySet()) {
-			ret += "boolean " + categoryVars.get(category) + " = false;\n";
+		for(PropertyAndHandlers prop : props){
+			PropMonitor propMonitor = propMonitors.get(prop);
+			for (String category : propMonitor.categoryVars.keySet()) {
+				ret += "boolean " + propMonitor.categoryVars.get(category) + " = false;\n";
+			}
 		}
 		ret += "\n";
 
 		// constructor
 		ret += "public " + monitorName + " () {\n";
-		if (prop.getVersionedStack()) {
-			MOPVariable global_depth = new MOPVariable("global_depth");
-			MOPVariable version = new MOPVariable("version");
-
-			ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
-			ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
+		for(PropertyAndHandlers prop : props){
+			if (prop.getVersionedStack()) {
+				MOPVariable global_depth = new MOPVariable("global_depth");
+				MOPVariable version = new MOPVariable("version");
+	
+				ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
+				ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
+				break;
+			}
 		}
-		ret += localDeclaration;
-		ret += initilization;
+		for(PropertyAndHandlers prop : props){
+			PropMonitor propMonitor = propMonitors.get(prop);
+			ret += propMonitor.localDeclaration;
+			ret += propMonitor.initilization;
+			ret += "\n";
+		}
 		if (Main.statistics) {
 			ret += stat.incNumMonitor();
 		}
@@ -410,53 +426,108 @@ public class BaseMonitor extends Monitor {
 		ret += "\n";
 
 		// events
-		for (EventDefinition event : this.events) {
-			ret += this.doEvent(event) + "\n";
+		for(PropertyAndHandlers prop : props){
+			for (EventDefinition event : this.events) {
+				ret += this.printEventMethod(prop, event) + "\n";
+			}
 		}
 
 		// handlers
-		for (HandlerMethod handlerMethod : this.handlerMethods.values()) {
-			ret += handlerMethod + "\n";
+		for(PropertyAndHandlers prop : props){
+			PropMonitor propMonitor = propMonitors.get(prop);
+			for (HandlerMethod handlerMethod : propMonitor.handlerMethods.values()) {
+				ret += handlerMethod + "\n";
+			}
 		}
 
 		// reset
 		ret += "public final void reset() {\n";
 		if (monitorInfo != null)
 			ret += monitorInfo.initConnected();
-
-		if (prop.getVersionedStack()) {
-			MOPVariable global_depth = new MOPVariable("global_depth");
-			MOPVariable version = new MOPVariable("version");
-
-			ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
-			ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
+		for(PropertyAndHandlers prop : props){
+			if (prop.getVersionedStack()) {
+				MOPVariable global_depth = new MOPVariable("global_depth");
+				MOPVariable version = new MOPVariable("version");
+	
+				ret += "int[] " + global_depth + " = (int[])(" + systemAspectName + ".t_global_depth.get());\n";
+				ret += "int[] " + version + " = (int[])(" + systemAspectName + ".t_version.get());\n";
+			}
 		}
-
-		ret += localDeclaration;
-		ret += resetCode;
 		if (isOutermost) {
 			ret += lastevent + " = -1;\n";
 		}
-		for (String category : categoryVars.keySet()) {
-			ret += categoryVars.get(category) + " = false;\n";
+		for(PropertyAndHandlers prop : props){
+			PropMonitor propMonitor = propMonitors.get(prop);
+
+			ret += propMonitor.localDeclaration;
+			ret += propMonitor.resetCode;
+			for (String category : propMonitor.categoryVars.keySet()) {
+				ret += propMonitor.categoryVars.get(category) + " = false;\n";
+			}
 		}
 		ret += "}\n";
 		ret += "\n";
 
 		// hashcode
-		if (!hashcodeCode.isEmpty()) {
-			ret += "public final int hashCode() {\n";
-			ret += hashcodeCode;
-			ret += "}\n";
-			ret += "\n";
+		if(props.size() > 1){
+			boolean newHashCode = false;
+			for(PropertyAndHandlers prop : props){
+				PropMonitor propMonitor = propMonitors.get(prop);
+				if (!propMonitor.hashcodeCode.isEmpty()) {
+					newHashCode = true;
+					
+					propMonitor.hashcodeMethod = new MOPVariable("Prop_" + prop.getPropertyId() + "_hashCode");
+					
+					ret += "public final int " + propMonitor.hashcodeMethod + "() {\n";
+					ret += propMonitor.hashcodeCode;
+					ret += "}\n";
+				}
+			}
+			if(newHashCode){
+				ret += "public final int hashCode() {\n";
+				ret += "return ";
+				boolean first = true;
+				for(PropertyAndHandlers prop : props){
+					PropMonitor propMonitor = propMonitors.get(prop);
+					if(propMonitor.hashcodeMethod != null){
+						if(first){
+							first = false;
+						} else {
+							ret += "^";
+						}
+						
+						ret += propMonitor.hashcodeMethod;
+					}
+				}
+				ret += ";\n";
+				ret += "}\n";
+				ret += "\n";
+			}
+		} else if(props.size() == 1){
+			for(PropertyAndHandlers prop : props){
+				PropMonitor propMonitor = propMonitors.get(prop);
+				if (!propMonitor.hashcodeCode.isEmpty()) {
+					
+					ret += "public final int hashCode() {\n";
+					ret += propMonitor.hashcodeCode;
+					ret += "}\n";
+					ret += "\n";
+				}
+			}
 		}
 
 		// equals
-		if (!equalsCode.isEmpty()) {
-			ret += "public final boolean equals(Object o) {\n";
-			ret += equalsCode;
-			ret += "}\n";
-			ret += "\n";
+		// if there are more than 1 property, there is no state collapsing.
+		if(props.size() == 1){
+			for(PropertyAndHandlers prop : props){
+				PropMonitor propMonitor = propMonitors.get(prop);
+				if (!propMonitor.equalsCode.isEmpty()) {
+					ret += "public final boolean equals(Object o) {\n";
+					ret += propMonitor.equalsCode;
+					ret += "}\n";
+					ret += "\n";
+				}
+			}
 		}
 
 		// endObject and some declarations

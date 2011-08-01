@@ -25,7 +25,7 @@ public class HandlerMethod {
 			HashMap<MOPParameter, MOPVariable> savedParams, BlockStmt body, MOPVariable categoryVar, Monitor monitor) {
 		this.prop = prop;
 		this.category = category;
-		this.methodName = new MOPVariable("handler_" + prop.getPropertyId() + "_" + category);
+		this.methodName = new MOPVariable("Prop_" + prop.getPropertyId() + "_handler_" + category);
 		this.body = body;
 		this.specParam = specParam;
 		this.categoryVar = categoryVar;
@@ -66,23 +66,15 @@ public class HandlerMethod {
 		String handlerBody = body.toString();
 
 		// local variable for now
-		MOPVariable thisJoinPoint = new MOPVariable("MOP_thisJoinPoint");
-		MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+		MOPVariable loc = new MOPVariable("MOP_loc");
+		MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 		ret += "public final ";
 
 		// if we want a handler to return some value, change it.
-		if (has__SKIP()) {
-			ret += "boolean ";
-		} else {
-			ret += "void ";
-		}
+		ret += "void ";
 
 		ret += methodName + " (" + this.specParam.parameterDeclString() + "){\n";
-
-		if (has__SKIP()) {
-			ret += "boolean " + skipAroundAdvice + " = false;\n";
-		}
 
 		if (Main.statistics) {
 			ret += "if(" + categoryVar + ") {\n";
@@ -99,14 +91,10 @@ public class HandlerMethod {
 		}
 
 		handlerBody = handlerBody.replaceAll("__RESET", "this.reset()");
-		handlerBody = handlerBody.replaceAll("__LOC", thisJoinPoint + ".getSourceLocation().toString()");
+		handlerBody = handlerBody.replaceAll("__LOC", "this." + loc);
 		handlerBody = handlerBody.replaceAll("__SKIP", skipAroundAdvice + " = true");
 
 		ret += handlerBody + "\n";
-
-		if (has__SKIP()) {
-			ret += "return " + skipAroundAdvice + ";\n";
-		}
 
 		ret += "}\n";
 

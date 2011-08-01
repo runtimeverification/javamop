@@ -147,9 +147,9 @@ public class SpecialAdviceBody extends AdviceBody {
 				ret += "}\n";
 
 			} else if (event.getMOPParametersOnSpec().size() == 0) {
-				ret += monitorSet.Monitoring(indexingTree.getName(), event, thisJoinPoint);
+				ret += monitorSet.Monitoring(indexingTree.getName(), event, null);
 			} else {
-				ret += monitorSet.Monitoring(obj, event, thisJoinPoint);
+				ret += monitorSet.Monitoring(obj, event, null);
 			}
 
 			if (mopSpec.isSync())

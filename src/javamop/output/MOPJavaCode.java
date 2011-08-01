@@ -1,11 +1,16 @@
 package javamop.output;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public class MOPJavaCode {
 	String code;
 	MOPVariable monitorName = null;
+	PropertyAndHandlers prop = null;
+	Set<String> localVars;
 
 	public MOPJavaCode(String code) {
 		this.code = code;
@@ -20,6 +25,20 @@ public class MOPJavaCode {
 		this.monitorName = monitorName;
 	}
 
+	public MOPJavaCode(PropertyAndHandlers prop, String code, MOPVariable monitorName) {
+		this.prop = prop;
+		this.code = code;
+		if(this.code != null)
+			this.code = this.code.trim();
+		this.monitorName = monitorName;
+	}
+	
+	public MOPJavaCode(PropertyAndHandlers prop, String code, MOPVariable monitorName, Set<String> localVars) {
+		this(prop, code, monitorName);
+		this.localVars = localVars;
+	}
+
+
 	public String rewriteVariables(String input) {
 		String ret = input;
 		String tagPattern = "\\$(\\w+)\\$";
@@ -29,7 +48,16 @@ public class MOPJavaCode {
 		while (matcher.find()) {
 			String tagStr = matcher.group();
 			String varName = tagStr.replaceAll(tagPattern, "$1");
-			MOPVariable var = new MOPVariable(varName);
+			MOPVariable var;
+			
+			if(prop == null)
+				var = new MOPVariable(varName);
+			else {
+				if(localVars != null && localVars.contains(varName))
+					var = new MOPVariable(varName);
+				else
+					var = new MOPVariable("Prop_" + prop.getPropertyId() + "_" + varName);
+			}
 
 			ret = ret.replaceAll(tagStr.replaceAll("\\$", "\\\\\\$"), var.toString());
 		}

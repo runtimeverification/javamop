@@ -15,7 +15,7 @@ import javamop.parser.ast.mopspec.MOPParameters;
 
 public class RawMonitor extends Monitor{
 
-	MOPVariable thisJoinPoint = new MOPVariable("MOP_thisJoinPoint");
+	MOPVariable loc = new MOPVariable("MOP_loc");
 	MOPVariable wrapper = new MOPVariable("wrapper");
 	MOPVariable reset = new MOPVariable("reset");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
@@ -28,8 +28,8 @@ public class RawMonitor extends Monitor{
 	
 	UserJavaCode monitorDeclaration;
 
-	public RawMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions) throws MOPException {
-		super(name, mopSpec, coenableSet, isOutermost, doActions);
+	public RawMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
+		super(name, mopSpec, coenableSet, isOutermost);
 		
 		this.isDefined = true;
 
@@ -62,13 +62,9 @@ public class RawMonitor extends Monitor{
 		ret.add(monitorName.toString());
 		return ret;
 	}
-
-	public boolean isDoingHandlers(){
-		return false;
-	}
 	
-	public Set<String> getCategories(){
-		HashSet<String> ret = new HashSet<String>();
+	public Set<MOPVariable> getCategoryVars(){
+		HashSet<MOPVariable> ret = new HashSet<MOPVariable>();
 		return ret;
 	}
 
@@ -86,11 +82,11 @@ public class RawMonitor extends Monitor{
 		MOPJavaCode condition = new MOPJavaCode(event.getCondition(), monitorName);
 		MOPJavaCode eventAction = null;
 
-		if (doActions && event.getAction() != null && event.getAction().getStmts() != null && event.getAction().getStmts().size() != 0) {
+		if (event.getAction() != null && event.getAction().getStmts() != null && event.getAction().getStmts().size() != 0) {
 			String eventActionStr = event.getAction().toString();
 
 			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
-			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + thisJoinPoint + ".getSourceLocation().toString()");
+			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
 			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");
 
 			eventAction = new MOPJavaCode(eventActionStr);
@@ -131,13 +127,14 @@ public class RawMonitor extends Monitor{
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
 		String ret = "";
 
-		if (doActions) {
-			if (has__LOC) {
-				ret += monitorVar + "." + this.thisJoinPoint + " = " + thisJoinPoint + ";\n";
-			}
+		if (has__LOC) {
+			if(loc != null)
+				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
+			else
+				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
 		if (event.getPos().equals("around") && event.has__SKIP()) {
@@ -148,14 +145,6 @@ public class RawMonitor extends Monitor{
 		ret += ");\n";
 		
 		return ret;
-	}
-
-	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
-		String ret = "";
-		
-		//There is no handler!!
-		
-		return "";
 	}
 
 	public String toString() {
@@ -179,11 +168,9 @@ public class RawMonitor extends Monitor{
 		ret += "}\n";
 		ret += "}\n";
 
-		if (doActions) {
-			ret += monitorDeclaration + "\n";
-			if (this.has__LOC)
-				ret += "org.aspectj.lang.JoinPoint " + thisJoinPoint + ";\n";
-		}
+		ret += monitorDeclaration + "\n";
+		if (this.has__LOC)
+			ret += "String " + loc + ";\n";
 
 		// events
 		for (EventDefinition event : this.events) {

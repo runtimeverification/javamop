@@ -25,15 +25,15 @@ import javamop.parser.ast.stmt.BlockStmt;
 public class JavaLibMonitor extends BaseMonitor {
 	private BaseMonitor basemon;
 
-	public JavaLibMonitor( String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop
-			     , OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions
-			     ) throws MOPException {
-		super(name, mopSpec, prop, coenableSet, isOutermost, doActions);
-		basemon = new BaseMonitor(name, mopSpec, prop, coenableSet, isOutermost, doActions);
+	public JavaLibMonitor(String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop, OptimizedCoenableSet coenableSet, boolean isOutermost)
+			throws MOPException {
+		super(name, mopSpec, prop, coenableSet, isOutermost);
+		basemon = new BaseMonitor(name, mopSpec, prop, coenableSet, isOutermost);
 		this.monitorName = new MOPVariable(mopSpec.getName() + "JavaLibMonitor");
 	}
 
-	// Create the event-handling methods, but do not have them accept parameters. This is so as to be able
+	// Create the event-handling methods, but do not have them accept
+	// parameters. This is so as to be able
 	// to use these methods to implement the JavaLibInterface in the javamoprt.
 	public String doBaseEvent(EventDefinition event) {
 		String ret = "";
@@ -54,27 +54,40 @@ public class JavaLibMonitor extends BaseMonitor {
 			}
 		}
 
-		if (doActions && event.getAction() != null && event.getAction().getStmts() != null && event.getAction().getStmts().size() != 0) {
+		if (event.getAction() != null && event.getAction().getStmts() != null && event.getAction().getStmts().size() != 0) {
 			String eventActionStr = event.getAction().toString();
 
 			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
-			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + thisJoinPoint + ".getSourceLocation().toString()");
+			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc + ".getSourceLocation().toString()");
 			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");
 
 			eventAction = new MOPJavaCode(eventActionStr);
 		}
 
-		// The parameter is commented out so as to be able to implement a more general interface
+		// The parameter is commented out so as to be able to implement a more
+		// general interface
 		if (isAround && event.has__SKIP()) {
-			ret += "public final boolean event_" + uniqueId + "(" /* + event.getMOPParameters().parameterDeclString()*/ + ") {\n";
+			ret += "public final boolean event_" + uniqueId + "(" /*
+																 * + event.
+																 * getMOPParameters
+																 * ().
+																 * parameterDeclString
+																 * ()
+																 */+ ") {\n";
 		} else {
-			ret += "public final void event_" + uniqueId + "(" /* + event.getMOPParameters().parameterDeclString()*/ + ") {\n";
+			ret += "public final void event_" + uniqueId + "(" /*
+																 * + event.
+																 * getMOPParameters
+																 * ().
+																 * parameterDeclString
+																 * ()
+																 */+ ") {\n";
 		}
 
 		if (event.has__SKIP())
 			ret += "boolean " + skipAroundAdvice + " = false;\n";
 
-		if (doActions && !condition.isEmpty()) {
+		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
 			if (isAround && event.has__SKIP()) {
 				ret += "return false;\n";
@@ -109,8 +122,8 @@ public class JavaLibMonitor extends BaseMonitor {
 
 		// Commented out so as to not actually take any actions on the event
 		// if (eventAction != null)
-		//   ret += "// eventAction\n";
-		//   ret += eventAction;
+		// ret += "// eventAction\n";
+		// ret += eventAction;
 
 		if (isAround && event.has__SKIP()) {
 			ret += "return " + skipAroundAdvice + ";\n";
@@ -135,8 +148,10 @@ public class JavaLibMonitor extends BaseMonitor {
 		// category condition
 		for (String category : categoryVars.keySet()) {
 			ret += "boolean " + categoryVars.get(category) + " = false;\n";
-			if (category.equals("fail")) hasFail = true;
-			if (category.equals("match")) hasMatch = true;
+			if (category.equals("fail"))
+				hasFail = true;
+			if (category.equals("match"))
+				hasMatch = true;
 		}
 		ret += "\n";
 
@@ -169,8 +184,10 @@ public class JavaLibMonitor extends BaseMonitor {
 
 		ret += "@Override\n";
 		ret += "public Category getCategory() {\n";
-		if (hasMatch) ret += "if (Category_match) return Category.Match;\n";
-		if (hasFail) ret += "if (Category_fail) return Category.Fail;\n";
+		if (hasMatch)
+			ret += "if (Category_match) return Category.Match;\n";
+		if (hasFail)
+			ret += "if (Category_fail) return Category.Fail;\n";
 		ret += "return Category.Unknown;\n";
 		ret += "}\n\n";
 

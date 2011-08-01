@@ -9,12 +9,14 @@ import javamop.output.OptimizedCoenableSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.parser.ast.stmt.BlockStmt;
 
-public class WrapperMonitor extends Monitor{
+public class WrapperMonitor extends Monitor {
 
-	MOPVariable thisJoinPoint = new MOPVariable("MOP_thisJoinPoint");
+	MOPVariable loc = new MOPVariable("MOP_loc");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
-	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 	MOPVariable monitor = new MOPVariable("monitor");
 	MOPVariable disable = new MOPVariable("disable");
@@ -23,37 +25,55 @@ public class WrapperMonitor extends Monitor{
 	List<EventDefinition> events;
 
 	SuffixMonitor suffixMonitor = null;
+	boolean existSkip = false;
 
-	public WrapperMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost, boolean doActions) throws MOPException {
-		super(name, mopSpec, coenableSet, isOutermost, doActions);
-		
+	public WrapperMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost)
+			throws MOPException {
+		super(name, mopSpec, coenableSet, isOutermost);
+
 		this.isDefined = mopSpec.isGeneral();
-		
+
 		if (this.isDefined) {
 			monitorName = new MOPVariable(mopSpec.getName() + "Wrapper");
 
 			if (isOutermost) {
 				monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
-				suffixMonitor = new SuffixMonitor(name, mopSpec, coenableSet, false, doActions);
-			} else {
-				suffixMonitor = new SuffixMonitor(name, mopSpec, coenableSet, false, doActions);
 			}
 
-			events = mopSpec.getEvents();
-		} else {
-			suffixMonitor = new SuffixMonitor(name, mopSpec, coenableSet, isOutermost, doActions);
-		}
+			suffixMonitor = new SuffixMonitor(name, mopSpec, coenableSet, false);
 
-		if (this.isDefined && mopSpec.isGeneral()){
-			if(mopSpec.isFullBinding() || mopSpec.isConnected())
+			events = mopSpec.getEvents();
+
+			if (mopSpec.isFullBinding() || mopSpec.isConnected()) {
 				monitorInfo = new MonitorInfo(mopSpec);
+			}
+			
+			for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
+				if(!existSkip){
+					for (BlockStmt handler : prop.getHandlers().values()) {
+						if (handler.toString().indexOf("__SKIP") != -1){
+							existSkip = true;
+							break;
+						}
+					}
+				}
+			}
+
+			for (EventDefinition event : events) {
+				if (event.has__SKIP()){
+					existSkip = true;
+					break;
+				}
+			}
+		} else {
+			suffixMonitor = new SuffixMonitor(name, mopSpec, coenableSet, isOutermost);
 		}
 	}
 
 	public String newWrapper(MOPVariable monitorVar, MOPParameters vars) {
 		String ret = "";
 		ret += monitorVar + " = new " + monitorName + "();\n";
-		if(monitorInfo != null)
+		if (monitorInfo != null)
 			monitorInfo.newInfo(monitorVar, vars);
 		return ret;
 	}
@@ -78,11 +98,11 @@ public class WrapperMonitor extends Monitor{
 	public SuffixMonitor getSubMonitorClass() {
 		return suffixMonitor;
 	}
-	
+
 	public MOPVariable getSubMonitorName() {
 		return suffixMonitor.getOutermostName();
 	}
-	
+
 	public String getTau(MOPVariable monitorVar) {
 		return monitorVar + "." + this.tau;
 	}
@@ -94,7 +114,7 @@ public class WrapperMonitor extends Monitor{
 	public String getLastEvent(MOPVariable monitorVar) {
 		return monitorVar + "." + this.lastevent;
 	}
-	
+
 	public MOPVariable getOutermostName() {
 		if (isDefined)
 			return monitorName;
@@ -109,94 +129,60 @@ public class WrapperMonitor extends Monitor{
 		return ret;
 	}
 
-	/*
-	 * Whether handlers are done when event methods are called.
-	 * 
-	 * If it is not true, handlers need to be done outside of monitor by calling
-	 * doHandlers.
-	 * 
-	 * If this monitor is the outermost monitor, calling Monitoring will do the
-	 * job.
-	 */
-	public boolean isDoingHandlers() {
-		return suffixMonitor.isDoingHandlers();
-	}
-	
-	public Set<String> getCategories(){
-		return suffixMonitor.getCategories();
+	public Set<MOPVariable> getCategoryVars() {
+		return suffixMonitor.getCategoryVars();
 	}
 
-	public boolean isReturningSKIP(EventDefinition event) {
-		if(!isDefined){
-			return suffixMonitor.isReturningSKIP(event);
-		}
-		
-		boolean isAround = event.getPos().equals("around");
-		boolean anyReturningSKIP = suffixMonitor.isReturningSKIP(event);
-
-		return isAround && anyReturningSKIP;
-	}
-	
-	public String doEvent(EventDefinition event) {
+	public String printEventMethod(EventDefinition event) {
 		String ret = "";
-		
+
 		String uniqueId = event.getUniqueId();
 		int idnum = event.getIdNum();
 
-		if (isReturningSKIP(event)) {
-			ret += "public final boolean event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
-		} else {
-			ret += "public final void event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
-		}
+		ret += "public final void event_" + uniqueId + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
 
 		if (isOutermost) {
 			ret += lastevent + " = " + idnum + ";\n";
 		}
 
-		if (isReturningSKIP(event)) {
-			ret += "return " + monitor + ".event_" + uniqueId + "(" + event.getMOPParameters().parameterString() + ");\n";
-		} else {
-			ret += monitor + ".event_" + uniqueId + "(" + event.getMOPParameters().parameterString() + ");\n";
-		}
+		ret += suffixMonitor.Monitoring(monitor, event, loc);
 		
 		ret += "}\n";
 
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable thisJoinPoint) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return suffixMonitor.Monitoring(monitorVar, event, thisJoinPoint);
+			return suffixMonitor.Monitoring(monitorVar, event, loc);
 
 		ret += "if (" + monitorVar + "." + monitor + " != null){\n";
 
 		if (has__LOC) {
-			ret += monitorVar + "." + monitor + "." + this.thisJoinPoint + " = " + thisJoinPoint + ";\n";
+			if(loc != null)
+				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
+			else
+				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";				
 		}
 
-		if (isReturningSKIP(event)) {
-			ret += skipAroundAdvice + " |= ";
+		if (checkSkip && event.has__SKIP()) {
+			ret += monitorVar + "." + skipAroundAdvice + " = false;\n";
 		}
-		
+
 		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
-
-		if (!suffixMonitor.isDoingHandlers()){
-			MOPVariable subMonitor = new MOPVariable(monitorVar, "monitor");
-			ret += suffixMonitor.callHandlers(subMonitor, monitorVar, event, event.getMOPParametersOnSpec(), thisJoinPoint, subMonitor, checkSkip);
+		
+		if (checkSkip && event.has__SKIP()) {
+			ret += skipAroundAdvice + " |= " + monitorVar + "." + skipAroundAdvice + ";\n";
 		}
 
 		ret += "}\n";
 
 		return ret;
-	}
-
-	public String callHandlers(MOPVariable monitorVar, MOPVariable monitorVarForReset, EventDefinition event, MOPParameters eventParam, MOPVariable thisJoinPoint, MOPVariable monitorVarForMonitor, boolean checkSkip) {
-		return suffixMonitor.callHandlers(monitorVar, monitorVarForReset, event, eventParam, thisJoinPoint, monitorVarForMonitor, checkSkip);
 	}
 
 	public String toString() {
@@ -211,13 +197,21 @@ public class WrapperMonitor extends Monitor{
 
 			ret += "public " + suffixMonitor.getOutermostName() + " " + monitor + " = null;\n";
 
+			if (this.has__LOC){
+				ret += "String " + loc + ";\n";
+			}
+
+			if (existSkip){
+				ret += "boolean " + skipAroundAdvice + " = false;\n";
+			}
+
 			ret += "public long " + disable + " = 1;\n";
 			ret += "public long " + tau + " = 1;\n";
 			ret += "\n";
 
 			// events
 			for (EventDefinition event : this.events) {
-				ret += this.doEvent(event) + "\n";
+				ret += this.printEventMethod(event) + "\n";
 			}
 
 			// reset
@@ -231,7 +225,7 @@ public class WrapperMonitor extends Monitor{
 
 			if (isOutermost)
 				ret += monitorTermination;
-			
+
 			ret += "}\n";
 			ret += "\n";
 		}

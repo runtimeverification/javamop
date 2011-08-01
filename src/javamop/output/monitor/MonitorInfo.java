@@ -107,9 +107,9 @@ public class MonitorInfo {
 		}
 
 		if (suffixMonitor.isDefined) {
-			MultiMonitor multiMonitor = suffixMonitor.multiMonitor;
+			Monitor innerMonitor = suffixMonitor.innerMonitor;
 
-			ret += "for(" + multiMonitor.getOutermostName() + " " + monitor + " : " + monitorVar + "." + monitorList + "){\n";
+			ret += "for(" + innerMonitor.getOutermostName() + " " + monitor + " : " + monitorVar + "." + monitorList + "){\n";
 			if (isFullBinding)
 				ret += monitor + "." + monitorInfo + ".isFullParam" + " = " + isFullParam + ";\n";
 			if (isConnected) {
@@ -125,48 +125,7 @@ public class MonitorInfo {
 				}
 			}
 
-			if (multiMonitor.isDefined) {
-				for (BaseMonitor baseMonitor : multiMonitor.baseMonitors) {
-					if (isFullBinding)
-						ret += monitor + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + " = " + isFullParam + ";\n";
-					if (isConnected) {
-						for (int i = 0; i < parameters.size(); i++) {
-							MOPParameter p = parameters.get(i);
-							if (vars.contains(p)) {
-								ret += monitor + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + ".connected" + "[" + i + "]" + " = ";
-								ret += "(" + monitor + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + ".connected" + "[" + i + "]" + " == "
-										+ "-2" + ")" + "?";
-								ret += "-1" + ":";
-								ret += monitor + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + ".connected" + "[" + i + "]";
-								ret += ";\n";
-							}
-						}
-					}
-				}
-			}
 			ret += "}\n";
-		} else {
-			MultiMonitor multiMonitor = suffixMonitor.multiMonitor;
-
-			if (multiMonitor.isDefined) {
-				for (BaseMonitor baseMonitor : multiMonitor.baseMonitors) {
-					if (isFullBinding)
-						ret += monitorVar + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + " = " + isFullParam + ";\n";
-					if (isConnected) {
-						for (int i = 0; i < parameters.size(); i++) {
-							MOPParameter p = parameters.get(i);
-							if (vars.contains(p)) {
-								ret += monitorVar + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + ".connected" + "[" + i + "]" + " = ";
-								ret += "(" + monitorVar + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + ".connected" + "[" + i + "]"
-										+ " == " + "-2" + ")" + "?";
-								ret += "-1" + ":";
-								ret += monitorVar + "." + multiMonitor.monitorVars.get(baseMonitor) + "." + monitorInfo + ".connected" + "[" + i + "]";
-								ret += ";\n";
-							}
-						}
-					}
-				}
-			}
 		}
 
 		return ret;

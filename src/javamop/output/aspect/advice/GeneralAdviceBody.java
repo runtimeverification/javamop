@@ -292,10 +292,10 @@ public class GeneralAdviceBody extends AdviceBody {
 		// main, line 7
 		ret += "// line 7 of Main in Algorithm D\n";
 		if (indexingTree.containsSet()) {
-			ret += monitorSet.Monitoring(mainSet, event, thisJoinPoint);
+			ret += monitorSet.Monitoring(mainSet, event, null);
 		} else {
 			ret += "if (" + mainWrapper + " != null && " + monitorClass.getSubMonitor(mainWrapper) + " != null" + ") {\n";
-			ret += monitorClass.Monitoring(mainWrapper, event, thisJoinPoint);
+			ret += monitorClass.Monitoring(mainWrapper, event, null);
 			ret += "}\n";
 		}
 
