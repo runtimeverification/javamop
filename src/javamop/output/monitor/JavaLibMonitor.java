@@ -24,11 +24,18 @@ import javamop.parser.ast.stmt.BlockStmt;
 
 public class JavaLibMonitor extends BaseMonitor {
 	private BaseMonitor basemon;
+	
+	PropertyAndHandlers prop;
 
-	public JavaLibMonitor(String name, JavaMOPSpec mopSpec, PropertyAndHandlers prop, OptimizedCoenableSet coenableSet, boolean isOutermost)
+	public JavaLibMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost)
 			throws MOPException {
-		super(name, mopSpec, prop, coenableSet, isOutermost);
-		basemon = new BaseMonitor(name, mopSpec, prop, coenableSet, isOutermost);
+		super(name, mopSpec, coenableSet, isOutermost);
+		
+		if(mopSpec.getPropertiesAndHandlers().size() != 1)
+			throw new MOPException("JavaLibMonitor does not support multiple properties in one specification");
+		
+		this.prop = mopSpec.getPropertiesAndHandlers().get(0);
+		this.basemon = new BaseMonitor(name, mopSpec, coenableSet, isOutermost);
 		this.monitorName = new MOPVariable(mopSpec.getName() + "JavaLibMonitor");
 	}
 
@@ -38,12 +45,14 @@ public class JavaLibMonitor extends BaseMonitor {
 	public String doBaseEvent(EventDefinition event) {
 		String ret = "";
 
+		PropMonitor propMonitor = propMonitors.get(prop);
+		
 		boolean isAround = event.getPos().equals("around");
 		String uniqueId = event.getUniqueId();
 		int idnum = event.getIdNum();
 		MOPJavaCode condition = new MOPJavaCode(event.getCondition(), monitorName);
-		MOPJavaCode eventMonitoringCode = new MOPJavaCode(prop.getEventMonitoringCode(event.getId()), monitorName);
-		MOPJavaCode monitoringBody = new MOPJavaCode(prop.getLogicProperty("monitoring body"), monitorName);
+		MOPJavaCode eventMonitoringCode = new MOPJavaCode(prop, prop.getEventMonitoringCode(event.getId()), monitorName);
+		MOPJavaCode monitoringBody = new MOPJavaCode(prop, prop.getLogicProperty("monitoring body"), monitorName);
 		HashMap<String, MOPJavaCode> categoryConditions = new HashMap<String, MOPJavaCode>();
 		MOPJavaCode eventAction = null;
 
@@ -58,42 +67,19 @@ public class JavaLibMonitor extends BaseMonitor {
 			String eventActionStr = event.getAction().toString();
 
 			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
-			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc + ".getSourceLocation().toString()");
+			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
 			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");
 
 			eventAction = new MOPJavaCode(eventActionStr);
 		}
 
-		// The parameter is commented out so as to be able to implement a more
+		// The parameter is omitted so as to be able to implement a more
 		// general interface
-		if (isAround && event.has__SKIP()) {
-			ret += "public final boolean event_" + uniqueId + "(" /*
-																 * + event.
-																 * getMOPParameters
-																 * ().
-																 * parameterDeclString
-																 * ()
-																 */+ ") {\n";
-		} else {
-			ret += "public final void event_" + uniqueId + "(" /*
-																 * + event.
-																 * getMOPParameters
-																 * ().
-																 * parameterDeclString
-																 * ()
-																 */+ ") {\n";
-		}
-
-		if (event.has__SKIP())
-			ret += "boolean " + skipAroundAdvice + " = false;\n";
+		ret += "public final void event_" + uniqueId + "(" + ") {\n";
 
 		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
-			if (isAround && event.has__SKIP()) {
-				ret += "return false;\n";
-			} else {
-				ret += "return;\n";
-			}
+			ret += "return;\n";
 			ret += "}\n";
 		}
 
@@ -104,7 +90,7 @@ public class JavaLibMonitor extends BaseMonitor {
 		if (monitorInfo != null)
 			ret += monitorInfo.union(event.getMOPParametersOnSpec());
 
-		ret += localDeclaration;
+		ret += propMonitor.localDeclaration;
 
 		ret += eventMonitoringCode;
 
@@ -112,7 +98,7 @@ public class JavaLibMonitor extends BaseMonitor {
 
 		String categoryCode = "";
 		for (Entry<String, MOPJavaCode> entry : categoryConditions.entrySet()) {
-			categoryCode += categoryVars.get(entry.getKey()) + " = " + entry.getValue() + ";\n";
+			categoryCode += propMonitor.categoryVars.get(entry.getKey()) + " = " + entry.getValue() + ";\n";
 		}
 
 		if (monitorInfo != null)
@@ -125,10 +111,6 @@ public class JavaLibMonitor extends BaseMonitor {
 		// ret += "// eventAction\n";
 		// ret += eventAction;
 
-		if (isAround && event.has__SKIP()) {
-			ret += "return " + skipAroundAdvice + ";\n";
-		}
-
 		ret += "}\n";
 
 		return ret;
@@ -140,14 +122,16 @@ public class JavaLibMonitor extends BaseMonitor {
 		boolean hasMatch = false;
 		String ret = basemon.toString();
 
+		PropMonitor propMonitor = propMonitors.get(prop);
+
 		ret += "public class " + monitorName;
 		if (isOutermost)
 			ret += " extends " + basemon.monitorName;
 		ret += " implements JavaLibInterface, javamoprt.MOPObject {\n";
 
 		// category condition
-		for (String category : categoryVars.keySet()) {
-			ret += "boolean " + categoryVars.get(category) + " = false;\n";
+		for (String category : propMonitor.categoryVars.keySet()) {
+			ret += "boolean " + propMonitor.categoryVars.get(category) + " = false;\n";
 			if (category.equals("fail"))
 				hasFail = true;
 			if (category.equals("match"))

@@ -58,7 +58,6 @@ public class BaseMonitor extends Monitor {
 
 	HashMap<PropertyAndHandlers, PropMonitor> propMonitors = new HashMap<PropertyAndHandlers, PropMonitor>();
 
-	// done
 	public BaseMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost);
 
@@ -141,12 +140,10 @@ public class BaseMonitor extends Monitor {
 		}
 	}
 
-	// done
 	public MOPVariable getOutermostName() {
 		return monitorName;
 	}
 
-	// done
 	public Set<String> getNames() {
 		Set<String> ret = new HashSet<String>();
 
@@ -154,7 +151,6 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
-	// done
 	public Set<MOPVariable> getCategoryVars() {
 		HashSet<MOPVariable> ret = new HashSet<MOPVariable>();
 
@@ -163,12 +159,6 @@ public class BaseMonitor extends Monitor {
 		}
 
 		return ret;
-	}
-
-	// done, but will be obsolete
-	public boolean isReturningSKIP(EventDefinition event) {
-		boolean isAround = event.getPos().equals("around");
-		return isAround && event.has__SKIP();
 	}
 
 	public String printEventMethod(PropertyAndHandlers prop, EventDefinition event) {
