@@ -1,5 +1,5 @@
 
-                          JavaMOP 2.2.0 INSTALL
+                          JavaMOP 2.3.0 INSTALL
 
 This file contains instructions for installing JavaMOP.
 
@@ -151,10 +151,10 @@ POSIX based operating systems, set the PATH variable in your .login script or in
 the rc file for whatever shell you use.  A typical value for PATH is:
 
 In Windows
-  C:\javamop2.2\bin
+  C:\javamop2.3\bin
 
 In Linux and Mac,
-  ~/javamop2.2/bin
+  ~/javamop2.3/bin
 
 Add this to the left end of the "Path" followed by ";" (":" in Linux and Mac). 
 
@@ -186,7 +186,7 @@ If you want the verbose mode pass the -v flag to the script of your choice.
 The -j command allows multiple threads to be used to speed up the test suite.
 The number of threads is specified after -j. The default is two threads
 
-If you want to add a test case, make a sub directory under javamop2.2/examples/
+If you want to add a test case, make a sub directory under javamop2.3/examples/
 and add a specification and programs in the new directory, with proper output
 files for the expected output of the given programs. For details about the
 TestSuite directory structure, read the next section.
@@ -197,14 +197,14 @@ A test case directory consists of specifications and testing program
 directories. All specifications will be applied to each testing program. The
 TestSuite will automatically generate another directory for each testing
 program directory with suffix _MOP, for a monitored testing program. For
-example, javamop2.2/examples/ERE/HasNext has a specification HasNext.mop and
+example, javamop2.3/examples/ERE/HasNext has a specification HasNext.mop and
 three testing program directories HasNext_1, HasNext_2, and HasNext_3. TestSuite
 generates HasNextMonitorAspect.aj in the same directory where HasNext.mop is. It
 also generates three directories of monitored testing programs, HasNext_1_MOP,
 HasNext_2_MOP, and HasNext_3_MOP.
 
 Enter the test case directory you want. For example, 
-  javamop2.2/examples/ERE/HasNext
+  javamop2.3/examples/ERE/HasNext
 
 To compile specifications, type
 

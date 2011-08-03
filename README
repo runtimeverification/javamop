@@ -1,5 +1,5 @@
 
-                          JavaMOP 2.2.0 README
+                          JavaMOP 2.3.0 README
 
 ==1. Overview==
 Monitoring-Oriented Programming, abbreviated MOP, is a software development and
@@ -86,14 +86,14 @@ For more options, type 'javamop.bat' or 'javamop.bat -h'
 
 When you execute a monitored program, you need to include the AspectJ library
 and JavaMOP Runtime Library in your class path. The JavaMOP Runtime Library is
-provided in this package in the javamop2.2/lib directory. A typical value of
+provided in this package in the javamop2.3/lib directory. A typical value of
 this is:
 
 In Windows,
-  c:\javamop2.2\lib\javamoprt.jar
+  c:\javamop2.3\lib\javamoprt.jar
 
 In Linux and Mac,
-  ~/javamop2.2/lib/javamoprt.jar
+  ~/javamop2.3/lib/javamoprt.jar
 
 Add this to the left end of the "CLASSPATH" followed by ";" (in Windows) or ":"
 (in Linux and Mac). For more information, refer to Section 5 from the following
@@ -115,7 +115,7 @@ To use the LogicRepository, type
 And provide input through the standard input. For the XML syntax of input, refer
 to the following pages:
 
-  http://fsl.cs.uiuc.edu/index.php/Special:LogicRepository2.2
+  http://fsl.cs.uiuc.edu/index.php/Special:LogicRepository2.3
 
 The resulting monitoring code is piped to standard output, in XML format.
 
