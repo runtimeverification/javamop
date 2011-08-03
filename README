@@ -1,7 +1,7 @@
 
                           JavaMOP 2.2.0 README
 
-1. Overview
+==1. Overview==
 Monitoring-Oriented Programming, abbreviated MOP, is a software development and
 analysis framework aiming at reducing the gap between formal specification and
 implementation by allowing them together to form a system. In MOP, runtime
@@ -21,33 +21,34 @@ JavaMOP is an instance of MOP for Java.
 
 For more information, refer to the following URL:
 
-  http://code.google.com/p/javamop/
+  javamop.googlecode.com
 
-2. Installation
+==2. Installation==
 
 For detailed installation instructions, please see the INSTALL file.
 
 As the tool is still under active development, it is recommended that you
-install K directly from the svn repository and update it regularly using
+install JavaMOP directly from the svn repository and update it regularly using
 
   svn up 
 
 from the base directory to benefit of the latest fixes and features.
 
-3. Usage
+==3. Usage==
 
-3.1 Linux and Mac
+=3.1 Linux and Mac (POSIX)
 
-If you want to use the Logic Repository Server provided by UIUC, use -remote
-option when using the script 'javamop'
+If you want to use the Logic Repository Server provided by UIUC, use the
+-remote option when using the 'javamop' script.
 
-If you want to use Logic Repository included in this package, use -local option
-when using the script 'javamop'
+If you want to use the Logic Repository included in this package, use the
+-local option when using the 'javamop' script.
 
 Using the remote repository is the preferred method for computers with viable
-Internet connections.
+Internet connections as it allows us to collect usage statistics used to improve
+JavaMOP.
 
-The script, 'javamop' has the following usage.
+The 'javamop' script has the following usage:
 
 Usage) javamop [-v] [-d <target directory>] <specification file or dir>
 
@@ -59,7 +60,7 @@ Example) javamop -d examples/FSM/ examples/FSM/HasNext.mop
 
 For more options, type 'javamop' or 'javamop -h'
 
-3.2 Windows
+=3.2 Windows
 
 If you want to use the Logic Repository server provided by UIUC, use -remote
 option when using the script 'javamop.bat'
@@ -71,21 +72,22 @@ The script, 'javamop.bat' has the following usage.
 
 Usage) javamop.bat [-v] [-d <target directory>] <specification file or dir>
 
--v option is verbose mode -d option is used to specify the target directory
-where the resulting aspectj code will be saved. Specification files must have
-The .mop file extension.
+The -v option is used to specify verbose mode. The -d option is used to specify
+the target directory where the resulting aspectj code will be saved.
+Specification files must have The .mop file extension.
 
 Example) javamop.bat -d examples\FSM examples\FSM\HasNext.mop
 
 For more options, type 'javamop.bat' or 'javamop.bat -h'
 
-4. Additional Features of the JavaMOP Distribution
+==4. Additional Features of the JavaMOP Distribution==
 
-4.1 Executing a Monitored Program
+=4.1 Executing a Monitored Program
 
 When you execute a monitored program, you need to include the AspectJ library
-and JavaMOP Runtime Library in your class path. JavaMOP Runtime Library is
-provided in this package in javamop2.2/lib. A typical value of this is
+and JavaMOP Runtime Library in your class path. The JavaMOP Runtime Library is
+provided in this package in the javamop2.2/lib directory. A typical value of
+this is:
 
 In Windows,
   c:\javamop2.2\lib\javamoprt.jar
@@ -97,7 +99,7 @@ Add this to the left end of the "CLASSPATH" followed by ";" (in Windows) or ":"
 (in Linux and Mac). For more information, refer to Section 5 from the following
 URL http://java.sun.com/j2se/1.4.2/install-windows.html
 
-4.2 Running the Logic Repository Tool
+=4.2 Running the Logic Repository Tool
 
 JavaMOP uses the Logic Repository automatically. Therefore, you do not need to
 invoke the Logic Repository explicitly. JavaMOP will connect to the Logic
@@ -115,12 +117,12 @@ to the following pages:
 
   http://fsl.cs.uiuc.edu/index.php/Special:LogicRepository2.2
 
-The result monitoring code is piped to standard output, in XML format.
+The resulting monitoring code is piped to standard output, in XML format.
 
-5. Contact Information
+=5. Contact Information
 
 We welcome your interest in JavaMOP. Your feedback, comments and bug reports are
 highly appreciated. Please feel free to contact us by sending email to
 mop@cs.uiuc.edu. Bugs and feature requests may be submitted at the project
-website.
+website at javamop.googlecode.com.
 
