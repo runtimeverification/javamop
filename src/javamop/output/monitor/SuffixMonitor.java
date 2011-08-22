@@ -10,7 +10,6 @@ import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
-import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
 

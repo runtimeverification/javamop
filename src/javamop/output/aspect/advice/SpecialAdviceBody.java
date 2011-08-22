@@ -2,13 +2,9 @@ package javamop.output.aspect.advice;
 
 import java.util.HashMap;
 
-import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.aspect.AspectBody;
-import javamop.output.aspect.GlobalLock;
 import javamop.output.aspect.indexingtree.IndexingTree;
-import javamop.output.monitor.WrapperMonitor;
-import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;

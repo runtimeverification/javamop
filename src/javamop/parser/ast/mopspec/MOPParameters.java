@@ -162,6 +162,19 @@ public class MOPParameters implements Iterable<MOPParameter> {
 	public boolean equals(MOPParameters set) {
 		return this.equals((Object) set);
 	}
+	
+	public boolean matchTypes(MOPParameters set){
+		if(this.size() != set.size())
+			return false;
+		for (int i = 0; i < this.parameters.size(); i++) {
+			if (this.parameters.get(i).getType().getOp().equals(set.get(i).getType().getOp())){
+				return false;
+			}
+		}				
+		
+		return true;
+	}
+	
 
 	public MOPParameter get(int i) {
 		if (i < 0 || i >= this.parameters.size())
@@ -242,4 +255,9 @@ public class MOPParameters implements Iterable<MOPParameter> {
 	public String toString() {
 		return parameters.toString();
 	}
+	
+	public List<MOPParameter> toList(){
+		return parameters;
+	}
+	
 }

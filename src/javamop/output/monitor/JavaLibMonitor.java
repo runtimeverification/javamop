@@ -4,23 +4,16 @@
 package javamop.output.monitor;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javamop.MOPException;
-import javamop.Main;
 import javamop.output.MOPJavaCode;
 import javamop.output.MOPJavaCodeNoNewLine;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
-import javamop.output.UserJavaCode;
-import javamop.output.aspect.MOPStatistics;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.BlockStmt;
 
 public class JavaLibMonitor extends BaseMonitor {
 	private BaseMonitor basemon;
@@ -47,7 +40,6 @@ public class JavaLibMonitor extends BaseMonitor {
 
 		PropMonitor propMonitor = propMonitors.get(prop);
 		
-		boolean isAround = event.getPos().equals("around");
 		String uniqueId = event.getUniqueId();
 		int idnum = event.getIdNum();
 		MOPJavaCode condition = new MOPJavaCode(event.getCondition(), monitorName);

@@ -30,18 +30,18 @@ import javamop.parser.ast.visitor.VoidVisitor;
  */
 public abstract class Node {
 
-    private final int beginLine;
+    protected final int beginLine;
 
-    private final int beginColumn;
+    protected final int beginColumn;
 
-    private final int endLine;
+    protected final int endLine;
 
-    private final int endColumn;
+    protected final int endColumn;
 
     /**
      * This attribute can store additional information from semantic analysis.
      */
-    private Object data;
+    protected Object data;
 
     public Node(int line, int column) {
         this.beginLine = line;
@@ -96,7 +96,7 @@ public abstract class Node {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         DumpVisitor visitor = new DumpVisitor();
         accept(visitor, null);
         return visitor.getSource();

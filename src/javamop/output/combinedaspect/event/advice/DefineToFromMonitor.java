@@ -60,10 +60,8 @@ public class DefineToFromMonitor {
 		MOPVariable wrapper = new MOPVariable("wrapper");
 
 		MOPVariable mainMap = new MOPVariable("mainMap");
-		MOPVariable lastMap = new MOPVariable("lastMap");
 
 		MOPVariable mainSet = new MOPVariable("mainSet");
-		MOPVariable origSet = new MOPVariable("origSet");
 		MOPVariable monitors = new MOPVariable("monitors");
 
 		MOPVariable timeCheck = new MOPVariable("timeCheck");

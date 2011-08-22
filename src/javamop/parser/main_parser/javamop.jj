@@ -31,6 +31,8 @@ import javamop.parser.ast.stmt.*;
 import javamop.parser.ast.type.*;
 import javamop.parser.ast.mopspec.*;
 import javamop.parser.ast.aspectj.*;
+import javamop.parser.astex.*;
+import javamop.parser.astex.mopspec.*;
 
 /**
  * Grammar to parse Java version 1.5
@@ -41,7 +43,7 @@ public final class JavaMOPParser {
 
     private static JavaMOPParser parser;
 
-    public static MOPSpecFile parse(InputStream in, String encoding) throws ParseException {
+    public static MOPSpecFileExt parse(InputStream in, String encoding) throws ParseException {
         if (parser == null) {
             parser = new JavaMOPParser(in, encoding);
         } else {
@@ -50,11 +52,11 @@ public final class JavaMOPParser {
         return parser.MOPSpecFile();
     }
 
-    public static MOPSpecFile parse(InputStream in) throws ParseException {
+    public static MOPSpecFileExt parse(InputStream in) throws ParseException {
         return parse(in, null);
     }
 
-    public static MOPSpecFile parse(File file, String encoding) throws ParseException {
+    public static MOPSpecFileExt parse(File file, String encoding) throws ParseException {
         try {
 	        FileInputStream in = new FileInputStream(file);
 	        try {
@@ -67,7 +69,7 @@ public final class JavaMOPParser {
         }
     }
     
-    public static MOPSpecFile parse(File file) throws ParseException {
+    public static MOPSpecFileExt parse(File file) throws ParseException {
 		return parse(file, null);
     }
     
@@ -348,6 +350,8 @@ TOKEN :
 |	<ENDPROGRAM: "endProgram" >
 |	<ENDTHREAD: "endThread" >
 |	<ENDOBJECT: "endObject" >
+|   <EXTEND: "extend">
+|   <INCLUDES: "includes">
 }
 
 /* LITERALS */
@@ -1148,6 +1152,7 @@ TOKEN :
 | < SEMICOLON: ";" >
 | < COMMA: "," >
 | < AT: "@" >
+| < DOT: "." >
 }
 
 /* OPERATORS */
@@ -1215,13 +1220,13 @@ TOKEN :
  * THE JAVAMOP SPECIFICATION GRAMMAR STARTS HERE *
  *************************************************/
 
-MOPSpecFile MOPSpecFile():
+MOPSpecFileExt MOPSpecFile():
 {
 	PackageDeclaration packageName = null;
 	List<ImportDeclaration> imports = new ArrayList<ImportDeclaration>();
 	ImportDeclaration im = null;
-	List<JavaMOPSpec> specList = new ArrayList<JavaMOPSpec>();
-	JavaMOPSpec spec = null;
+	List<JavaMOPSpecExt> specList = new ArrayList<JavaMOPSpecExt>();
+	JavaMOPSpecExt spec = null;
 	int line = -1;
 	int column = -1;
 }
@@ -1230,35 +1235,41 @@ MOPSpecFile MOPSpecFile():
 	( im = ImportDeclaration() { if(line==-1){line = im.getBeginLine(); column = im.getBeginColumn();} imports.add(im); } )* 
 	(spec = JavaMOPSpec() {if(line==-1){line = spec.getBeginLine(); column = spec.getBeginColumn();} specList.add(spec);})+
 	(<EOF> | "\u001A" /** ctrl+z char **/)
-	{return new MOPSpecFile(line, column, packageName, imports, specList);}
+	{return new MOPSpecFileExt(line, column, packageName, imports, specList);}
 }
 
-JavaMOPSpec JavaMOPSpec():
-{
+JavaMOPSpecExt JavaMOPSpec():
+{  
 	int modifiers;
 	String name;
 	List<MOPParameter> parameters = null;
 	//MethodPattern inMethod = null;
 	String inMethod = null;
 	List<BodyDeclaration> declarations = null;
-	List<EventDefinition> events = new ArrayList<EventDefinition>();
-	EventDefinition event = null;
-	List<PropertyAndHandlers> props = new ArrayList<PropertyAndHandlers>();
-	PropertyAndHandlers prop = null;
+	List<EventDefinitionExt> events = new ArrayList<EventDefinitionExt>();
+	EventDefinitionExt event = null;
+	List<PropertyAndHandlersExt> props = new ArrayList<PropertyAndHandlersExt>();
+	PropertyAndHandlersExt prop = null;
 	int line = -1;
 	int column = -1;
+	List<ExtendedSpec> extendedSpecList= null;
+	boolean isPublic = false;
 }
 {
+	["public" { isPublic = true; }]
 	modifiers = SpecModifier()
 	(<IDENTIFIER> | "get" | "set") { if(line==-1){line = token.beginLine; column = token.beginColumn;} name = token.image; }
 	[parameters = MOPParameters()]
 	["within" { inMethod = getStringUntil('{'); }]
+	//****************soha adding here*****************/
+	[<INCLUDES> extendedSpecList = MOPExtendedSpec()]
+	//****************soha ends addition here*****************/
 	"{"
-	declarations = ClassOrInterfaceBody(false)
-	(event = Event() { events.add(event); } )*
+	 declarations = ClassOrInterfaceBody(false)
+	(event = Event() { events.add(event); } )+
 	(prop = PropertyAndHandlers() {props.add(prop);})*
 	"}"
-	{return new JavaMOPSpec(line, column, modifiers, name, parameters, inMethod, declarations, events, props);}
+	{return new JavaMOPSpecExt(line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
 }
 
 int SpecModifier():
@@ -1281,6 +1292,38 @@ int SpecModifier():
 	)* 
 	{return modifiers;}
 }
+
+//**************** soha adding here*************/
+//List<MOPExtendedSpec> MOPExtendedSpec():
+List<ExtendedSpec> MOPExtendedSpec():
+{	
+	List<ExtendedSpec> extendedSpecList= new ArrayList<ExtendedSpec>();
+	ExtendedSpec S = null;
+}
+{
+  S = singleExtendedSpec() { extendedSpecList.add(S);} 
+  ("," S= singleExtendedSpec(){ extendedSpecList.add(S);})*
+
+  {return extendedSpecList;} 
+}
+
+ExtendedSpec singleExtendedSpec():
+{ 
+ String specName= null;
+ boolean isParametric = false;
+ List<String> parameterList = new ArrayList<String>();
+ int line, column;
+}
+{
+  (<IDENTIFIER> | "get" | "set") {specName = token.image; line = token.beginLine; column = token.beginColumn;}
+   ["(" (<IDENTIFIER> | "get" | "set") {isParametric = true; parameterList.add(token.image); }
+  (","(<IDENTIFIER> | "get" | "set") {parameterList.add(token.image);})* ")"]
+
+  {return new ExtendedSpec(line, column, specName, isParametric, parameterList);}
+  
+}
+
+//************ soha ends addition here*************/
 
 List<MOPParameter> MOPParameters():
 {
@@ -1329,15 +1372,14 @@ MOPParameter AdviceParameter():
 	{ return new MOPParameter(line, column, type, name); }
 }
 
-
-EventDefinition Event():
+EventDefinitionExt Event():
 {
 	int line, column;
 	String id;
 	Type rettype = null;
 	String pos;
 	List<MOPParameter> parameters = null;
-	String pointCut;
+	String pointCut = null;
 	BlockStmt block = null;
 	boolean hasThread = false;
 	boolean hasCond = false;
@@ -1346,22 +1388,43 @@ EventDefinition Event():
 	boolean hasThrowing = false;
 	List<MOPParameter> throwVal = null;
 	boolean startEvent = false;
+	boolean abstractEvent = false;
 }
 {
-    ["creation" {startEvent = true;}]
+   (
+     ( //to handle syntax of abstract events :Soha
+     ("abstract" {abstractEvent = true;} "event" {line = token.beginLine; column = token.beginColumn;}
+     (<IDENTIFIER> | "get" | "set") {id = token.image;})
+     (
+	  pos = Position() |
+	 rettype = ResultType()
+	 "around" { pos = token.image; }
+	)
+	 [parameters = AdviceParameters()]		
+	["returning" {hasReturning = true;} [retVal = AdviceParameters()]]
+	["throwing" {hasThrowing = true; } [throwVal = AdviceParameters()]]
+	";"
+	)
+	
+   | 
+    ( //old syntax of events: Soha
+      ["creation" {startEvent = true;}]
 	"event" {line = token.beginLine; column = token.beginColumn;}
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
-	(	  pos = Position() |
+	(
+	  pos = Position() |
 	 rettype = ResultType()
-	 "around" { pos = token.image; }	)
+	 "around" { pos = token.image; }
+	)
 
 	[parameters = AdviceParameters()]		
 	["returning" {hasReturning = true;} [retVal = AdviceParameters()]]
 	["throwing" {hasThrowing = true; } [throwVal = AdviceParameters()]]
 	":" {pointCut = getStringUntil('{');} 
-	(block = Block() | ";")
-	{ return new EventDefinition(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning, retVal, hasThrowing, throwVal, startEvent); } 
+	(block = Block() | ";")))
+	
+	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning, retVal, hasThrowing, throwVal, startEvent, abstractEvent); } 
 }
 
 String Position():
@@ -1401,39 +1464,65 @@ BaseTypePattern TypePattern():
 	{ return new BaseTypePattern(line, column, id); }
 }
 
-PropertyAndHandlers PropertyAndHandlers():
+PropertyAndHandlersExt PropertyAndHandlers():
 {
-	Property prop;
+	PropertyExt prop = null;
 	BlockStmt handler = null;
 	String id;
 	HashMap<String, BlockStmt> handlers = new HashMap<String, BlockStmt>();
 	int line, column;
+	HandlerExt h = null;
+	List<HandlerExt> handlerList = new ArrayList<HandlerExt>();
+	String propertyReference = null;
+	String specReference = null;
+	int handlerLine;
+	int handlerColumn;
 }
 {
-	prop = Property() {line = prop.getBeginLine(); column = prop.getBeginColumn();} 
-	("@" (<IDENTIFIER> | "get" | "set") {id = token.image;} handler = Block() {handlers.put(id.toLowerCase(), handler);})*
-	{
-//		if (handlers.size() == 0)
-//			throw new ParseException(token, "At least one handler is expected");
-//		if(handlers.size() == 0) handlers = null;
-		return new PropertyAndHandlers(line, column, prop, handlers);
-	}
+  [prop = Property()]
+  (LOOKAHEAD(2)
+    "@"
+    (<IDENTIFIER> | "get" | "set") {id = token.image; line = token.beginLine; column = token.beginColumn; propertyReference = null; specReference = null;}
+    [
+      "@" (<IDENTIFIER> | "get" | "set") {propertyReference = id; id = token.image;}
+      | ("." (<IDENTIFIER> | "get" | "set") {specReference = id; propertyReference = token.image;} "@" (<IDENTIFIER> | "get" | "set"){id = token.image;})
+    ]
+    handler = Block() 
+    {
+      handlers.put(id.toLowerCase(), handler); 
+      h = new HandlerExt(line, column, id, handler, specReference, propertyReference);
+      handlerList.add(h);
+    }
+  )+
+
+  {
+//  if (handlers.size() == 0)
+//    throw new ParseException(token, "At least one handler is expected");
+//  if(handlers.size() == 0) handlers = null;
+    return new PropertyAndHandlersExt(line, column, prop, handlers, handlerList);
+  }
 }
 
 /**
  * We may want to support combined properties later, now only a single formula allowed
  */
 
-Property Property():
+PropertyExt Property():
 {
 	String logicId;
 	int line, column;
 	String f;
+	String propertyName;
 }
 {
-	(<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; logicId = token.image;} ":"
+  (
+    LOOKAHEAD(3)
+  (
+    (<IDENTIFIER> | "get" | "set")    {logicId = token.image;}
+    (<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; propertyName = token.image; } ":")
+| ( (<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; logicId = token.image; propertyName = "defaultProp";} ":"))
 	{f = getFormula();}
-	{ return new Formula(line, column, logicId, f); }
+	{ return new FormulaExt(line, column, logicId, f, propertyName); }
 }
 
 /***********************************************

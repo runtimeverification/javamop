@@ -115,15 +115,15 @@ import javamop.parser.ast.mopspec.*;
  * @author Julio Vilmar Gesser
  */
 
-public final class DumpVisitor implements VoidVisitor<Object> {
+public class DumpVisitor implements VoidVisitor<Object> {
 
-	private final SourcePrinter printer = new SourcePrinter();
+	protected final SourcePrinter printer = new SourcePrinter();
 
 	public String getSource() {
 		return printer.getSource();
 	}
 
-	private void printSpecModifiers(int modifiers) {
+	protected void printSpecModifiers(int modifiers) {
 		if (SpecModifierSet.isUnSync(modifiers)) {
 			printer.print("unsynchronized ");
 		}
@@ -132,7 +132,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printModifiers(int modifiers) {
+	protected void printModifiers(int modifiers) {
 		if (ModifierSet.isPrivate(modifiers)) {
 			printer.print("private ");
 		}
@@ -168,7 +168,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printNotModifiers(int modifiers) {
+	protected void printNotModifiers(int modifiers) {
 		if (ModifierSet.isPrivate(modifiers)) {
 			printer.print("!private ");
 		}
@@ -204,7 +204,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printMembers(List<BodyDeclaration> members, Object arg) {
+	protected void printMembers(List<BodyDeclaration> members, Object arg) {
 		for (BodyDeclaration member : members) {
 			printer.printLn();
 			member.accept(this, arg);
@@ -212,7 +212,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printMemberAnnotations(List<AnnotationExpr> annotations, Object arg) {
+	protected void printMemberAnnotations(List<AnnotationExpr> annotations, Object arg) {
 		if (annotations != null) {
 			for (AnnotationExpr a : annotations) {
 				a.accept(this, arg);
@@ -221,7 +221,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printAnnotations(List<AnnotationExpr> annotations, Object arg) {
+	protected void printAnnotations(List<AnnotationExpr> annotations, Object arg) {
 		if (annotations != null) {
 			for (AnnotationExpr a : annotations) {
 				a.accept(this, arg);
@@ -230,7 +230,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printTypeArgs(List<Type> args, Object arg) {
+	protected void printTypeArgs(List<Type> args, Object arg) {
 		if (args != null) {
 			printer.print("<");
 			for (Iterator<Type> i = args.iterator(); i.hasNext();) {
@@ -244,7 +244,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printTypeParameters(List<TypeParameter> args, Object arg) {
+	protected void printTypeParameters(List<TypeParameter> args, Object arg) {
 		if (args != null) {
 			printer.print("<");
 			for (Iterator<TypeParameter> i = args.iterator(); i.hasNext();) {
@@ -258,7 +258,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	private void printSpecParameters(MOPParameters args, Object arg) {
+	protected void printSpecParameters(MOPParameters args, Object arg) {
 		printer.print("(");
 		if (args != null) {
 			for (Iterator<MOPParameter> i = args.iterator(); i.hasNext();) {
@@ -376,13 +376,13 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 
 	/* visit functions for AspectJ components */
 
-	private void printParameterTypes(List<TypePattern> args, Object arg) {
+	protected void printParameterTypes(List<TypePattern> args, Object arg) {
 		printer.print("(");
 		printTypePatterns(args, arg);
 		printer.print(")");
 	}
 
-	private void printTypePatterns(List<TypePattern> args, Object arg) {
+	protected void printTypePatterns(List<TypePattern> args, Object arg) {
 		if (args != null) {
 			for (Iterator<TypePattern> i = args.iterator(); i.hasNext();) {
 				TypePattern t = i.next();

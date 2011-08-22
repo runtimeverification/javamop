@@ -2,7 +2,6 @@ package javamop.output.aspect.advice;
 
 import java.util.HashMap;
 
-import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.aspect.indexingtree.IndexingTree;
 import javamop.output.monitor.MonitorInfo;
@@ -53,7 +52,6 @@ public class DefineToFromList {
 
 		MOPVariable obj = new MOPVariable("obj");
 		MOPVariable m = new MOPVariable("m");
-		MOPVariable mainWrapper = new MOPVariable("mainWrapper");
 		MOPVariable origWrapper = new MOPVariable("origWrapper");
 		MOPVariable lastWrapper = new MOPVariable("lastWrapper");
 		MOPVariable wrapper = new MOPVariable("wrapper");

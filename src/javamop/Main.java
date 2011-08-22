@@ -35,13 +35,13 @@ public class Main {
 	public static String aspectname = null;
 	public static boolean isJarFile = false;
 	public static String jarFilePath = null;
-	
+
 	/**
 	 * Process a java file including mop annotations to generate an aspectj
 	 * file. The path argument should be an existing java file name. The
 	 * location argument should contain the original file name, But it may have
 	 * a different directory.
-	 *
+	 * 
 	 * @param path
 	 *            an absolute path of a specification file
 	 * @param location
@@ -62,7 +62,7 @@ public class Main {
 	 * argument should be an existing specification file name. The location
 	 * argument should contain the original file name, But it may have a
 	 * different directory.
-	 *
+	 * 
 	 * @param path
 	 *            an absolute path of a specification file
 	 * @param location
@@ -80,7 +80,7 @@ public class Main {
 			writeJavaLibFile(output, location);
 		} else {
 			writeAspectFile(output, location);
-                }
+		}
 	}
 
 	protected static void writeJavaFile(String javaContent, String location) throws Exception {

@@ -1,7 +1,6 @@
 package javamop.output.monitorset;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javamop.output.MOPVariable;
@@ -246,7 +245,6 @@ public class MonitorSet {
 
 		for (EventDefinition event : this.events) {
 			String eventName = event.getUniqueId();
-			boolean isAround = event.getPos().equals("around");
 			MOPParameters parameters = event.getMOPParameters();
 
 			ret += "\n";

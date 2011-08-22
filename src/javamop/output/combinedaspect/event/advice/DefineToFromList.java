@@ -52,7 +52,6 @@ public class DefineToFromList {
 
 		MOPVariable obj = new MOPVariable("obj");
 		MOPVariable m = new MOPVariable("m");
-		MOPVariable mainWrapper = new MOPVariable("mainWrapper");
 		MOPVariable origWrapper = new MOPVariable("origWrapper");
 		MOPVariable lastWrapper = new MOPVariable("lastWrapper");
 		MOPVariable wrapper = new MOPVariable("wrapper");

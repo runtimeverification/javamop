@@ -3,7 +3,6 @@ package javamop.output;
 import java.util.HashMap;
 
 import javamop.MOPException;
-import javamop.output.aspect.Aspect;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.monitor.WrapperMonitor;
 import javamop.output.monitorset.MonitorSet;

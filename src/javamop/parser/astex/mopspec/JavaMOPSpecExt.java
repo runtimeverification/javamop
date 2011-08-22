@@ -1,32 +1,34 @@
-package javamop.parser.ast.mopspec;
+package javamop.parser.astex.mopspec;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javamop.MOPNameSpace;
 import javamop.MOPException;
-import javamop.parser.ast.Node;
+import javamop.MOPNameSpace;
 import javamop.parser.ast.body.BodyDeclaration;
+import javamop.parser.ast.mopspec.MOPParameter;
+import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.parser.ast.mopspec.SpecModifierSet;
 import javamop.parser.ast.stmt.BlockStmt;
-import javamop.parser.ast.visitor.GenericVisitor;
-import javamop.parser.ast.visitor.VoidVisitor;
+import javamop.parser.astex.ExtNode;
+import javamop.parser.astex.visitor.GenericVisitor;
+import javamop.parser.astex.visitor.VoidVisitor;
 
-public class JavaMOPSpec extends Node {
+public class JavaMOPSpecExt extends ExtNode {
 	int modifiers;
+	boolean isPublic = false;
 	String name;
 	MOPParameters parameters;
 	String inMethod;
 	List<BodyDeclaration> declarations;
-	List<EventDefinition> events = null;
-	List<PropertyAndHandlers> properties = null;
+	List<EventDefinitionExt> events = null;
+	List<PropertyAndHandlersExt> properties = null;
 	List<String> eventNames = null;
-	
-	MOPParameters commonParamInEvents;
-	MOPParameters varsToSave;
+	List<ExtendedSpec> extendedSpecs = null;
 
-	public JavaMOPSpec(int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
-			List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
+	public JavaMOPSpecExt(int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
+			List<BodyDeclaration> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
 		super(line, column);
 		this.modifiers = modifiers;
 		this.name = name;
@@ -36,15 +38,16 @@ public class JavaMOPSpec extends Node {
 		this.events = events;
 		this.properties = properties;
 		this.eventNames = new ArrayList<String>();
-		this.commonParamInEvents = new MOPParameters(this.parameters);
+		this.extendedSpecs = extendedSpecs;
+		this.isPublic = isPublic;
 
-		for (EventDefinition event : this.events) {
+		for (EventDefinitionExt event : this.events) {
 			if (!this.eventNames.contains(event.getId()))
 				this.eventNames.add(event.getId());
 		}
 
 		int idnum = 1;
-		for (PropertyAndHandlers prop : this.properties)
+		for (PropertyAndHandlersExt prop : this.properties)
 			prop.propertyId = idnum++;
 
 		// set variables in each event
@@ -53,50 +56,19 @@ public class JavaMOPSpec extends Node {
 		} catch (MOPException e) {
 			throw new javamop.parser.main_parser.ParseException(e.getMessage());
 		}
-		
-		for (EventDefinition event : this.events) {
-			MOPParameters param = event.getMOPParametersOnSpec();
-			
-			this.commonParamInEvents = MOPParameters.intersectionSet(param, this.commonParamInEvents);
-		}
-		
-		this.varsToSave = new MOPParameters();
-		
-		for (PropertyAndHandlers prop : properties){
-			for(String category: prop.getHandlers().keySet()){
-				MOPParameters param = prop.getUsedParametersIn(category, this.parameters);
-				
-				for(MOPParameter p : param){
-					if(!this.commonParamInEvents.contains(p)){
-						varsToSave.add(p);
-					}
-				}
-			}
-		}
-		
-		for (EventDefinition event : events){
-			MOPParameters eventParam = event.getMOPParametersOnSpec();
-			MOPParameters param = event.getUsedParametersIn(this.parameters);
-			
-			for(MOPParameter p : param){
-				if(!eventParam.contains(p)){
-					varsToSave.add(p);
-				}
-			}
-		}
 	}
 
 	public void setVarsInEvents() throws MOPException {
 		int numStartEvent = 0;
 		HashSet<String> duplicatedEventNames = new HashSet<String>();
-		for (EventDefinition event : this.events) {
+		for (EventDefinitionExt event : this.events) {
 			if (event.isStartEvent())
 				numStartEvent++;
 
 			event.mopParametersOnSpec = MOPParameters.intersectionSet(event.mopParameters, this.parameters);
 			event.mopParametersOnSpec = this.parameters.sortParam(event.mopParametersOnSpec);
 
-			for (EventDefinition event2 : this.events) {
+			for (EventDefinitionExt event2 : this.events) {
 				if (event == event2)
 					continue;
 				if (event.getId().equals(event2.getId())) {
@@ -107,14 +79,14 @@ public class JavaMOPSpec extends Node {
 		}
 
 		if (numStartEvent == 0) {
-			for (EventDefinition event : this.events) {
+			for (EventDefinitionExt event : this.events) {
 				event.startEvent = true;
 			}
 		}
 
 		for (String eventName : duplicatedEventNames) {
 			int idnum = 1;
-			for (EventDefinition event : this.events) {
+			for (EventDefinitionExt event : this.events) {
 				if (event.getId().equals(eventName)) {
 					while (MOPNameSpace.checkUserVariable(event.getId() + "_" + idnum))
 						idnum++;
@@ -126,7 +98,7 @@ public class JavaMOPSpec extends Node {
 		}
 
 		for (int i = 0; i < this.events.size(); i++) {
-			EventDefinition event = this.events.get(i);
+			EventDefinitionExt event = this.events.get(i);
 			if (event.uniqueId == null)
 				event.uniqueId = event.getId();
 			event.idnum = i;
@@ -144,14 +116,6 @@ public class JavaMOPSpec extends Node {
 	public MOPParameters getParameters() {
 		return parameters;
 	}
-	
-	public MOPParameters getCommonParamInEvents(){
-		return commonParamInEvents;
-	}
-	
-	public MOPParameters getVarsToSave(){
-		return varsToSave;
-	}
 
 	public String getInMethod() {
 		return inMethod;
@@ -160,66 +124,70 @@ public class JavaMOPSpec extends Node {
 	public List<BodyDeclaration> getDeclarations() {
 		return declarations;
 	}
-	
-	public String getDeclarationsStr(){
+
+	public String getDeclarationsStr() {
 		String ret = "";
 
 		if (declarations == null)
 			return ret;
-		
-		for(BodyDeclaration decl : declarations)
+
+		for (BodyDeclaration decl : declarations)
 			ret += decl.toString() + "\n";
-		
+
 		return ret;
 	}
 
-	public List<EventDefinition> getEvents() {
+	public List<EventDefinitionExt> getEvents() {
 		return events;
 	}
-	
+
 	private String cachedEventStr = null;
-	
-	public String getEventStr(){
-		if(cachedEventStr != null)
+
+	public String getEventStr() {
+		if (cachedEventStr != null)
 			return cachedEventStr;
 		cachedEventStr = "";
 		for (String eventName : eventNames) {
 			cachedEventStr += " " + eventName;
 		}
 		cachedEventStr = cachedEventStr.trim();
-		
+
 		return cachedEventStr;
 	}
 
-	public List<PropertyAndHandlers> getPropertiesAndHandlers() {
+	public List<ExtendedSpec> getExtendedSpec() {
+		return this.extendedSpecs;
+	}
+
+	public List<PropertyAndHandlersExt> getPropertiesAndHandlers() {
 		return properties;
 	}
 
-	public boolean isPerThread(){
+	public boolean isPerThread() {
 		return SpecModifierSet.isPerThread(modifiers);
 	}
-	
-	public boolean isSync(){
-		if(SpecModifierSet.isPerThread(modifiers))
+
+	public boolean isSync() {
+		if (SpecModifierSet.isPerThread(modifiers))
 			return false;
-		
+
 		return !SpecModifierSet.isUnSync(modifiers);
 	}
-	
-	public boolean isCentralized(){
-		if(SpecModifierSet.isPerThread(modifiers))
-			return true; //if perthread, it always uses centralized indexing
-		
+
+	public boolean isCentralized() {
+		if (SpecModifierSet.isPerThread(modifiers))
+			return true; // if perthread, it always uses centralized indexing
+
 		return !SpecModifierSet.isDecentralized(modifiers);
 	}
-	
+
 	private Boolean cachedIsGeneral = null;
 
 	public boolean isGeneral() {
 		if (cachedIsGeneral != null)
 			return cachedIsGeneral.booleanValue();
 
-		for (EventDefinition event : this.events) {
+		for (EventDefinitionExt event : this.events) {
 			if (event.isStartEvent()) {
 				if (!event.getMOPParametersOnSpec().contains(parameters)) {
 					cachedIsGeneral = new Boolean(true);
@@ -242,7 +210,7 @@ public class JavaMOPSpec extends Node {
 	public boolean isConnected() {
 		return SpecModifierSet.isConnected(this.getModifiers());
 	}
-	
+
 	public boolean isMultiFormula() {
 		return this.properties != null && this.properties.size() > 1;
 	}
@@ -257,16 +225,16 @@ public class JavaMOPSpec extends Node {
 		if (cachedHas__LOC != null)
 			return cachedHas__LOC.booleanValue();
 
-		for (EventDefinition event : this.events) {
+		for (EventDefinitionExt event : this.events) {
 			String eventAction = event.getAction().toString();
-			if (eventAction.indexOf("__LOC") != -1){
+			if (eventAction.indexOf("__LOC") != -1) {
 				cachedHas__LOC = new Boolean(true);
 				return true;
 			}
 		}
-		for (PropertyAndHandlers prop : this.properties) {
+		for (PropertyAndHandlersExt prop : this.properties) {
 			for (BlockStmt handler : prop.getHandlers().values()) {
-				if (handler.toString().indexOf("__LOC") != -1){
+				if (handler.toString().indexOf("__LOC") != -1) {
 					cachedHas__LOC = new Boolean(true);
 					return true;
 				}
@@ -282,18 +250,18 @@ public class JavaMOPSpec extends Node {
 		if (cachedHas__SKIP != null)
 			return cachedHas__SKIP.booleanValue();
 
-		for (EventDefinition event : this.events) {
-			if(event.getAction() == null)
+		for (EventDefinitionExt event : this.events) {
+			if (event.getAction() == null)
 				continue;
 			String eventAction = event.getAction().toString();
-			if (eventAction.indexOf("__SKIP") != -1){
+			if (eventAction.indexOf("__SKIP") != -1) {
 				cachedHas__SKIP = new Boolean(true);
 				return true;
 			}
 		}
-		for (PropertyAndHandlers prop : this.properties) {
+		for (PropertyAndHandlersExt prop : this.properties) {
 			for (BlockStmt handler : prop.getHandlers().values()) {
-				if (handler.toString().indexOf("__SKIP") != -1){
+				if (handler.toString().indexOf("__SKIP") != -1) {
 					cachedHas__SKIP = new Boolean(true);
 					return true;
 				}
@@ -302,7 +270,18 @@ public class JavaMOPSpec extends Node {
 		cachedHas__SKIP = new Boolean(false);
 		return false;
 	}
-	
+
+	/**
+	 * returns if the specification is extending other specifications.
+	 * 
+	 */
+	public boolean hasExtend() {
+		if (this.extendedSpecs == null)
+			return false;
+		else
+			return (this.extendedSpecs.isEmpty() == false);
+	}
+
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
 		v.visit(this, arg);
@@ -311,6 +290,26 @@ public class JavaMOPSpec extends Node {
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		return v.visit(this, arg);
+	}
+
+	public Boolean isCachedGeneral() {
+		return this.cachedIsGeneral;
+	}
+
+	public String isCachedEventStr() {
+		return this.cachedEventStr;
+	}
+
+	public Boolean isCachedHas__LOC() {
+		return this.cachedHas__LOC;
+	}
+
+	public Boolean isCashedHas__SKIP() {
+		return this.cachedHas__SKIP;
+	}
+
+	public boolean isPublic() {
+		return this.isPublic;
 	}
 
 }

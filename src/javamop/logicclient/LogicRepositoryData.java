@@ -114,7 +114,6 @@ public class LogicRepositoryData {
 	}
 
 	public LogicRepositoryType transOutputStreamToXML(ByteArrayOutputStream outputStream) throws MOPException {
-		LogicRepositoryType xmlData;
 		ByteArrayInputStream parserInput = new ByteArrayInputStream(outputStream.toByteArray());
 
 		return transInputStreamToXML(parserInput);
