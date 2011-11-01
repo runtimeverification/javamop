@@ -165,7 +165,7 @@ public class WrapperMonitor extends Monitor {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
-				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";				
+				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
 		if (checkSkip && event.has__SKIP()) {

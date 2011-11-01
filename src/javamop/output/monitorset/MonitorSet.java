@@ -97,9 +97,9 @@ public class MonitorSet {
 		
 		if (has__LOC) {
 			if(loc != null)
-				ret += monitorSetVar + "." + this.loc + " = " + loc + ";\n";
+				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + loc + ";\n";
 			else
-				ret += monitorSetVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
 		if (isAround && event.has__SKIP()) {
