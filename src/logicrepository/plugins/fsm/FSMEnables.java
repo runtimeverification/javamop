@@ -143,7 +143,7 @@ public class FSMEnables {
 				// if the alias does not already contain this state
 				// bcause adding the path to the category a second
 				// time accomplishes nothing
-				else if (aliasedStates.contains(fail) && nContainsDefault(state) && (stateMap.get(state).size() < events.size())) {
+				else if (aliasedStates.contains(fail) && !nContainsDefault(state) && (stateMap.get(state).size() < events.size())) {
 					addPath(category, newPath);
 				}
 			}
@@ -153,7 +153,7 @@ public class FSMEnables {
 			else {
 				if (category.equals(state)) {
 					addPath(category, newPath);
-				} else if (category.equals(fail) && nContainsDefault(state) && (stateMap.get(state).size() < events.size())) {
+				} else if (category.equals(fail) && !nContainsDefault(state) && (stateMap.get(state).size() < events.size())) {
 					addPath(fail, newPath);
 				}
 			}
