@@ -1277,6 +1277,8 @@ public class DumpVisitor implements VoidVisitor<Object> {
 				printer.printLn();
 			}
 			printer.unindent();
+		} else {
+			printer.print("\n");
 		}
 		printer.print("}");
 
