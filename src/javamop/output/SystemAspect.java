@@ -1,5 +1,7 @@
 package javamop.output;
 
+import javamop.Main;
+
 public class SystemAspect {
 	String name;
 
@@ -27,14 +29,26 @@ public class SystemAspect {
 		ret += "}\n";
 		ret += "};\n\n";
 		
-		ret += "pointcut sysbegin() : execution(* *(..)) && !within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		
+		
+		ret += "pointcut sysbegin() : execution(* *(..)) && ";
+		if(Main.dacapo){
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
+		} else {
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		}
 		ret += "before () : sysbegin() {\n";
 		ret += "((int[])t_version.get())[++((int[])t_global_depth.get())[0]]++;\n";
 		ret += "}\n";
 		ret += "}\n\n";
 		
 		ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
-		ret += "pointcut sysend() : execution(* *(..)) && !within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		ret += "pointcut sysend() : execution(* *(..)) && ";
+		if(Main.dacapo){
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
+		} else {
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		}
 		ret += "after () : sysend() {\n";
 		ret += "((int[])" + name + ".t_global_depth.get())[0]--;\n";
 		ret += "}\n";

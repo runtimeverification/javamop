@@ -35,6 +35,8 @@ public class Main {
 	public static String aspectname = null;
 	public static boolean isJarFile = false;
 	public static String jarFilePath = null;
+	
+	public static boolean dacapo = false;
 
 	/**
 	 * Process a java file including mop annotations to generate an aspectj
@@ -246,6 +248,8 @@ public class Main {
 			} else if (args[i].compareTo("-n") == 0 || args[i].compareTo("-aspectname") == 0) {
 				i++;
 				Main.aspectname = args[i];
+			} else if (args[i].compareTo("-dacapo") == 0) {
+				Main.dacapo = true;
 			} else {
 				if (files.length() != 0)
 					files += ";";

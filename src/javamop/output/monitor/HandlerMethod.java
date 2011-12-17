@@ -3,6 +3,7 @@ package javamop.output.monitor;
 import java.util.HashMap;
 
 import javamop.Main;
+import javamop.output.MOPJavaCode;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
@@ -12,7 +13,7 @@ import javamop.parser.ast.stmt.BlockStmt;
 public class HandlerMethod {
 	PropertyAndHandlers prop;
 	MOPVariable methodName;
-	BlockStmt body;
+	MOPJavaCode handlerCode = null;
 	MOPParameters specParam;
 	MOPVariable categoryVar;
 	String category;
@@ -21,12 +22,30 @@ public class HandlerMethod {
 	MOPParameters varsToRestore;
 	HashMap<MOPParameter, MOPVariable> savedParams;
 
+	// local variable for now
+	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
+
+	private boolean has__SKIP = false;
+
 	public HandlerMethod(PropertyAndHandlers prop, String category, MOPParameters specParam, MOPParameters commonParamInEvents,
 			HashMap<MOPParameter, MOPVariable> savedParams, BlockStmt body, MOPVariable categoryVar, Monitor monitor) {
 		this.prop = prop;
 		this.category = category;
 		this.methodName = new MOPVariable("Prop_" + prop.getPropertyId() + "_handler_" + category);
-		this.body = body;
+		if(body != null){
+			String handlerBody = body.toString();
+
+			if (handlerBody.indexOf("__SKIP") != -1) {
+				has__SKIP = true;
+			}
+
+			handlerBody = handlerBody.replaceAll("__RESET", "this.reset()");
+			handlerBody = handlerBody.replaceAll("__LOC", "this." + loc);
+			handlerBody = handlerBody.replaceAll("__SKIP", skipAroundAdvice + " = true");
+			
+			this.handlerCode = new MOPJavaCode(handlerBody);
+		}
 		this.specParam = specParam;
 		this.categoryVar = categoryVar;
 		this.monitor = monitor;
@@ -40,21 +59,8 @@ public class HandlerMethod {
 		}
 	}
 
-	private Boolean cachedHas__SKIP = null;
-
 	public boolean has__SKIP() {
-		if (cachedHas__SKIP != null)
-			return cachedHas__SKIP.booleanValue();
-
-		if (body != null) {
-			String handlerBody = body.toString();
-			if (handlerBody.indexOf("__SKIP") != -1) {
-				cachedHas__SKIP = new Boolean(true);
-				return true;
-			}
-		}
-		cachedHas__SKIP = new Boolean(false);
-		return false;
+		return has__SKIP;
 	}
 
 	public MOPVariable getMethodName() {
@@ -63,11 +69,6 @@ public class HandlerMethod {
 
 	public String toString() {
 		String ret = "";
-		String handlerBody = body.toString();
-
-		// local variable for now
-		MOPVariable loc = new MOPVariable("MOP_loc");
-		MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 		ret += "public final ";
 
@@ -90,11 +91,7 @@ public class HandlerMethod {
 			ret += "}\n";
 		}
 
-		handlerBody = handlerBody.replaceAll("__RESET", "this.reset()");
-		handlerBody = handlerBody.replaceAll("__LOC", "this." + loc);
-		handlerBody = handlerBody.replaceAll("__SKIP", skipAroundAdvice + " = true");
-
-		ret += handlerBody + "\n";
+		ret += handlerCode + "\n";
 
 		ret += "}\n";
 

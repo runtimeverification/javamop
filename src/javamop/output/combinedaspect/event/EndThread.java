@@ -3,6 +3,7 @@ package javamop.output.combinedaspect.event;
 import java.util.HashMap;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -73,8 +74,12 @@ public class EndThread {
 		ret += "after (Runnable r) returning (Thread t): ";
 		ret += "(";
 		ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
-		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..))";
-		ret += ") && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
+		if(Main.dacapo){
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
+		} else {
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		}
 		ret += runnableMap + ".put(t, r);\n";
 		ret += "}\n";
 
@@ -86,7 +91,12 @@ public class EndThread {
 		MOPVariable threadVar = new MOPVariable("t");
 
 		ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
-		ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		
+		if(Main.dacapo){
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
+		} else {
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		}
 
 		ret += "if(Thread.currentThread() == " + threadVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -107,7 +117,12 @@ public class EndThread {
 		MOPVariable runnableVar = new MOPVariable("r");
 
 		ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
-		ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		if(Main.dacapo){
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
+		} else {
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		}
+
 
 		ret += "if(" + runnableMap + ".get(Thread.currentThread()) == " + runnableVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -127,7 +142,11 @@ public class EndThread {
 		String ret = "";
 
 		ret += "before (): " + "(execution(void *.main(..)) )";
-		ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		if(Main.dacapo){
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
+		} else {
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		}
 		ret += "if(" + mainThread + " == null){\n";
 		ret += mainThread + " = Thread.currentThread();\n";
 		ret += threadSet + ".add(Thread.currentThread());\n";
@@ -139,7 +158,11 @@ public class EndThread {
 		ret += "\n";
 
 		ret += "after (): " + "(execution(void *.main(..)) )";
-		ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		if(Main.dacapo){
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
+		} else {
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		}
 		ret += "if(" + mainThread + " == Thread.currentThread()){\n";
 		ret += mainCounter + "--;\n";
 		ret += "if(" + mainCounter + " <= 0){\n";
@@ -162,8 +185,12 @@ public class EndThread {
 		
 		ret += "after (Thread t): ";
 		ret += "(";
-		ret += "call(void Thread+.start()) && target(t)";
-		ret += ") && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		ret += "call(void Thread+.start()) && target(t))";
+		if(Main.dacapo){
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
+		} else {
+			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
+		}
 		ret += threadSet + ".add(t);\n";
 		ret += "}\n";
 		

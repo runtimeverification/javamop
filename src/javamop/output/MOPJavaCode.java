@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javamop.Main;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public class MOPJavaCode {
@@ -14,13 +15,13 @@ public class MOPJavaCode {
 
 	public MOPJavaCode(String code) {
 		this.code = code;
-		if(this.code != null)
+		if (this.code != null)
 			this.code = this.code.trim();
 	}
 
 	public MOPJavaCode(String code, MOPVariable monitorName) {
 		this.code = code;
-		if(this.code != null)
+		if (this.code != null)
 			this.code = this.code.trim();
 		this.monitorName = monitorName;
 	}
@@ -28,16 +29,15 @@ public class MOPJavaCode {
 	public MOPJavaCode(PropertyAndHandlers prop, String code, MOPVariable monitorName) {
 		this.prop = prop;
 		this.code = code;
-		if(this.code != null)
+		if (this.code != null)
 			this.code = this.code.trim();
 		this.monitorName = monitorName;
 	}
-	
+
 	public MOPJavaCode(PropertyAndHandlers prop, String code, MOPVariable monitorName, Set<String> localVars) {
 		this(prop, code, monitorName);
 		this.localVars = localVars;
 	}
-
 
 	public String rewriteVariables(String input) {
 		String ret = input;
@@ -49,11 +49,11 @@ public class MOPJavaCode {
 			String tagStr = matcher.group();
 			String varName = tagStr.replaceAll(tagPattern, "$1");
 			MOPVariable var;
-			
-			if(prop == null)
+
+			if (prop == null)
 				var = new MOPVariable(varName);
 			else {
-				if(localVars != null && localVars.contains(varName))
+				if (localVars != null && localVars.contains(varName))
 					var = new MOPVariable(varName);
 				else
 					var = new MOPVariable("Prop_" + prop.getPropertyId() + "_" + varName);
@@ -84,6 +84,11 @@ public class MOPJavaCode {
 
 		if (ret.length() != 0 && !ret.endsWith("\n"))
 			ret += "\n";
+
+		if (Main.dacapo) {
+			ret = ret.replaceAll("System.out.println\\(\"", "System.out.println\\(\"VIOLATION:");
+			ret = ret.replaceAll("System.err.println\\(\"", "System.err.println\\(\"VIOLATION:");
+		}
 
 		return ret;
 	}

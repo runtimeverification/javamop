@@ -90,7 +90,11 @@ public class AdviceAndPointCut {
 			ret += ")";
 			ret += " && ";
 		}
-		ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		if(Main.dacapo){
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
+		} else {
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		}
 
 		if (isAround)
 			ret += retType + " ";
