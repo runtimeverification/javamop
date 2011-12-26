@@ -27,6 +27,7 @@ class MOPFileFilter implements FilenameFilter {
 }
 
 public class Main {
+	
 	static String output_path = null;
 	public static boolean debug = false;
 	public static boolean noopt1 = false;
@@ -35,7 +36,12 @@ public class Main {
 	public static String aspectname = null;
 	public static boolean isJarFile = false;
 	public static String jarFilePath = null;
-	
+
+	public static final int NONE = 0;    
+	public static final int HANDLERS = 1;    
+	public static final int EVENTS = 2;    
+	public static int logLevel = NONE;
+
 	public static boolean dacapo = false;
 
 	/**
@@ -197,6 +203,10 @@ public class Main {
 		System.out.println("    -n | -aspectname <aspect name>\t  use the given aspect name instead of source code name");
 		System.out.println();
 
+		System.out.println("    -showevents\t\t\t  show every event/handler occurrence");
+		System.out.println("    -showhandlers\t\t\t  show every handler occurrence");
+		System.out.println();
+		
 		System.out.println("    -s | -statistics\t\t  generate monitor with statistics");
 		System.out.println("    -noopt1\t\t\t  don't use the enable set optimization");
 		System.out.println("    -javalib\t\t\t  generate a java library rather than an AspectJ file");
@@ -248,6 +258,12 @@ public class Main {
 			} else if (args[i].compareTo("-n") == 0 || args[i].compareTo("-aspectname") == 0) {
 				i++;
 				Main.aspectname = args[i];
+			} else if (args[i].compareTo("-showhandlers") == 0) {
+				if(Main.logLevel < Main.HANDLERS)
+					Main.logLevel = Main.HANDLERS;
+			} else if (args[i].compareTo("-showevents") == 0) {
+				if(Main.logLevel < Main.EVENTS)
+					Main.logLevel = Main.EVENTS;
 			} else if (args[i].compareTo("-dacapo") == 0) {
 				Main.dacapo = true;
 			} else {
