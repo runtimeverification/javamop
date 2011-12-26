@@ -19,7 +19,6 @@ public class SpecialAdviceBody extends AdviceBody {
 	MOPVariable monitor = new MOPVariable("monitor");
 	MOPVariable monitors = new MOPVariable("monitors");
 	MOPVariable m = new MOPVariable("m");
-	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 
 	HashMap<String, MOPVariable> tempRefs = new HashMap<String, MOPVariable>();
 	HashMap<String, MOPVariable> mopRefs = new HashMap<String, MOPVariable>();
@@ -154,7 +153,7 @@ public class SpecialAdviceBody extends AdviceBody {
 			if (mopSpec.isSync())
 				ret += "synchronized(" + globalLock.getName() + ") {\n";
 
-			ret += monitorClass.Monitoring(indexingTree.getName(), event, thisJoinPoint);
+			ret += monitorClass.Monitoring(indexingTree.getName(), event, null);
 
 			if (mopSpec.isSync())
 				ret += "}\n";
