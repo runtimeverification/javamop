@@ -43,6 +43,9 @@ public class Main {
 	public static int logLevel = NONE;
 
 	public static boolean dacapo = false;
+	public static boolean silent = false;
+
+	public static boolean merge = false;
 
 	/**
 	 * Process a java file including mop annotations to generate an aspectj
@@ -133,10 +136,6 @@ public class Main {
 		System.out.println(" " + Tool.getFileName(location) + "PluginOutput.txt is generated");
 	}
 
-	public static void process(String arg) {
-		process(arg.split(";"), "");
-	}
-
 	public static String polishPath(String path) {
 		if (path.indexOf("%20") > 0)
 			path = path.replaceAll("%20", " ");
@@ -178,6 +177,10 @@ public class Main {
 				System.out.println("");
 			}
 		}
+	}
+
+	public static void process(String arg) {
+		process(arg.split(";"), "");
 	}
 
 	// PM
@@ -266,6 +269,10 @@ public class Main {
 					Main.logLevel = Main.EVENTS;
 			} else if (args[i].compareTo("-dacapo") == 0) {
 				Main.dacapo = true;
+			} else if (args[i].compareTo("-silent") == 0) {
+				Main.silent = true;
+			} else if (args[i].compareTo("-merge") == 0) {
+				Main.merge = true;
 			} else {
 				if (files.length() != 0)
 					files += ";";
