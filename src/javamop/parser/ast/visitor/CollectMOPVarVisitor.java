@@ -469,8 +469,11 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 	}
 
 	public MOPParameters visit(QualifiedNameExpr n, MOPParameters arg) {
-		// This one might need to change, if MOP supports qualifiedName
-		return null;
+		MOPParameters ret = new MOPParameters();
+
+		process(ret, n.getQualifier(), arg);
+
+		return ret;
 	}
 
 	public MOPParameters visit(SuperMemberAccessExpr n, MOPParameters arg) {

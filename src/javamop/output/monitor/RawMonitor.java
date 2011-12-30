@@ -19,6 +19,7 @@ public class RawMonitor extends Monitor{
 	MOPVariable reset = new MOPVariable("reset");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 	
 	JavaMOPSpec mopSpec;
 	List<EventDefinition> events;
@@ -135,6 +136,10 @@ public class RawMonitor extends Monitor{
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
+		
+		if (this.hasThisJoinPoint){
+			ret += monitorVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
+		}
 
 		if (event.getPos().equals("around") && event.has__SKIP()) {
 			ret += skipAroundAdvice + " |= ";
@@ -142,6 +147,10 @@ public class RawMonitor extends Monitor{
 		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
+		
+		if (this.hasThisJoinPoint){
+			ret += monitorVar + "." + this.thisJoinPoint + " = null;\n";
+		}
 		
 		return ret;
 	}
@@ -171,6 +180,9 @@ public class RawMonitor extends Monitor{
 		if (this.has__LOC)
 			ret += "String " + loc + ";\n";
 
+		if (this.hasThisJoinPoint)
+			ret += "JoinPoint " + thisJoinPoint + " = null;\n";
+		
 		// events
 		for (EventDefinition event : this.events) {
 			ret += this.doEvent(event) + "\n";

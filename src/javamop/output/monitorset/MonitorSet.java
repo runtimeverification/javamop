@@ -16,19 +16,21 @@ public class MonitorSet {
 	MOPVariable setName;
 	MOPVariable monitorName;
 	WrapperMonitor monitor;
-	
+
 	boolean extendedNode = false;
-	
+
 	ArrayList<EventDefinition> events;
 	List<PropertyAndHandlers> properties;
 	boolean has__LOC;
+	boolean hasThisJoinPoint;
 	boolean existSkip = false;
-	
+
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 	MOPStatistics stat;
-	
+
 	public MonitorSet(String name, JavaMOPSpec mopSpec, WrapperMonitor monitor, boolean extendedNode) {
 		this.monitorName = monitor.getOutermostName();
 		this.monitor = monitor;
@@ -36,23 +38,24 @@ public class MonitorSet {
 		this.events = new ArrayList<EventDefinition>(mopSpec.getEvents());
 		this.properties = mopSpec.getPropertiesAndHandlers();
 		this.extendedNode = extendedNode;
-		
+
 		this.has__LOC = mopSpec.has__LOC();
-		
+		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
+
 		for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
 			for (BlockStmt handler : prop.getHandlers().values()) {
-				if (handler.toString().indexOf("__SKIP") != -1){
+				if (handler.toString().indexOf("__SKIP") != -1) {
 					existSkip = true;
 				}
 			}
 		}
 		for (EventDefinition event : events) {
-			if (event.has__SKIP()){
+			if (event.has__SKIP()) {
 				existSkip = true;
 				break;
 			}
 		}
-		
+
 		this.stat = new MOPStatistics(name, mopSpec);
 	}
 
@@ -64,42 +67,46 @@ public class MonitorSet {
 		return setName;
 	}
 
-	public String getNode(MOPVariable monitorVar, MOPVariable monitorSetVar){
+	public String getNode(MOPVariable monitorVar, MOPVariable monitorSetVar) {
 		String ret = "";
-		
+
 		ret += monitorVar + " = " + "((" + setName + ")" + monitorSetVar + ")" + ".node;\n";
-		
+
 		return ret;
 	}
-	
-	public String setNode(String monitorSetVar, MOPVariable monitorVar){
+
+	public String setNode(String monitorSetVar, MOPVariable monitorVar) {
 		String ret = "";
-		
+
 		ret += "((" + setName + ")" + monitorSetVar + ")" + ".node" + " = " + monitorVar + ";\n";
-		
+
 		return ret;
 	}
-	
-	public String addMonitor(String monitorSetVar, MOPVariable monitorVar){
+
+	public String addMonitor(String monitorSetVar, MOPVariable monitorVar) {
 		String ret = "";
-		
+
 		ret += monitorSetVar + ".add(" + monitorVar + ");\n";
-		
+
 		return ret;
 	}
-	
-	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc){
+
+	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc) {
 		String ret = "";
-		
+
 		boolean isAround = event.getPos().equals("around");
 
 		ret += "if (" + monitorSetVar + " != null) {\n";
-		
+
 		if (has__LOC) {
-			if(loc != null)
+			if (loc != null)
 				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + loc + ";\n";
 			else
 				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+		}
+
+		if (this.hasThisJoinPoint) {
+			ret += "((" + setName + ") " + monitorSetVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
 		}
 
 		if (isAround && event.has__SKIP()) {
@@ -109,12 +116,16 @@ public class MonitorSet {
 		ret += "((" + setName + ")" + monitorSetVar + ").event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
-		
+
 		if (isAround && event.has__SKIP()) {
 			ret += skipAroundAdvice + " |= " + monitorSetVar + "." + skipAroundAdvice + ";\n";
 		}
-		
+
 		ret += "}\n";
+
+		if (this.hasThisJoinPoint) {
+			ret += "((" + setName + ") " + monitorSetVar + "." + this.thisJoinPoint + " = null;\n";
+		}
 		
 		return ret;
 	}
@@ -128,17 +139,19 @@ public class MonitorSet {
 		// elementData and size are safe since they will be accessed by the prefix "this.".
 
 		ret += "class " + setName + " implements javamoprt.MOPSet {\n";
-		if(extendedNode)
+		if (extendedNode)
 			ret += "public " + monitorName + " node;\n";
 		ret += "protected " + monitorName + "[] elementData;\n";
 		ret += "public int size;\n";
 
 		if (has__LOC)
 			ret += "String " + loc + " = null;\n";
-		
-		if (existSkip){
+
+		if (existSkip)
 			ret += "boolean " + skipAroundAdvice + " = false;\n";
-		}
+
+		if (hasThisJoinPoint)
+			ret += "JoinPoint " + this.thisJoinPoint + " = null;\n";
 
 		ret += "\n";
 
@@ -270,13 +283,13 @@ public class MonitorSet {
 			ret += "break;\n";
 			ret += "}\n";
 			ret += "}\n";
-			
+
 			ret += "if(" + num_terminated_monitors + " != 0){\n";
 			ret += "this.elementData[" + i + "] = " + monitor + ";\n";
 			ret += "}\n";
 
 			ret += this.monitor.Monitoring(monitor, event, loc);
-			
+
 			ret += "}\n";
 
 			ret += "if(" + num_terminated_monitors + " != 0){\n";
@@ -287,7 +300,7 @@ public class MonitorSet {
 			ret += "this.elementData[" + i + "] = null;\n";
 			ret += "}\n";
 			ret += "}\n";
-			
+
 			ret += "}\n";
 		}
 

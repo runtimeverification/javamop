@@ -17,6 +17,7 @@ public class SuffixMonitor extends Monitor {
 	MOPVariable loc = new MOPVariable("MOP_loc");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
+	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 
 	List<EventDefinition> events;
 
@@ -160,6 +161,10 @@ public class SuffixMonitor extends Monitor {
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
+		if (this.hasThisJoinPoint){
+			ret += monitorVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
+		}
+
 		if (checkSkip && event.has__SKIP()) {
 			ret += monitorVar + "." + skipAroundAdvice + " = false;\n";
 		}
@@ -167,7 +172,11 @@ public class SuffixMonitor extends Monitor {
 		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
-		
+
+		if (this.hasThisJoinPoint){
+			ret += monitorVar + "." + this.thisJoinPoint + " = null;\n";
+		}
+
 		if (checkSkip && event.has__SKIP()) {
 			ret += skipAroundAdvice + " |= " + monitorVar + "." + skipAroundAdvice + ";\n";
 		}
@@ -191,9 +200,10 @@ public class SuffixMonitor extends Monitor {
 
 			if (this.has__LOC)
 				ret += "String " + loc + ";\n";
-			if (existSkip){
+			if (this.hasThisJoinPoint)
+				ret += "JoinPoint " + thisJoinPoint + " = null;\n";
+			if (existSkip)
 				ret += "boolean " + skipAroundAdvice + " = false;\n";
-			}
 
 			// clone()
 			ret += "public Object clone() {\n";

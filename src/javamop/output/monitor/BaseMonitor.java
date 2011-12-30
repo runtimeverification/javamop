@@ -42,6 +42,7 @@ public class BaseMonitor extends Monitor {
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 	MOPVariable conditionFail = new MOPVariable("MOP_conditionFail");
+	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 
 	// methods
 	MOPVariable reset = new MOPVariable("reset");
@@ -287,7 +288,11 @@ public class BaseMonitor extends Monitor {
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
-		
+
+		if (this.hasThisJoinPoint){
+			ret += monitorVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
+		}
+
 		if (checkSkip && event.has__SKIP()) {
 			ret += monitorVar + "." + skipAroundAdvice + " = false;\n";
 		}
@@ -329,6 +334,10 @@ public class BaseMonitor extends Monitor {
 				ret += "}\n";
 			}
 		}
+		
+		if (this.hasThisJoinPoint){
+			ret += monitorVar + "." + this.thisJoinPoint + " = null;\n";
+		}
 
 		return ret;
 	}
@@ -363,6 +372,8 @@ public class BaseMonitor extends Monitor {
 		ret += monitorDeclaration + "\n";
 		if (this.has__LOC)
 			ret += "String " + loc + ";\n";
+		if (this.hasThisJoinPoint)
+			ret += "JoinPoint " + thisJoinPoint + " = null;\n";
 
 		// references for saved parameters
 		for (MOPVariable v : varsToSave.values()) {

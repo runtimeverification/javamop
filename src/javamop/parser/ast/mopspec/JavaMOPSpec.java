@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javamop.MOPNameSpace;
 import javamop.MOPException;
+import javamop.MOPNameSpace;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.stmt.BlockStmt;
+import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 
@@ -300,6 +301,34 @@ public class JavaMOPSpec extends Node {
 			}
 		}
 		cachedHas__SKIP = new Boolean(false);
+		return false;
+	}
+	
+	private Boolean cachedHasThisJoinPoint = null;
+	
+	public boolean hasThisJoinPoint() {
+		if(cachedHasThisJoinPoint != null)
+			return cachedHasThisJoinPoint;
+		
+		for (EventDefinition event : this.events) {
+			if(event.getAction() == null)
+				continue;
+			BlockStmt block = event.getAction();
+			if (block.accept(new CheckThisJoinPointVisitor(), null)){
+				cachedHasThisJoinPoint = new Boolean(true);
+				return true;
+			}
+		}
+		
+		for (PropertyAndHandlers prop : this.properties) {
+			for (BlockStmt handler : prop.getHandlers().values()) {
+				if (handler.accept(new CheckThisJoinPointVisitor(), null)){
+					cachedHasThisJoinPoint = new Boolean(true);
+					return true;
+				}
+			}
+		}
+		cachedHasThisJoinPoint = new Boolean(false);
 		return false;
 	}
 	

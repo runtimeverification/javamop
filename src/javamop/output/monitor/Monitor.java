@@ -20,6 +20,7 @@ public abstract class Monitor {
 	boolean has__LOC;
 	boolean has__SKIP;
 	boolean handlersHave__SKIP;
+	boolean hasThisJoinPoint;
 
 	OptimizedCoenableSet coenableSet;
 
@@ -33,6 +34,7 @@ public abstract class Monitor {
 
 		this.has__LOC = mopSpec.has__LOC();
 		this.has__SKIP = mopSpec.has__SKIP();
+		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
 		
 		this.handlersHave__SKIP = false; 
 		for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {

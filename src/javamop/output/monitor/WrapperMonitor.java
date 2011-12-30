@@ -17,6 +17,7 @@ public class WrapperMonitor extends Monitor {
 	MOPVariable loc = new MOPVariable("MOP_loc");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
+	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 
 	MOPVariable monitor = new MOPVariable("monitor");
 	MOPVariable disable = new MOPVariable("disable");
@@ -27,8 +28,7 @@ public class WrapperMonitor extends Monitor {
 	SuffixMonitor suffixMonitor = null;
 	boolean existSkip = false;
 
-	public WrapperMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost)
-			throws MOPException {
+	public WrapperMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost);
 
 		this.isDefined = mopSpec.isGeneral();
@@ -47,11 +47,11 @@ public class WrapperMonitor extends Monitor {
 			if (mopSpec.isFullBinding() || mopSpec.isConnected()) {
 				monitorInfo = new MonitorInfo(mopSpec);
 			}
-			
+
 			for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
-				if(!existSkip){
+				if (!existSkip) {
 					for (BlockStmt handler : prop.getHandlers().values()) {
-						if (handler.toString().indexOf("__SKIP") != -1){
+						if (handler.toString().indexOf("__SKIP") != -1) {
 							existSkip = true;
 							break;
 						}
@@ -60,7 +60,7 @@ public class WrapperMonitor extends Monitor {
 			}
 
 			for (EventDefinition event : events) {
-				if (event.has__SKIP()){
+				if (event.has__SKIP()) {
 					existSkip = true;
 					break;
 				}
@@ -146,7 +146,7 @@ public class WrapperMonitor extends Monitor {
 		}
 
 		ret += suffixMonitor.Monitoring(monitor, event, loc);
-		
+
 		ret += "}\n";
 
 		return ret;
@@ -162,10 +162,14 @@ public class WrapperMonitor extends Monitor {
 		ret += "if (" + monitorVar + "." + monitor + " != null){\n";
 
 		if (has__LOC) {
-			if(loc != null)
+			if (loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+		}
+
+		if (this.hasThisJoinPoint) {
+			ret += monitorVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
 		}
 
 		if (checkSkip && event.has__SKIP()) {
@@ -175,9 +179,13 @@ public class WrapperMonitor extends Monitor {
 		ret += monitorVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
-		
+
 		if (checkSkip && event.has__SKIP()) {
 			ret += skipAroundAdvice + " |= " + monitorVar + "." + skipAroundAdvice + ";\n";
+		}
+
+		if (this.hasThisJoinPoint) {
+			ret += monitorVar + "." + this.thisJoinPoint + " = null;\n";
 		}
 
 		ret += "}\n";
@@ -197,13 +205,12 @@ public class WrapperMonitor extends Monitor {
 
 			ret += "public " + suffixMonitor.getOutermostName() + " " + monitor + " = null;\n";
 
-			if (this.has__LOC){
+			if (this.has__LOC)
 				ret += "String " + loc + ";\n";
-			}
-
-			if (existSkip){
+			if (this.hasThisJoinPoint)
+				ret += "JoinPoint " + thisJoinPoint + " = null;\n";
+			if (existSkip)
 				ret += "boolean " + skipAroundAdvice + " = false;\n";
-			}
 
 			ret += "public long " + disable + " = 1;\n";
 			ret += "public long " + tau + " = 1;\n";
