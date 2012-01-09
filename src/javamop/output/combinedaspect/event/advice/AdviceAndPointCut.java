@@ -1,6 +1,8 @@
 package javamop.output.combinedaspect.event.advice;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javamop.MOPException;
 import javamop.Main;
@@ -27,6 +29,8 @@ public class AdviceAndPointCut {
 	public MOPParameters threadVars = new MOPParameters();
 	MOPStatistics stat;
 
+	LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
+	
 	HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
 
 	public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
@@ -56,6 +60,8 @@ public class AdviceAndPointCut {
 		else
 			this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
 		
+		this.events.add(event);
+		
 		this.pointcut = event.getPointCut();
 	}
 
@@ -73,6 +79,8 @@ public class AdviceAndPointCut {
 			this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
 		else
 			this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
+		
+		this.events.add(event);
 	}
 
 	public String toString() {
@@ -119,7 +127,15 @@ public class AdviceAndPointCut {
 			ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
 		}
 
-		for (EventDefinition event : advices.keySet()) {
+		Iterator<EventDefinition> iter;
+		if(this.pos.equals("before"))
+			iter = this.events.descendingIterator();
+		else
+			iter = this.events.iterator();
+		
+		while(iter.hasNext()){
+			EventDefinition event = iter.next(); 
+					
 			AdviceBody advice = advices.get(event);
 
 			if(advices.size() > 1){
