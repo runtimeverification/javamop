@@ -30,7 +30,7 @@ TOKEN : {
   | <UPPERCASE : ["A"-"Z"] >
   | <BEGIN     : "^"       >
   | <END       : "$"       >
-  
+  | <ARROW     : "->"      > 
 }
 
 void Start() : {}
