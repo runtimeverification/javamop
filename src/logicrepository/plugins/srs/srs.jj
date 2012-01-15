@@ -1,0 +1,43 @@
+options {
+  STATIC = false;
+  ERROR_REPORTING = true;
+}
+
+PARSER_BEGIN(SRSParser)
+  package logicrepository.plugins.srs;
+
+  import java.util.ArrayList;
+  import java.util.HashMap;
+  import java.util.HashSet;
+  import java.io.*;
+
+  public class SRSParser {
+   
+
+  }
+
+PARSER_END(SRSParser)
+
+SKIP : {
+  <WHITESPACE: [" ","\t", "\r", "\n"]>
+}
+
+TOKEN : {
+    <ALT       : "|"       >
+  | <EPSILON   : "epsilon" >
+  | <COMMA     : ","       >
+  | <LOWERCASE : ["a"-"z"] >
+  | <UPPERCASE : ["A"-"Z"] >
+  | <BEGIN     : "^"       >
+  | <END       : "$"       >
+  
+}
+
+void Start() : {}
+{
+
+  <EOF>
+
+}
+  
+
