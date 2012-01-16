@@ -12,8 +12,25 @@ PARSER_BEGIN(SRSParser)
   import java.io.*;
 
   public class SRSParser {
-   
+    public static SRSParser parse(InputStream input) {
+      SRSParser srsParser = new SRSParser(input);
+      try{
+        srsParser.Start();
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+        System.exit(1);
+      }
+      return srsParser;
+    }
 
+    public static void main(String[] args) throws ParseException, TokenMgrError {
+      SRSParser parser = new SRSParser(System.in);
+      parser.Start();
+      ArrayList<Rule> srs = parser.getSRS();
+      System.out.println(srs.toString());
+    }
+  
   }
 
 PARSER_END(SRSParser)
@@ -31,6 +48,7 @@ TOKEN : {
   | <BEGIN     : "^"       >
   | <END       : "$"       >
   | <ARROW     : "->"      > 
+  | <HASH      : "#"       >
 }
 
 void Start() : {}
