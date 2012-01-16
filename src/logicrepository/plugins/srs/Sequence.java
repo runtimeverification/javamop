@@ -12,7 +12,7 @@ public class Sequence extends ArrayList<Symbol> {
     return sb.toString();
   }
 
-  public Sequence Terminals(){
+  public Sequence getTerminals(){
     Sequence ret = new Sequence();
     for(Symbol s : this){
       if(s instanceof Terminal){
@@ -22,7 +22,7 @@ public class Sequence extends ArrayList<Symbol> {
     return ret;
   }
 
-  public Sequence Variables(){
+  public Sequence getVariables(){
     Sequence ret = new Sequence();
     for(Symbol s : this){
       if(s instanceof Variable){

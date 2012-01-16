@@ -27,10 +27,24 @@ PARSER_BEGIN(SRSParser)
     public static void main(String[] args) throws ParseException, TokenMgrError {
       SRSParser parser = new SRSParser(System.in);
       parser.Start();
-      ArrayList<Rule> srs = parser.getSRS();
+      SRS srs = parser.getSRS();
       System.out.println(srs.toString());
+//      for(Rule r : srs){
+//        System.out.println("LHS VAR: " + r.lhs.getVariables());
+//        System.out.println("LHS TERM: " + r.lhs.getTerminals());
+//        System.out.println("RHS VAR: " + r.rhs.getVariables());
+//        System.out.println("RHS TERM: " + r.rhs.getTerminals());
+//        for(Symbol v : r.lhs.getVariables()){
+//          Symbol v2 = Variable.get("Foo");
+//          System.out.println(v.toString() + " " + (v2 == v));
+//        }
+//      }
+      
     }
   
+    private SRS srs;
+    public SRS getSRS() { return srs; }
+
   }
 
 PARSER_END(SRSParser)
@@ -40,22 +54,77 @@ SKIP : {
 }
 
 TOKEN : {
-    <ALT       : "|"       >
-  | <EPSILON   : "epsilon" >
+    <EPSILON   : "epsilon" >
   | <COMMA     : ","       >
   | <LOWERCASE : ["a"-"z"] >
   | <UPPERCASE : ["A"-"Z"] >
+  | <CHARACTER : <LOWERCASE>|<UPPERCASE>|"_" >   
   | <BEGIN     : "^"       >
   | <END       : "$"       >
   | <ARROW     : "->"      > 
   | <HASH      : "#"       >
+  | <TERMINAL  : <LOWERCASE>(<CHARACTER>)* >
+  | <VARIABLE  : <UPPERCASE>(<CHARACTER>)* >
 }
 
-void Start() : {}
+void Start() : {
+  srs = new SRS();
+}
 {
-
-  <EOF>
-
+  Srs() <EOF>
 }
-  
+
+void Srs() : {
+  Rule r;
+}
+{
+  r = Rule()
+  { srs.add(r); }
+  (
+    ","
+   r = Rule()
+   {srs.add(r); }
+  )*
+}
+
+Rule Rule() : {
+  Rule ret = new Rule();
+  Sequence s;
+}
+{
+  s = Sequence()
+  {ret.lhs = s; } 
+  "->"
+  s = Sequence()
+  {ret.rhs = s; }
+  { return ret; }
+}
+
+Sequence Sequence() : {
+  Sequence ret = new Sequence();
+  Symbol s;
+}
+{
+  s = Symbol()
+  { ret.add(s); }
+  (
+    s = Symbol()
+    { ret.add(s); }
+  )*
+  { return ret; }
+}
+
+Symbol Symbol() : {
+  Token t;
+}
+{
+  (
+    t = <TERMINAL> 
+    { return Terminal.get(t.image); }
+  ) 
+  | (
+    t = <VARIABLE>
+    { return Variable.get(t.image); }
+  )
+}
 
