@@ -54,7 +54,7 @@ SKIP : {
 }
 
 TOKEN : {
-    <EPSILON   : "epsilon" >
+    <EPSILON   : "\\epsilon" >
   | <COMMA     : ","       >
   | <LOWERCASE : ["a"-"z"] >
   | <UPPERCASE : ["A"-"Z"] >
@@ -103,15 +103,23 @@ Rule Rule() : {
 Sequence Sequence() : {
   Sequence ret = new Sequence();
   Symbol s;
+  Token t;
 }
 {
+  [ t = "^" 
+    { ret.add(Begin.get()); }
+  ]
   s = Symbol()
   { ret.add(s); }
   (
     s = Symbol()
     { ret.add(s); }
   )*
+  [ t = "$" 
+    { ret.add(End.get()); }
+  ]
   { return ret; }
+  
 }
 
 Symbol Symbol() : {
@@ -124,6 +132,10 @@ Symbol Symbol() : {
   ) 
   | (
     t = <VARIABLE>
+    { return Variable.get(t.image); }
+  )
+  | (
+    t = "\\epsilon"
     { return Variable.get(t.image); }
   )
 }
