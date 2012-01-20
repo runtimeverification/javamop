@@ -31,4 +31,8 @@ public class Sequence extends ArrayList<Symbol> {
     }
     return ret;
   }
+
+  public void advance(Symbol s){
+
+  }
 }
