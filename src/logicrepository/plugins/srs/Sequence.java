@@ -12,6 +12,14 @@ public class Sequence extends ArrayList<Symbol> {
     super();
   }
 
+  public Sequence(ArrayList<Symbol> symbols){
+    for(Symbol s : symbols){
+      if(s == null) continue;
+      add(s);
+    }
+    if(size() == 0) add(Epsilon.get());
+  }
+
   public String toString(){
     StringBuilder sb = new StringBuilder();
     for(Symbol s : this){
@@ -39,6 +47,68 @@ public class Sequence extends ArrayList<Symbol> {
       }
     }
     return ret;
+  }
+
+  
+  //some simplifications to an SRS that make generating pattern match
+  //automata easier.
+  //
+  //1) variables concatenation is idempotent 
+  //   collapse adjacent variables
+  //
+  //2) ^A can be removed where A is a Variable
+  //
+  //3) A$ can be removed where A is, again, a variable
+  public Sequence simplify(){
+    Symbol begin = Begin.get();
+    Symbol end   = End.get();
+    if(size() == 1) {
+      if(get(0) == begin || get(0) == end) {
+        Sequence ret = new Sequence();
+        ret.add(Epsilon.get());
+        return ret;
+      }
+      return copy();
+    }
+    ArrayList<Symbol> symbols = new ArrayList<Symbol>(size());
+    for(Symbol s : this){
+      symbols.add(s);
+    }
+    if(symbols.get(0) == begin && (symbols.get(1) instanceof Variable)){
+      symbols.set(0, null);
+      symbols.set(1, null);
+    }
+    else if(symbols.get(0) instanceof Variable){
+      symbols.set(0, null);
+    }
+    if(symbols.get(size() - 1) == end && (symbols.get(size() - 2) instanceof Variable)){
+      symbols.set(size() - 1, null);
+      symbols.set(size() - 2, null);
+    }
+    else if(symbols.get(size() -1) instanceof Variable){
+      symbols.set(size() - 1, null);
+    }
+    
+    if(symbols.get(0) == null){
+      for(int i = 1; i < size(); ++i){
+        if(symbols.get(i) instanceof Terminal) break;
+        symbols.set(i, null);
+      }
+    }
+
+    if(symbols.get(size() - 1) == null){
+      for(int i = size() - 1; i >= 0; --i){
+        if(symbols.get(i) instanceof Terminal) break;
+        symbols.set(i, null);
+      }
+    }
+
+    for(int i = 0; i < size() - 1; ++i){
+      if((symbols.get(i) instanceof Variable) && (symbols.get(i + 1) instanceof Variable))
+        symbols.set(i, null);
+    }
+
+    return new Sequence(symbols);
   }
 
   // attempts to generate a new sequence with the cursor

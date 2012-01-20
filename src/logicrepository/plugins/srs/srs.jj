@@ -29,6 +29,7 @@ PARSER_BEGIN(SRSParser)
       parser.Start();
       SRS srs = parser.getSRS();
       System.out.println(srs.toString());
+      System.out.println(srs.simplify().toString());
 //      for(Rule r : srs){
 //        System.out.println("LHS VAR: " + r.lhs.getVariables());
 //        System.out.println("LHS TERM: " + r.lhs.getTerminals());
@@ -92,15 +93,15 @@ Rule Rule() : {
   Sequence s;
 }
 {
-  s = Sequence()
+  s = LSequence()
   {ret.lhs = s; } 
   "->"
-  s = Sequence()
+  s = RSequence()
   {ret.rhs = s; }
   { return ret; }
 }
 
-Sequence Sequence() : {
+Sequence LSequence() : {
   Sequence ret = new Sequence();
   Symbol s;
   Token t;
@@ -120,6 +121,21 @@ Sequence Sequence() : {
   ]
   { return ret; }
   
+}
+
+
+Sequence RSequence() : {
+  Sequence ret = new Sequence();
+  Symbol s;
+}
+{
+  s = Symbol()
+  { ret.add(s); }
+  (
+    s = Symbol()
+    { ret.add(s); }
+  )*
+  { return ret; }
 }
 
 Symbol Symbol() : {
