@@ -29,18 +29,12 @@ PARSER_BEGIN(SRSParser)
       parser.Start();
       SRS srs = parser.getSRS();
       System.out.println(srs.toString());
-      System.out.println(srs.simplify().toString());
-//      for(Rule r : srs){
-//        System.out.println("LHS VAR: " + r.lhs.getVariables());
-//        System.out.println("LHS TERM: " + r.lhs.getTerminals());
-//        System.out.println("RHS VAR: " + r.rhs.getVariables());
-//        System.out.println("RHS TERM: " + r.rhs.getTerminals());
-//        for(Symbol v : r.lhs.getVariables()){
-//          Symbol v2 = Variable.get("Foo");
-//          System.out.println(v.toString() + " " + (v2 == v));
-//        }
-//      }
-      
+      SRS simple = srs.simplify().initial();
+      System.out.println(simple.toString());
+      for(String s : args){
+        System.out.println("Advanced by " + s);
+        System.out.println(simple.advance(Symbol.get(s)));
+      } 
     }
   
     private SRS srs;

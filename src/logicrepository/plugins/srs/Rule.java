@@ -4,8 +4,21 @@ public class Rule {
   public Sequence lhs;
   public Sequence rhs; 
 
+  @Override
   public String toString(){
     return lhs.toString() + " -> " + rhs.toString();
+  }
+
+  @Override
+  public boolean equals(Object o){
+    if(!(o instanceof Rule)) return false;
+    Rule r = (Rule) o;
+    return (lhs.equals(r.lhs) && rhs.equals(r.rhs));
+  }
+
+  @Override
+  public int hashCode(){
+    return lhs.hashCode() ^ rhs.hashCode();
   }
 
   // Simplifying a rule entails first simplifying the sequence on
@@ -67,5 +80,20 @@ public class Rule {
         rhs.add(X2);
       }
     }
+  }
+
+  public Rule[] advance(Symbol s){
+    Sequence[] results = lhs.advance(s);
+    if(results == null) return null;
+    Rule[] ret = new Rule[results.length];
+    ret[0] = new Rule();
+    ret[0].lhs = results[0];
+    ret[0].rhs = rhs;
+    if(results.length == 2){
+      ret[1] = new Rule();
+      ret[1].lhs = results[1];
+      ret[1].rhs = rhs;
+    }
+    return ret;
   }
 }
