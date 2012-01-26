@@ -29,12 +29,14 @@ PARSER_BEGIN(SRSParser)
       parser.Start();
       SRS srs = parser.getSRS();
       System.out.println(srs.toString());
-      SRS simple = srs.simplify().initial();
-      System.out.println(simple.toString());
+
+
+      ArrayList<Symbol> inputs = new ArrayList<Symbol>();
       for(String s : args){
-        System.out.println("Advanced by " + s);
-        System.out.println(simple.advance(Symbol.get(s)));
-      } 
+        inputs.add(Terminal.get(s));
+      }
+      PatternMatchAutomaton pma = new PatternMatchAutomaton (srs, inputs); 
+      System.out.println(pma); 
     }
   
     private SRS srs;
