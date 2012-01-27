@@ -82,6 +82,11 @@ public class Rule {
     }
   }
 
+  //advance the cursor in a rule
+  //by a given symbol
+  //return null if it cannot be advanced
+  //(such as if the cursor is before Terminal "a"
+  //and we are advancing by Terminal "b"
   public Rule[] advance(Symbol s){
     Sequence[] results = lhs.advance(s);
     if(results == null) return null;
@@ -95,5 +100,10 @@ public class Rule {
       ret[1].rhs = rhs;
     }
     return ret;
+  }
+
+  //return whether or not a rule is final (has the cursor before $).
+  public boolean isFinal(){
+    return (Cursor.get() == lhs.get(lhs.size() - 2));
   }
 }

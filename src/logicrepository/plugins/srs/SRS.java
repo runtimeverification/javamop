@@ -64,5 +64,17 @@ public class SRS extends LinkedHashSet<Rule> {
     return ret;
   }
 
+  //this is an inplace modification
+  //this method removes all rules from an SRS
+  //that are not in accept states (i.e. those without cursor before $).
+  public void makeFinal(){
+    for(Rule r : this){
+      if(!r.isFinal()) {
+        System.out.println("removing ===> " + r);
+        remove(r);
+      }
+    } 
+  }
+
 }
 
