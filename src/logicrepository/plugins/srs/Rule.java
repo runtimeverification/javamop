@@ -104,6 +104,10 @@ public class Rule {
 
   //return whether or not a rule is final (has the cursor before $).
   public boolean isFinal(){
-    return (Cursor.get() == lhs.get(lhs.size() - 2));
+    if(lhs.size() < 3) return false;
+    Symbol cursor = Cursor.get();
+    return (cursor == lhs.get(lhs.size() - 2))
+          || ((cursor == lhs.get(lhs.size() - 3) 
+                && (lhs.get(lhs.size() - 2) instanceof Variable))) ;
   }
 }

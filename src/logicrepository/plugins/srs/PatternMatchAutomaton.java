@@ -25,7 +25,10 @@ public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SR
     return sb.toString();
   }
 
-  
+  public PatternMatchAutomaton(){
+    super();
+  }
+
   //construct a Pattern Match Automaton from an initial SRS
   public PatternMatchAutomaton(SRS srs, ArrayList<Symbol> inputs){
     SRS initial = srs.simplify().initial(); 
@@ -53,12 +56,18 @@ public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SR
   }
 
   //remove non-final rules from the automaton
-  //Note that this is destructive
   public PatternMatchAutomaton makeFinal(){
+    PatternMatchAutomaton ret = new PatternMatchAutomaton();
     for(SRS state : keySet()){
-      state.makeFinal();
+      HashMap<Symbol, SRS> trans = get(state);
+      HashMap<Symbol, SRS> finalizedTrans = new HashMap<Symbol, SRS>(); 
+      SRS finalizedState = state.makeFinal();
+      for(Symbol s : trans.keySet()){
+        finalizedTrans.put(s, trans.get(s).makeFinal());
+      }
+      ret.put(finalizedState, finalizedTrans);
     }
-    return this;
+    return ret;
   }
 
 }
