@@ -1,5 +1,6 @@
 package logicrepository.plugins.srs;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class SRS extends LinkedHashSet<Rule> {
@@ -68,11 +69,16 @@ public class SRS extends LinkedHashSet<Rule> {
   //this method removes all rules from an SRS
   //that are not in accept states (i.e. those without cursor before $).
   public void makeFinal(){
+    ArrayList<Rule> toReplace = new ArrayList<Rule>();
     for(Rule r : this){
       if(!r.isFinal()) {
         System.out.println("removing ===> " + r);
         remove(r);
+        toReplace.add(r);
       }
+    } 
+    for(Rule r : toReplace){
+      add(RulePlaceHolder.get(r));
     } 
   }
 
