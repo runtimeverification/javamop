@@ -136,11 +136,12 @@ public class Main {
 			if(specFiles.size() == 1) {
 				aspectName = Tool.getFileName(specFiles.get(0).getAbsolutePath());
 			} else {
-				int suffixNumber = 1;
+				int suffixNumber = 0;
 				// generate auto name like 'MultiMonitorApsect.aj'
 				
 				File aspectFile;
 				do{
+					suffixNumber++;
 					aspectFile = new File(outputDir.getAbsolutePath() + File.separator + "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
 				} while(aspectFile.exists());
 				
