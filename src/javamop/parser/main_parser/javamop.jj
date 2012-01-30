@@ -1460,6 +1460,7 @@ BaseTypePattern TypePattern():
         { 
           line = token.beginLine; column = token.beginColumn; id = token.image;}
 	("." {id += token.image;} (<IDENTIFIER> | "get" | "set") {id += token.image;})*
+	("[" {id += token.image;} "]" {id += token.image;})*
 	["+" {id += token.image;}]
 	{ return new BaseTypePattern(line, column, id); }
 }
