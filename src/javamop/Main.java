@@ -10,8 +10,10 @@ package javamop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 import javamop.logicclient.LogicRepositoryConnector;
+import javamop.parser.ast.MOPSpecFile;
 import javamop.util.Tool;
 
 class JavaFileFilter implements FilenameFilter {
@@ -27,8 +29,8 @@ class MOPFileFilter implements FilenameFilter {
 }
 
 public class Main {
-	
-	static String output_path = null;
+
+	static File outputDir = null;
 	public static boolean debug = false;
 	public static boolean noopt1 = false;
 	public static boolean toJavaLib = false;
@@ -37,9 +39,9 @@ public class Main {
 	public static boolean isJarFile = false;
 	public static String jarFilePath = null;
 
-	public static final int NONE = 0;    
-	public static final int HANDLERS = 1;    
-	public static final int EVENTS = 2;    
+	public static final int NONE = 0;
+	public static final int HANDLERS = 1;
+	public static final int EVENTS = 2;
 	public static int logLevel = NONE;
 
 	public static boolean dacapo = false;
@@ -47,45 +49,72 @@ public class Main {
 
 	public static boolean merge = false;
 
+	static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
+		if(Main.outputDir != null){
+			return outputDir;
+		}
+
+		boolean sameDir = true;
+		File parentFile = null;
+		
+		for(File file : specFiles){
+			if(parentFile == null){
+				parentFile = file.getParentFile();
+			} else {
+				if(file.getParentFile().equals(parentFile)){
+					continue;
+				} else {
+					sameDir = false;
+					break;
+				}
+			}
+		}
+		
+		if(sameDir){
+			return parentFile;
+		} else {
+			return new File(".");
+		}
+	}
+	
+	
 	/**
-	 * Process a java file including mop annotations to generate an aspectj
-	 * file. The path argument should be an existing java file name. The
-	 * location argument should contain the original file name, But it may have
-	 * a different directory.
+	 * Process a java file including mop annotations to generate an aspectj file. The path argument should be an existing java file name. The location
+	 * argument should contain the original file name, But it may have a different directory.
 	 * 
 	 * @param path
 	 *            an absolute path of a specification file
 	 * @param location
 	 *            an absolute path for result file
 	 */
-	public static void processJavaFile(String path, String location) throws Exception {
-		String content = Tool.convertFileToString(path);
-
+	public static void processJavaFile(File file, String location) throws MOPException {
 		MOPNameSpace.init();
-		AnnotationProcessor processor = new AnnotationProcessor(Main.aspectname == null ? Tool.getFileName(path) : Main.aspectname);
+		String specStr = SpecExtractor.process(file);
+		MOPSpecFile spec =  SpecExtractor.parse(specStr);
+		
+		MOPProcessor processor = new MOPProcessor(Main.aspectname == null ? Tool.getFileName(file.getAbsolutePath()) : Main.aspectname);
 
-		String aspect = processor.process(content);
+		String aspect = processor.process(spec);
 		writeAspectFile(aspect, location);
 	}
 
 	/**
-	 * Process a specification file to generate an aspectj file. The path
-	 * argument should be an existing specification file name. The location
-	 * argument should contain the original file name, But it may have a
-	 * different directory.
+	 * Process a specification file to generate an aspectj file. The path argument should be an existing specification file name. The location
+	 * argument should contain the original file name, But it may have a different directory.
 	 * 
 	 * @param path
 	 *            an absolute path of a specification file
 	 * @param location
 	 *            an absolute path for result file
 	 */
-	public static void processSpecFile(String path, String location) throws Exception {
-		String content = Tool.convertFileToString(path);
-
+	public static void processSpecFile(File file, String location) throws MOPException {
 		MOPNameSpace.init();
-		SpecificationProcessor processor = new SpecificationProcessor(Main.aspectname == null ? Tool.getFileName(path) : Main.aspectname);
+		String specStr = SpecExtractor.process(file);
+		MOPSpecFile spec =  SpecExtractor.parse(specStr);
 
-		String output = processor.process(content);
+		MOPProcessor processor = new MOPProcessor(Main.aspectname == null ? Tool.getFileName(file.getAbsolutePath()) : Main.aspectname);
+
+		String output = processor.process(spec);
 
 		if (toJavaLib) {
 			writeJavaLibFile(output, location);
@@ -93,46 +122,118 @@ public class Main {
 			writeAspectFile(output, location);
 		}
 	}
+	
+	public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
+		String aspectName;
+		
+		if(outputDir == null){
+			outputDir = getTargetDir(specFiles);
+		}
+		
+		if(Main.aspectname != null) {
+			aspectName = Main.aspectname;
+		} else {
+			if(specFiles.size() == 1) {
+				aspectName = Tool.getFileName(specFiles.get(0).getAbsolutePath());
+			} else {
+				int suffixNumber = 1;
+				// generate auto name like 'MultiMonitorApsect.aj'
+				
+				File aspectFile;
+				do{
+					aspectFile = new File(outputDir.getAbsolutePath() + File.separator + "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
+				} while(aspectFile.exists());
+				
+				aspectName = "MultiSpec_" + suffixNumber;
+			}
+		}
+		
+		MOPNameSpace.init();
+		ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
+		for(File file : specFiles){
+			String specStr = SpecExtractor.process(file);
+			MOPSpecFile spec =  SpecExtractor.parse(specStr);
+			
+			specs.add(spec);
+		}
+		MOPSpecFile combinedSpec = SpecCombiner.process(specs);
+		
+		MOPProcessor processor = new MOPProcessor(aspectName);
+		String output = processor.process(combinedSpec);
+		
+		writeCombinedAspectFile(output, aspectName);
+	}
 
-	protected static void writeJavaFile(String javaContent, String location) throws Exception {
+	protected static void writeJavaFile(String javaContent, String location) throws MOPException {
 		if ((javaContent == null) || (javaContent.length() == 0))
 			throw new MOPException("Nothing to write as a java file");
 		if (!Tool.isJavaFile(location))
 			throw new MOPException(location + "should be a Java file!");
 
-		FileWriter f = new FileWriter(location);
-		f.write(javaContent);
-		f.close();
+		try {
+			FileWriter f = new FileWriter(location);
+			f.write(javaContent);
+			f.close();
+		} catch (Exception e) {
+			throw new MOPException(e.getMessage());
+		}
+	}
+	
+	protected static void writeCombinedAspectFile(String aspectContent, String aspectName) throws MOPException {
+		if (aspectContent == null || aspectContent.length() == 0)
+			return;
+
+		try {
+			FileWriter f = new FileWriter(outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj");
+			f.write(aspectContent);
+			f.close();
+		} catch (Exception e) {
+			throw new MOPException(e.getMessage());
+		}
+		System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
 	}
 
-	protected static void writeAspectFile(String aspectContent, String location) throws Exception {
+	protected static void writeAspectFile(String aspectContent, String location) throws MOPException {
 		if (aspectContent == null || aspectContent.length() == 0)
 			return;
 
 		int i = location.lastIndexOf(File.separator);
-		FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "MonitorAspect.aj");
-		f.write(aspectContent);
-		f.close();
+		try {
+			FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "MonitorAspect.aj");
+			f.write(aspectContent);
+			f.close();
+		} catch (Exception e) {
+			throw new MOPException(e.getMessage());
+		}
 		System.out.println(" " + Tool.getFileName(location) + "MonitorAspect.aj is generated");
 	}
 
-	protected static void writeJavaLibFile(String javaLibContent, String location) throws Exception {
+	protected static void writeJavaLibFile(String javaLibContent, String location) throws MOPException {
 		if (javaLibContent == null || javaLibContent.length() == 0)
 			return;
 
 		int i = location.lastIndexOf(File.separator);
-		FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "JavaLibMonitor.java");
-		f.write(javaLibContent);
-		f.close();
+		try {
+			FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "JavaLibMonitor.java");
+			f.write(javaLibContent);
+			f.close();
+		} catch (Exception e) {
+			throw new MOPException(e.getMessage());
+		}
 		System.out.println(" " + Tool.getFileName(location) + "JavaLibMonitor.java is generated");
 	}
 
 	// PM
-	protected static void writePluginOutputFile(String pluginOutput, String location) throws Exception {
+	protected static void writePluginOutputFile(String pluginOutput, String location) throws MOPException {
 		int i = location.lastIndexOf(File.separator);
-		FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "PluginOutput.txt");
-		f.write(pluginOutput);
-		f.close();
+
+		try {
+			FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "PluginOutput.txt");
+			f.write(pluginOutput);
+			f.close();
+		} catch (Exception e) {
+			throw new MOPException(e.getMessage());
+		}
 		System.out.println(" " + Tool.getFileName(location) + "PluginOutput.txt is generated");
 	}
 
@@ -143,43 +244,59 @@ public class Main {
 		return path;
 	}
 
-	public static void process(String[] files, String path) {
-		// iterate over every supplied file
+	public static ArrayList<File> collectFiles(String[] files, String path) throws MOPException {
+		ArrayList<File> ret = new ArrayList<File>();
+
 		for (String file : files) {
 			String fPath = path.length() == 0 ? file : path + File.separator + file;
-
 			File f = new File(fPath);
 
-			// if the file does not exist, alert the user
 			if (!f.exists()) {
-				System.err.println("[Error] Target file, " + file + ", doesn't exsit!");
-				System.err.println("");
-				// if it is a directory, recursively process all the files in it
+				throw new MOPException("[Error] Target file, " + file + ", doesn't exsit!");
 			} else if (f.isDirectory()) {
-				process(f.list(new JavaFileFilter()), f.getAbsolutePath());
-				process(f.list(new MOPFileFilter()), f.getAbsolutePath());
+				ret.addAll(collectFiles(f.list(new JavaFileFilter()), f.getAbsolutePath()));
+				ret.addAll(collectFiles(f.list(new MOPFileFilter()), f.getAbsolutePath()));
 			} else {
-				try {
-					String location = output_path == null ? f.getAbsolutePath() : output_path + File.separator + f.getName();
-					System.out.println("-Processing " + file);
-					if (Tool.isSpecFile(file)) {
-						processSpecFile(f.getAbsolutePath(), location);
-					} else if (Tool.isJavaFile(file)) {
-						processJavaFile(f.getAbsolutePath(), location);
-					} else
-						throw new MOPException("Unrecognized file type! The JavaMOP specification file should have .mop as the extension.");
-				} catch (Exception e) {
-					// any exceptions should be printed to the user on stderr
-					System.err.println(" [Error]" + e.getMessage());
-					if (Main.debug)
-						e.printStackTrace();
+				if (Tool.isSpecFile(file)) {
+					ret.add(f);
+				} else if (Tool.isJavaFile(file)) {
+					ret.add(f);
+				} else
+					throw new MOPException("Unrecognized file type! The JavaMOP specification file should have .mop as the extension.");
+			}
+		}
+
+		return ret;
+	}
+
+	public static void process(String[] files, String path) throws MOPException {
+		ArrayList<File> specFiles = collectFiles(files, path);
+		
+		if(Main.aspectname != null && files.length > 1){
+			Main.merge = true;
+		}
+		
+		if (Main.merge) {
+			System.out.println("-Processing " + specFiles.size() + " specification(s)");
+			processMultipleFiles(specFiles);
+		} else {
+			for (File file : specFiles) {
+				String location = outputDir == null ? file.getAbsolutePath() : outputDir.getAbsolutePath() + File.separator + file.getName();
+
+				System.out.println("-Processing " + file.getPath());
+				if (Tool.isSpecFile(file.getName())) {
+					processSpecFile(file, location);
+				} else if (Tool.isJavaFile(file.getName())) {
+					processJavaFile(file, location);
 				}
-				System.out.println("");
 			}
 		}
 	}
 
-	public static void process(String arg) {
+	public static void process(String arg) throws MOPException {
+		if(outputDir != null && !outputDir.exists())
+			throw new MOPException("The output directory, " + outputDir.getPath() + " does not exist.");
+		
 		process(arg.split(";"), "");
 	}
 
@@ -209,7 +326,7 @@ public class Main {
 		System.out.println("    -showevents\t\t\t  show every event/handler occurrence");
 		System.out.println("    -showhandlers\t\t\t  show every handler occurrence");
 		System.out.println();
-		
+
 		System.out.println("    -s | -statistics\t\t  generate monitor with statistics");
 		System.out.println("    -noopt1\t\t\t  don't use the enable set optimization");
 		System.out.println("    -javalib\t\t\t  generate a java library rather than an AspectJ file");
@@ -240,7 +357,7 @@ public class Main {
 
 			if (args[i].compareTo("-d") == 0) {
 				i++;
-				output_path = args[i];
+				outputDir = new File(args[i]);
 			} else if (args[i].compareTo("-local") == 0) {
 				LogicRepositoryConnector.serverName = "local";
 			} else if (args[i].compareTo("-remote") == 0) {
@@ -262,10 +379,10 @@ public class Main {
 				i++;
 				Main.aspectname = args[i];
 			} else if (args[i].compareTo("-showhandlers") == 0) {
-				if(Main.logLevel < Main.HANDLERS)
+				if (Main.logLevel < Main.HANDLERS)
 					Main.logLevel = Main.HANDLERS;
 			} else if (args[i].compareTo("-showevents") == 0) {
-				if(Main.logLevel < Main.EVENTS)
+				if (Main.logLevel < Main.EVENTS)
 					Main.logLevel = Main.EVENTS;
 			} else if (args[i].compareTo("-dacapo") == 0) {
 				Main.dacapo = true;
@@ -285,7 +402,13 @@ public class Main {
 			print_help();
 			return;
 		}
-
-		process(files);
+		
+		try {
+			process(files);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			if (Main.debug)
+				e.printStackTrace();
+		}
 	}
 }
