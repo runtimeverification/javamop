@@ -64,6 +64,59 @@ public class Sequence extends ArrayList<Symbol> {
 //    return new Sequence(symbols);
 //  }
 
+
+  //We have switched to deterministic pattern matching since it
+  //is actually... feasible.  Keeping the old version of the method
+  //for posterity below
+  //
+  //return null if it cannot be advanced
+  //(such as if the cursor is before Terminal "a"
+  //and we are advancing by Terminal "b"
+  public Sequence deterministicAdvance(Symbol s){
+    int i;
+    for(i = 0; i < size(); ++i){
+      if(get(i) instanceof Cursor) break; 
+    }
+    if(i == size()) return null; //if there is no Cursor return null
+    if(i + 1 == size()) {
+      return this; //if we are already at the end return this Sequence 
+    }
+    Symbol next = get(i + 1);
+    if(next instanceof Variable){
+      Symbol afterNext = get(i + 2);
+      if(afterNext != s) {
+        return this; //we are not advancing because the symbol after the 
+                     //Variable is not s
+      }
+      //otherwise, we can advance, and we always deterministically
+      //choose to shift a matching terminal
+      Sequence advanced = new Sequence(size());
+      for(int j = 0; j < i; ++j){
+        advanced.add(get(j));
+      }
+      advanced.add(next);
+      advanced.add(afterNext);
+      advanced.add(Cursor.get());
+      for(int j = i + 3; j < size(); ++j){
+        advanced.add(get(j));
+      }
+      return advanced;
+    }
+    assert(next instanceof Terminal);
+    if(next != s) return null;
+    Sequence advanced = new Sequence(size());
+    for(int j = 0; j < i; ++j){
+      advanced.add(get(j));
+    }
+    advanced.add(next);
+    advanced.add(Cursor.get());
+    for(int j = i + 2; j < size(); ++j) {
+      advanced.add(get(j));
+    }
+    return advanced;
+  }
+
+  // NOT USED
   // attempts to generate a new sequence with the cursor
   // in the original sequence advanced.  
   // If the next Symbol in the pattern is a Variable and the Terminal

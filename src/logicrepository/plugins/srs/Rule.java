@@ -82,6 +82,26 @@ public class Rule {
     }
   }
 
+
+  //We have switched to deterministic pattern matching since it
+  //is actually... feasible.  Keeping the old version of the method
+  //for posterity below
+  //
+  //advance the cursor in a rule
+  //by a given symbol
+  //return null if it cannot be advanced
+  //(such as if the cursor is before Terminal "a"
+  //and we are advancing by Terminal "b"
+  public Rule deterministicAdvance(Symbol s) {
+    Rule ret = new Rule();
+    Sequence advancedLhs = lhs.deterministicAdvance(s);
+    if(advancedLhs == null) return null;
+    ret.lhs = advancedLhs;
+    ret.rhs = rhs;
+    return ret;
+  }
+
+  // NOT USED
   //advance the cursor in a rule
   //by a given symbol
   //return null if it cannot be advanced
@@ -101,6 +121,7 @@ public class Rule {
     }
     return ret;
   }
+
 
   //return whether or not a rule is final (has the cursor before $).
   public boolean isFinal(){

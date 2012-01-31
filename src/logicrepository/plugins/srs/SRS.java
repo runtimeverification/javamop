@@ -53,6 +53,19 @@ public class SRS extends LinkedHashSet<Rule> {
     return ret;
   }
 
+  //Advance an entire SRS by symbol s DETERMINISTICALLY
+  public SRS deterministicAdvance(Symbol s){
+    SRS ret = new SRS();
+    for(Rule r : this){
+      Rule result = r.deterministicAdvance(s);
+      if(result != null) {
+        ret.add(result);
+      }
+    }
+    return ret;
+  }
+
+  // Not USED
   public SRS advance(Symbol s){
     SRS ret = new SRS();
     for(Rule r : this){

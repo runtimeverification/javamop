@@ -47,7 +47,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SR
       HashMap<Symbol, SRS> stateTrans = new HashMap<Symbol, SRS>();
       put(srs, stateTrans);
       for(Symbol s : inputs){
-        SRS nextState = srs.advance(s);
+        SRS nextState = srs.deterministicAdvance(s);
         if(nextState.size() == 0) continue;
         stateTrans.put(s, nextState); 
         if(!containsKey(nextState)) workList.add(nextState);
