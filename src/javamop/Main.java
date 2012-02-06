@@ -59,9 +59,9 @@ public class Main {
 		
 		for(File file : specFiles){
 			if(parentFile == null){
-				parentFile = file.getParentFile();
+				parentFile = file.getAbsoluteFile().getParentFile();
 			} else {
-				if(file.getParentFile().equals(parentFile)){
+				if(file.getAbsoluteFile().getParentFile().equals(parentFile)){
 					continue;
 				} else {
 					sameDir = false;
@@ -125,11 +125,11 @@ public class Main {
 	
 	public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
 		String aspectName;
-		
+
 		if(outputDir == null){
 			outputDir = getTargetDir(specFiles);
 		}
-		
+
 		if(Main.aspectname != null) {
 			aspectName = Main.aspectname;
 		} else {
