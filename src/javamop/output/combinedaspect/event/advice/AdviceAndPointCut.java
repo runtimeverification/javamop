@@ -72,7 +72,12 @@ public class AdviceAndPointCut {
 	public void addEvent(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
 		parameters.addAll(event.getParametersWithoutThreadVar());
 
-		// combine pointcuts
+		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+			if (event.getParameters().getParam(event.getThreadVar()) == null)
+				throw new MOPException("thread variable is not included in the event definition.");
+
+			this.threadVars.add(event.getParameters().getParam(event.getThreadVar()));
+		}
 
 		// add an advice body.
 		if (mopSpec.isGeneral())
