@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SRS>> {
+public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, ActionSRS>> {
   @Override
   public String toString(){
     StringBuilder sb = new StringBuilder();
     for(SRS srs : keySet()){
       sb.append(srs.toString());
-      HashMap<Symbol, SRS> stateTrans = get(srs); 
+      HashMap<Symbol, ActionSRS> stateTrans = get(srs); 
       if(stateTrans == null) continue;
       sb.append("[\n");
       for(Symbol s : stateTrans.keySet()){
@@ -44,12 +44,12 @@ public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SR
     while(!workList.isEmpty()){
       SRS srs = workList.iterator().next();
       workList.remove(srs);
-      HashMap<Symbol, SRS> stateTrans = new HashMap<Symbol, SRS>();
+      HashMap<Symbol, ActionSRS> stateTrans = new HashMap<Symbol, ActionSRS>();
       put(srs, stateTrans);
       for(Symbol s : inputs){
         SRS nextState = srs.deterministicAdvance(s);
         if(nextState.size() == 0) continue;
-        stateTrans.put(s, nextState); 
+        stateTrans.put(s, new ActionSRS(new ArrayList<Variable>(), nextState)); 
         if(!containsKey(nextState)) workList.add(nextState);
       }
     }
@@ -59,8 +59,8 @@ public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SR
   public PatternMatchAutomaton makeFinal(){
     PatternMatchAutomaton ret = new PatternMatchAutomaton();
     for(SRS state : keySet()){
-      HashMap<Symbol, SRS> trans = get(state);
-      HashMap<Symbol, SRS> finalizedTrans = new HashMap<Symbol, SRS>(); 
+      HashMap<Symbol, ActionSRS> trans = get(state);
+      HashMap<Symbol, ActionSRS> finalizedTrans = new HashMap<Symbol, ActionSRS>(); 
       SRS finalizedState = state.makeFinal();
       for(Symbol s : trans.keySet()){
         finalizedTrans.put(s, trans.get(s).makeFinal());
