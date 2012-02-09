@@ -49,15 +49,37 @@ public class SRS extends LinkedHashSet<Rule> {
   }
 
   //Advance an entire SRS by symbol s DETERMINISTICALLY
-  public SRS deterministicAdvance(Symbol s){
-    SRS ret = new SRS();
+  //population the list of actions by determining which
+  //Variables need the current symbol pushed
+  public ActionSRS deterministicAdvance(Symbol s){
+    Symbol cursor = Cursor.get();
+    SRS srs = new SRS();
+    ArrayList<Variable> actions = new ArrayList<Variable>();
     for(Rule r : this){
       Rule result = r.deterministicAdvance(s);
       if(result != null) {
-        ret.add(result);
+        srs.add(result);
+        //if r == result, then we need to push the current
+        //symbol to the Variable following the cursor.
+        if(r.equals(result)) {
+          boolean cursorFound = false;
+          for(Symbol symbol : r.getLhs()){
+            if(cursorFound){
+              if(symbol instanceof Variable){
+                actions.add((Variable) symbol);
+                break;
+              }
+              else {
+                throw new RuntimeException("Bug in deterministicAdvance. " 
+                    + symbol + "\n" + r + "\n" + result );
+              }
+            }
+            if(symbol == cursor) cursorFound = true;
+          }
+        }
       }
     }
-    return ret;
+    return new ActionSRS(actions, srs);
   }
 
   // Not USED
@@ -84,6 +106,5 @@ public class SRS extends LinkedHashSet<Rule> {
     } 
     return ret;
   }
-
 }
 
