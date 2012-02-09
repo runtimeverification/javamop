@@ -36,10 +36,10 @@ PARSER_BEGIN(SRSParser)
         inputs.add(Terminal.get(s));
       }
       PatternMatchAutomaton pma = new PatternMatchAutomaton (srs, inputs); 
-      System.out.println("=========Non-finalized pattern match automaton\n");
-      System.out.println(pma); 
-      System.out.println("=========Finalized pattern match automaton\n");
-      System.out.println(pma.makeFinal()); 
+//      System.out.println("=========Non-finalized pattern match automaton\n");
+//      System.out.println(pma); 
+//      System.out.println("=========Finalized pattern match automaton\n");
+//      System.out.println(pma.makeFinal()); 
     }
   
     private SRS srs;

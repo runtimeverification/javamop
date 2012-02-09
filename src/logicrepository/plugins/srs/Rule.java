@@ -174,6 +174,9 @@ public class Rule {
     //to be checked for equivalency in the presence of non-linear patterns
     HashMap<Variable, HashSet<Variable>> nonLinearVariableFinderMap
       = new HashMap<Variable, HashSet<Variable>>();
+    //map for replacing Variables with new uniquely named Variables
+    //in the rhs, but only in the rhs
+    HashMap<Variable, Variable> replaceMap = new HashMap<Variable, Variable>();
     for(Variable v : lhsVariables){
       if(seen.contains(v)){
         StringBuilder namePrefix = new StringBuilder();
@@ -190,19 +193,25 @@ public class Rule {
         checkSet.add(newVar); 
         variables.add(newVar);
       }
-      else {
-        variables.add(
-            (Variable) Variable.get(number + v.toString()));
+      else { //here we set the replacement map because this branch
+             //will always execute first for a given nonlinear
+             //Variable.  It should not matter which substitution of
+             //Terminals for a nonlinear Variable we choose
+             //because the pattern won't match if they aren't equal!
+        Variable newVar = (Variable) Variable.get(number + v.toString());
+        variables.add(newVar);
         seen.add(v);
+        replaceMap.put(v, newVar);
       }
     } 
 
     computeEqVariables(nonLinearVariableFinderMap);
 
-    System.out.println("!!!" + variables);
-    System.out.println("!!!" + eqVariables);
+    //System.out.println("!!!" + variables);
+    //System.out.println("!!!" + eqVariables);
 
     rhsVariableCheck(seen, rhsVariables);
+    replaceVariables(replaceMap);
   }
 
   private void computeEqVariables(
@@ -224,6 +233,36 @@ public class Rule {
         + this +                              "\n"
         + "does not appear in left hand side.\n");
     } 
+  }
+
+  //replace the original variables with the new uniquely
+  //named variables computed in computeVariables
+  private void replaceVariables(HashMap<Variable, Variable> replaceMap){
+    //yea, this is a weird design pattern, but we want to loop through
+    //each Variable in variables and replace the next Variable we seen
+    //in the lhs with it, so we need to keep track of which is the next
+    //Variable.  We do this by setting j outside of the loops
+    int j = 0;
+    for(Variable v : variables){
+      while(j < lhs.size()){
+        if(lhs.get(j) instanceof Variable){
+          lhs.set(j++, v); //make sure to increment j when we break also
+          break;
+        } 
+        ++j;
+      }
+    }
+    //for the right hand side we just use the replaceMap
+    //because it gives us the first instanc of a lhs variable
+    //in the case where there are nonlinear variables.  Also
+    //variables in the rhs need not appear in the same order
+    //as those on the lhs, so the order of the variables
+    //ArrayList cannot be used here as it can for the lhs
+    for(int i = 0; i < rhs.size(); ++i){
+      if(rhs.get(i) instanceof Variable){
+        rhs.set(i, replaceMap.get(rhs.get(i)));
+      }
+    }
   }
 
   public Rule initial(){
