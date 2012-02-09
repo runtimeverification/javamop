@@ -11,6 +11,6 @@ public final class Cursor extends Symbol {
   }
 
   public String toString(){
-    return ".";
+    return "_";
   }
 } 

@@ -31,7 +31,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<SRS, HashMap<Symbol, SR
 
   //construct a Pattern Match Automaton from an initial SRS
   public PatternMatchAutomaton(SRS srs, ArrayList<Symbol> inputs){
-    SRS initial = srs.simplify().initial(); 
+    SRS initial = srs.initial(); 
     HashSet<SRS> workList = new HashSet<SRS>();
     workList.add(initial);
     construct(inputs, workList);

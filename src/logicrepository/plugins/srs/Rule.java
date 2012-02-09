@@ -1,8 +1,46 @@
 package logicrepository.plugins.srs;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class Rule {
-  public Sequence lhs;
-  public Sequence rhs; 
+  private static int counter = 0;
+  private int number;
+  
+  private Sequence lhs;
+  private Sequence rhs; 
+
+  private ArrayList<Variable> variables 
+    = new ArrayList<Variable>();
+  private ArrayList<ArrayList<Variable>> eqVariables 
+    = new ArrayList<ArrayList<Variable>>();  
+
+  public Sequence getLhs(){
+    return lhs;
+  }
+
+  public Sequence getRhs(){
+    return rhs;
+  }
+
+  public ArrayList<Variable> getVariables(){
+    return variables;
+  }
+
+  public ArrayList<ArrayList<Variable>> getEqVariables(){
+    return eqVariables;
+  }  
+
+  protected Rule() {}
+
+  public Rule(Sequence lhs, Sequence rhs){
+    number = counter++;
+    this.lhs = lhs;
+    this.rhs = rhs;
+    simplify();
+    computeVariables();
+  }
 
   @Override
   public String toString(){
@@ -35,7 +73,7 @@ public class Rule {
   //
   // Note that X*1 and X*2 will never clash because they are not valid Variables
   // from the parser
-  public void simplify(){
+  private void simplify(){
    // lhs = lhs.simplify();
    // rhs = rhs.simplify();
 
@@ -98,6 +136,8 @@ public class Rule {
     if(advancedLhs == null) return null;
     ret.lhs = advancedLhs;
     ret.rhs = rhs;
+    ret.variables = variables;
+    ret.eqVariables = eqVariables;
     return ret;
   }
 
@@ -107,21 +147,100 @@ public class Rule {
   //return null if it cannot be advanced
   //(such as if the cursor is before Terminal "a"
   //and we are advancing by Terminal "b"
-  public Rule[] advance(Symbol s){
-    Sequence[] results = lhs.advance(s);
-    if(results == null) return null;
-    Rule[] ret = new Rule[results.length];
-    ret[0] = new Rule();
-    ret[0].lhs = results[0];
-    ret[0].rhs = rhs;
-    if(results.length == 2){
-      ret[1] = new Rule();
-      ret[1].lhs = results[1];
-      ret[1].rhs = rhs;
-    }
-    return ret;
+//  public Rule[] advance(Symbol s){
+//    Sequence[] results = lhs.advance(s);
+//    if(results == null) return null;
+//    Rule[] ret = new Rule[results.length];
+//    ret[0] = new Rule();
+//    ret[0].lhs = results[0];
+//    ret[0].rhs = rhs;
+//    if(results.length == 2){
+//      ret[1] = new Rule();
+//      ret[1].lhs = results[1];
+//      ret[1].rhs = rhs;
+//    }
+//    return ret;
+//  }
+
+
+  private void computeVariables(){
+    int uniqueId = 0;
+    ArrayList<Variable> lhsVariables = lhs.getVariables();
+    ArrayList<Variable> rhsVariables = rhs.getVariables();
+    //variables that have already been seen in the lhs of this
+    //rule.  Used to find non-linear variable occurences
+    HashSet<Variable> seen = new HashSet<Variable>();
+    //used to compute the final list of lists of variables that need
+    //to be checked for equivalency in the presence of non-linear patterns
+    HashMap<Variable, HashSet<Variable>> nonLinearVariableFinderMap
+      = new HashMap<Variable, HashSet<Variable>>();
+    for(Variable v : lhsVariables){
+      if(seen.contains(v)){
+        StringBuilder namePrefix = new StringBuilder();
+        namePrefix.append(number);
+        namePrefix.append(v.toString());
+        String prefixString = namePrefix.toString();
+        HashSet<Variable> checkSet = nonLinearVariableFinderMap.get(v);
+        if(checkSet == null){
+          checkSet = new HashSet<Variable>();
+          checkSet.add((Variable) Variable.get(prefixString));
+          nonLinearVariableFinderMap.put(v, checkSet);
+        }
+        Variable newVar = (Variable) Variable.get(prefixString + uniqueId++); 
+        checkSet.add(newVar); 
+        variables.add(newVar);
+      }
+      else {
+        variables.add(
+            (Variable) Variable.get(number + v.toString()));
+        seen.add(v);
+      }
+    } 
+
+    computeEqVariables(nonLinearVariableFinderMap);
+
+    System.out.println("!!!" + variables);
+    System.out.println("!!!" + eqVariables);
+
+    rhsVariableCheck(seen, rhsVariables);
   }
 
+  private void computeEqVariables(
+      HashMap<Variable, HashSet<Variable>> nonLinearVariableMap){
+    for(HashSet<Variable> checkSet : nonLinearVariableMap.values()){
+      ArrayList<Variable> retCheckSet 
+        = new ArrayList<Variable>(checkSet);
+      eqVariables.add(retCheckSet);
+    }
+  }
+
+  private void rhsVariableCheck(HashSet<Variable> lhsVariables,
+                                ArrayList<Variable> rhsVariables
+      ){
+    for(Variable v : rhsVariables){
+      if(!lhsVariables.contains(v))
+        throw new RuntimeException(
+          "\nVariable in right hand side of rule:\n     "
+        + this +                              "\n"
+        + "does not appear in left hand side.\n");
+    } 
+  }
+
+  public Rule initial(){
+    Symbol cursor = Cursor.get();
+    Symbol begin = Begin.get();
+    Rule ret = new Rule();
+    ret.lhs = new Sequence();
+    ret.lhs.add(begin);
+    ret.lhs.add(cursor);
+    for(int i = 1; i < lhs.size(); ++i){
+        ret.lhs.add(lhs.get(i));
+    }
+    ret.rhs = rhs;
+    ret.variables = variables;
+    ret.eqVariables = eqVariables;
+    return ret;
+  }
 
   //return whether or not a rule is final (has the cursor before $).
   public boolean isFinal(){

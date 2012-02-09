@@ -55,7 +55,7 @@ SKIP : {
 
 TOKEN : {
     <EPSILON   : "\\epsilon" >
-  | <COMMA     : ","       >
+  | <PERIOD    : "."       >
   | <LOWERCASE : ["a"-"z"] >
   | <UPPERCASE : ["A"-"Z"] >
   | <CHARACTER : <LOWERCASE>|<UPPERCASE>|"_"|["0"-"9"] >   
@@ -80,24 +80,25 @@ void Srs() : {
 {
   r = Rule()
   { srs.add(r); }
+  "."
   (
-    ","
    r = Rule()
    {srs.add(r); }
-  )*
+  "." )* 
 }
 
 Rule Rule() : {
-  Rule ret = new Rule();
+  Sequence lhs;
+  Sequence rhs;
   Sequence s;
 }
 {
   s = LSequence()
-  {ret.lhs = s; } 
+  {lhs = s; } 
   "->"
   s = RSequence()
-  {ret.rhs = s; }
-  { return ret; }
+  {rhs = s; }
+  { return new Rule(lhs,rhs); }
 }
 
 Sequence LSequence() : {

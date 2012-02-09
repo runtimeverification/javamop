@@ -29,21 +29,21 @@ public class Sequence extends ArrayList<Symbol> {
     return sb.toString();
   }
 
-  public Sequence getTerminals(){
-    Sequence ret = new Sequence();
+  public ArrayList<Terminal> getTerminals(){
+    ArrayList<Terminal> ret = new ArrayList<Terminal>();
     for(Symbol s : this){
       if(s instanceof Terminal){
-        ret.add(s);
+        ret.add((Terminal) s);
       }
     }
     return ret;
   }
 
-  public Sequence getVariables(){
-    Sequence ret = new Sequence();
+  public ArrayList<Variable> getVariables(){
+    ArrayList<Variable> ret = new ArrayList<Variable>();
     for(Symbol s : this){
       if(s instanceof Variable){
-        ret.add(s);
+        ret.add((Variable) s);
       }
     }
     return ret;
