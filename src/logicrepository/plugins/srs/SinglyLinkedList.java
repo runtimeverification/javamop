@@ -106,7 +106,11 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     SLLIterator<E> T = (SLLIterator<E>) J;
     H.currentNode.next = replacement.head;
     H.nextNode = replacement.head;  
-    
+    Node<E> node = replacement.head;
+    while(node.next != null){
+      node = node.next;
+    }
+    node.next = T.currentNode;
   }
 
   @Override 
@@ -136,6 +140,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       arr.add(s);
     }
     SinglyLinkedList<String> l = new SinglyLinkedList<String>(arr);
+    SinglyLinkedList<String> l2 = new SinglyLinkedList<String>(arr);
     System.out.println(l);
     for(String s : l){
       System.out.println(s);
@@ -150,6 +155,46 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     I = l.iterator();
     removeTest(I);
     System.out.println(l + " " + l.size());
+
+    System.out.println("replacing 3 -- 10 with 0, 0, 0, 0"); 
+    ArrayList<String> t = new ArrayList<String>();
+    for(int i = 0; i < 4; ++i){
+      t.add("0");
+    }
+    SinglyLinkedList<String> replacement = new SinglyLinkedList<String>(t);
+    Iterator<String> I3 = l2.iterator();
+    Iterator<String> I10 = l2.iterator();
+    while(I3.hasNext()){
+      if(I3.next().equals("2")){
+        System.out.println("found 2");
+        break;
+      }
+    }
+
+    while(I10.hasNext()){
+      if(I10.next().equals("11")){
+        System.out.println("found 11");
+        break;
+      }
+    }
+
+    l2.replace(I3,I10,replacement);
+    System.out.println(l2);
+
+    System.out.println("Now make sure I3 is not broken");
+    while(I3.hasNext()){
+      System.out.println(I3.next());
+    }
+
+    System.out.println("Now make sure I10 is not broken");
+    while(I10.hasNext()){
+      System.out.println(I10.next());
+    }
+
+    System.out.println("Now make sure we can iterate over the whole new list");
+    for(String s : l2){
+      System.out.println(s);
+    }
   }
 
   private static void removeTest(Iterator I){
