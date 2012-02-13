@@ -4,12 +4,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class SinglyLinkedList<E> implements Iterable<E> {
-  protected Node<E> head;
+  protected Node head;
+  protected Node tail;
   protected int size;
 
-  protected class Node<E> {
+  protected class Node {
     protected E element;
-    protected Node<E> next;
+    protected Node next;
 
     protected Node() { element = null; next = null; }
     
@@ -18,20 +19,25 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       next = null;
     }
 
-    protected Node(E e, Node<E> next){
+    protected Node(E e, Node next){
       element = e;
       this.next = next;
     }
+
+    @Override
+    public String toString(){
+      return "<" + element + ", " + ((next == null)? "<>" : next.toString()) + ">";
+    }
   }
 
-  protected class SLLIterator<E> implements Iterator<E> {
-    protected Node<E> nextNode;
-    protected Node<E> currentNode;
-    protected Node<E> previousNode;
+  protected class SLLIterator implements Iterator<E> {
+    protected Node nextNode;
+    protected Node currentNode;
+    protected Node previousNode;
     protected boolean legalState = false;
 
     protected SLLIterator(){
-      nextNode = (Node<E>) head;
+      nextNode = (Node) head;
       previousNode = null;
       currentNode = null;
     } 
@@ -65,6 +71,9 @@ public class SinglyLinkedList<E> implements Iterable<E> {
         --size;
         return;
       }
+      if(currentNode == tail){
+        tail = (Node) previousNode;
+      }
       previousNode.next = nextNode;
       --size;
     }
@@ -72,24 +81,86 @@ public class SinglyLinkedList<E> implements Iterable<E> {
 
   public SinglyLinkedList () { head = null; }
 
-  public SinglyLinkedList (Collection<E> c) {
-    if(c.size() == 0) {
+  public SinglyLinkedList (Iterable<E> c) {
+    Iterator<E> I = c.iterator();
+    if(!I.hasNext()) {
       head = null;
       size = 0;
       return;
     }
     size = 1;
-    head = new Node<E>();
-    Iterator<E> I = c.iterator();
+    head = new Node();
     head.element = I.next();
-    Node<E> node = head;
+    Node node = head;
     while(I.hasNext()){
       ++size;
-      node.next = new Node<E>();
+      node.next = new Node();
       node = node.next;
       node.element = I.next();
       node.next = null;
     }
+    tail = node;
+  }
+
+  public boolean add(E e){
+    tail.next = new Node(e);
+    tail = tail.next;
+    return true;
+  }
+
+  public boolean addAll(Iterable<E> c){
+    Node node = tail;
+    Iterator<? extends E> I = c.iterator();
+    while(I.hasNext()){
+      ++size;
+      node.next = new Node();
+      node = node.next;
+      node.element = I.next();
+      node.next = null;
+    }
+    tail = node;
+    return true;
+  }
+
+  public boolean contains(Object o){
+    return false;
+  }
+
+  @Override
+  public boolean equals(Object o){
+    if(o == this) return true;
+    if(!(o instanceof SinglyLinkedList)) return false;
+    SinglyLinkedList comp = (SinglyLinkedList) o; 
+    if(size != comp.size) return false;
+    Iterator<E> I = iterator();
+    Iterator J    = comp.iterator();
+    while(I.hasNext()){
+      E o1 = I.next();
+      Object o2 = J.next();
+      if( !(o1==null ? o2==null : o1.equals(o2))) return false;  
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode(){
+    return size ^ head.element.hashCode() ^ tail.element.hashCode();
+  }
+
+  public boolean isEmpty(){
+    return head == null;
+  }
+
+  public boolean remove(Object o){
+    Iterator<E> I = iterator();
+    while(I.hasNext()){
+      E e = I.next();
+      if(e.equals(o)){
+        I.remove();
+        return true;
+      }
+    }
+    return false;
   }
 
   public int size(){
@@ -99,18 +170,27 @@ public class SinglyLinkedList<E> implements Iterable<E> {
   //WARNING: This does NOT copy the replacement list, so this can be considered
   //destructive to the replacement list, as it will have a new tail after this.
   public void replace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
-    if(!(I instanceof SLLIterator) || !(J instanceof SLLIterator)) {
-      throw new IllegalArgumentException();
+    SLLIterator H;
+    SLLIterator T;
+    try{
+      H = (SLLIterator) I;
+      T = (SLLIterator) J;
+    } catch(ClassCastException e){
+      throw new IllegalArgumentException(
+          "replace can only accept Iterators from a SinglyLinkedList");
     }
-    SLLIterator<E> H = (SLLIterator<E>) I;
-    SLLIterator<E> T = (SLLIterator<E>) J;
     H.currentNode.next = replacement.head;
     H.nextNode = replacement.head;  
-    Node<E> node = replacement.head;
+    Node node = replacement.head;
     while(node.next != null){
       node = node.next;
     }
     node.next = T.currentNode;
+  }
+
+  public void nonDestructiveReplace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
+    SinglyLinkedList<E> clone = new SinglyLinkedList<E>(replacement);
+    replace(I, J, clone);
   }
 
   @Override 
@@ -125,18 +205,19 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     //remove the last ", "
     String ret = sb.substring(0, sb.length() - 2);
     return ret + "]";
-    
   }
 
   @Override
   public Iterator<E> iterator(){
-    return new SLLIterator<E>();
+    return new SLLIterator();
   }
 
 
   public static void main(String[] args){
+    String[] a 
+      = new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}; 
     ArrayList<String> arr = new ArrayList<String>();
-    for(String s : args){
+    for(String s : a){
       arr.add(s);
     }
     SinglyLinkedList<String> l = new SinglyLinkedList<String>(arr);
@@ -154,7 +235,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     System.out.println("------SLL------");
     I = l.iterator();
     removeTest(I);
-    System.out.println(l + " " + l.size());
+    System.out.println(l + " " + l.size() + " " + l.tail);
 
     System.out.println("replacing 3 -- 10 with 0, 0, 0, 0"); 
     ArrayList<String> t = new ArrayList<String>();
@@ -195,6 +276,28 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     for(String s : l2){
       System.out.println(s);
     }
+    System.out.println(l2.tail);
+
+    for(int i = 0; i < 12; ++i){
+      l2.add("foo");
+    }
+    System.out.println(l2.tail);
+    System.out.println(l2.head);
+
+    l2.addAll(arr);
+    System.out.println(l2);
+    System.out.println(l2.tail);
+
+    l2.remove("foo");
+    System.out.println(l2);
+    l2.remove("foo");
+    System.out.println(l2);
+
+    l2.remove("11");
+    System.out.println(l2);
+    l2.remove("11");
+    System.out.println(l2);
+    System.out.println(l2.tail);
   }
 
   private static void removeTest(Iterator I){
