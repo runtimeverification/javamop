@@ -42,6 +42,19 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       currentNode = null;
     } 
 
+    protected SLLIterator(Iterator<E> I){
+      SLLIterator J; 
+      try{
+          J = (SLLIterator) I;
+      } catch(ClassCastException e){
+        throw new IllegalArgumentException("Not an SLLIterator");
+      }
+      nextNode = J.nextNode;
+      currentNode = J.currentNode;
+      previousNode = J.previousNode;
+      legalState = J.legalState;
+    }
+
     @Override
     public boolean hasNext(){
       return nextNode != null;
@@ -212,6 +225,10 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     return new SLLIterator();
   }
 
+  public Iterator<E> iterator(Iterator<E> I){
+    return new SLLIterator(I);
+  }
+
 
   public static void main(String[] args){
     String[] a 
@@ -244,7 +261,6 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     }
     SinglyLinkedList<String> replacement = new SinglyLinkedList<String>(t);
     Iterator<String> I3 = l2.iterator();
-    Iterator<String> I10 = l2.iterator();
     while(I3.hasNext()){
       if(I3.next().equals("2")){
         System.out.println("found 2");
@@ -252,6 +268,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       }
     }
 
+    Iterator<String> I10 = l2.iterator(I3);
     while(I10.hasNext()){
       if(I10.next().equals("11")){
         System.out.println("found 11");
