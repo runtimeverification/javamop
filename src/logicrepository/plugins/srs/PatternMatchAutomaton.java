@@ -85,10 +85,35 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
         HashMap<Symbol, ActionState> transition = get(state);
         for(Symbol symbol : terminals){
           if(!transition.containsKey(symbol)){
+            State nextState = findState(state, i - 1, terminals);
+            transition.put(symbol,  
+                new ActionState(state.getDepth() - nextState.getDepth(), nextState));
           } 
         } 
       }
     }
+  }
+
+  private State findState(State state, int depth, Set<Symbol> terminals){
+    Set<State> shallowerStates = depthMap.get(depth);
+    for(State shallowerState : shallowerStates){
+      HashMap<Symbol, ActionState> transition = get(shallowerState); 
+      State failureState = null;
+      Symbol a = null;
+      for(Symbol symbol : terminals){
+        ActionState destination = transition.get(symbol);
+        if(destination.getState() == state){
+          a = symbol;
+        }
+        else if(destination.getAction() != 0){
+          failureState = destination.getState();
+        }
+      }
+      if(a != null){
+        //return findStateAux(a, depth - 1, terminals); 
+      }
+    }
+    return s0;
   }
 
   @Override public String toString(){
