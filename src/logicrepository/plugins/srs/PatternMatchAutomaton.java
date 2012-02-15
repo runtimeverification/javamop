@@ -68,10 +68,12 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
   }
 
   private void addFailureTransitions(Set<Symbol> terminals){
+    HashMap<State, State> fail = new HashMap<State, State>();
     if(depthMap.size() == 1) return;
     //handle all depth 1
     for(State state : depthMap.get(1)){
       HashMap<Symbol, ActionState> transition = get(state);
+      fail.put(state, s0);
       for(Symbol symbol : terminals){
         if(!transition.containsKey(symbol)){
           transition.put(symbol, new ActionState(1, s0));
@@ -85,32 +87,37 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
         HashMap<Symbol, ActionState> transition = get(state);
         for(Symbol symbol : terminals){
           if(!transition.containsKey(symbol)){
-            State nextState = findState(state, i - 1, terminals);
+            State failState = findState(state, depthMap.get(i - 1), fail, 
+                                        terminals);
             transition.put(symbol,  
-                new ActionState(state.getDepth() - nextState.getDepth(), nextState));
+                new ActionState(state.getDepth() - failState.getDepth(), 
+                                failState));
+            fail.put(state, failState);
           } 
         } 
       }
     }
+
+    System.out.println("!!!!!!!!!!");
+    System.out.println(fail);
+    System.out.println("!!!!!!!!!!");
   }
 
-  private State findState(State state, int depth, Set<Symbol> terminals){
-    Set<State> shallowerStates = depthMap.get(depth);
+  private State findState(State state, Set<State> shallowerStates, 
+                          HashMap<State, State> fail, Set<Symbol> terminals){
     for(State shallowerState : shallowerStates){
       HashMap<Symbol, ActionState> transition = get(shallowerState); 
-      State failureState = null;
-      Symbol a = null;
       for(Symbol symbol : terminals){
         ActionState destination = transition.get(symbol);
         if(destination.getState() == state){
-          a = symbol;
+
+        System.out.println(state + " " + destination.getState());
+          State failState = fail.get(shallowerState);
+          while(failState != s0 && get(failState).get(symbol).getAction() != 0){
+            failState = fail.get(failState);
+          } 
+          return get(failState).get(symbol).getState();
         }
-        else if(destination.getAction() != 0){
-          failureState = destination.getState();
-        }
-      }
-      if(a != null){
-        //return findStateAux(a, depth - 1, terminals); 
       }
     }
     return s0;
