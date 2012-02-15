@@ -39,6 +39,10 @@ public class Rule {
     }
   }
 
+  public int getNumber(){
+    return number;
+  }
+
   public Set<Symbol> getTerminals(){
     return terminals;
   }
