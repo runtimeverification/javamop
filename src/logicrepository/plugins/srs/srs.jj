@@ -29,6 +29,7 @@ PARSER_BEGIN(SRSParser)
       parser.Start();
       SRS srs = parser.getSRS();
       System.out.println(srs.toString());
+      System.out.println(new PatternMatchAutomaton(srs));
     }
   
     private SRS srs;
