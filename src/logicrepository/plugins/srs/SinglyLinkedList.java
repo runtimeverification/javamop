@@ -1,3 +1,5 @@
+package logicrepository.plugins.srs;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
