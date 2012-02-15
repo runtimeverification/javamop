@@ -3,10 +3,12 @@ package logicrepository.plugins.srs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 public class Rule {
   private static int counter = 0;
   private int number;
+  private Set<Symbol> terminals = new HashSet<Symbol>();
   
   private Sequence lhs;
   private Sequence rhs; 
@@ -25,6 +27,20 @@ public class Rule {
     number = counter++;
     this.lhs = lhs;
     this.rhs = rhs;
+    computeTerminals();
+  }
+
+  private void computeTerminals(){
+    for(Symbol s : lhs){
+      terminals.add(s);
+    }
+    for(Symbol s : rhs){
+      terminals.add(s);
+    }
+  }
+
+  public Set<Symbol> getTerminals(){
+    return terminals;
   }
 
   @Override

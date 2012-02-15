@@ -1,9 +1,11 @@
 package logicrepository.plugins.srs;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class SRS extends LinkedHashSet<Rule> {
+  private Set<Symbol> terminals = new HashSet<Symbol>();
 
   public SRS(){
     super();
@@ -27,6 +29,16 @@ public class SRS extends LinkedHashSet<Rule> {
       sb.append(".\n");
     }
     return sb.toString();
+  }
+
+  @Override
+  public boolean add(Rule r){
+    terminals.addAll(r.getTerminals());
+    return super.add(r);
+  }
+
+  public Set<Symbol> getTerminals(){
+    return terminals;
   }
 }
 
