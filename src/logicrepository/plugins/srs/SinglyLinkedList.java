@@ -1,3 +1,4 @@
+//TODO: does size matter wrt to replacing?
 package logicrepository.plugins.srs;
 
 import java.util.ArrayList;
@@ -220,7 +221,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     node.next = T.currentNode;
   }
 
-  public void nonDestructiveReplace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
+  public void nonDestructiveReplace(Iterator<E> I, Iterator<E> J, Iterable<E> replacement){
     SinglyLinkedList<E> clone = new SinglyLinkedList<E>(replacement);
     replace(I, J, clone);
   }
@@ -289,11 +290,11 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     System.out.println(l + " " + l.size() + " " + l.tail);
 
     System.out.println("replacing 3 -- 10 with 0, 0, 0, 0"); 
-    ArrayList<String> t = new ArrayList<String>();
+    ArrayList<String> replacement = new ArrayList<String>();
     for(int i = 0; i < 4; ++i){
-      t.add("0");
+      replacement.add("0");
     }
-    SinglyLinkedList<String> replacement = new SinglyLinkedList<String>(t);
+   // SinglyLinkedList<String> replacement = new SinglyLinkedList<String>(t);
     Iterator<String> I3 = l2.iterator();
     while(I3.hasNext()){
       if(I3.next().equals("2")){
@@ -310,7 +311,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       }
     }
 
-    l2.replace(I3,I10,replacement);
+    l2.nonDestructiveReplace(I3,I10,replacement);
     System.out.println(l2);
 
     System.out.println("Now make sure I3 is not broken using printRange");
