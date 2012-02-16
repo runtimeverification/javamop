@@ -1,15 +1,19 @@
+/// TODO : consider symbols that don't appear in the SRS?
+
 package logicrepository.plugins.srs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 //This uses a slightly modified Aho-Corasick automaton
 public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, ActionState>> {
   private State s0 = new State(0); 
   private ArrayList<Set<State>> depthMap = new ArrayList<Set<State>>();
+  private HashMap<State, State> fail;
 
   public PatternMatchAutomaton(SRS srs){
     mkGotoMachine(srs);
@@ -62,13 +66,13 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     HashMap<Symbol, ActionState> s0transition = get(s0);
     for(Symbol s : srs.getTerminals()){
       if(!s0transition.containsKey(s)){
-        s0transition.put(s, new ActionState(1, s0));
+        s0transition.put(s, new ActionState(0, s0));
       }
     }
   }
 
   private void addFailureTransitions(Set<Symbol> terminals){
-    HashMap<State, State> fail = new HashMap<State, State>();
+    fail = new HashMap<State, State>();
     if(depthMap.size() == 1) return;
     //handle all depth 1
     for(State state : depthMap.get(1)){
@@ -98,9 +102,9 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       }
     }
 
-    System.out.println("!!!!!!!!!!");
-    System.out.println(fail);
-    System.out.println("!!!!!!!!!!");
+    //System.out.println("!!!!!!!!!!");
+    //System.out.println(fail);
+    //System.out.println("!!!!!!!!!!");
   }
 
   private State findState(State state, Set<State> shallowerStates, 
@@ -111,7 +115,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
         ActionState destination = transition.get(symbol);
         if(destination.getState() == state){
 
-        System.out.println(state + " " + destination.getState());
+      //  System.out.println(state + " " + destination.getState());
           State failState = fail.get(shallowerState);
           while(failState != s0 && get(failState).get(symbol).getAction() != 0){
             failState = fail.get(failState);
@@ -121,6 +125,35 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       }
     }
     return s0;
+  }
+
+  public void search(SinglyLinkedList<Symbol> l){
+    if(l.size() == 0) return;
+    Iterator<Symbol> first  = l.iterator();
+    Iterator<Symbol> second = l.iterator();
+    State currentState = s0;
+    ActionState as;
+    Symbol symbol = second.next();
+    while(true){
+      as = get(currentState).get(symbol);
+      if(as.getState().getMatch() != null){
+        System.out.println("match! " + as.getState().getMatch());
+        l.printRange(first, second);
+      }
+      if(!second.hasNext()) break;
+      //normal transition
+      if(as.getAction() == 0){
+        currentState = as.getState();
+        symbol = second.next();
+      }
+      //fail transition, need to reconsider he same symbol in next state
+      else {
+        currentState = as.getState();
+        for(int i = 0; i < as.getAction(); ++i){
+          first.next();
+        }
+      } 
+    }
   }
 
   @Override public String toString(){

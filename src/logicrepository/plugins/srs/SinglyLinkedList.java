@@ -92,6 +92,18 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       previousNode.next = nextNode;
       --size;
     }
+
+    @Override
+    public boolean equals(Object o){
+      SLLIterator other;
+      try{
+        other = (SLLIterator) o;
+      } catch(ClassCastException e){
+        return false;
+      }
+      //System.out.println(currentNode + " * " + other.currentNode);
+      return (currentNode  == other.currentNode);
+    }
   }
 
   public SinglyLinkedList () { head = null; }
@@ -118,6 +130,11 @@ public class SinglyLinkedList<E> implements Iterable<E> {
   }
 
   public boolean add(E e){
+    ++size;
+    if(tail == null){
+      head = tail = new Node(e);
+      return true;
+    }
     tail.next = new Node(e);
     tail = tail.next;
     return true;
@@ -208,6 +225,21 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     replace(I, J, clone);
   }
 
+  public void printRange(Iterator<E> I, Iterator<E> J){
+    SLLIterator H = new SLLIterator(I);
+    SLLIterator T;
+    try{
+      T = (SLLIterator) J;
+    } catch(ClassCastException e){
+      throw new IllegalArgumentException(
+          "printRange can only accept Iterators from a SinglyLinkedList");
+    }
+    while(!H.equals(T) && H.hasNext()){
+      //System.out.println(H.equals(T));
+      System.out.println(H.next()); 
+    }
+  }
+
   @Override 
   public String toString(){
     StringBuilder sb = new StringBuilder("[");
@@ -234,7 +266,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
 
   public static void main(String[] args){
     String[] a 
-      = new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}; 
+      = new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"}; 
     ArrayList<String> arr = new ArrayList<String>();
     for(String s : a){
       arr.add(s);
@@ -281,10 +313,12 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     l2.replace(I3,I10,replacement);
     System.out.println(l2);
 
-    System.out.println("Now make sure I3 is not broken");
-    while(I3.hasNext()){
-      System.out.println(I3.next());
-    }
+    System.out.println("Now make sure I3 is not broken using printRange");
+  //  while(I3.hasNext()){
+  //    System.out.println(I3.next());
+  //  }
+  //
+    l2.printRange(I3, I10);
 
     System.out.println("Now make sure I10 is not broken");
     while(I10.hasNext()){
