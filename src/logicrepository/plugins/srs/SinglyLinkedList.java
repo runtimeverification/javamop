@@ -196,13 +196,24 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     return false;
   }
 
+  //size can be rendered incorrect if a replacement occurs
+  //only recompute size if we actually ever query size after
+  //a replacement. size() can be very expensive if called
+  //after a replacement
   public int size(){
+    if(size != 0) return size;
+    Node currentNode = head;
+    while(currentNode != null){
+      currentNode = currentNode.next;
+      ++size;
+    }
     return size;
   }
 
   //WARNING: This does NOT copy the replacement list, so this can be considered
   //destructive to the replacement list, as it will have a new tail after this.
   public void replace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
+    if(I.equals(J)) return;
     SLLIterator H;
     SLLIterator T;
     try{
@@ -212,13 +223,32 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       throw new IllegalArgumentException(
           "replace can only accept Iterators from a SinglyLinkedList");
     }
-    H.currentNode.next = replacement.head;
-    H.nextNode = replacement.head;  
-    Node node = replacement.head;
-    while(node.next != null){
-      node = node.next;
+    if(H.currentNode == null || T.currentNode == null){
+      throw new IllegalStateException("Iterator in replace does not point to an element");
     }
-    node.next = T.currentNode;
+    size = 0;
+    //handle null replacement 
+    if(replacement.head == null){
+      if(H.previousNode != null) H.previousNode.next = T.nextNode;
+      else head = T.nextNode;
+      if(T.currentNode == tail) {
+        tail = H.previousNode;
+        H.previousNode.next = null;
+      }
+      return;
+    }
+    if(H.currentNode == head) {
+      head = replacement.head; 
+    }
+    else {
+      H.previousNode.next = replacement.head;
+    }
+    H.currentNode = replacement.head;
+    H.nextNode = replacement.head.next;  
+    if(T.currentNode == tail){
+      tail = replacement.tail;
+    }
+    replacement.tail.next = T.nextNode;
   }
 
   public void nonDestructiveReplace(Iterator<E> I, Iterator<E> J, Iterable<E> replacement){
@@ -274,6 +304,8 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     }
     SinglyLinkedList<String> l = new SinglyLinkedList<String>(arr);
     SinglyLinkedList<String> l2 = new SinglyLinkedList<String>(arr);
+    SinglyLinkedList<String> l3 = new SinglyLinkedList<String>(arr);
+    SinglyLinkedList<String> l4 = new SinglyLinkedList<String>(arr);
     System.out.println(l);
     for(String s : l){
       System.out.println(s);
@@ -297,16 +329,16 @@ public class SinglyLinkedList<E> implements Iterable<E> {
    // SinglyLinkedList<String> replacement = new SinglyLinkedList<String>(t);
     Iterator<String> I3 = l2.iterator();
     while(I3.hasNext()){
-      if(I3.next().equals("2")){
-        System.out.println("found 2");
+      if(I3.next().equals("3")){
+        System.out.println("found 3");
         break;
       }
     }
 
     Iterator<String> I10 = l2.iterator(I3);
     while(I10.hasNext()){
-      if(I10.next().equals("11")){
-        System.out.println("found 11");
+      if(I10.next().equals("10")){
+        System.out.println("found 10");
         break;
       }
     }
@@ -352,6 +384,44 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     l2.remove("11");
     System.out.println(l2);
     System.out.println(l2.tail);
+
+
+    System.out.println("replacing 1 -- 10 with 0, 0, 0, 0"); 
+    
+    Iterator<String> I1 = l3.iterator();
+    I1.next();
+    I10 = l3.iterator(I1);
+    while(I10.hasNext()){
+      if(I10.next().equals("10")){
+        System.out.println("found 10");
+        break;
+      }
+    }
+
+    l3.nonDestructiveReplace(I1,I10,replacement);
+    System.out.println(l3);
+
+    System.out.println("replacing 11 -- 13 with 0, 0, 0, 0"); 
+    
+    Iterator<String> I11 = l4.iterator();
+
+    while(I11.hasNext()){
+      if(I11.next().equals("11")){
+        System.out.println("found 11");
+        break;
+      }
+    }
+    Iterator<String> I13 = l4.iterator(I11);
+    while(I13.hasNext()){
+      if(I13.next().equals("13")){
+        System.out.println("found 13");
+        break;
+      }
+    }
+
+    l4.nonDestructiveReplace(I11,I13,new ArrayList<String>());
+    System.out.println(l4);
+    System.out.println(l4.tail);
   }
 
   private static void removeTest(Iterator I){
