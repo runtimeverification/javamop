@@ -56,11 +56,11 @@ public class EventManager {
 						PointcutComparator comparator = new PointcutComparator();
 						PointCut p1 = event.getPointCut().accept(new ConvertPointcutToCNFVisitor(), null);
 						PointCut p2 = advice.getPointCut().accept(new ConvertPointcutToCNFVisitor(), null);
-
+						
 						if (comparator.compare(p1, p2)) {
-							advice.addEvent(spec, event, combinedAspect);
-							added = true;
-							break;
+							added = advice.addEvent(spec, event, combinedAspect);
+							if(added)
+								break;
 						}
 					}
 

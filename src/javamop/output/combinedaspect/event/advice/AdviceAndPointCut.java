@@ -69,7 +69,20 @@ public class AdviceAndPointCut {
 		return pointcut;
 	}
 
-	public void addEvent(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+	public boolean addEvent(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+
+		// Parameter Conflict Check
+		for(MOPParameter param : event.getParametersWithoutThreadVar()){
+			MOPParameter param2 = parameters.getParam(param.getName());
+			
+			if(param2 == null)
+				continue;
+			
+			if(!param.getType().equals(param2.getType())){
+				return false;
+			}
+		}
+		
 		parameters.addAll(event.getParametersWithoutThreadVar());
 
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -86,6 +99,7 @@ public class AdviceAndPointCut {
 			this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
+		return true;
 	}
 
 	public String toString() {
@@ -144,6 +158,7 @@ public class AdviceAndPointCut {
 			AdviceBody advice = advices.get(event);
 
 			if(advices.size() > 1){
+				ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
 				ret += "{\n";
 			}
 			
