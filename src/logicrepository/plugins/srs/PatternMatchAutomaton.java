@@ -14,8 +14,10 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
   private State s0 = new State(0); 
   private ArrayList<Set<State>> depthMap = new ArrayList<Set<State>>();
   private HashMap<State, State> fail;
+  private int longestLhsSize;
 
   public PatternMatchAutomaton(SRS srs){
+    longestLhsSize = srs.getLongestLhsSize();
     mkGotoMachine(srs);
     addFailureTransitions(srs.getTerminals());
   }

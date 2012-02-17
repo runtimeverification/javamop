@@ -6,6 +6,7 @@ import java.util.Set;
 
 public class SRS extends LinkedHashSet<Rule> {
   private Set<Symbol> terminals = new HashSet<Symbol>();
+  private int longestLhsSize = 0;
 
   public SRS(){
     super();
@@ -31,9 +32,16 @@ public class SRS extends LinkedHashSet<Rule> {
     return sb.toString();
   }
 
+  public int getLongestLhsSize(){
+    return longestLhsSize;
+  }
+
   @Override
   public boolean add(Rule r){
     terminals.addAll(r.getTerminals());
+    if(r.getLhs().size() > longestLhsSize){
+      longestLhsSize = r.getLhs().size();
+    }
     return super.add(r);
   }
 
