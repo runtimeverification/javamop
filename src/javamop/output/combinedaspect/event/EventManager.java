@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.EnableSet;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
@@ -122,7 +123,12 @@ public class EventManager {
 	public String advices() {
 		String ret = "";
 
+		int numAdvice = 1;
 		for (AdviceAndPointCut advice : advices) {
+			if(Main.empty_advicebody){
+				ret += "// " + numAdvice++ + "\n";
+			}
+
 			ret += advice;
 			ret += "\n";
 		}

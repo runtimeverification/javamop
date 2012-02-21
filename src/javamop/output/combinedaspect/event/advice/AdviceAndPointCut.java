@@ -142,40 +142,60 @@ public class AdviceAndPointCut {
 
 		ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
 
-		for (MOPParameter threadVar : threadVars) {
-			ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
-		}
+		if(Main.empty_advicebody){
+			ret += "System.out.print(\"\");\n";
 
-		Iterator<EventDefinition> iter;
-		if(this.pos.equals("before"))
-			iter = this.events.descendingIterator();
-		else
-			iter = this.events.iterator();
-		
-		while(iter.hasNext()){
-			EventDefinition event = iter.next(); 
-					
-			AdviceBody advice = advices.get(event);
-
-			if(advices.size() > 1){
-				ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
-				ret += "{\n";
-			}
+			Iterator<EventDefinition> iter;
+			if(this.pos.equals("before"))
+				iter = this.events.descendingIterator();
+			else
+				iter = this.events.iterator();
 			
-			if (Main.statistics) {
-				ret += stat.eventInc(event.getId());
-
-				for (MOPParameter param : event.getMOPParametersOnSpec()) {
-					ret += stat.paramInc(param);
+			while(iter.hasNext()){
+				EventDefinition event = iter.next(); 
+						
+				AdviceBody advice = advices.get(event);
+	
+				if(advices.size() > 1){
+					ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
 				}
-
-				ret += "\n";
 			}
-
-			ret += advice;
+		} else {
+			for (MOPParameter threadVar : threadVars) {
+				ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
+			}
+	
+			Iterator<EventDefinition> iter;
+			if(this.pos.equals("before"))
+				iter = this.events.descendingIterator();
+			else
+				iter = this.events.iterator();
 			
-			if(advices.size() > 1){
-				ret += "}\n";
+			while(iter.hasNext()){
+				EventDefinition event = iter.next(); 
+						
+				AdviceBody advice = advices.get(event);
+	
+				if(advices.size() > 1){
+					ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
+					ret += "{\n";
+				}
+				
+				if (Main.statistics) {
+					ret += stat.eventInc(event.getId());
+	
+					for (MOPParameter param : event.getMOPParametersOnSpec()) {
+						ret += stat.paramInc(param);
+					}
+	
+					ret += "\n";
+				}
+	
+				ret += advice;
+				
+				if(advices.size() > 1){
+					ret += "}\n";
+				}
 			}
 		}
 

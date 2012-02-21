@@ -46,6 +46,7 @@ public class Main {
 
 	public static boolean dacapo = false;
 	public static boolean silent = false;
+	public static boolean empty_advicebody = false;
 
 	public static boolean merge = false;
 
@@ -391,6 +392,8 @@ public class Main {
 				Main.silent = true;
 			} else if (args[i].compareTo("-merge") == 0) {
 				Main.merge = true;
+			} else if (args[i].compareTo("-noadvicebody") == 0) {
+				Main.empty_advicebody = true;
 			} else {
 				if (files.length() != 0)
 					files += ";";
