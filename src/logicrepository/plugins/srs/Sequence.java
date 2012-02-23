@@ -20,7 +20,7 @@ public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
   }
 
   public String toString(){
-    if(size() == 0) return "\\epsilon";
+    if(size() == 0) return "#epsilon";
     StringBuilder sb = new StringBuilder();
     for(Symbol s : this){
       sb.append(s.toString());
