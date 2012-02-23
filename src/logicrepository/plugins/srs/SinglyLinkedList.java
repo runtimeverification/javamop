@@ -265,6 +265,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       throw new IllegalArgumentException(
           "printRange can only accept Iterators from a SinglyLinkedList");
     }
+    System.out.println(H.currentNode.element);
     while(!H.equals(T) && H.hasNext()){
       //System.out.println(H.equals(T));
       System.out.println(H.next()); 

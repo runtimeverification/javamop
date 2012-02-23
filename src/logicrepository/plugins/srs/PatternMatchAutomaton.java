@@ -132,7 +132,44 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
   public void search(SinglyLinkedList<Symbol> l){
     if(l.size() == 0) return;
     Iterator<Symbol> first  = l.iterator();
+    first.next(); //make sure first points to an element
     Iterator<Symbol> second = l.iterator();
+    State currentState = s0;
+    ActionState as;
+    Symbol symbol = second.next();
+    while(true){
+      as = get(currentState).get(symbol);
+      System.out.println("*" + currentState + " -- " + symbol);
+      if(as.getState().getMatch() != null && as.getAction() == 0){
+        System.out.println("match! " + as.getState().getMatch());
+        l.printRange(first, second);
+      }
+      if(!second.hasNext()) break;
+      //normal transition
+      if(as.getAction() == 0){
+        currentState = as.getState();
+        symbol = second.next();
+      }
+      //fail transition, need to reconsider he same symbol in next state
+      else {
+        System.out.println("Fail transition " + as.toString());
+        currentState = as.getState();
+        for(int i = 0; i < as.getAction(); ++i){
+          first.next();
+        }
+      } 
+    }
+  }
+
+  public void rewrite(SinglyLinkedList<Symbol> l){
+    System.out.println("rewriting:");
+    System.out.println("   " + l + "\n=========================================");
+    if(l.size() == 0) return;
+
+    Iterator<Symbol> first  = l.iterator();
+    first.next(); //make sure first points to an element
+    Iterator<Symbol> second = l.iterator();
+    Iterator<Symbol> endOfRepl;
     State currentState = s0;
     ActionState as;
     Symbol symbol = second.next();
@@ -140,7 +177,22 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       as = get(currentState).get(symbol);
       if(as.getState().getMatch() != null){
         System.out.println("match! " + as.getState().getMatch());
-        l.printRange(first, second);
+        AbstractSequence rhs = as.getState().getMatch().getRhs();
+        if(rhs instanceof Fail){
+          System.out.println("fail!");
+          return;
+        }
+        if(rhs instanceof Succeed){
+          System.out.println("succeed!");
+          return;
+        }
+        if(rhs instanceof Sequence){
+          Sequence repl = (Sequence) rhs;
+          l.nonDestructiveReplace(first, second, repl);
+          endOfRepl = l.iterator(second);
+          System.out.println("!!!" + endOfRepl);
+          System.out.println(l);
+        }
       }
       if(!second.hasNext()) break;
       //normal transition
@@ -156,10 +208,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
         }
       } 
     }
-  }
-
-  public void rewrite(SinglyLinkedList<Symbol> l){
-
+    System.out.println("substituted form = " + l.toString());
   }
 
   @Override public String toString(){
