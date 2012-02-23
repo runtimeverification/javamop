@@ -2,7 +2,7 @@ package logicrepository.plugins.srs;
 
 import java.util.ArrayList;
 
-public class Sequence extends ArrayList<Symbol> {
+public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
 
   public Sequence(int size){
     super(size);

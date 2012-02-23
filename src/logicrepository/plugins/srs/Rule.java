@@ -11,19 +11,19 @@ public class Rule {
   private Set<Symbol> terminals = new HashSet<Symbol>();
   
   private Sequence lhs;
-  private Sequence rhs; 
+  private AbstractSequence rhs; 
 
   public Sequence getLhs(){
     return lhs;
   }
 
-  public Sequence getRhs(){
+  public AbstractSequence getRhs(){
     return rhs;
   }
 
   protected Rule() {}
 
-  public Rule(Sequence lhs, Sequence rhs){
+  public Rule(Sequence lhs, AbstractSequence rhs){
     number = counter++;
     this.lhs = lhs;
     this.rhs = rhs;
@@ -34,8 +34,10 @@ public class Rule {
     for(Symbol s : lhs){
       terminals.add(s);
     }
-    for(Symbol s : rhs){
-      terminals.add(s);
+    if(rhs instanceof Sequence){
+      for(Symbol s : (Sequence) rhs){
+        terminals.add(s);
+      }
     }
   }
 

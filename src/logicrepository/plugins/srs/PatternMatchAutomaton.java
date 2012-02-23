@@ -158,6 +158,10 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     }
   }
 
+  public void rewrite(SinglyLinkedList<Symbol> l){
+
+  }
+
   @Override public String toString(){
     StringBuilder sb = new StringBuilder();
     for(State state : keySet()){

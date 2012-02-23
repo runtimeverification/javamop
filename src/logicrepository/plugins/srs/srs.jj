@@ -36,6 +36,7 @@ PARSER_BEGIN(SRSParser)
         l.add(Terminal.get(s)); 
       }
       p.search(l);
+      p.rewrite(l);
     }
   
     private SRS srs;
@@ -50,9 +51,11 @@ SKIP : {
 }
 
 TOKEN : {
-    <EPSILON   : "\\epsilon" >
-  | <PERIOD    : "."       >
-  | <ARROW     : "->"      > 
+    <EPSILON   : "#epsilon" >
+  | <FAIL      : "#fail"    >
+  | <SUCCEED   : "#succeed" >
+  | <PERIOD    : "."        >
+  | <ARROW     : "->"       > 
   | <TERMINAL  : ["A"-"z"](["A"-"z"]|"_"|["0"-"9"])* >
 }
 
@@ -78,15 +81,12 @@ void Srs() : {
 
 Rule Rule() : {
   Sequence lhs;
-  Sequence rhs;
-  Sequence s;
+  AbstractSequence rhs;
 }
 {
-  s = Sequence()
-  {lhs = s; } 
+  lhs = Sequence() 
   "->"
-  (s = Sequence() | s = Epsilon())
-  {rhs = s; }
+  (rhs = Sequence() | rhs = Epsilon() | rhs = SucceedOrFail() )
   { return new Rule(lhs,rhs); }
 }
 
@@ -104,6 +104,14 @@ Sequence Sequence() : {
   )*
   { return ret; }
   
+}
+
+AbstractSequence SucceedOrFail() : {}
+{
+  (<SUCCEED>
+   { return Succeed.get(); } )
+ |(<FAIL>
+   { return Fail.get();    } )
 }
 
 Sequence Epsilon() : {}
