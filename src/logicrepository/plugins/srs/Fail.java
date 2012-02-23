@@ -5,7 +5,7 @@ public class Fail implements AbstractSequence {
   private Fail(){}
 
   public String toString(){
-    return "#succeed";
+    return "#fail";
   }
 
   public static Fail theFail = new Fail();
