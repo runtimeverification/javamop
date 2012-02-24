@@ -107,7 +107,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     }
 
     @Override public String toString(){
-      return "IT<" + ((nextNode == null)? "<>" : nextNode.element.toString()) + ">";
+      return "IT<" + ((nextNode == null)? "<>" : nextNode.toString()) + ">";
     }
   }
 
@@ -217,6 +217,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
   //WARNING: This does NOT copy the replacement list, so this can be considered
   //destructive to the replacement list, as it will have a new tail after this.
   public void replace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
+    System.out.println("replacement" + toString() + " - " + I.toString() + " - " + J.toString()); 
     if(I.equals(J)) return;
     SLLIterator H;
     SLLIterator T;

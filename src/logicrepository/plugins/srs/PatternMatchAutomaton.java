@@ -173,8 +173,15 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       as = get(currentState).get(symbol);
       System.out.println("*" + symbol + " -- " + as);
       //adjust the first pointer
-      for(int i = 0; i < as.getAction(); ++i){
-        System.out.println("!!!!!" + first.next());
+      if(currentState == s0 && as.getState() == s0){
+        System.out.println("false 0 transition");
+        if(!first.hasNext()) break;
+        first.next();
+      }
+      else {
+        for(int i = 0; i < as.getAction(); ++i){
+          System.out.println("!!!!!" + first.next());
+        }
       }
       if(as.getState().getMatch() != null){
         AbstractSequence repl = as.getState().getMatch().getRhs();
@@ -187,12 +194,13 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
           return;
         }
         if(repl instanceof Sequence){
-          System.out.println("==========Replacing==============" + repl.toString());
+          System.out.println("==========Replacing==============" + first);
           System.out.println("in: " + l);
           l.nonDestructiveReplace(first, second, (Sequence) repl);
           System.out.println("out: " + l);
           lastRepl = l.iterator(second);
           System.out.println("lastRepl: " + lastRepl);
+          symbol = first.next();
           second = l.iterator(first);
           System.out.println("first: " + first);
           System.out.println("second: " + second);
