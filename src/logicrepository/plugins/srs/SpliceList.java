@@ -51,6 +51,18 @@ public class SpliceList<E> {
     head = tail = null;
   }
 
+  public SpliceList(Collection<E> c){
+    for(E e : c){
+      add(e);
+    }
+  }
+
+  public SpliceList(E[] c){
+    for(E e : c){
+      add(e);
+    }
+  }
+
   public boolean isEmpty(){
     return head == null;
   }
@@ -65,17 +77,99 @@ public class SpliceList<E> {
     tail = tail.next;
   }
 
+  public void add(Collection<E> c){
+    for(E e : c){
+      add(e);
+    }
+  }
 
-  protected class SLIterator {
+  public void add(E[] c){
+    for(E e : c){
+      add(e);
+    }
+  }
 
+  @Override
+  public String toString(){
+    if(isEmpty()) return "#epsilon";
+    Node current = head;
+    StringBuilder sb = new StringBuilder("[");
+    do {
+     sb.append(current.element);
+     sb.append(" ");
+     current = current.next; 
+    } while(current != null); 
+    sb.setCharAt(sb.length() - 1, ']'); 
+    return sb.toString();
+  } 
+
+  //C++ style iterator, because it's far superior
+  public class SLIteratorImpl implements SLIterator<E> {
+    protected Node node; 
+
+    protected SLIteratorImpl(Node node){
+      this.node = node;
+    }
+
+    public boolean next(){
+      if(node.next == null) return false;
+      node = node.next;
+      return true;
+    }
+
+    public boolean next(int amount){
+      for(int i = 0; i < amount; ++i){
+        if(!next()) return false;
+      }
+      return true;
+    }
+
+    public boolean previous(){
+      if(node.prev == null) return false;
+      node = node.prev;
+      return true;
+    }
+
+    public boolean previous(int amount){
+      for(int i = 0; i < amount; ++i){
+        if(!previous()) return false;
+      }
+      return true;
+    }
+
+    public E get(){
+      return node.element;
+    }
+
+    @Override 
+    public String toString(){
+      return node.toString();
+    }
+  }
+
+  public SLIterator<E> head(){
+    return new SLIteratorImpl(head);
+  }
+
+  public SLIterator<E> tail(){
+    return new SLIteratorImpl(tail);
   }
 
   public static void main(String[] args){
-    SpliceList<String> sl = new SpliceList<String>();
-    for(String s : args){
-      sl.add(s);
-    }
+    SpliceList<String> sl = new SpliceList<String>(args);
     System.out.println(sl.head);
     System.out.println(sl.tail);
+    System.out.println(sl);
+    SLIterator<String> H = sl.head();
+    System.out.println(H);
+    H.next(3);
+    System.out.println(H);
+    H.next(3);
+    System.out.println(H);
+    H.next(3);
+    System.out.println(H);
+    H.next(40);
+    System.out.println(H);
   }
 }
+
