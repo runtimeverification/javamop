@@ -87,8 +87,8 @@ public class MOPJavaCode {
 
 		if (Main.dacapo) {
 			if(Main.silent){
-				ret = ret.replaceAll("System.out.println\\(", "//System.out.println\\(");
-				ret = ret.replaceAll("System.err.println\\(", "//System.err.println\\(");
+				ret = ret.replaceAll("System.out.println\\(", "{}//System.out.println\\(");
+				ret = ret.replaceAll("System.err.println\\(", "{}//System.err.println\\(");
 			} else {
 				ret = ret.replaceAll("System.out.println\\(\"", "System.out.println\\(\"VIOLATION:");
 				ret = ret.replaceAll("System.err.println\\(\"", "System.err.println\\(\"VIOLATION:");
