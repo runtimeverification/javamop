@@ -237,6 +237,10 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     if(replacement.head == null){
       if(H.previousNode != null) H.previousNode.next = T.nextNode;
       else head = T.nextNode;
+      if(head == null){
+        tail = null;
+        return;
+      }
       if(T.currentNode == tail) {
         tail = H.previousNode;
         H.previousNode.next = null;
@@ -284,6 +288,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
 
   @Override 
   public String toString(){
+    if(head == null) return "#epsilon";
     StringBuilder sb = new StringBuilder("[");
     Node node = head;
     while(node != null){

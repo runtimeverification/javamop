@@ -198,6 +198,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
           System.out.println("==========Replacing==============" + second);
           System.out.println("in: " + l);
           l.nonDestructiveReplace(first, second, (Sequence) repl);
+          if(l.isEmpty()) break;
           first = l.iterator();
           System.out.println("out: " + l);
           System.out.println("out: " + first);
