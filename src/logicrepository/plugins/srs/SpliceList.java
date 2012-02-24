@@ -145,6 +145,21 @@ public class SpliceList<E> {
     public String toString(){
       return node.toString();
     }
+
+    @Override
+    public boolean equals(Object o){
+      if(this == o) return true;
+      SLIteratorImpl other;
+      try{
+         other = (SLIteratorImpl) o;
+      }
+      catch(ClassCastException e){
+        return false;
+      }
+      return   (node.element == other.node.element) 
+            && (node.next    == other.node.next   )
+            && (node.prev    == other.node.prev   );
+    }
   }
 
   public SLIterator<E> head(){
@@ -161,15 +176,13 @@ public class SpliceList<E> {
     System.out.println(sl.tail);
     System.out.println(sl);
     SLIterator<String> H = sl.head();
-    System.out.println(H);
-    H.next(3);
-    System.out.println(H);
-    H.next(3);
-    System.out.println(H);
-    H.next(3);
-    System.out.println(H);
-    H.next(40);
-    System.out.println(H);
+    do {
+      System.out.println(H);
+    } while(H.next());
+    H = sl.head();
+    do {
+      System.out.println(H.get());
+    } while(H.next());
   }
 }
 
