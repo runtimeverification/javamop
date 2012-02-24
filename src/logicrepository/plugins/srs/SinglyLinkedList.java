@@ -217,8 +217,9 @@ public class SinglyLinkedList<E> implements Iterable<E> {
   //WARNING: This does NOT copy the replacement list, so this can be considered
   //destructive to the replacement list, as it will have a new tail after this.
   public void replace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
-    System.out.println("replacement" + toString() + " - " + I.toString() + " - " + J.toString()); 
+  //  System.out.println("replacement" + toString() + " - " + I.toString() + " - " + J.toString()); 
   //  if(I.equals(J)) return;
+  System.out.println("replacing" + toString());
     SLLIterator H;
     SLLIterator T;
     try{
@@ -246,13 +247,18 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       head = replacement.head; 
     }
     else {
+      //System.out.println("PREV: " + H.previousNode.toString());
       H.previousNode.next = replacement.head;
+      //System.out.println("2PREV: " + H.previousNode.toString());
     }
     H.nextNode = replacement.head;
     if(T.currentNode == tail){
       tail = replacement.tail;
     }
     replacement.tail.next = T.nextNode;
+    //System.out.println("3PREV: " + H.previousNode.toString());
+    //System.out.println("head: " + head);
+    //System.out.println("done replacing " + toString());
   }
 
   public void nonDestructiveReplace(Iterator<E> I, Iterator<E> J, Iterable<E> replacement){
@@ -269,7 +275,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       throw new IllegalArgumentException(
           "printRange can only accept Iterators from a SinglyLinkedList");
     }
-    System.out.println(H.currentNode.element);
+    //System.out.println(H.currentNode.element);
     while(!H.equals(T) && H.hasNext()){
       //System.out.println(H.equals(T));
       System.out.println(H.next()); 

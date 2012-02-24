@@ -180,30 +180,33 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       }
       else {
         for(int i = 0; i < as.getAction(); ++i){
-          System.out.println("!!!!!" + first.next());
+          first.next();
         }
       }
       if(as.getState().getMatch() != null){
         AbstractSequence repl = as.getState().getMatch().getRhs();
         if(repl instanceof Fail){
-          System.out.println("Fail!");
+          //System.out.println("Fail!");
           return;
         }
         if(repl instanceof Succeed){
-          System.out.println("Succeed!");
+         // System.out.println("Succeed!");
           return;
         }
         if(repl instanceof Sequence){
           System.out.println("==========Replacing==============" + first);
+          System.out.println("==========Replacing==============" + second);
           System.out.println("in: " + l);
           l.nonDestructiveReplace(first, second, (Sequence) repl);
+          first = l.iterator();
           System.out.println("out: " + l);
-          lastRepl = l.iterator(second);
-          System.out.println("lastRepl: " + lastRepl);
+          System.out.println("out: " + first);
+          //lastRepl = l.iterator(second);
+          //System.out.println("lastRepl: " + lastRepl);
           symbol = first.next();
           second = l.iterator(first);
-          System.out.println("first: " + first);
-          System.out.println("second: " + second);
+          //System.out.println("first: " + first);
+          //System.out.println("second: " + second);
           currentState = s0;
           continue;
         }
