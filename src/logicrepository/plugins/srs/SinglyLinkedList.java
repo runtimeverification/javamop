@@ -218,7 +218,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
   //destructive to the replacement list, as it will have a new tail after this.
   public void replace(Iterator<E> I, Iterator<E> J, SinglyLinkedList<E> replacement){
     System.out.println("replacement" + toString() + " - " + I.toString() + " - " + J.toString()); 
-    if(I.equals(J)) return;
+  //  if(I.equals(J)) return;
     SLLIterator H;
     SLLIterator T;
     try{
