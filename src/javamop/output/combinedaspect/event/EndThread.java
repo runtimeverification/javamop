@@ -34,6 +34,8 @@ public class EndThread {
 	MOPVariable mainCounter;
 	MOPVariable threadSet;
 
+	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+
 	public EndThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
 		if (!event.isEndThread())
 			throw new MOPException("EndThread should be defined only for an endThread pointcut.");
@@ -75,11 +77,8 @@ public class EndThread {
 		ret += "(";
 		ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
 		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
+		
 		ret += runnableMap + ".put(t, r);\n";
 		ret += "}\n";
 
@@ -91,12 +90,7 @@ public class EndThread {
 		MOPVariable threadVar = new MOPVariable("t");
 
 		ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
-		
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 
 		ret += "if(Thread.currentThread() == " + threadVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -117,12 +111,7 @@ public class EndThread {
 		MOPVariable runnableVar = new MOPVariable("r");
 
 		ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
-
+		ret += " && " + commonPointcut + "() {\n";
 
 		ret += "if(" + runnableMap + ".get(Thread.currentThread()) == " + runnableVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -142,11 +131,7 @@ public class EndThread {
 		String ret = "";
 
 		ret += "before (): " + "(execution(void *.main(..)) )";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 		ret += "if(" + mainThread + " == null){\n";
 		ret += mainThread + " = Thread.currentThread();\n";
 		ret += threadSet + ".add(Thread.currentThread());\n";
@@ -158,11 +143,7 @@ public class EndThread {
 		ret += "\n";
 
 		ret += "after (): " + "(execution(void *.main(..)) )";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 		ret += "if(" + mainThread + " == Thread.currentThread()){\n";
 		ret += mainCounter + "--;\n";
 		ret += "if(" + mainCounter + " <= 0){\n";
@@ -186,11 +167,7 @@ public class EndThread {
 		ret += "after (Thread t): ";
 		ret += "(";
 		ret += "call(void Thread+.start()) && target(t))";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 		ret += threadSet + ".add(t);\n";
 		ret += "}\n";
 		

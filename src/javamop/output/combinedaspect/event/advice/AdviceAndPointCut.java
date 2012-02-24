@@ -17,10 +17,14 @@ import javamop.parser.ast.mopspec.MOPParameters;
 
 public class AdviceAndPointCut {
 
+	MOPVariable inlineFuncName;
+	MOPParameters inlineParameters;
+
 	MOPVariable pointcutName;
 	public PointCut pointcut;
 	MOPParameters parameters;
 
+	boolean hasThisJoinPoint;
 	public boolean isAround = false;
 	public String retType;
 	public String pos;
@@ -33,9 +37,15 @@ public class AdviceAndPointCut {
 	
 	HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
 
+	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+
 	public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
+
 		this.pointcutName = new MOPVariable(mopSpec.getName() + "_" + event.getUniqueId());
+		this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" + event.getUniqueId());
 		this.parameters = event.getParametersWithoutThreadVar();
+		this.inlineParameters = event.getMOPParametersWithoutThreadVar();
 
 		if (event.getPos().equals("around")) {
 			isAround = true;
@@ -101,47 +111,10 @@ public class AdviceAndPointCut {
 		this.events.add(event);
 		return true;
 	}
-
-	public String toString() {
+	
+	protected String adviceBody(){
 		String ret = "";
-		String pointcutStr = pointcut.toString();
-
-		ret += "pointcut " + pointcutName;
-		ret += "(";
-		ret += parameters.parameterDeclString();
-		ret += ")";
-		ret += " : ";
-		if (pointcutStr != null && pointcutStr.length() != 0) {
-			ret += "(";
-			ret += pointcutStr;
-			ret += ")";
-			ret += " && ";
-		}
-		if(Main.dacapo){
-			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
-		} else {
-			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
-		}
-
-		if (isAround)
-			ret += retType + " ";
-
-		ret += pos + " (" + parameters.parameterDeclString() + ") ";
-
-		if (retVal != null && retVal.size() > 0) {
-			ret += "returning (";
-			ret += retVal.parameterDeclString();
-			ret += ") ";
-		}
-
-		if (throwVal != null && throwVal.size() > 0) {
-			ret += "throwing (";
-			ret += throwVal.parameterDeclString();
-			ret += ") ";
-		}
-
-		ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
-
+		
 		if(Main.empty_advicebody){
 			ret += "System.out.print(\"\");\n";
 
@@ -197,6 +170,72 @@ public class AdviceAndPointCut {
 					ret += "}\n";
 				}
 			}
+		}
+		
+		return ret;
+	}
+
+	public String toString() {
+		String ret = "";
+		String pointcutStr = pointcut.toString();
+
+		if(Main.inline && !isAround){
+			ret += "void " + inlineFuncName + "(" + inlineParameters.parameterDeclString();
+			if(hasThisJoinPoint){
+				if(inlineParameters.size() > 0) 
+					ret += ", ";
+				ret += "JoinPoint thisJoinPoint";
+			}
+			ret += ") {\n";
+
+			ret += adviceBody();
+			
+			ret += "}\n";
+		}
+		
+		
+		ret += "pointcut " + pointcutName;
+		ret += "(";
+		ret += parameters.parameterDeclString();
+		ret += ")";
+		ret += " : ";
+		if (pointcutStr != null && pointcutStr.length() != 0) {
+			ret += "(";
+			ret += pointcutStr;
+			ret += ")";
+			ret += " && ";
+		}
+		ret += commonPointcut + "();\n";
+
+		if (isAround)
+			ret += retType + " ";
+
+		ret += pos + " (" + parameters.parameterDeclString() + ") ";
+
+		if (retVal != null && retVal.size() > 0) {
+			ret += "returning (";
+			ret += retVal.parameterDeclString();
+			ret += ") ";
+		}
+
+		if (throwVal != null && throwVal.size() > 0) {
+			ret += "throwing (";
+			ret += throwVal.parameterDeclString();
+			ret += ") ";
+		}
+
+		ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
+
+		if(Main.inline && !isAround){
+			ret += inlineFuncName + "(" + inlineParameters.parameterString();
+			if(hasThisJoinPoint){
+				if(inlineParameters.size() > 0) 
+					ret += ", ";
+				ret += "thisJoinPoint";
+			}
+			ret += ");\n";
+		} else {
+			ret += adviceBody();
 		}
 
 		ret += "}\n";

@@ -32,6 +32,8 @@ public class StartThread {
 	MOPVariable runnableMap;
 	MOPVariable mainThread;
 
+	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+
 	public StartThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
 		if (!event.isStartThread())
 			throw new MOPException("StartThread should be defined only for an startThread pointcut.");
@@ -68,11 +70,8 @@ public class StartThread {
 		ret += "(";
 		ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
 		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
+
 		ret += runnableMap + ".put(t, r);\n";
 		ret += "}\n";
 
@@ -84,11 +83,7 @@ public class StartThread {
 		MOPVariable threadVar = new MOPVariable("t");
 
 		ret += "before (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 
 		ret += "if(Thread.currentThread() == " + threadVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -108,11 +103,7 @@ public class StartThread {
 		MOPVariable runnableVar = new MOPVariable("r");
 
 		ret += "before (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 
 		ret += "if(" + runnableMap + ".get(Thread.currentThread()) == " + runnableVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -131,11 +122,7 @@ public class StartThread {
 		String ret = "";
 
 		ret += "before (): " + "(execution(void *.main(..)) )";
-		if(Main.dacapo){
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin() {\n";
-		} else {
-			ret += " && !within(javamoprt.MOPObject+) && !adviceexecution() {\n";
-		}
+		ret += " && " + commonPointcut + "() {\n";
 		ret += "if(" + mainThread + " == null){\n";
 		ret += mainThread + " = Thread.currentThread();\n";
 		

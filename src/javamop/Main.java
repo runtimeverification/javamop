@@ -49,6 +49,7 @@ public class Main {
 	public static boolean empty_advicebody = false;
 
 	public static boolean merge = false;
+	public static boolean inline = false;
 
 	static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
 		if(Main.outputDir != null){
@@ -392,6 +393,8 @@ public class Main {
 				Main.silent = true;
 			} else if (args[i].compareTo("-merge") == 0) {
 				Main.merge = true;
+			} else if (args[i].compareTo("-inline") == 0) {
+				Main.inline = true;
 			} else if (args[i].compareTo("-noadvicebody") == 0) {
 				Main.empty_advicebody = true;
 			} else {

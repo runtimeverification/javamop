@@ -7,6 +7,7 @@ import java.util.List;
 import javamop.MOPException;
 import javamop.Main;
 import javamop.output.EnableSet;
+import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
 import javamop.output.monitor.WrapperMonitor;
@@ -27,6 +28,8 @@ public class EventManager {
 	public HashMap<JavaMOPSpec, MonitorSet> monitorSets;
 	public HashMap<JavaMOPSpec, WrapperMonitor> monitors;
 	public HashMap<JavaMOPSpec, EnableSet> enableSets;
+	
+	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
 	public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) throws MOPException {
 		this.monitorSets = combinedAspect.monitorSets;
@@ -123,6 +126,13 @@ public class EventManager {
 	public String advices() {
 		String ret = "";
 
+		ret += "pointcut " + commonPointcut + "() : ";
+		if(Main.dacapo){
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
+		} else {
+			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
+		}
+		
 		int numAdvice = 1;
 		for (AdviceAndPointCut advice : advices) {
 			if(Main.empty_advicebody){
