@@ -105,6 +105,10 @@ public class SinglyLinkedList<E> implements Iterable<E> {
       //System.out.println(currentNode + " * " + other.currentNode);
       return (currentNode  == other.currentNode);
     }
+
+    @Override public String toString(){
+      return "IT<" + ((nextNode == null)? "<>" : nextNode.element.toString()) + ">";
+    }
   }
 
   public SinglyLinkedList () { head = null; }
@@ -243,8 +247,7 @@ public class SinglyLinkedList<E> implements Iterable<E> {
     else {
       H.previousNode.next = replacement.head;
     }
-    H.currentNode = replacement.head;
-    H.nextNode = replacement.head.next;  
+    H.nextNode = replacement.head;
     if(T.currentNode == tail){
       tail = replacement.tail;
     }
