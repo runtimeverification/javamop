@@ -186,11 +186,11 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       if(as.getState().getMatch() != null){
         AbstractSequence repl = as.getState().getMatch().getRhs();
         if(repl instanceof Fail){
-          //System.out.println("Fail!");
+          System.out.println("Fail!");
           return;
         }
         if(repl instanceof Succeed){
-         // System.out.println("Succeed!");
+          System.out.println("Succeed!");
           return;
         }
         if(repl instanceof Sequence){
