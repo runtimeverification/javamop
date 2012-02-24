@@ -15,6 +15,7 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 public class RawMonitor extends Monitor{
 
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable staticsig = new MOPVariable("MOP_staticsig");
 	MOPVariable wrapper = new MOPVariable("wrapper");
 	MOPVariable reset = new MOPVariable("reset");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
@@ -87,6 +88,7 @@ public class RawMonitor extends Monitor{
 
 			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
 			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
+			eventActionStr = eventActionStr.replaceAll("__STATICSIG", "this." + staticsig);
 			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");
 
 			eventAction = new MOPJavaCode(eventActionStr);
@@ -127,7 +129,7 @@ public class RawMonitor extends Monitor{
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
 		String ret = "";
 
 		if (has__LOC) {
@@ -136,6 +138,14 @@ public class RawMonitor extends Monitor{
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
+		
+		if (has__STATICSIG) {
+			if(staticsig != null)
+				ret += monitorVar + "." + this.staticsig + " = " + staticsig + ";\n";
+			else
+				ret += monitorVar + "." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
+		}
+
 		
 		if (this.hasThisJoinPoint){
 			ret += monitorVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
@@ -179,6 +189,8 @@ public class RawMonitor extends Monitor{
 		ret += monitorDeclaration + "\n";
 		if (this.has__LOC)
 			ret += "String " + loc + ";\n";
+		if (this.has__STATICSIG)
+			ret += "org.aspectj.lang.Signature " + staticsig + ";\n";
 
 		if (this.hasThisJoinPoint)
 			ret += "JoinPoint " + thisJoinPoint + " = null;\n";

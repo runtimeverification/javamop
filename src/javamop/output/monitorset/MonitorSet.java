@@ -22,10 +22,12 @@ public class MonitorSet {
 	ArrayList<EventDefinition> events;
 	List<PropertyAndHandlers> properties;
 	boolean has__LOC;
+	boolean has__STATICSIG;
 	boolean hasThisJoinPoint;
 	boolean existSkip = false;
 
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable staticsig = new MOPVariable("MOP_staticsig");
 	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
@@ -40,6 +42,7 @@ public class MonitorSet {
 		this.extendedNode = extendedNode;
 
 		this.has__LOC = mopSpec.has__LOC();
+		this.has__STATICSIG = mopSpec.has__STATICSIG();
 		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
 
 		for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
@@ -91,7 +94,7 @@ public class MonitorSet {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc) {
+	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
 		String ret = "";
 
 		boolean isAround = event.getPos().equals("around");
@@ -103,6 +106,13 @@ public class MonitorSet {
 				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + loc + ";\n";
 			else
 				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+		}
+		
+		if (has__STATICSIG) {
+			if(staticsig != null)
+				ret += "((" + setName + ")" + monitorSetVar + ")." + this.staticsig + " = " + staticsig + ";\n";
+			else
+				ret += "((" + setName + ")" + monitorSetVar + ")." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
 		}
 
 		if (this.hasThisJoinPoint) {
@@ -146,6 +156,8 @@ public class MonitorSet {
 
 		if (has__LOC)
 			ret += "String " + loc + " = null;\n";
+		if (this.has__STATICSIG)
+			ret += "org.aspectj.lang.Signature " + staticsig + ";\n";
 
 		if (existSkip)
 			ret += "boolean " + skipAroundAdvice + " = false;\n";
@@ -288,7 +300,7 @@ public class MonitorSet {
 			ret += "this.elementData[" + i + "] = " + monitor + ";\n";
 			ret += "}\n";
 
-			ret += this.monitor.Monitoring(monitor, event, loc);
+			ret += this.monitor.Monitoring(monitor, event, loc, staticsig);
 
 			ret += "}\n";
 

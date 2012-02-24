@@ -39,6 +39,7 @@ class PropMonitor {
 public class BaseMonitor extends Monitor {
 	// fields
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable staticsig = new MOPVariable("MOP_staticsig");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 	MOPVariable conditionFail = new MOPVariable("MOP_conditionFail");
@@ -196,6 +197,7 @@ public class BaseMonitor extends Monitor {
 	
 				eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
 				eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
+				eventActionStr = eventActionStr.replaceAll("__STATICSIG", "this." + staticsig);
 				eventActionStr = eventActionStr.replaceAll("__SKIP", "this." + skipAroundAdvice + " = true");
 	
 				eventAction = new MOPJavaCode(eventActionStr);
@@ -278,7 +280,7 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
@@ -287,6 +289,13 @@ public class BaseMonitor extends Monitor {
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+		}
+
+		if (has__STATICSIG) {
+			if(staticsig != null)
+				ret += monitorVar + "." + this.staticsig + " = " + staticsig + ";\n";
+			else
+				ret += monitorVar + "." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
 		}
 
 		if (this.hasThisJoinPoint){
@@ -372,6 +381,8 @@ public class BaseMonitor extends Monitor {
 		ret += monitorDeclaration + "\n";
 		if (this.has__LOC)
 			ret += "String " + loc + ";\n";
+		if (this.has__STATICSIG)
+			ret += "org.aspectj.lang.Signature " + staticsig + ";\n";
 		if (this.hasThisJoinPoint)
 			ret += "JoinPoint " + thisJoinPoint + " = null;\n";
 

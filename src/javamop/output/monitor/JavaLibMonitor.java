@@ -60,6 +60,7 @@ public class JavaLibMonitor extends BaseMonitor {
 
 			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
 			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
+			eventActionStr = eventActionStr.replaceAll("__STATICSIG", "this." + staticsig);
 			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");
 
 			eventAction = new MOPJavaCode(eventActionStr);

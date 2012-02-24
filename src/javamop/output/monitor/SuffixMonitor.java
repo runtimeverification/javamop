@@ -15,6 +15,7 @@ import javamop.parser.ast.stmt.BlockStmt;
 
 public class SuffixMonitor extends Monitor {
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable staticsig = new MOPVariable("MOP_staticsig");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
@@ -128,7 +129,7 @@ public class SuffixMonitor extends Monitor {
 		ret += "while (" + it + ".hasNext()){\n";
 		ret += innerMonitor.getOutermostName() + " " + monitor + " = (" + innerMonitor.getOutermostName() + ")" + it + ".next();\n";
 
-		ret += innerMonitor.Monitoring(monitor, event, loc);
+		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig);
 
 		ret += "if(" + monitorSet + ".contains(" + monitor + ")";
 		for (MOPVariable categoryVar : categoryVars) {
@@ -147,18 +148,24 @@ public class SuffixMonitor extends Monitor {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return innerMonitor.Monitoring(monitorVar, event, loc);
+			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig);
 
 		if (has__LOC) {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+		}
+		if (has__STATICSIG) {
+			if(staticsig != null)
+				ret += monitorVar + "." + this.staticsig + " = " + staticsig + ";\n";
+			else
+				ret += monitorVar + "." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
 		}
 
 		if (this.hasThisJoinPoint){
@@ -200,6 +207,8 @@ public class SuffixMonitor extends Monitor {
 
 			if (this.has__LOC)
 				ret += "String " + loc + ";\n";
+			if (this.has__STATICSIG)
+				ret += "org.aspectj.lang.Signature " + staticsig + ";\n";
 			if (this.hasThisJoinPoint)
 				ret += "JoinPoint " + thisJoinPoint + " = null;\n";
 			if (existSkip)

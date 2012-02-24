@@ -22,8 +22,9 @@ public class HandlerMethod {
 	MOPParameters varsToRestore;
 	HashMap<MOPParameter, MOPVariable> savedParams;
 
-	// local variable for now
+	// local variables for now
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable staticsig = new MOPVariable("MOP_staticsig");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 	private boolean has__SKIP = false;
@@ -42,6 +43,7 @@ public class HandlerMethod {
 
 			handlerBody = handlerBody.replaceAll("__RESET", "this.reset()");
 			handlerBody = handlerBody.replaceAll("__LOC", "this." + loc);
+			handlerBody = handlerBody.replaceAll("__STATICSIG", "this." + staticsig);
 			handlerBody = handlerBody.replaceAll("__SKIP", skipAroundAdvice + " = true");
 			
 			this.handlerCode = new MOPJavaCode(handlerBody);

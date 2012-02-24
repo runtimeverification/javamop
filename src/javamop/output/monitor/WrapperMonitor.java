@@ -15,6 +15,7 @@ import javamop.parser.ast.stmt.BlockStmt;
 public class WrapperMonitor extends Monitor {
 
 	MOPVariable loc = new MOPVariable("MOP_loc");
+	MOPVariable staticsig = new MOPVariable("MOP_staticsig");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
@@ -145,19 +146,19 @@ public class WrapperMonitor extends Monitor {
 			ret += lastevent + " = " + idnum + ";\n";
 		}
 
-		ret += suffixMonitor.Monitoring(monitor, event, loc);
+		ret += suffixMonitor.Monitoring(monitor, event, loc, staticsig);
 
 		ret += "}\n";
 
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return suffixMonitor.Monitoring(monitorVar, event, loc);
+			return suffixMonitor.Monitoring(monitorVar, event, loc, staticsig);
 
 		ret += "if (" + monitorVar + "." + monitor + " != null){\n";
 
@@ -166,6 +167,13 @@ public class WrapperMonitor extends Monitor {
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
 				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+		}
+
+		if (has__STATICSIG) {
+			if(staticsig != null)
+				ret += monitorVar + "." + this.staticsig + " = " + staticsig + ";\n";
+			else
+				ret += monitorVar + "." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
 		}
 
 		if (this.hasThisJoinPoint) {

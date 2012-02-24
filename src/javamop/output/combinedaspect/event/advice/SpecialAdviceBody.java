@@ -133,18 +133,18 @@ public class SpecialAdviceBody extends AdviceBody {
 			}
 
 			if (event.isStartEvent()) {
-				ret += monitorClass.Monitoring(monitor, event, null);
+				ret += monitorClass.Monitoring(monitor, event, null, null);
 			} else if (mopSpec.getParameters().size() == event.getMOPParametersOnSpec().size()) {
 
 				ret += monitor + " = (" + monitorName + ")" + obj + ";\n";
 				ret += "if(" + monitor + " != null) {\n";
-				ret += monitorClass.Monitoring(monitor, event, null);
+				ret += monitorClass.Monitoring(monitor, event, null, null);
 				ret += "}\n";
 
 			} else if (event.getMOPParametersOnSpec().size() == 0) {
-				ret += monitorSet.Monitoring(indexingTree.getName(), event, null);
+				ret += monitorSet.Monitoring(indexingTree.getName(), event, null, null);
 			} else {
-				ret += monitorSet.Monitoring(obj, event, null);
+				ret += monitorSet.Monitoring(obj, event, null, null);
 			}
 
 			if (mopSpec.isSync())
@@ -153,7 +153,7 @@ public class SpecialAdviceBody extends AdviceBody {
 			if (mopSpec.isSync())
 				ret += "synchronized(" + globalLock.getName() + ") {\n";
 
-			ret += monitorClass.Monitoring(indexingTree.getName(), event, null);
+			ret += monitorClass.Monitoring(indexingTree.getName(), event, null, null);
 
 			if (mopSpec.isSync())
 				ret += "}\n";
