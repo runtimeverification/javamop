@@ -307,6 +307,7 @@ public class SpliceList<E> {
     SpliceList<String> sl9 = new SpliceList<String>(sl);
     SpliceList<String> sl10 = new SpliceList<String>(sl);
     SpliceList<String> sl11 = new SpliceList<String>(sl);
+    SpliceList<String> sl12 = new SpliceList<String>(sl);
 
     SLIterator<String> H;
     SLIterator<String> T;
