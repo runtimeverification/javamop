@@ -111,12 +111,14 @@ public class SpliceList<E> {
       this.node = node;
     }
 
+    @Override
     public boolean next(){
       if(node.next == null) return false;
       node = node.next;
       return true;
     }
 
+    @Override
     public boolean next(int amount){
       for(int i = 0; i < amount; ++i){
         if(!next()) return false;
@@ -124,12 +126,14 @@ public class SpliceList<E> {
       return true;
     }
 
+    @Override
     public boolean previous(){
       if(node.prev == null) return false;
       node = node.prev;
       return true;
     }
 
+    @Override
     public boolean previous(int amount){
       for(int i = 0; i < amount; ++i){
         if(!previous()) return false;
@@ -137,8 +141,24 @@ public class SpliceList<E> {
       return true;
     }
 
+    @Override
     public E get(){
       return node.element;
+    }
+
+    @Override
+    public void splice(SLIterator<E> end, SpliceList<E> replacement){
+    
+    }
+    
+    @Override
+    public void nonDestructiveSplice(SLIterator<E> end, SpliceList<E> replacement){
+
+    }
+
+    @Override
+    public void nonDestructiveSplice(SLIterator<E> end, Collection<E> replacement){
+
     }
 
     @Override 
