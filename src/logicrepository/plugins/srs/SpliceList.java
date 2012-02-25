@@ -212,6 +212,13 @@ public class SpliceList<E> {
 
     private void spliceNonEmptyRepl(SLIteratorImpl endImpl, SpliceList<E> replacement){
       if(node == head){
+        if(endImpl.node == tail){
+          head = replacement.head;
+          tail = replacement.tail;
+          node = replacement.head;
+          replacement.head = replacement.tail = endImpl.node = null;
+          return;
+        }
         head = replacement.head;
         node = head;
         replacement.head = null;
