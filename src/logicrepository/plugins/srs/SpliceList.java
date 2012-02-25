@@ -170,18 +170,34 @@ public class SpliceList<E> {
         throw new IllegalArgumentException("Must provide an SLIteratorImpl to splice");
       }
       if(replacement.isEmpty()){
-        if(node == head){
-          head = endImpl.node.next; 
-          head.prev = null;
-          node = head;
-          endImpl.node = head;
-          return;
-        }
-        if(node == tail){
-          return;
-        }
-
+        spliceEmptyRepl(endImpl);
         return;
+      }
+    }
+
+    private void spliceEmptyRepl(SLIteratorImpl endImpl){
+      if(node == head){
+        head = endImpl.node.next; 
+        head.prev = null;
+        node = head;
+        endImpl.node = head;
+      }
+      else if(node == tail){
+        tail = tail.prev;
+        tail.next = null;
+        node = null;
+        endImpl.node = null;
+      }
+      else {
+        Node prev = node.prev;
+        Node next = endImpl.node.next;
+        prev.next = next;
+        if(next != null) next.prev = prev;
+        node = next;
+        endImpl.node = next;
+      }
+      if (endImpl.node == tail) {
+        tail = node; 
       }
     }
     
@@ -287,11 +303,10 @@ public class SpliceList<E> {
     System.out.println(T);
     System.out.println(sl);
 
+
     H = sl2.head();
-    T = sl2.tail();
-    H.next(2);
-    T.previous(5);
-    System.out.println("========splicing empty to middle========");
+    T = sl2.head();
+    System.out.println("========splicing empty to single front element========");
     System.out.println(H);
     System.out.println(T);
     System.out.println(sl2);
@@ -300,6 +315,46 @@ public class SpliceList<E> {
     System.out.println(H);
     System.out.println(T);
     System.out.println(sl2);
+
+
+    H = sl3.head();
+    T = sl3.tail();
+    H.next(2);
+    T.previous(5);
+    System.out.println("========splicing empty to middle========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl3);
+    H.splice(T, new SpliceList<String>());
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl3);
+
+    H = sl4.head();
+    H.next(5);
+    T = sl4.tail();
+    System.out.println("========splicing empty to back========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl4);
+    H.splice(T, new SpliceList<String>());
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl4);
+
+    H = sl5.tail();
+    T = sl5.tail();
+    System.out.println("========splicing empty to single back element========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl5);
+    H.splice(T, new SpliceList<String>());
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl5);
   }
 }
 
