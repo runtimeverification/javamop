@@ -57,6 +57,13 @@ public class SpliceList<E> {
     }
   }
 
+  public SpliceList(SpliceList<E> c){
+    SLIterator<E> I = c.head();
+    do {
+      add(I.get());
+    } while(I.next());  
+  }
+
   public SpliceList(E[] c){
     for(E e : c){
       add(e);
@@ -146,19 +153,35 @@ public class SpliceList<E> {
       return node.element;
     }
 
+    //WARNING:  This assumes iterators point to the same list!
     @Override
     public void splice(SLIterator<E> end, SpliceList<E> replacement){
-    
+      SLIteratorImpl endImpl;
+      try {
+        endImpl = (SLIteratorImpl) end;
+      }
+      catch(ClassCastException e){
+        throw new IllegalArgumentException("Must provide an SLIteratorImpl to splice");
+      }
+      if(node == head){
+        if(replacement.isEmpty()){
+          head = endImpl.node.next; 
+          head.prev = null;
+          node = head;
+          endImpl.node = head;
+          return;
+        }
+      } 
     }
     
     @Override
     public void nonDestructiveSplice(SLIterator<E> end, SpliceList<E> replacement){
-
+      splice(end, new SpliceList<E>(replacement));
     }
 
     @Override
     public void nonDestructiveSplice(SLIterator<E> end, Collection<E> replacement){
-
+      splice(end, new SpliceList<E>(replacement));
     }
 
     @Override 
@@ -203,6 +226,18 @@ public class SpliceList<E> {
     do {
       System.out.println(H.get());
     } while(H.next());
+    H = sl.head();
+    SLIterator<String> T = sl.tail();
+    T.previous(5);
+    System.out.println("========splicing========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl);
+    H.splice(T, new SpliceList<String>());
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl);
   }
 }
 
