@@ -171,11 +171,13 @@ public class SpliceList<E> {
         endImpl.node = head;
         return;
       }  
-      //we are splicing empty into something
+      //we are splicing empty into something not empty
       if(replacement.isEmpty()){
         spliceEmptyRepl(endImpl);
         return;
       }
+      //we are splicing something not empty into something not empty
+      spliceNonEmptyRepl(endImpl, replacement);
     }
 
     private void spliceEmptyRepl(SLIteratorImpl endImpl){
@@ -207,7 +209,24 @@ public class SpliceList<E> {
       }
       endImpl.node = next;
     }
-    
+
+    private void spliceNonEmptyRepl(SLIteratorImpl endImpl, SpliceList<E> replacement){
+      if(node == head){
+        head = replacement.head;
+        node = head;
+        replacement.head = null;
+        endImpl.node = endImpl.node.next;
+        replacement.tail.next = endImpl.node; 
+        endImpl.node.prev = replacement.tail;
+        replacement.tail = null;
+        return;
+      }    
+      if(node == tail){
+        
+        return;
+      }
+    }
+
     @Override
     public void nonDestructiveSplice(SLIterator<E> end, SpliceList<E> replacement){
       splice(end, new SpliceList<E>(replacement));
@@ -257,6 +276,9 @@ public class SpliceList<E> {
     SpliceList<String> sl4 = new SpliceList<String>(sl);
     SpliceList<String> sl5 = new SpliceList<String>(sl);
     SpliceList<String> sl6 = new SpliceList<String>(sl);
+    SpliceList<String> sl7 = new SpliceList<String>(sl);
+    SpliceList<String> sl8 = new SpliceList<String>(sl);
+    SpliceList<String> sl9 = new SpliceList<String>(sl);
 
     SLIterator<String> H;
     SLIterator<String> T;
@@ -393,6 +415,21 @@ public class SpliceList<E> {
     System.out.println(sl6);
     System.out.println(sl6.head());
     System.out.println(sl6.tail());
+
+    H = sl7.head();
+    T = sl7.tail();
+    T.previous(5);
+    System.out.println("========splicing [0 0 0] to front========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl7);
+    H.splice(T, new SpliceList<String>(new String[] {"0", "0", "0"}));
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl7);
+    System.out.println(sl7.head());
+    System.out.println(sl7.tail());
 
   }
 }
