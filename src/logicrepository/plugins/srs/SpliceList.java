@@ -222,7 +222,12 @@ public class SpliceList<E> {
         return;
       }    
       if(node == tail){
-        
+        endImpl.node = null;
+        tail = replacement.tail;
+        node.prev.next = replacement.head;
+        replacement.head.prev = node.prev;
+        node = replacement.head;
+        replacement.tail = replacement.head = null;
         return;
       }
     }
@@ -431,6 +436,34 @@ public class SpliceList<E> {
     System.out.println(sl7.head());
     System.out.println(sl7.tail());
 
+    H = sl8.head();
+    H.next(5);
+    T = sl8.tail();
+    System.out.println("========splicing [0 0 0] to back========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl8);
+    H.splice(T, new SpliceList<String>(new String[] {"0", "0", "0"}));
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl8);
+    System.out.println(sl8.head());
+    System.out.println(sl8.tail());
+
+    H = sl9.tail();
+    T = sl9.tail();
+    System.out.println("========splicing [0 0 0] to single back element========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl9);
+    H.splice(T, new SpliceList<String>(new String[] {"0", "0", "0"}));
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl9);
+    System.out.println(sl9.head());
+    System.out.println(sl9.tail());
   }
 }
 
