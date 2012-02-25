@@ -520,6 +520,30 @@ public class SpliceList<E> {
     System.out.println(sl11);
     System.out.println(sl11.head());
     System.out.println(sl11.tail());
+
+    H = sl12.head();
+    T = sl12.tail();
+    H.next(5);
+    T.previous(5);
+    System.out.println(
+        "========splicing [0 0 0] to middle then [9 9 9] with the same Iterators========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl12);
+    H.splice(T, new SpliceList<String>(new String[] {"0", "0", "0"}));
+    System.out.println("========done one========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl12);
+    System.out.println(sl12.head());
+    System.out.println(sl12.tail());
+    H.splice(T, new SpliceList<String>(new String[] {"9", "9", "9"}));
+    System.out.println("========done two========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl12);
+    System.out.println(sl12.head());
+    System.out.println(sl12.tail());
   }
 }
 
