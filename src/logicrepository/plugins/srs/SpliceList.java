@@ -180,12 +180,13 @@ public class SpliceList<E> {
 
     private void spliceEmptyRepl(SLIteratorImpl endImpl){
       if(node == head){
+        if(endImpl.node == tail){
+          head = tail = node = endImpl.node = null;
+          return;
+        }
         head = endImpl.node.next; 
         head.prev = null;
         node = head;
-        if (endImpl.node == tail) {
-          tail = node; 
-        }
         endImpl.node = head;
         return;
       }
@@ -377,6 +378,22 @@ public class SpliceList<E> {
     System.out.println(sl5);
     System.out.println(sl5.head());
     System.out.println(sl5.tail());
+
+    
+    H = sl6.head();
+    T = sl6.tail();
+    System.out.println("========splicing empty to whole list========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl6);
+    H.splice(T, new SpliceList<String>());
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl6);
+    System.out.println(sl6.head());
+    System.out.println(sl6.tail());
+
   }
 }
 
