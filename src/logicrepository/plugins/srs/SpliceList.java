@@ -234,8 +234,9 @@ public class SpliceList<E> {
       replacement.head.prev = node.prev;
 
       replacement.tail.next = endImpl.node.next;
-      endImpl.node.prev = replacement.tail;
-
+      if(endImpl.node.next != null){
+        endImpl.node.next.prev = replacement.tail;
+      }
       if(endImpl.node == tail) {
         tail = replacement.tail; 
       }
@@ -297,6 +298,8 @@ public class SpliceList<E> {
     SpliceList<String> sl7 = new SpliceList<String>(sl);
     SpliceList<String> sl8 = new SpliceList<String>(sl);
     SpliceList<String> sl9 = new SpliceList<String>(sl);
+    SpliceList<String> sl10 = new SpliceList<String>(sl);
+    SpliceList<String> sl11 = new SpliceList<String>(sl);
 
     SLIterator<String> H;
     SLIterator<String> T;
@@ -477,6 +480,38 @@ public class SpliceList<E> {
     System.out.println(sl9);
     System.out.println(sl9.head());
     System.out.println(sl9.tail());
+
+
+    H = sl10.head();
+    T = sl10.tail();
+    H.next(2);
+    T.previous(2);
+    System.out.println("========splicing [0 0 0] to middile========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl10);
+    H.splice(T, new SpliceList<String>(new String[] {"0", "0", "0"}));
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl10);
+    System.out.println(sl10.head());
+    System.out.println(sl10.tail());
+
+
+    H = sl11.head();
+    T = sl11.tail();
+    System.out.println("========splicing [0 0 0] to entirety========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl11);
+    H.splice(T, new SpliceList<String>(new String[] {"0", "0", "0"}));
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl11);
+    System.out.println(sl11.head());
+    System.out.println(sl11.tail());
   }
 }
 
