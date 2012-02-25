@@ -156,6 +156,12 @@ public class SpliceList<E> {
     //WARNING:  This assumes iterators point to the same list!
     @Override
     public void splice(SLIterator<E> end, SpliceList<E> replacement){
+      if(isEmpty()) {
+        if(replacement.isEmpty()) return;
+        head = replacement.head;
+        tail = replacement.tail;
+        return;
+      }  
       SLIteratorImpl endImpl;
       try {
         endImpl = (SLIteratorImpl) end;
@@ -163,15 +169,20 @@ public class SpliceList<E> {
       catch(ClassCastException e){
         throw new IllegalArgumentException("Must provide an SLIteratorImpl to splice");
       }
-      if(node == head){
-        if(replacement.isEmpty()){
+      if(replacement.isEmpty()){
+        if(node == head){
           head = endImpl.node.next; 
           head.prev = null;
           node = head;
           endImpl.node = head;
           return;
         }
-      } 
+        if(node == tail){
+          return;
+        }
+
+        return;
+      }
     }
     
     @Override
@@ -186,6 +197,7 @@ public class SpliceList<E> {
 
     @Override 
     public String toString(){
+      if(node == null) return "<>";
       return node.toString();
     }
 
@@ -214,11 +226,22 @@ public class SpliceList<E> {
   }
 
   public static void main(String[] args){
+    SpliceList<String> empty = new SpliceList<String>();
+
     SpliceList<String> sl = new SpliceList<String>(args);
+    SpliceList<String> sl2 = new SpliceList<String>(sl);
+    SpliceList<String> sl3 = new SpliceList<String>(sl);
+    SpliceList<String> sl4 = new SpliceList<String>(sl);
+    SpliceList<String> sl5 = new SpliceList<String>(sl);
+    SpliceList<String> sl6 = new SpliceList<String>(sl);
+
+    SLIterator<String> H;
+    SLIterator<String> T;
+
     System.out.println(sl.head);
     System.out.println(sl.tail);
     System.out.println(sl);
-    SLIterator<String> H = sl.head();
+    H = sl.head();
     do {
       System.out.println(H);
     } while(H.next());
@@ -226,10 +249,35 @@ public class SpliceList<E> {
     do {
       System.out.println(H.get());
     } while(H.next());
+
+    H = empty.head();
+    T = empty.tail();
+    System.out.println("========splicing empty to empty========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(empty);
+    H.splice(T, new SpliceList<String>());    
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(empty);
+
+
+    H = empty.head();
+    T = empty.tail();
+    System.out.println("========splicing [1 2 3] to empty========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(empty);
+    H.splice(T, new SpliceList<String>(new String[] {"1", "2", "3"}));    
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(empty);
+
+
     H = sl.head();
-    SLIterator<String> T = sl.tail();
+    T = sl.tail();
     T.previous(5);
-    System.out.println("========splicing========");
+    System.out.println("========splicing empty to front========");
     System.out.println(H);
     System.out.println(T);
     System.out.println(sl);
@@ -238,6 +286,20 @@ public class SpliceList<E> {
     System.out.println(H);
     System.out.println(T);
     System.out.println(sl);
+
+    H = sl2.head();
+    T = sl2.tail();
+    H.next(2);
+    T.previous(5);
+    System.out.println("========splicing empty to middle========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl2);
+    H.splice(T, new SpliceList<String>());
+    System.out.println("========done========");
+    System.out.println(H);
+    System.out.println(T);
+    System.out.println(sl2);
   }
 }
 
