@@ -319,10 +319,6 @@ public class SpliceList<E> {
     do {
       System.out.println(H);
     } while(H.next());
-    H = sl.head();
-    do {
-      System.out.println(H.get());
-    } while(H.next());
 
     H = empty.head();
     T = empty.tail();
