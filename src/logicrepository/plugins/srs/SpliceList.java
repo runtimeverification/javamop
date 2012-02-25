@@ -230,6 +230,19 @@ public class SpliceList<E> {
         replacement.tail = replacement.head = null;
         return;
       }
+      node.prev.next = replacement.head;
+      replacement.head.prev = node.prev;
+
+      replacement.tail.next = endImpl.node.next;
+      endImpl.node.prev = replacement.tail;
+
+      if(endImpl.node == tail) {
+        tail = replacement.tail; 
+      }
+
+      node = replacement.head;
+      endImpl.node = replacement.tail.next;
+      replacement.head = replacement.tail = null;
     }
 
     @Override
