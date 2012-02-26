@@ -205,8 +205,10 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     ActionState as;
     Symbol symbol; 
     boolean changed;
+    boolean atOrPastLastChange;
 DONE:
     do {
+    atOrPastLastChange = false;
     changed = false;
     first = l.head();
     second = l.head();
@@ -261,7 +263,10 @@ DONE:
         System.out.println("*********" + second);
         System.out.println("*********" + lastRepl);
         if(!changed && second.equals(lastRepl)){
-          System.out.println("second == lastRepl");
+          atOrPastLastChange = true; 
+        }
+        if(atOrPastLastChange && currentState == s0){
+          System.out.println("early exit");
           break DONE;
         }
         symbol = second.get();
