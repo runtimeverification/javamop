@@ -260,13 +260,14 @@ DONE:
       //normal transition
       if(as.getAction() == 0){
         if(!second.next()) break;
-        System.out.println("*********" + second);
-        System.out.println("*********" + lastRepl);
+        System.out.println("*********first " + second);
+        System.out.println("*********second " + second);
+        System.out.println("*********lastRepl " + lastRepl);
         if(!changed && second.equals(lastRepl)){
           atOrPastLastChange = true; 
         }
         if(atOrPastLastChange && currentState == s0){
-          System.out.println("early exit");
+          System.out.println("early exit at symbol " + second);
           break DONE;
         }
         symbol = second.get();
