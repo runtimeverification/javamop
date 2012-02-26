@@ -254,6 +254,7 @@ DONE:
           System.out.println("first: " + first);
           System.out.println("second: " + second);
           currentState = s0;
+          symbol = second.get();
           continue;
         }
       }
