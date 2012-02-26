@@ -129,35 +129,6 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     return s0;
   }
 
-  public void search(SinglyLinkedList<Symbol> l){
-//    if(l.size() == 0) return;
-//    Iterator<Symbol> first  = l.iterator();
-//    first.next(); //make sure first points to an element
-//    Iterator<Symbol> second = l.iterator();
-//    State currentState = s0;
-//    ActionState as;
-//    Symbol symbol = second.next();
-//    while(true){
-//      as = get(currentState).get(symbol);
-//      //System.out.println("*" + symbol + " -- " + as.getState());
-//      //adjust the first pointer
-//      for(int i = 0; i < as.getAction(); ++i){
-//        first.next();
-//      }
-//      if(as.getState().getMatch() != null){
-//       // System.out.println("match! " + as.getState().getMatch());
-//       // l.printRange(first, second);
-//      }
-//      if(!second.hasNext()) break;
-//      currentState = as.getState();
-//      //normal transition
-//      if(as.getAction() == 0){
-//        symbol = second.next();
-//      }
-//      //fail transition, need to reconsider he same symbol in next state
-//    }
-  }
-
   public void rewrite(SinglyLinkedList<Symbol> l){
     System.out.println("rewriting:");
     System.out.println("   " + l + "\n=========================================");
@@ -217,6 +188,67 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       //normal transition
       if(as.getAction() == 0){
         symbol = second.next();
+      }
+      //fail transition, need to reconsider he same symbol in next state
+    }
+    System.out.println("substituted form = " + l.toString());
+  }
+
+  public void rewrite(SpliceList<Symbol> l){
+    System.out.println("rewriting:");
+    System.out.println("   " + l + "\n=========================================");
+    if(l.isEmpty()) return;
+    SLIterator<Symbol> first  = l.head();
+    SLIterator<Symbol> second = l.head();
+    SLIterator<Symbol> lastRepl;
+    State currentState = s0;
+    ActionState as;
+    Symbol symbol = second.get();
+    while(true){
+      as = get(currentState).get(symbol);
+      System.out.println("*" + symbol + " -- " + as);
+      //adjust the first pointer
+      if(currentState == s0 && as.getState() == s0){
+        System.out.println("false 0 transition");
+        if(!first.next()) break;
+      }
+      else {
+        for(int i = 0; i < as.getAction(); ++i){
+          first.next();
+        }
+      }
+      if(as.getState().getMatch() != null){
+        AbstractSequence repl = as.getState().getMatch().getRhs();
+        if(repl instanceof Fail){
+          System.out.println("Fail!");
+          return;
+        }
+        if(repl instanceof Succeed){
+          System.out.println("Succeed!");
+          return;
+        }
+        if(repl instanceof Sequence){
+          System.out.println("==========Replacing==============" + first);
+          System.out.println("==========Replacing==============" + second);
+          System.out.println("in: " + l);
+          first.nonDestructiveSplice(second, (Sequence) repl);
+          if(l.isEmpty()) break;
+          System.out.println("out: " + l);
+          System.out.println("out: " + first);
+          lastRepl = second;
+          System.out.println("lastRepl: " + lastRepl);
+          second = first.copy();
+          System.out.println("first: " + first);
+          System.out.println("second: " + second);
+          currentState = s0;
+          continue;
+        }
+      }
+      currentState = as.getState();
+      //normal transition
+      if(as.getAction() == 0){
+        if(!second.next()) break;
+        symbol = second.get();
       }
       //fail transition, need to reconsider he same symbol in next state
     }

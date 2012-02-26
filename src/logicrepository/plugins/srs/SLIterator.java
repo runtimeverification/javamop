@@ -3,6 +3,7 @@ package logicrepository.plugins.srs;
 import java.util.Collection;
 
 interface SLIterator<E> {
+  public SLIterator<E> copy();
   public boolean next();
   public boolean next(int amount);
   public boolean previous();

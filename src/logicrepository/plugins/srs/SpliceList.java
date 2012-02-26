@@ -119,6 +119,11 @@ public class SpliceList<E> {
     }
 
     @Override
+    public SLIterator<E> copy(){
+      return new SLIteratorImpl(node);
+    }
+
+    @Override
     public boolean next(){
       if(node.next == null) return false;
       node = node.next;

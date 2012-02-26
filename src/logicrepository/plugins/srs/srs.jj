@@ -31,11 +31,10 @@ PARSER_BEGIN(SRSParser)
       System.out.println(srs.toString());
       PatternMatchAutomaton p = new PatternMatchAutomaton(srs);
       System.out.println(p);
-      SinglyLinkedList<Symbol> l = new SinglyLinkedList<Symbol>();
+      SpliceList<Symbol> l = new SpliceList<Symbol>();
       for(String s : args){
         l.add(Terminal.get(s)); 
       }
-      p.search(l);
       p.rewrite(l);
     }
   
