@@ -125,7 +125,7 @@ public class SpliceList<E> {
 
     @Override
     public boolean next(){
-      if(node.next == null) return false;
+      if(node == null || node.next == null) return false;
       node = node.next;
       return true;
     }
@@ -285,6 +285,11 @@ public class SpliceList<E> {
       catch(ClassCastException e){
         return false;
       }
+      if(node == null){
+        if(other.node == null) return true;
+        else return false;
+      }
+      if(other.node == null) return false;
       return   (node.element == other.node.element) 
             && (node.next    == other.node.next   )
             && (node.prev    == other.node.prev   );
