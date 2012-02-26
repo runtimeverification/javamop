@@ -198,12 +198,24 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     System.out.println("rewriting:");
     System.out.println("   " + l + "\n=========================================");
     if(l.isEmpty()) return;
-    SLIterator<Symbol> first  = l.head();
-    SLIterator<Symbol> second = l.head();
-    SLIterator<Symbol> lastRepl;
+    SLIterator<Symbol> first;
+    SLIterator<Symbol> second;
+    SLIterator<Symbol> lastRepl = null;
     State currentState = s0;
     ActionState as;
-    Symbol symbol = second.get();
+    Symbol symbol; 
+    boolean changed;
+DONE:
+    do {
+    changed = false;
+    first = l.head();
+    second = l.head();
+    symbol = second.get();
+    System.out.println("******************outer");
+    if(second.equals(lastRepl)){
+       System.out.println("second == lastRepl");
+       break DONE;
+    }
     while(true){
       as = get(currentState).get(symbol);
       System.out.println("*" + symbol + " -- " + as);
@@ -228,11 +240,12 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
           return;
         }
         if(repl instanceof Sequence){
+          changed = true;
           System.out.println("==========Replacing==============" + first);
           System.out.println("==========Replacing==============" + second);
           System.out.println("in: " + l);
           first.nonDestructiveSplice(second, (Sequence) repl);
-          if(l.isEmpty()) break;
+          if(l.isEmpty()) break DONE;
           System.out.println("out: " + l);
           System.out.println("out: " + first);
           lastRepl = second;
@@ -252,6 +265,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
       }
       //fail transition, need to reconsider he same symbol in next state
     }
+    } while(changed);
     System.out.println("substituted form = " + l.toString());
   }
 
