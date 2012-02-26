@@ -212,10 +212,6 @@ DONE:
     second = l.head();
     symbol = second.get();
     System.out.println("******************outer");
-    if(second.equals(lastRepl)){
-       System.out.println("second == lastRepl");
-       break DONE;
-    }
     while(true){
       as = get(currentState).get(symbol);
       System.out.println("*" + symbol + " -- " + as);
@@ -262,6 +258,12 @@ DONE:
       //normal transition
       if(as.getAction() == 0){
         if(!second.next()) break;
+        System.out.println("*********" + second);
+        System.out.println("*********" + lastRepl);
+        if(!changed && second.equals(lastRepl)){
+          System.out.println("second == lastRepl");
+          break DONE;
+        }
         symbol = second.get();
       }
       //fail transition, need to reconsider he same symbol in next state
