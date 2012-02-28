@@ -35,7 +35,7 @@ public class MOPMultiMap<V> implements MOPObject {
 	protected int cleanIndex = -1;
 
 	protected boolean isDeleted = false;
-	protected MOPMap nextInQueue = null;
+	protected MOPMultiMap nextInQueue = null;
 
 	protected boolean isCleaning = false;
 	protected boolean repeat = false;
@@ -44,6 +44,9 @@ public class MOPMultiMap<V> implements MOPObject {
 	protected int lastsize;
 
 	// protected int cleanupThreshold;
+	
+	MOPMultiMapSignature[] valuePattern;
+	protected int valueSize;
 
 	public MOPMultiMap(MOPMultiMapSignature[] signatures) {
 		this.data = new MOPHashEntry[DEFAULT_CAPACITY];
@@ -57,6 +60,9 @@ public class MOPMultiMap<V> implements MOPObject {
 
 		this.lastsize = 0;
 		// this.cleanupThreshold = this.data.length / 5;
+		
+		this.valuePattern = signatures;
+		this.valueSize = signatures.length;
 	}
 
 	final public long size() {
@@ -119,12 +125,12 @@ public class MOPMultiMap<V> implements MOPObject {
 			if (!isCleaning && this.nextInQueue == null && addedMappings - deletedMappings >= data.length / 2
 					&& addedMappings - deletedMappings - lastsize > data.length / 10) {
 				this.isCleaning = true;
-				if (MOPMapManager.treeQueueTail == this) {
-					this.repeat = true;
-				} else {
-					MOPMapManager.treeQueueTail.nextInQueue = this;
-					MOPMapManager.treeQueueTail = this;
-				}
+//				if (MOPMapManager.treeQueueTail == this) {
+//					this.repeat = true;
+//				} else {
+//					MOPMapManager.treeQueueTail.nextInQueue = this;
+//					MOPMapManager.treeQueueTail = this;
+//				}
 			}
 		} else {
 			int hashCode = keyref.hash;
