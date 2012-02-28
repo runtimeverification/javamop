@@ -206,6 +206,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     Symbol symbol; 
     boolean changed;
     boolean atOrPastLastChange;
+    boolean firstIteration = true;
 DONE:
     do {
     currentState = s0;
@@ -214,7 +215,7 @@ DONE:
     first = l.head();
     second = l.head();
     symbol = second.get();
-    System.out.println("******************outer");
+    System.out.println("******************outer*****" + firstIteration);
     while(true){
       as = get(currentState).get(symbol);
       System.out.println("*" + symbol + " -- " + as);
@@ -240,6 +241,7 @@ DONE:
         }
         if(repl instanceof Sequence){
           changed = true;
+          atOrPastLastChange = false; 
           System.out.println("==========Replacing==============" + first);
           System.out.println("==========Replacing==============" + second);
           System.out.println("in: " + l);
@@ -265,17 +267,20 @@ DONE:
         System.out.println("*********first " + second);
         System.out.println("*********second " + second);
         System.out.println("*********lastRepl " + lastRepl);
-        if(!changed && second.equals(lastRepl)){
-          atOrPastLastChange = true; 
-        }
-        if(atOrPastLastChange && currentState == s0){
-          System.out.println("early exit at symbol " + second);
-          break DONE;
+        if(!firstIteration){
+          if(second.equals(lastRepl)){
+            atOrPastLastChange = true; 
+          }
+          if(atOrPastLastChange && currentState == s0){
+            System.out.println("early exit at symbol " + second);
+            break DONE;
+          }
         }
         symbol = second.get();
       }
       //fail transition, need to reconsider he same symbol in next state
     }
+    firstIteration = false;
     } while(changed);
     System.out.println("substituted form = " + l.toString());
   }
