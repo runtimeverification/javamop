@@ -206,7 +206,6 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     Symbol symbol; 
     boolean changed;
     boolean atOrPastLastChange;
-    boolean firstIteration = true;
 DONE:
     do {
     currentState = s0;
@@ -215,7 +214,7 @@ DONE:
     first = l.head();
     second = l.head();
     symbol = second.get();
-    System.out.println("******************outer*****" + firstIteration);
+    System.out.println("******************outer*****");
     while(true){
       as = get(currentState).get(symbol);
       System.out.println("*" + symbol + " -- " + as);
@@ -267,7 +266,7 @@ DONE:
         System.out.println("*********first " + second);
         System.out.println("*********second " + second);
         System.out.println("*********lastRepl " + lastRepl);
-        if(!firstIteration){
+        if(!changed){
           if(second.equals(lastRepl)){
             atOrPastLastChange = true; 
           }
@@ -280,7 +279,6 @@ DONE:
       }
       //fail transition, need to reconsider he same symbol in next state
     }
-    firstIteration = false;
     } while(changed);
     System.out.println("substituted form = " + l.toString());
   }
