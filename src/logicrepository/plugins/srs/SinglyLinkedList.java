@@ -1,4 +1,3 @@
-//TODO: does size matter wrt to replacing?
 package logicrepository.plugins.srs;
 
 import java.util.ArrayList;

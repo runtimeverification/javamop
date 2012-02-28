@@ -201,13 +201,14 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     SLIterator<Symbol> first;
     SLIterator<Symbol> second;
     SLIterator<Symbol> lastRepl = null;
-    State currentState = s0;
+    State currentState;
     ActionState as;
     Symbol symbol; 
     boolean changed;
     boolean atOrPastLastChange;
 DONE:
     do {
+    currentState = s0;
     atOrPastLastChange = false;
     changed = false;
     first = l.head();
@@ -253,6 +254,7 @@ DONE:
           System.out.println("second: " + second);
           currentState = s0;
           symbol = second.get();
+          if(symbol == null) break;
           continue;
         }
       }

@@ -155,6 +155,7 @@ public class SpliceList<E> {
 
     @Override
     public E get(){
+      if(node == null) return null;
       return node.element;
     }
 
