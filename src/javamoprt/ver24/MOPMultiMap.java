@@ -1,9 +1,10 @@
-package javamoprt;
+package javamoprt.ver24;
 
 import java.lang.ref.Reference;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
-public class MOPMultiMap<V> implements MOPObject {
+import javamoprt.MOPObject;
+
+public class MOPMultiMap implements MOPObject {
 	protected static final int DEFAULT_CAPACITY = 16;
 	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 	protected static final int MAXIMUM_CAPACITY = 1 << 30;
@@ -28,8 +29,8 @@ public class MOPMultiMap<V> implements MOPObject {
 	protected int datathreshold;
 	// protected int datalowthreshold;
 
-	protected MOPHashEntry<V>[] data;
-	protected MOPHashEntry<V>[] newdata;
+	protected MOPHashEntry[] data;
+	protected MOPHashEntry[] newdata;
 
 	protected int putIndex = -1;
 	protected int cleanIndex = -1;
@@ -65,26 +66,30 @@ public class MOPMultiMap<V> implements MOPObject {
 		this.valueSize = signatures.length;
 	}
 
+	/*
+	 * To avoid a race condition, it keeps two numbers separately.
+	 * Thus, the result might be incorrect sometimes.
+	 * This method is only for statistics.
+	 */
 	final public long size() {
 		return addedMappings - deletedMappings;
 	}
 
 	public MOPWeakReference cachedKey;
 
-	final public V get(Object key) {
+	final public Object[] get(Object key) {
 		if (key == null) {
 			return null;
 		}
 
-		MOPHashEntry<V>[] data = this.data;
+		MOPHashEntry[] data = this.data;
 
 		int hashCode = System.identityHashCode(key);
 		int index = hashIndex(hashCode, data.length);
-		MOPHashEntry<V> entry = data[index];
+		MOPHashEntry entry = data[index];
 
 		while (entry != null) {
 			if (entry.hashCode == hashCode && (key == entry.key.get())) {
-				lastValue = entry.getValue();
 				cachedKey = entry.key;
 
 				return entry.getValue();
@@ -94,14 +99,49 @@ public class MOPMultiMap<V> implements MOPObject {
 		return null;
 	}
 
-	public boolean put(MOPWeakReference keyref, V value) {
+	final public Object get(Object key, int pos) {
+		if (key == null) {
+			return null;
+		}
+
+		MOPHashEntry[] data = this.data;
+
+		int hashCode = System.identityHashCode(key);
+		int index = hashIndex(hashCode, data.length);
+		MOPHashEntry entry = data[index];
+
+		while (entry != null) {
+			if (entry.hashCode == hashCode && (key == entry.key.get())) {
+				lastValue = entry.getValue()[pos];
+				cachedKey = entry.key;
+
+				return entry.getValue()[pos];
+			}
+			entry = entry.next;
+		}
+		return null;
+	}
+
+	public boolean put(MOPWeakReference keyref, Object value, int pos) {
 		lastValue = value;
 
 		if (multicore && data.length > DEFAULT_THREADED_CLEANUP_THREASHOLD) {
-			MOPHashEntry<V>[] data = this.data;
+			MOPHashEntry[] data = this.data;
 
 			int hashCode = keyref.hash;
 			putIndex = hashIndex(hashCode, data.length);
+			
+			MOPHashEntry entry = data[putIndex];
+			
+			while (entry != null) {
+				if (entry.hashCode == hashCode && (keyref.get() == entry.key.get())) {
+					entry.value[pos] = value;
+					
+					putIndex = -1;
+					return true;
+				}
+				entry = entry.next;
+			}
 
 			while (this.newdata != null) {
 				putIndex = -1;
@@ -115,8 +155,9 @@ public class MOPMultiMap<V> implements MOPObject {
 			while (cleanIndex == putIndex) {
 				Thread.yield();
 			}
-
-			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref, value);
+			
+			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref, valueSize);
+			newentry.value[pos] = value;
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -136,7 +177,19 @@ public class MOPMultiMap<V> implements MOPObject {
 			int hashCode = keyref.hash;
 			int index = hashIndex(hashCode, data.length);
 
-			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref, value);
+			MOPHashEntry entry = data[index];
+			
+			while (entry != null) {
+				if (entry.hashCode == hashCode && (keyref.get() == entry.key.get())) {
+					entry.value[pos] = value;
+					
+					return true;
+				}
+				entry = entry.next;
+			}
+			
+			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref, valueSize);
+			newentry.value[pos] = value;
 			data[index] = newentry;
 			addedMappings++;
 
@@ -267,20 +320,20 @@ public class MOPMultiMap<V> implements MOPObject {
 
 	/* ************************************************************************************ */
 
-	static protected class MOPHashEntry<V> {
-		protected MOPHashEntry<V> next;
+	static protected class MOPHashEntry {
+		protected MOPHashEntry next;
 		protected int hashCode;
 		protected MOPWeakReference key;
-		protected V value;
+		protected Object[] value;
 
-		protected MOPHashEntry(MOPHashEntry<V> next, int hashCode, MOPWeakReference keyref, V value) {
+		protected MOPHashEntry(MOPHashEntry next, int hashCode, MOPWeakReference keyref, int len) {
 			this.next = next;
 			this.hashCode = hashCode;
 			this.key = keyref;
-			this.value = value;
+			this.value = new Object[len];
 		}
 
-		final public V getValue() {
+		final public Object[] getValue() {
 			return value;
 		}
 
