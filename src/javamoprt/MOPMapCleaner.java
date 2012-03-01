@@ -214,8 +214,8 @@ public class MOPMapCleaner extends Thread {
 						maintainMap(mopMap);
 						mopMap.lastsize = (int) (mopMap.addedMappings - mopMap.deletedMappings);
 						map.isCleaning = false;
-					} else if(map instanceof MOPMultiMap){
-						MOPMultiMap mopMultiMap = (MOPMultiMap) map;
+					} else if(map instanceof MOPMultiMapNode){
+						MOPMultiMapNode mopMultiMap = (MOPMultiMapNode) map;
 						
 						// blah
 						

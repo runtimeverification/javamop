@@ -93,37 +93,35 @@ public class MOPMapOfMonitor extends MOPMap<MOPMonitor> {
 		for (int i = data.length - 1; i >= 0; i--) {
 			MOPHashEntry entry = data[i];
 			MOPHashEntry previous = null;
-			if (entry != null) {
-				do {
-					MOPHashEntry next = entry.next;
-					MOPMonitor monitor = (MOPMonitor) entry.getValue();
-					if (entry.key.get() == null) {
-						if (previous == null) {
-							data[i] = entry.next;
-						} else {
-							previous.next = entry.next;
-						}
-						// monitor cleanup
-						if (!monitor.MOP_terminated)
-							monitor.endObject(idnum);
-
-						entry.next = null;
-						this.deletedMappings++;
-						// success = true;
-					} else if (monitor.MOP_terminated) {
-						if (previous == null) {
-							data[i] = entry.next;
-						} else {
-							previous.next = entry.next;
-						}
-						entry.next = null;
-						this.deletedMappings++;
-						// success = true;
+			while (entry != null) {
+				MOPHashEntry next = entry.next;
+				MOPMonitor monitor = (MOPMonitor) entry.getValue();
+				if (entry.key.get() == null) {
+					if (previous == null) {
+						data[i] = entry.next;
 					} else {
-						previous = entry;
+						previous.next = entry.next;
 					}
-					entry = next;
-				} while (entry != null);
+					// monitor cleanup
+					if (!monitor.MOP_terminated)
+						monitor.endObject(idnum);
+
+					entry.next = null;
+					this.deletedMappings++;
+					// success = true;
+				} else if (monitor.MOP_terminated) {
+					if (previous == null) {
+						data[i] = entry.next;
+					} else {
+						previous.next = entry.next;
+					}
+					entry.next = null;
+					this.deletedMappings++;
+					// success = true;
+				} else {
+					previous = entry;
+				}
+				entry = next;
 			}
 		}
 
