@@ -1,4 +1,4 @@
-package javamoprt.ver24;
+package javamoprt;
 
 public class MOPMultiMapSignature {
 	static public final int MAP_OF_MAP = 1;

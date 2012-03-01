@@ -1,10 +1,8 @@
-package javamoprt.ver24;
+package javamoprt;
 
 import java.lang.ref.Reference;
 
-import javamoprt.MOPObject;
-
-public class MOPMultiMap implements MOPObject {
+public class MOPMapOfMultiMap extends MOPCleanable implements MOPObject {
 	protected static final int DEFAULT_CAPACITY = 16;
 	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 	protected static final int MAXIMUM_CAPACITY = 1 << 30;
@@ -20,9 +18,6 @@ public class MOPMultiMap implements MOPObject {
 	protected static final boolean multicore = Runtime.getRuntime().availableProcessors() > 1;
 	//protected static final boolean multicore = false;
 
-	protected int idnum;
-
-	// protected int datasize;
 	protected long addedMappings;
 	protected long deletedMappings;
 
@@ -49,12 +44,13 @@ public class MOPMultiMap implements MOPObject {
 	MOPMultiMapSignature[] valuePattern;
 	protected int valueSize;
 
-	public MOPMultiMap(MOPMultiMapSignature[] signatures) {
+	public MOPMapOfMultiMap(MOPMultiMapSignature[] signatures) {
 		this.data = new MOPHashEntry[DEFAULT_CAPACITY];
 		this.newdata = null;
-		// this.datasize = 0;
+
 		this.addedMappings = 0;
 		this.deletedMappings = 0;
+		
 		this.datathreshold = (int) (DEFAULT_CAPACITY * DEFAULT_LOAD_FACTOR);
 		// this.datalowthreshold = (int) (DEFAULT_CAPACITY *
 		// DEFAULT_REDUCE_FACTOR);
@@ -166,12 +162,12 @@ public class MOPMultiMap implements MOPObject {
 			if (!isCleaning && this.nextInQueue == null && addedMappings - deletedMappings >= data.length / 2
 					&& addedMappings - deletedMappings - lastsize > data.length / 10) {
 				this.isCleaning = true;
-//				if (MOPMapManager.treeQueueTail == this) {
-//					this.repeat = true;
-//				} else {
-//					MOPMapManager.treeQueueTail.nextInQueue = this;
-//					MOPMapManager.treeQueueTail = this;
-//				}
+				if (MOPMapManager.treeQueueTail == this) {
+					this.repeat = true;
+				} else {
+					MOPMapManager.treeQueueTail.nextInQueue = this;
+					MOPMapManager.treeQueueTail = this;
+				}
 			}
 		} else {
 			int hashCode = keyref.hash;
