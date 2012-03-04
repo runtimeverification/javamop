@@ -10,8 +10,8 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public class CentralizedIndexingTree extends IndexingTree {
-	public CentralizedIndexingTree(String name, MOPParameters queryParam, MOPParameters contentParam, MOPParameters fullParam, MonitorSet monitorSet,
-			WrapperMonitor monitor, boolean perthread) throws MOPException {
+	public CentralizedIndexingTree(String name, MOPParameters queryParam, MOPParameters contentParam, MOPParameters fullParam, MonitorSet monitorSet, WrapperMonitor monitor,
+			boolean perthread) throws MOPException {
 		super(name, queryParam, contentParam, fullParam, monitorSet, monitor, perthread);
 
 		if (anycontent) {
@@ -54,6 +54,11 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.addMonitor(map, obj, monitors, mopRefs, monitor);
+		}
+
 		String ret = "";
 
 		if (queryParam.equals(fullParam))
@@ -99,39 +104,23 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
-	/*
-	 * addMonitorAfterLookup adds the given wrapper to the indexing tree.
-	 * 
-	 * It does not care about the nodes at monitorSets.
-	 * 
-	 * Also, it assumes that this indexing tree was accessed already by using
-	 * lastMap and set.
-	 */
-	public String addMonitorAfterLookup(MOPVariable map, MOPVariable set, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
+	public String addMonitorAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.addMonitorAfterLookup(map, monitorVar, mopRefs);
+		}
+
 		String ret = "";
 
-		boolean isFullParam = false;
-		if (queryParam.equals(fullParam))
-			isFullParam = true;
-
 		if (queryParam.size() == 0) {
-			if (isFullParam){
-				if(perthread)
-					ret += name + ".set(" + "(" + monitor.getOutermostName() + ")" + monitor + ");\n";
-				else
-					ret += name + " = " + "(" + monitor.getOutermostName() + ")" + monitor + ";\n";
-			}else
-				ret += monitorSet.addMonitor(retrieveTree(), monitorVar);
+			if (perthread)
+				ret += name + ".set(" + "(" + monitor.getOutermostName() + ")" + monitor + ");\n";
+			else
+				ret += name + " = " + "(" + monitor.getOutermostName() + ")" + monitor + ";\n";
 		} else if (queryParam.size() == 1) {
-			if (isFullParam)
-				ret += retrieveTree() + ".put(" + monitorVar + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + ", " + monitorVar + ");\n";
-			else
-				ret += monitorSet.addMonitor(set.toString(), monitorVar);
+			ret += retrieveTree() + ".put(" + monitorVar + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + ", " + monitorVar + ");\n";
 		} else {
-			if (isFullParam)
-				ret += map + ".put(" + monitorVar + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + ", " + monitorVar + ");\n";
-			else
-				ret += monitorSet.addMonitor(set.toString(), monitorVar);
+			ret += map + ".put(" + monitorVar + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + ", " + monitorVar + ");\n";
 		}
 
 		return ret;
@@ -147,18 +136,19 @@ public class CentralizedIndexingTree extends IndexingTree {
 	 * lastMap and set.
 	 */
 	public String addExactWrapper(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, HashMap<String, MOPVariable> mopRefs) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.addExactWrapper(wrapper, lastMap, set, mopRefs);
+		}
+
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
 			return ret;
 
-		boolean isFullParam = false;
-		if (queryParam.equals(fullParam))
-			isFullParam = true;
-
-		if(isFullParam){
-			if (queryParam.size() == 0){
-				if(perthread)
+		if (isFullParam) {
+			if (queryParam.size() == 0) {
+				if (perthread)
 					ret += name + ".set(" + "(" + monitor.getOutermostName() + ")" + wrapper + ");\n";
 				else
 					ret += name + " = " + "(" + monitor.getOutermostName() + ")" + wrapper + ";\n";
@@ -168,7 +158,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 				ret += lastMap + ".put(" + wrapper + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + ", " + wrapper + ");\n";
 			}
 		} else {
-			if (queryParam.size() == 0){
+			if (queryParam.size() == 0) {
 				ret += monitorSet.setNode(retrieveTree(), wrapper);
 			} else if (queryParam.size() == 1) {
 				ret += monitorSet.setNode(set.toString(), wrapper);
@@ -190,6 +180,11 @@ public class CentralizedIndexingTree extends IndexingTree {
 	 * lastMap and set.
 	 */
 	public String addWrapper(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, HashMap<String, MOPVariable> mopRefs) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.addWrapper(wrapper, lastMap, set, mopRefs);
+		}
+
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
@@ -207,6 +202,11 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String lookup(MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs, boolean creative) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.lookup(map, obj, tempRefs, creative);
+		}
+
 		String ret = "";
 
 		if (queryParam.size() == 0) {
@@ -226,9 +226,9 @@ public class CentralizedIndexingTree extends IndexingTree {
 							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
 						else
 							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
-						
+
 						MOPParameter nextP = queryParam.get(i + 1);
-						
+
 						ret += "if (" + obj + " == null) {\n";
 
 						if (i == queryParam.size() - 2 && fullParam.size() == queryParam.size())
@@ -244,7 +244,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
 						else
 							ret += map + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
-						
+
 						ret += "} else {\n";
 						if (i == 0)
 							ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
@@ -275,20 +275,20 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
-	public String lookupExactMonitor(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj,
-			HashMap<String, MOPVariable> tempRefs) {
+	public String lookupExactMonitor(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.lookupExactMonitor(wrapper, lastMap, set, map, obj, tempRefs);
+		}
+
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
 			return ret;
 
-		boolean isFullParam = false;
-		if (queryParam.equals(fullParam))
-			isFullParam = true;
-
 		if (isFullParam) {
 			if (queryParam.size() == 0) {
-				if(perthread)
+				if (perthread)
 					ret += wrapper + " = " + retrieveTree() + ";\n";
 				else
 					ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ";\n";
@@ -315,20 +315,18 @@ public class CentralizedIndexingTree extends IndexingTree {
 
 						if (i == queryParam.size() - 2 && fullParam.size() == queryParam.size())
 							ret += obj + " = new javamoprt.MOPMapOfMonitor(" + fullParam.getIdnum(nextP) + ");\n";
-						else if (i == queryParam.size() - 2 && fullParam.size() != queryParam.size())
-							ret += obj + " = new javamoprt.MOPMapOfSet(" + fullParam.getIdnum(nextP) + ");\n";
 						else
 							ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
 
 						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
 						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
 						ret += "}\n";
-						
+
 						if (i == 0)
 							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
 						else
 							ret += map + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
-						
+
 						ret += "} else {\n";
 						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
 
@@ -336,7 +334,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 							ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
 						else
 							ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
-						
+
 						ret += "}\n";
 
 						ret += "}\n";
@@ -347,7 +345,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 							ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
 						}
 					}
-				}				
+				}
 			}
 		} else {
 			if (queryParam.size() == 0) {
@@ -367,7 +365,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 						} else {
 							ret += set + " = " + "(" + monitorSet.getName() + ")" + lastMap + ".get(" + p.getName() + ");\n";
 						}
-						
+
 						ret += "if (" + set + " != null){\n";
 						ret += monitorSet.getNode(wrapper, set);
 						ret += "} else {\n";
@@ -376,13 +374,13 @@ public class CentralizedIndexingTree extends IndexingTree {
 						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
 						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
 						ret += "}\n";
-						
+
 						if (i == 0) {
 							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + set + ");\n";
 						} else {
 							ret += lastMap + ".put(" + tempRefs.get(p.getName()) + ", " + set + ");\n";
 						}
-						
+
 						ret += wrapper + " = " + "null;\n";
 						ret += "}\n";
 					} else if (i < queryParam.size() - 1) {
@@ -396,9 +394,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 
 						ret += "if (" + obj + " == null) {\n";
 
-						if (i == queryParam.size() - 2 && fullParam.size() == queryParam.size())
-							ret += obj + " = new javamoprt.MOPMapOfMonitor(" + fullParam.getIdnum(nextP) + ");\n";
-						else if (i == queryParam.size() - 2 && fullParam.size() != queryParam.size())
+						if (i == queryParam.size() - 2 && fullParam.size() != queryParam.size())
 							ret += obj + " = new javamoprt.MOPMapOfSet(" + fullParam.getIdnum(nextP) + ");\n";
 						else
 							ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
@@ -406,7 +402,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
 						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
 						ret += "}\n";
-						
+
 						if (i == 0) {
 							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
 						} else {
@@ -421,7 +417,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 						} else {
 							ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
 						}
-						
+
 						ret += "}\n";
 
 						ret += "}\n";
@@ -432,7 +428,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 							ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
 						}
 					}
-				}				
+				}
 			}
 		}
 
@@ -440,14 +436,15 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.checkTime(timeCheck, wrapper, fromWrapper, set, map, obj);
+		}
+
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
 			return ret;
-
-		boolean isFullParam = false;
-		if (queryParam.equals(fullParam))
-			isFullParam = true;
 
 		if (isFullParam) {
 			if (queryParam.size() == 0) {
@@ -546,6 +543,11 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String getCachedValue(MOPVariable obj) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.getCachedValue(obj);
+		}
+
 		String ret = "";
 
 		if (this.cache == null)
@@ -558,6 +560,11 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String setCacheKeys() {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.setCacheKeys();
+		}
+
 		String ret = "";
 
 		if (this.cache == null)
@@ -569,6 +576,11 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String setCacheValue(MOPVariable monitor) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.setCacheValue(monitor);
+		}
+
 		String ret = "";
 
 		if (this.cache == null)
@@ -586,13 +598,18 @@ public class CentralizedIndexingTree extends IndexingTree {
 			return false;
 		return true;
 	}
-	
-	public String retrieveTree(){
-		if(perthread){
+
+	public String retrieveTree() {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.retrieveTree();
+		}
+
+		if (perthread) {
 			String ret = "";
-			
+
 			ret += "(";
-			
+
 			if (fullParam.size() == 0) {
 				if (queryParam.size() == 0) {
 					ret += "(" + monitor.getOutermostName() + ")";
@@ -607,18 +624,23 @@ public class CentralizedIndexingTree extends IndexingTree {
 
 			ret += name + ".get()";
 			ret += ")";
-			
+
 			return ret;
-			
+
 		} else {
 			return name.toString();
 		}
 	}
 
 	public String toString() {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.toString();
+		}
+
 		String ret = "";
 
-		if(perthread){
+		if (perthread) {
 			ret += "static final ThreadLocal " + name + " = new ThreadLocal() {\n";
 			ret += "protected Object initialValue(){\n";
 			ret += "return ";
@@ -640,7 +662,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 			} else {
 				ret += "new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(queryParam.get(0)) + ");\n";
 			}
-			
+
 			ret += "}\n";
 			ret += "};\n";
 		} else {

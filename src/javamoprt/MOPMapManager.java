@@ -32,7 +32,7 @@ public class MOPMapManager extends Thread implements MOPObject {
 
 		cleanerThreads = new MOPMapCleaner[numCleaners];
 		
-		treeQueueHead = new MOPMap();
+		treeQueueHead = new MOPAbstractMap();
 		treeQueueTail = treeQueueHead;
 		treeQueueHead.isDeleted = true;
 	}

@@ -2,7 +2,7 @@ package javamoprt;
 
 import java.lang.ref.Reference;
 
-public class MOPMultiMapNode extends MOPCleanable implements MOPObject, MOPMultiMap {
+public class MOPMultiMapNode extends MOPMap {
 	protected static final int DEFAULT_CAPACITY = 16;
 	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 	protected static final int MAXIMUM_CAPACITY = 1 << 30;

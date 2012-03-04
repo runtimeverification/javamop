@@ -2,24 +2,33 @@ package javamop.output.combinedaspect.indexingtree;
 
 import java.util.HashMap;
 
+import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.monitor.WrapperMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public abstract class IndexingTree {
+	IndexingTree combinedIndexingTree = null;
+	int index_id;
+	public int current_index_id = -1;
+	
 	MOPVariable name;
 	MOPParameters fullParam;
 	MOPParameters queryParam;
+	MOPParameterTypes queryTypes;
 	MOPParameters contentParam;
 	MonitorSet monitorSet;
 	WrapperMonitor monitor;
 	IndexingCache cache = null;
 	boolean anycontent = true;
 	boolean perthread = false;
+	
+	boolean isFullParam = false;
 
 	public IndexingTree(String name, MOPParameters queryParam, MOPParameters contentParam, MOPParameters fullParam, MonitorSet monitorSet, WrapperMonitor monitor, boolean perthread) {
 		this.queryParam = queryParam;
+		this.queryTypes = new MOPParameterTypes(queryParam);
 		this.contentParam = contentParam;
 		this.fullParam = fullParam;
 		this.monitorSet = monitorSet;
@@ -31,6 +40,9 @@ public abstract class IndexingTree {
 			anycontent = false;
 		}
 		
+		if (queryParam != null && fullParam != null && queryParam.equals(fullParam))
+			isFullParam = true;
+
 		this.perthread = perthread;
 	}
 
@@ -46,7 +58,7 @@ public abstract class IndexingTree {
 
 	public abstract String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor);
 
-	public abstract String addMonitorAfterLookup(MOPVariable map, MOPVariable set, MOPVariable monitor, HashMap<String, MOPVariable> mopRefs);
+	public abstract String addMonitorAfterLookup(MOPVariable map, MOPVariable monitor, HashMap<String, MOPVariable> mopRefs);
 
 	public abstract String addExactWrapper(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, HashMap<String, MOPVariable> mopRefs);
 

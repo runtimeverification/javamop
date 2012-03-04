@@ -47,7 +47,7 @@ public class EndObject {
 		this.monitorClass = combinedAspect.monitors.get(mopSpec);
 		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
 		this.indexingTrees = indexingDecl.getIndexingTrees();
-		this.globalLock = combinedAspect.lockManager.getLock(mopSpec);
+		this.globalLock = combinedAspect.lockManager.getLock();
 
 		this.endObjectType = event.getEndObjectType();
 		this.endObjectVar = event.getEndObjectVar();

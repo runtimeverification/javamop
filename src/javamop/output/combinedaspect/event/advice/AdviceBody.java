@@ -21,7 +21,6 @@ public abstract class AdviceBody {
 	public WrapperMonitor monitorClass;
 	public MOPVariable monitorName;
 	public HashMap<MOPParameters, IndexingTree> indexingTrees;
-	GlobalLock globalLock;
 	public IndexingDecl indexingDecl;
 	
 	public MOPStatistics stat;
@@ -34,7 +33,6 @@ public abstract class AdviceBody {
 		this.monitorName = monitorClass.getOutermostName();
 		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
 		this.indexingTrees = indexingDecl.getIndexingTrees();
-		this.globalLock = combinedAspect.lockManager.getLock(mopSpec);
 		this.stat = combinedAspect.statManager.getStat(mopSpec);
 	}
 

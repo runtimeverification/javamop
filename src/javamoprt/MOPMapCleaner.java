@@ -1,6 +1,6 @@
 package javamoprt;
 
-import javamoprt.MOPMap.MOPHashEntry;
+import javamoprt.MOPAbstractMap.MOPHashEntry;
 
 public class MOPMapCleaner extends Thread {
 	int id;
@@ -29,7 +29,7 @@ public class MOPMapCleaner extends Thread {
 			MOPHashEntry entry = map.data[i];
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
-				MOPMap value = (MOPMap) entry.getValue();
+				MOPAbstractMap value = (MOPAbstractMap) entry.getValue();
 				if (entry.key.get() == null) {
 					if (previous == null) {
 						map.data[i] = entry.next;
@@ -151,7 +151,7 @@ public class MOPMapCleaner extends Thread {
 		map.deletedMappings += numDeleted;
 	}
 	
-	protected void cleanup(MOPMap map) {
+	protected void cleanup(MOPAbstractMap map) {
 		int numDeleted = 0;
 		if (map instanceof MOPMapOfMap) {
 			MOPMapOfMap mapOfMap = (MOPMapOfMap) map;
@@ -165,7 +165,7 @@ public class MOPMapCleaner extends Thread {
 		}
 	}
 
-	protected void maintainMap(MOPMap map) {
+	protected void maintainMap(MOPAbstractMap map) {
 		cleanup(map);
 		if (map.addedMappings - map.deletedMappings >= map.datathreshold) {
 			int oldCapacity = map.data.length;
@@ -209,8 +209,8 @@ public class MOPMapCleaner extends Thread {
 			if (map != null) {
 				if (!map.isDeleted) {
 //					System.err.println("Cleaner " + id + " cleaning " + map);
-					if(map instanceof MOPMap){
-						MOPMap mopMap = (MOPMap) map;
+					if(map instanceof MOPAbstractMap){
+						MOPAbstractMap mopMap = (MOPAbstractMap) map;
 						maintainMap(mopMap);
 						mopMap.lastsize = (int) (mopMap.addedMappings - mopMap.deletedMappings);
 						map.isCleaning = false;

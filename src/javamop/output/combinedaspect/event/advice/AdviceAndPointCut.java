@@ -8,6 +8,7 @@ import javamop.MOPException;
 import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
+import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -32,6 +33,8 @@ public class AdviceAndPointCut {
 	public MOPParameters throwVal;
 	public MOPParameters threadVars = new MOPParameters();
 	MOPStatistics stat;
+	GlobalLock globalLock;
+	boolean isSync;
 
 	LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
 	
@@ -64,6 +67,8 @@ public class AdviceAndPointCut {
 		}
 
 		this.stat = combinedAspect.statManager.getStat(mopSpec);
+		this.globalLock = combinedAspect.lockManager.getLock();
+		this.isSync = mopSpec.isSync();
 
 		if (mopSpec.isGeneral())
 			this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
@@ -137,6 +142,9 @@ public class AdviceAndPointCut {
 			for (MOPParameter threadVar : threadVars) {
 				ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
 			}
+			
+			if (isSync)
+				ret += "synchronized(" + globalLock.getName() + ") {\n";
 	
 			Iterator<EventDefinition> iter;
 			if(this.pos.equals("before"))
@@ -170,6 +178,10 @@ public class AdviceAndPointCut {
 					ret += "}\n";
 				}
 			}
+			
+			if (isSync)
+				ret += "}\n";
+
 		}
 		
 		return ret;

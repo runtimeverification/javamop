@@ -1,6 +1,6 @@
 package javamoprt;
 
-public class MOPMapOfMonitor extends MOPMap<MOPMonitor> {
+public class MOPMapOfMonitor extends MOPAbstractMap<MOPMonitor> {
 
 	public MOPMapOfMonitor(int idnum) {
 		super();

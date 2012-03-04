@@ -1,6 +1,6 @@
 package javamoprt;
 
-public class MOPMapOfMap extends MOPMap<MOPMap> {
+public class MOPMapOfMap extends MOPAbstractMap<MOPAbstractMap> {
 
 	public MOPMapOfMap(int idnum) {
 		super();
@@ -14,7 +14,7 @@ public class MOPMapOfMap extends MOPMap<MOPMap> {
 			data[i] = null;
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
-				MOPMap map = (MOPMap) entry.getValue();
+				MOPAbstractMap map = (MOPAbstractMap) entry.getValue();
 				map.endObject(idnum);
 				entry.next = null;
 				entry = next;
@@ -37,7 +37,7 @@ public class MOPMapOfMap extends MOPMap<MOPMap> {
 			if (entry != null) {
 				do {
 					MOPHashEntry next = entry.next;
-					MOPMap map = (MOPMap) entry.getValue();
+					MOPAbstractMap map = (MOPAbstractMap) entry.getValue();
 					if (entry.key.get() == null) {
 						if (previous == null) {
 							data[cleancursor] = entry.next;
@@ -90,7 +90,7 @@ public class MOPMapOfMap extends MOPMap<MOPMap> {
 			MOPHashEntry previous = null;
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
-				MOPMap map = (MOPMap) entry.getValue();
+				MOPAbstractMap map = (MOPAbstractMap) entry.getValue();
 				if (entry.key.get() == null) {
 					if (previous == null) {
 						data[i] = entry.next;

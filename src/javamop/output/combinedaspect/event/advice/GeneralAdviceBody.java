@@ -165,9 +165,6 @@ public class GeneralAdviceBody extends AdviceBody {
 		if (ret.length() != 0)
 			ret += "\n";
 
-		if (mopSpec.isSync())
-			ret += "synchronized(" + globalLock.getName() + ") {\n";
-
 		// cache
 		if (indexingTree.hasCache()) {
 			ret += indexingTree.getCachedValue(obj);
@@ -296,9 +293,6 @@ public class GeneralAdviceBody extends AdviceBody {
 			ret += monitorClass.Monitoring(mainWrapper, event, null, null);
 			ret += "}\n";
 		}
-
-		if (mopSpec.isSync())
-			ret += "}\n";
 
 		if (aroundAdviceReturn != null)
 			ret += aroundAdviceReturn;

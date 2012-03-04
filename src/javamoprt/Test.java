@@ -102,7 +102,7 @@ public class Test {
 		StopWatch timer = new StopWatch();
 		StopWatch timer2 = new StopWatch();
 
-		MOPMap map = new MOPMap();
+		MOPAbstractMap map = new MOPAbstractMap();
 
 		Integer[] keys1 = new Integer[100];
 		Integer[][] keys2 = new Integer[100][100];
@@ -129,15 +129,15 @@ public class Test {
 					Integer newint = new Integer(1010100 + i * 10000 + j * 100 + k);
 					integers[index++] = newint;
 
-					MOPMap map2 = (MOPMap) map.get(keys1[i]);
+					MOPAbstractMap map2 = (MOPAbstractMap) map.get(keys1[i]);
 					if (map2 == null) {
-						map2 = new MOPMap();
+						map2 = new MOPAbstractMap();
 						map.put(new MOPWeakReference(keys1[i]), map2);
 					}
 
-					MOPMap map3 = (MOPMap) map2.get(keys2[i][j]);
+					MOPAbstractMap map3 = (MOPAbstractMap) map2.get(keys2[i][j]);
 					if (map3 == null) {
-						map3 = new MOPMap();
+						map3 = new MOPAbstractMap();
 						map2.put(new MOPWeakReference(keys2[i][j]), map3);
 					}
 
@@ -155,12 +155,12 @@ public class Test {
 		for (int j = 0; j < 100; j++) {
 			for (int k = 0; k < 100; k++) {
 				for (int i = 0; i < 100; i++) {
-					MOPMap map2 = (MOPMap) map.get(keys1[i]);
-					MOPMap map3 = (MOPMap) map2.get(keys2[i][j]);
+					MOPAbstractMap map2 = (MOPAbstractMap) map.get(keys1[i]);
+					MOPAbstractMap map3 = (MOPAbstractMap) map2.get(keys2[i][j]);
 					Integer num = (Integer) map3.get(keys3[i][j][k]);
 
-					map2 = (MOPMap) map.get(keys1[i]);
-					map3 = (MOPMap) map2.get(keys2[i][j]);
+					map2 = (MOPAbstractMap) map.get(keys1[i]);
+					map3 = (MOPAbstractMap) map2.get(keys2[i][j]);
 					num = (Integer) map3.get(keys3[i][j][k]);
 
 					if (num != null) {

@@ -2,6 +2,7 @@ package javamop.parser.ast.mopspec;
 
 import java.util.*;
 
+import javamop.output.combinedaspect.indexingtree.IndexingTree;
 import javamop.parser.ast.aspectj.BaseTypePattern;
 
 public class MOPParameters implements Iterable<MOPParameter> {
@@ -181,6 +182,29 @@ public class MOPParameters implements Iterable<MOPParameter> {
 			return null;
 		return this.parameters.get(i);
 	}
+	
+	ArrayList<MOPParameter> lexico = null;
+	
+	public MOPParameter get_lexicographic(int i) {
+		if (i < 0 || i >= this.parameters.size())
+			return null;
+		
+		if(this.lexico == null || this.lexico.size() != this.parameters.size()){
+			this.lexico = new ArrayList<MOPParameter>(this.parameters);
+			Collections.sort(lexico, new Comparator<MOPParameter>() {
+				public int compare(MOPParameter p1, MOPParameter p2) {
+					int ret = p1.getType().getOp().compareTo(p2.getType().getOp());
+					if(ret != 0)
+						return ret;
+					ret = p1.getName().compareTo(p2.getName());
+					return ret;
+				}
+			});
+		}
+		
+		return this.lexico.get(i);
+	}
+
 
 	public Iterator<MOPParameter> iterator() {
 		return this.parameters.iterator();

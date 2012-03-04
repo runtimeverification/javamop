@@ -16,6 +16,9 @@ public class IndexingCache{
 	
 	boolean perthread = false;
 	
+	public IndexingCache(){
+	}
+	
 	public IndexingCache(MOPVariable name, MOPParameters param, MOPParameters fullParam, boolean perthread) {
 		this.name = name;
 		this.param = param;

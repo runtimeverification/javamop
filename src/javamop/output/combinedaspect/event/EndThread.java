@@ -46,7 +46,7 @@ public class EndThread {
 		this.monitorClass = combinedAspect.monitors.get(mopSpec);
 		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
 		this.indexingTrees = indexingDecl.getIndexingTrees();
-		this.globalLock = combinedAspect.lockManager.getLock(mopSpec);
+		this.globalLock = combinedAspect.lockManager.getLock();
 		
 		this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_ThreadToRunnable");
 		this.mainThread = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_MainThread");

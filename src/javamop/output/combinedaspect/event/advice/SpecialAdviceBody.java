@@ -69,9 +69,6 @@ public class SpecialAdviceBody extends AdviceBody {
 			if (ret.length() != 0)
 				ret += "\n";
 
-			if (mopSpec.isSync())
-				ret += "synchronized(" + globalLock.getName() + ") {\n";
-
 			if (event.getMOPParametersOnSpec().size() != 0) {
 				// cache
 				if (indexingTree.hasCache())
@@ -100,7 +97,7 @@ public class SpecialAdviceBody extends AdviceBody {
 							ret += "new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
 						}
 					}
-					ret += indexingTree.addMonitorAfterLookup(m, null, monitor, mopRefs);
+					ret += indexingTree.addMonitorAfterLookup(m, monitor, mopRefs);
 
 					for (IndexingTree indexingTree2 : indexingTrees.values()) {
 						if (indexingTree2 == indexingTree)
@@ -147,16 +144,9 @@ public class SpecialAdviceBody extends AdviceBody {
 				ret += monitorSet.Monitoring(obj, event, null, null);
 			}
 
-			if (mopSpec.isSync())
-				ret += "}\n";
 		} else {
-			if (mopSpec.isSync())
-				ret += "synchronized(" + globalLock.getName() + ") {\n";
-
 			ret += monitorClass.Monitoring(indexingTree.getName(), event, null, null);
 
-			if (mopSpec.isSync())
-				ret += "}\n";
 		}
 
 		if (aroundAdviceReturn != null)
