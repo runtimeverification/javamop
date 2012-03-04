@@ -38,6 +38,8 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 		if (queryParam.equals(fullParam))
 			isFullParam = true;
+		else
+			isFullParam = false;
 	}
 
 	public String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor) {
@@ -74,7 +76,7 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			if (i < queryParam.size() - 1) {
 				ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
 			} else {
-				ret += obj + " = " + map + ".getAll(" + p.getName() + ")[" + current_index_id + "];\n";
+				ret += obj + " = " + map + ".get(" + p.getName() + ", " + current_index_id + ");\n";
 			}
 		}
 
@@ -157,10 +159,18 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 				if (i == queryParam.size() - 1) {
 					if (i == 0) {
 						ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+						ret += "if(" + objs + " != null){\n";
 						ret += obj + " = " + objs + "[" + current_index_id + "];\n";
+						ret += "} else {\n";
+						ret += obj + " = null;\n";
+						ret += "}\n";
 					} else {
 						ret += objs + " = " + map + ".getAll(" + p.getName() + ");\n";
+						ret += "if(" + objs + " != null){\n";
 						ret += obj + " = " + objs + "[" + current_index_id + "];\n";
+						ret += "} else {\n";
+						ret += obj + " = null;\n";
+						ret += "}\n";
 					}
 				} else if (i < queryParam.size() - 1) {
 					if (i == 0) {
@@ -200,12 +210,20 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 				if (i == queryParam.size() - 1) {
 					if (i == 0) {
 						ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+						ret += "if(" + objs + " != null){\n";
 						ret += obj + " = " + objs + "[" + current_index_id + "];\n";
+						ret += "} else {\n";
+						ret += obj + " = null;\n";
+						ret += "}\n";
 					} else {
 						ret += "if (" + obj + " != null) {\n";
 						ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
 						ret += objs + " = " + map + ".getAll(" + p.getName() + ");\n";
+						ret += "if(" + objs + " != null){\n";
 						ret += obj + " = " + objs + "[" + current_index_id + "];\n";
+						ret += "} else {\n";
+						ret += obj + " = null;\n";
+						ret += "}";
 						ret += "}\n";
 					}
 				} else {
@@ -233,10 +251,19 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			if (i == queryParam.size() - 1) {
 				if (i == 0) {
 					ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+					ret += "if(" + objs + " != null){\n";
 					ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + objs + "[" + current_index_id + "];\n";
+					ret += "} else {\n";
+					ret += wrapper + " = null;\n";
+					ret += "}\n";
 				} else {
 					ret += objs + " = " + lastMap + ".getAll(" + p.getName() + ");\n";
+					ret += "if(" + objs + " != null){\n";
 					ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + objs + "[" + current_index_id + "];\n";
+					ret += "} else {\n";
+					ret += wrapper + " = null;\n";
+					ret += "}\n";
+
 				}
 			} else if (i < queryParam.size() - 1) {
 				if (i == 0) {
@@ -294,10 +321,18 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			if (i == queryParam.size() - 1) {
 				if (i == 0) {
 					ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+					ret += "if(" + objs + " != null){\n";
 					ret += set + " = " + "(" + monitorSet.getName() + ")" + objs + "[" + current_index_id + "];\n";
+					ret += "} else {\n";
+					ret += set + " = null;\n";
+					ret += "}\n";
 				} else {
 					ret += objs + " = " + lastMap + ".getAll(" + p.getName() + ");\n";
+					ret += "if(" + objs + " != null){\n";
 					ret += set + " = " + "(" + monitorSet.getName() + ")" + objs + "[" + current_index_id + "];\n";
+					ret += "} else {\n";
+					ret += set + " = null;\n";
+					ret += "}\n";
 				}
 
 				ret += "if (" + set + " != null){\n";
@@ -320,10 +355,18 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			} else if (i < queryParam.size() - 1) {
 				if (i == 0) {
 					ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+					ret += "if(" + objs + " != null){\n";
 					ret += obj + " = " + objs + "[" + current_index_id + "];\n";
+					ret += "} else {\n";
+					ret += obj + " = null;\n";
+					ret += "}\n";
 				} else {
 					ret += objs + " = " + map + ".getAll(" + p.getName() + ");\n";
+					ret += "if(" + objs + " != null){\n";
 					ret += obj + " = " + objs + "[" + current_index_id + "];\n";
+					ret += "} else {\n";
+					ret += obj + " = null;\n";
+					ret += "}\n";
 				}
 
 				ret += "if (" + obj + " == null) {\n";
@@ -390,8 +433,7 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 		if (isFullParam) {
 			if (queryParam.size() == 1) {
-				ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".getAll(" + queryParam.get_lexicographic(0).getName() + ")[" + current_index_id
-						+ "];\n";
+				ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".get(" + queryParam.get_lexicographic(0).getName() + ", " + current_index_id + ");\n";
 
 				ret += "if (" + wrapper + " != null && (" + monitor.getDisable(wrapper) + " > " + monitor.getTau(fromWrapper);
 				ret += " || " + monitor.getTau(wrapper) + " < " + monitor.getTau(fromWrapper) + ")) {\n";
@@ -402,7 +444,7 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 					MOPParameter p = queryParam.get_lexicographic(i);
 
 					if (i == queryParam.size() - 1) {
-						ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + map + ".getAll(" + p.getName() + ")[" + current_index_id + "];\n";
+						ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + map + ".get(" + p.getName() + ", " + current_index_id + ");\n";
 					} else if (i < queryParam.size() - 1) {
 						if (i == 0) {
 							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
@@ -426,7 +468,7 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			}
 		} else {
 			if (queryParam.size() == 1) {
-				ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".getAll(" + queryParam.get_lexicographic(0).getName() + ")[" + current_index_id + "];\n";
+				ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".get(" + queryParam.get_lexicographic(0).getName() + ", " + current_index_id + ");\n";
 				ret += "if (" + set + " != null){\n";
 				ret += monitorSet.getNode(wrapper, set);
 
@@ -441,7 +483,7 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 					MOPParameter p = queryParam.get_lexicographic(i);
 
 					if (i == queryParam.size() - 1) {
-						ret += set + " = " + "(" + monitorSet.getName() + ")" + map + ".getAll(" + p.getName() + ")[" + current_index_id + "];\n";
+						ret += set + " = " + "(" + monitorSet.getName() + ")" + map + ".get(" + p.getName() + ", " + current_index_id + ");\n";
 						ret += "if (" + set + " != null){\n";
 						ret += monitorSet.getNode(wrapper, set);
 					} else if (i < queryParam.size() - 1) {
@@ -543,13 +585,13 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 			ret += "new javamoprt.MOPMultiMapSignature(";
 			if (ith == queryTypes.size() - 1) {
-				ret += "javamoprt.MOPMultiMapSignature.MAP_OF_MAP";
-			} else {
 				if (tree.queryParam.size() == tree.fullParam.size()) {
 					ret += "javamoprt.MOPMultiMapSignature.MAP_OF_MONITOR";
 				} else {
 					ret += "javamoprt.MOPMultiMapSignature.MAP_OF_SET";
 				}
+			} else {
+				ret += "javamoprt.MOPMultiMapSignature.MAP_OF_MAP";
 			}
 			ret += ", ";
 			ret += tree.fullParam.getIdnum(tree.queryParam.get_lexicographic(ith));

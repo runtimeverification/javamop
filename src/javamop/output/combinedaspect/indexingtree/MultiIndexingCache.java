@@ -43,6 +43,7 @@ public class MultiIndexingCache {
 					ret += " && ";
 				ret += param.get_lexicographic(i).getName() + " == " + keys.get(i) + ".get()";
 			}
+			ret += " && " + value + ".get() != null";
 			ret += "){\n";
 			ret += obj + " = " + value + ".get()[" + current_index_id + "];\n";
 			ret += "}\n";
@@ -53,6 +54,7 @@ public class MultiIndexingCache {
 					ret += " && ";
 				ret += param.get_lexicographic(i).getName() + " == " + keys.get(i);
 			}
+			ret += " && " + value + " != null";
 			ret += "){\n";
 			ret += obj + " = " + value + "[" + current_index_id + "];\n";
 			ret += "}\n";
