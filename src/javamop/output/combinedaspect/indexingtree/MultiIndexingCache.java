@@ -109,7 +109,7 @@ public class MultiIndexingCache {
 			for (MOPVariable key : keys) {
 				ret += "static Object " + key + " = null;\n";
 			}
-			ret += "static Object " + value + " = null;\n";
+			ret += "static Object[] " + value + " = null;\n";
 		}
 
 		return ret;

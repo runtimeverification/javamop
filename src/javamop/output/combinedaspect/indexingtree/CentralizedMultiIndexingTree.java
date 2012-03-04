@@ -24,6 +24,8 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 		this.trees = trees;
 
+		this.queryTypes = queryTypes;
+
 		if (queryTypes.size() != 0)
 			this.cache = new MultiIndexingCache(this.name, queryTypes, perthread);
 	}
@@ -230,11 +232,11 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 			if (i == queryParam.size() - 1) {
 				if (i == 0) {
-					ret += objs + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".getAll(" + p.getName() + ");\n";
-					ret += wrapper + " = " + objs + "[" + current_index_id + "];\n";
+					ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+					ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + objs + "[" + current_index_id + "];\n";
 				} else {
-					ret += objs + " = " + "(" + monitor.getOutermostName() + ")" + lastMap + ".getAll(" + p.getName() + ");\n";
-					ret += wrapper + " = " + objs + "[" + current_index_id + "];\n";
+					ret += objs + " = " + lastMap + ".getAll(" + p.getName() + ");\n";
+					ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + objs + "[" + current_index_id + "];\n";
 				}
 			} else if (i < queryParam.size() - 1) {
 				if (i == 0) {
@@ -291,11 +293,11 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 			if (i == queryParam.size() - 1) {
 				if (i == 0) {
-					ret += objs + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".getAll(" + p.getName() + ");\n";
-					ret += set + " = " + objs + "[" + current_index_id + "];\n";
+					ret += objs + " = " + retrieveTree() + ".getAll(" + p.getName() + ");\n";
+					ret += set + " = " + "(" + monitorSet.getName() + ")" + objs + "[" + current_index_id + "];\n";
 				} else {
-					ret += objs + " = " + "(" + monitorSet.getName() + ")" + lastMap + ".getAll(" + p.getName() + ");\n";
-					ret += set + " = " + objs + "[" + current_index_id + "];\n";
+					ret += objs + " = " + lastMap + ".getAll(" + p.getName() + ");\n";
+					ret += set + " = " + "(" + monitorSet.getName() + ")" + objs + "[" + current_index_id + "];\n";
 				}
 
 				ret += "if (" + set + " != null){\n";
@@ -373,9 +375,9 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 		ret += "Object[] " + objs + ";\n";
 
 		if (isFullParam) {
-			ret = lookupExactMonitorFullParam(wrapper, lastMap, set, map, obj, tempRefs);
+			ret += lookupExactMonitorFullParam(wrapper, lastMap, set, map, obj, tempRefs);
 		} else {
-			ret = lookupExactMonitorPartialParam(wrapper, lastMap, set, map, obj, tempRefs);
+			ret += lookupExactMonitorPartialParam(wrapper, lastMap, set, map, obj, tempRefs);
 		}
 
 		return ret;
@@ -554,7 +556,8 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			ret += ")";
 		}
 
-		ret += "}";
+		ret += "\n";
+		ret += "}\n";
 
 		return ret;
 	}
