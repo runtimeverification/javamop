@@ -58,6 +58,8 @@ public abstract class IndexingTree {
 
 	public abstract String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor);
 
+	public abstract String getWeakReferenceAfterLookup(MOPVariable map, MOPVariable monitor, HashMap<String, MOPVariable> mopRefs);
+	
 	public abstract String addMonitorAfterLookup(MOPVariable map, MOPVariable monitor, HashMap<String, MOPVariable> mopRefs);
 
 	public abstract String addExactWrapper(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, HashMap<String, MOPVariable> mopRefs);

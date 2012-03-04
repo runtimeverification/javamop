@@ -56,11 +56,6 @@ public class MOPMultiMapNode extends MOPMap {
 		this.valueSize = signatures.length;
 	}
 
-	/*
-	 * To avoid a race condition, it keeps two numbers separately.
-	 * Thus, the result might be incorrect sometimes.
-	 * This method is only for statistics.
-	 */
 	final public long size() {
 		return addedMappings - deletedMappings;
 	}
@@ -114,6 +109,8 @@ public class MOPMultiMapNode extends MOPMap {
 			}
 			entry = entry.next;
 		}
+		
+		cachedKey = null;
 		return null;
 	}
 
@@ -200,7 +197,7 @@ public class MOPMultiMapNode extends MOPMap {
 
 		return true;
 	}
-
+	
 	/* ************************************************************************************ */
 
 	public void endObject(MOPMultiMapSignature[] signatures) {
@@ -268,6 +265,7 @@ public class MOPMultiMapNode extends MOPMap {
 									MOPSet set = (MOPSet) values[j];
 									set.endObjectAndClean(valuePattern[j].idnum);
 								}
+								values[j] = null;
 							}
 						}
 						
@@ -282,16 +280,19 @@ public class MOPMultiMapNode extends MOPMap {
 									MOPMonitor monitor = (MOPMonitor) values[j];
 									if (!monitor.MOP_terminated) {
 										exist = true;
-										break;
+									} else {
+										values[j] = null;
 									}
 								} else if(valuePattern[j].type == MOPMultiMapSignature.MAP_OF_SET){
 									MOPSet set = (MOPSet) values[j];
 									if (!(set != lastValue && set.size() == 0)) {
 										exist = true;
-										break;
+									} else {
+										values[j] = null;
 									}
+								} else {
+									System.err.println("[MOPMultiMapNode] Something Wrong 1");
 								}
-								
 							}
 						}
 						
@@ -340,6 +341,7 @@ public class MOPMultiMapNode extends MOPMap {
 								MOPSet set = (MOPSet) values[j];
 								set.endObjectAndClean(valuePattern[j].idnum);
 							}
+							values[j] = null;
 						}
 					}
 
@@ -354,16 +356,17 @@ public class MOPMultiMapNode extends MOPMap {
 								MOPMonitor monitor = (MOPMonitor) values[j];
 								if (!monitor.MOP_terminated) {
 									exist = true;
-									break;
+								} else {
+									values[j] = null;
 								}
 							} else if(valuePattern[j].type == MOPMultiMapSignature.MAP_OF_SET){
 								MOPSet set = (MOPSet) values[j];
 								if (!(set != lastValue && set.size() == 0)) {
 									exist = true;
-									break;
+								} else {
+									values[j] = null;
 								}
 							}
-							
 						}
 					}
 					

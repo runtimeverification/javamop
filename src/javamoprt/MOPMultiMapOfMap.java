@@ -13,7 +13,7 @@ public class MOPMultiMapOfMap extends MOPMap {
 	protected static final int DEFAULT_CLEANUP_PIECE = DEFAULT_CAPACITY / DEFAULT_CLEANUP_FACTOR;
 	protected static final int DEFAULT_THREADED_CLEANUP_THREASHOLD = 1<<8;
 
-	protected static final int cleanup_piece = 12;
+	protected static final int cleanup_piece = 8;
 
 	protected static final boolean multicore = Runtime.getRuntime().availableProcessors() > 1;
 	//protected static final boolean multicore = false;
@@ -56,11 +56,6 @@ public class MOPMultiMapOfMap extends MOPMap {
 		this.valueSize = signatures.length;
 	}
 
-	/*
-	 * To avoid a race condition, it keeps two numbers separately.
-	 * Thus, the result might be incorrect sometimes.
-	 * This method is only for statistics.
-	 */
 	final public long size() {
 		return addedMappings - deletedMappings;
 	}

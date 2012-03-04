@@ -93,6 +93,20 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 		return ret;
 	}
 
+	public String getWeakReferenceAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
+		String ret = "";
+
+		bringParameters();
+
+		if (queryParam.size() == 1) {
+			ret += monitorVar + "." + mopRefs.get(queryParam.get_lexicographic(queryParam.size() - 1).getName()) + " = " + retrieveTree() + ".cachedKey;\n";
+		} else {
+			ret += monitorVar + "." + mopRefs.get(queryParam.get_lexicographic(queryParam.size() - 1).getName()) + " = " + map + ".cachedKey;\n";
+		}
+		
+		return ret;
+	}
+	
 	public String addMonitorAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
 		String ret = "";
 
@@ -340,8 +354,19 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 				ret += "} else {\n";
 				ret += set + " = new " + monitorSet.getName() + "();\n";
 
+				
 				ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
+				if (i == 0) {
+					ret += "if (" + retrieveTree() + ".cachedKey != null){\n";
+					ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
+				} else {
+					ret += "if (" + map + ".cachedKey != null){\n";
+					ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
+				}
+				ret += "} else {\n";
 				ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
+				ret += "}\n";
+				
 				ret += "}\n";
 
 				if (i == 0) {

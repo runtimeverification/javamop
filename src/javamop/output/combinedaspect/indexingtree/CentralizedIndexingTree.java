@@ -104,6 +104,21 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
+	public String getWeakReferenceAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.getWeakReferenceAfterLookup(map, monitorVar, mopRefs);
+		}
+		
+		String ret = "";
+
+		ret += monitorVar + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + " = ";
+		ret += "new javamoprt.MOPWeakReference(" + queryParam.get(queryParam.size() - 1).getName() + ");\n";
+		
+		
+		return ret;
+	}
+	
 	public String addMonitorAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
 		if (combinedIndexingTree != null) {
 			combinedIndexingTree.current_index_id = this.index_id;

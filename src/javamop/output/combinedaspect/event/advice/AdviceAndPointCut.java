@@ -9,6 +9,7 @@ import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
+import javamop.output.combinedaspect.MOPStatManager;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -17,6 +18,7 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public class AdviceAndPointCut {
+	public MOPStatManager statManager;
 
 	MOPVariable inlineFuncName;
 	MOPParameters inlineParameters;
@@ -32,7 +34,6 @@ public class AdviceAndPointCut {
 	public MOPParameters retVal;
 	public MOPParameters throwVal;
 	public MOPParameters threadVars = new MOPParameters();
-	MOPStatistics stat;
 	GlobalLock globalLock;
 	boolean isSync;
 
@@ -66,7 +67,8 @@ public class AdviceAndPointCut {
 			this.threadVars.add(event.getParameters().getParam(event.getThreadVar()));
 		}
 
-		this.stat = combinedAspect.statManager.getStat(mopSpec);
+		this.statManager = combinedAspect.statManager;
+		
 		this.globalLock = combinedAspect.lockManager.getLock();
 		this.isSync = mopSpec.isSync();
 
@@ -163,6 +165,8 @@ public class AdviceAndPointCut {
 				}
 				
 				if (Main.statistics) {
+					MOPStatistics stat = this.statManager.getStat(advice.mopSpec);
+					
 					ret += stat.eventInc(event.getId());
 	
 					for (MOPParameter param : event.getMOPParametersOnSpec()) {

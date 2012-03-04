@@ -93,8 +93,7 @@ public class SpecialAdviceBody extends AdviceBody {
 							ret += monitor + "." + mopRefs.get(p.getName()) + " = ";
 							ret += tempRefs.get(p.getName()) + ";\n";
 						} else {
-							ret += monitor + "." + mopRefs.get(p.getName()) + " = ";
-							ret += "new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
+							ret += indexingTree.getWeakReferenceAfterLookup(m, monitor, mopRefs);
 						}
 					}
 					ret += indexingTree.addMonitorAfterLookup(m, monitor, mopRefs);
