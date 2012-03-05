@@ -29,7 +29,11 @@ PARSER_BEGIN(SRSParser)
       parser.Start();
       SRS srs = parser.getSRS();
       System.out.println(srs.toString());
-      PatternMatchAutomaton p = new PatternMatchAutomaton(srs);
+      HashSet<Symbol> extraTerminals = new HashSet<Symbol>();
+      for(String s : args){
+        extraTerminals.add(Terminal.get(s));
+      }
+      PatternMatchAutomaton p = new PatternMatchAutomaton(srs, extraTerminals);
       System.out.println(p);
       SpliceList<Symbol> l = new SpliceList<Symbol>();
       for(String s : args){

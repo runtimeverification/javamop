@@ -14,15 +14,21 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
   private State s0 = new State(0); 
   private ArrayList<Set<State>> depthMap = new ArrayList<Set<State>>();
   private HashMap<State, State> fail;
-  private int longestLhsSize;
 
   public PatternMatchAutomaton(SRS srs){
-    longestLhsSize = srs.getLongestLhsSize();
-    mkGotoMachine(srs);
+    mkGotoMachine(srs, srs.getTerminals());    
     addFailureTransitions(srs.getTerminals());
   }
 
-  private void mkGotoMachine(SRS srs){
+  public PatternMatchAutomaton(SRS srs, Set<Symbol> extraTerminals){
+    Set<Symbol> terminals = new HashSet<Symbol>();
+    terminals.addAll(srs.getTerminals());
+    terminals.addAll(extraTerminals);
+    mkGotoMachine(srs, terminals);
+    addFailureTransitions(terminals);
+  }
+
+  private void mkGotoMachine(SRS srs, Set<Symbol> terminals){
     State currentState;
     put(s0, new HashMap<Symbol, ActionState>()); 
     Set<State> depthStates = new HashSet<State>();
@@ -66,7 +72,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     //now add self transitions on s0 for any symbols that don't
     //exit from s0 already
     HashMap<Symbol, ActionState> s0transition = get(s0);
-    for(Symbol s : srs.getTerminals()){
+    for(Symbol s : terminals){
       if(!s0transition.containsKey(s)){
         s0transition.put(s, new ActionState(0, s0));
       }
