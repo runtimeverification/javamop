@@ -75,7 +75,7 @@ public class DefineToFromMonitor {
 				IndexingTree indexingTree = generalAdviceBody.indexingTrees.get(param);
 
 				ret += "if (" + timeCheck + "){\n";
-				ret += indexingTree.checkTime(timeCheck, wrapper, origWrapper, monitors, m, obj);
+				ret += indexingTree.checkTime(timeCheck, wrapper, origWrapper, monitors, m, obj, tempRefs);
 				ret += "}\n"; // timeCheck
 				ret += "\n";
 			}

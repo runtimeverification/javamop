@@ -51,7 +51,7 @@ public class Main {
 	public static boolean merge = false;
 	public static boolean inline = false;
 
-	public static boolean combinedindexing = false;
+	public static boolean scalable = false;
 
 	static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
 		if(Main.outputDir != null){
@@ -400,7 +400,7 @@ public class Main {
 			} else if (args[i].compareTo("-noadvicebody") == 0) {
 				Main.empty_advicebody = true;
 			} else if (args[i].compareTo("-scalable") == 0) {
-				Main.combinedindexing = true;
+				Main.scalable = true;
 			} else {
 				if (files.length() != 0)
 					files += ";";

@@ -15,10 +15,13 @@ import javamop.output.MOPVariable;
 import javamop.output.monitor.WrapperMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameter;
 
 public class IndexingTreeManager {
 
 	HashMap<JavaMOPSpec, IndexingDecl> trees = new HashMap<JavaMOPSpec, IndexingDecl>();
+	
+	public HashMap<String, RefTree> refTrees = new HashMap<String, RefTree>();
 
 	public IndexingTreeManager(String name, List<JavaMOPSpec> specs, HashMap<JavaMOPSpec, MonitorSet> monitorSets, HashMap<JavaMOPSpec, WrapperMonitor> monitors,
 			HashMap<JavaMOPSpec, EnableSet> enableSets) throws MOPException {
@@ -30,9 +33,29 @@ public class IndexingTreeManager {
 			trees.put(spec, new IndexingDecl(spec, monitorSet, monitor, enableSet));
 		}
 
-		if (Main.combinedindexing)
+/*		if (Main.scalable)
 			combineIndexingTrees(name);
+*/
+		if(Main.scalable)
+			getRefTrees(name);
+	}
+	
+	protected void getRefTrees(String name) throws MOPException {
+		for (IndexingDecl indexDecl : trees.values()) {
+			for (IndexingTree tree : indexDecl.indexingTrees.values()) {
+				for(MOPParameter param : tree.queryParam){
+					RefTree refTree = refTrees.get(param.getType().toString());
+					
+					if(refTree == null){
+						MOPVariable refTreeName = new MOPVariable(name + "_" + param.getType() + "_RefMap");
 
+						refTree = new RefTree(refTreeName, param.getType().toString());
+						
+						refTrees.put(param.getType().toString(), refTree);
+					}
+				}
+			}
+		}
 	}
 
 	protected void combineIndexingTrees(String name) throws MOPException {
@@ -131,6 +154,12 @@ public class IndexingTreeManager {
 		if (trees.size() <= 0)
 			return ret;
 
+		ret += "// Trees for References\n";
+		for (RefTree refTree : refTrees.values()){
+			ret += refTree;
+		}
+		ret += "\n";
+		
 		ret += "// Declarations for Indexing Trees \n";
 		for (IndexingDecl indexDecl : trees.values()) {
 			ret += indexDecl;

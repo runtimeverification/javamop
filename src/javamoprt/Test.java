@@ -98,7 +98,7 @@ public class Test {
 		return size_inst(c);
 	}
 
-	static public void testMOPMap() {
+/*	static public void testMOPMap() {
 		StopWatch timer = new StopWatch();
 		StopWatch timer2 = new StopWatch();
 
@@ -180,7 +180,7 @@ public class Test {
 				max2 = integers[i];
 		}
 
-	}
+	}*/
 
 	/*
 	static public void testApacheMap3() {
@@ -477,7 +477,7 @@ public class Test {
 		// testMOPRefMap2();
 		// testMOPRefMap3();
 		// testApacheMap3();
-		testMOPMap();
+		// testMOPMap();
 
 		// testApacheMap2();
 		// memoryClean();

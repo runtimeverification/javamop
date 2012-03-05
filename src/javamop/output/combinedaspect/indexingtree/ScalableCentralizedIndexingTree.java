@@ -9,8 +9,8 @@ import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
-public class CentralizedIndexingTree extends IndexingTree {
-	public CentralizedIndexingTree(String name, MOPParameters queryParam, MOPParameters contentParam, MOPParameters fullParam, MonitorSet monitorSet, WrapperMonitor monitor,
+public class ScalableCentralizedIndexingTree extends IndexingTree {
+	public ScalableCentralizedIndexingTree(String name, MOPParameters queryParam, MOPParameters contentParam, MOPParameters fullParam, MonitorSet monitorSet, WrapperMonitor monitor,
 			boolean perthread) throws MOPException {
 		super(name, queryParam, contentParam, fullParam, monitorSet, monitor, perthread);
 
@@ -50,24 +50,16 @@ public class CentralizedIndexingTree extends IndexingTree {
 		}
 
 		if (queryParam.size() != 0)
-			this.cache = new IndexingCache(this.name, this.queryParam, this.fullParam, perthread);
+			this.cache = new ScalableIndexingCache(this.name, this.queryParam, this.fullParam, perthread);
 	}
 	
+	//done
 	public MOPParameter getQueryParam(int i){
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.getQueryParam(i);
-		}
-		
 		return queryParam.get(i);
 	}
 
+	//done
 	public String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.addMonitor(map, obj, monitors, mopRefs, monitor);
-		}
-
 		String ret = "";
 
 		if (queryParam.equals(fullParam))
@@ -96,7 +88,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 					ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
 				}
 
-				ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
+				ret += obj + " = " + map + ".get(" + monitor + "." + mopRefs.get(queryParam.get(i).getName()) + ");\n";
 			}
 
 			ret += monitors + " = ";
@@ -112,28 +104,16 @@ public class CentralizedIndexingTree extends IndexingTree {
 
 		return ret;
 	}
-
+	
+	//done
 	public String getWeakReferenceAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.getWeakReferenceAfterLookup(map, monitorVar, mopRefs);
-		}
-		
 		String ret = "";
 
-		ret += monitorVar + "." + mopRefs.get(queryParam.get(queryParam.size() - 1).getName()) + " = ";
-		ret += "new javamoprt.MOPWeakReference(" + queryParam.get(queryParam.size() - 1).getName() + ");\n";
-		
-		
 		return ret;
 	}
-	
-	public String addMonitorAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.addMonitorAfterLookup(map, monitorVar, mopRefs);
-		}
 
+	//done
+	public String addMonitorAfterLookup(MOPVariable map, MOPVariable monitorVar, HashMap<String, MOPVariable> mopRefs) {
 		String ret = "";
 
 		if (queryParam.size() == 0) {
@@ -160,11 +140,6 @@ public class CentralizedIndexingTree extends IndexingTree {
 	 * lastMap and set.
 	 */
 	public String addExactWrapper(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, HashMap<String, MOPVariable> mopRefs) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.addExactWrapper(wrapper, lastMap, set, mopRefs);
-		}
-
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
@@ -204,11 +179,6 @@ public class CentralizedIndexingTree extends IndexingTree {
 	 * lastMap and set.
 	 */
 	public String addWrapper(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, HashMap<String, MOPVariable> mopRefs) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.addWrapper(wrapper, lastMap, set, mopRefs);
-		}
-
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
@@ -225,12 +195,8 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
+	//done
 	public String lookup(MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs, boolean creative) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.lookup(map, obj, tempRefs, creative);
-		}
-
 		String ret = "";
 
 		if (queryParam.size() == 0) {
@@ -239,19 +205,21 @@ public class CentralizedIndexingTree extends IndexingTree {
 			if (creative) {
 				for (int i = 0; i < queryParam.size(); i++) {
 					MOPParameter p = queryParam.get(i);
+					MOPVariable tempRef = tempRefs.get(p.getName());
 
 					if (i == queryParam.size() - 1) {
 						if (i == 0)
-							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
 						else
-							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + map + ".get(" + tempRef + ");\n";
 					} else if (i < queryParam.size() - 1) {
 						if (i == 0)
-							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
 						else
-							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + map + ".get(" + tempRef + ");\n";
 
 						MOPParameter nextP = queryParam.get(i + 1);
+						MOPVariable nextTempRef = tempRefs.get(nextP.getName());
 
 						ret += "if (" + obj + " == null) {\n";
 
@@ -262,34 +230,27 @@ public class CentralizedIndexingTree extends IndexingTree {
 						else
 							ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
 
-						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
-
 						if (i == 0)
-							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
+							ret += retrieveTree() + ".put(" + tempRef + ", " + obj + ");\n";
 						else
-							ret += map + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
+							ret += map + ".put(" + tempRef + ", " + obj + ");\n";
 
-						ret += "} else {\n";
-						if (i == 0)
-							ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
-						else
-							ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
 						ret += "}\n";
 
 						ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
-
 					}
 				}
 			} else {
 				for (int i = 0; i < queryParam.size(); i++) {
 					MOPParameter p = queryParam.get(i);
+					MOPVariable tempRef = tempRefs.get(p.getName());
 
 					if (i == 0) {
-						ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
+						ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
 					} else {
 						ret += "if (" + obj + " != null) {\n";
 						ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
-						ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
+						ret += obj + " = " + map + ".get(" + tempRef + ");\n";
 						ret += "}\n";
 					}
 				}
@@ -299,172 +260,147 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
-	public String lookupExactMonitor(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.lookupExactMonitor(wrapper, lastMap, set, map, obj, tempRefs);
-		}
+	protected String lookupExactMonitorFullParam(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
+		String ret = "";
+		
+		if (queryParam.size() == 0) {
+			if (perthread)
+				ret += wrapper + " = " + retrieveTree() + ";\n";
+			else
+				ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ";\n";
+		} else {
+			for (int i = 0; i < queryParam.size(); i++) {
+				MOPParameter p = queryParam.get(i);
+				MOPVariable tempRef = tempRefs.get(p.getName());
 
+				if (i == queryParam.size() - 1) {
+					if (i == 0) {
+						ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".get(" + tempRef + ");\n";
+					} else {
+						ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + lastMap + ".get(" + tempRef + ");\n";
+					}
+				} else if (i < queryParam.size() - 1) {
+					if (i == 0) {
+						ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
+					} else {
+						ret += obj + " = " + map + ".get(" + tempRef + ");\n";
+					}
+
+					MOPParameter nextP = queryParam.get(i + 1);
+
+					ret += "if (" + obj + " == null) {\n";
+
+					if (i == queryParam.size() - 2 && fullParam.size() == queryParam.size())
+						ret += obj + " = new javamoprt.MOPMapOfMonitor(" + fullParam.getIdnum(nextP) + ");\n";
+					else
+						ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
+
+					if (i == 0)
+						ret += retrieveTree() + ".put(" + tempRef + ", " + obj + ");\n";
+					else
+						ret += map + ".put(" + tempRef + ", " + obj + ");\n";
+
+					ret += "}\n";
+
+					if (i == queryParam.size() - 2) {
+						ret += lastMap + " = (javamoprt.MOPMap)" + obj + ";\n";
+					} else {
+						ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
+					}
+				}
+			}
+		}
+		
+		return ret;
+	}
+
+	protected String lookupExactMonitorPartialParam(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
+		String ret = "";
+
+		if (queryParam.size() == 0) {
+			ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ";\n";
+			ret += "if (" + set + " != null){\n";
+			ret += monitorSet.getNode(wrapper, set);
+			ret += "} else {\n";
+			ret += wrapper + " = null;\n";
+			ret += "}\n";
+		} else {
+			for (int i = 0; i < queryParam.size(); i++) {
+				MOPParameter p = queryParam.get(i);
+				MOPVariable tempRef = tempRefs.get(p.getName());
+
+				if (i == queryParam.size() - 1) {
+					if (i == 0) {
+						ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".get(" + tempRef + ");\n";
+					} else {
+						ret += set + " = " + "(" + monitorSet.getName() + ")" + lastMap + ".get(" + tempRef + ");\n";
+					}
+
+					ret += "if (" + set + " != null){\n";
+					ret += monitorSet.getNode(wrapper, set);
+					ret += "} else {\n";
+					ret += set + " = new " + monitorSet.getName() + "();\n";
+
+					if (i == 0) {
+						ret += retrieveTree() + ".put(" + tempRef + ", " + set + ");\n";
+					} else {
+						ret += lastMap + ".put(" + tempRef + ", " + set + ");\n";
+					}
+
+					ret += wrapper + " = " + "null;\n";
+					ret += "}\n";
+				} else if (i < queryParam.size() - 1) {
+					if (i == 0) {
+						ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
+					} else {
+						ret += obj + " = " + map + ".get(" + tempRef + ");\n";
+					}
+
+					MOPParameter nextP = queryParam.get(i + 1);
+
+					ret += "if (" + obj + " == null) {\n";
+
+					if (i == queryParam.size() - 2 && fullParam.size() != queryParam.size())
+						ret += obj + " = new javamoprt.MOPMapOfSet(" + fullParam.getIdnum(nextP) + ");\n";
+					else
+						ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
+
+					if (i == 0) {
+						ret += retrieveTree() + ".put(" + tempRef + ", " + obj + ");\n";
+					} else {
+						ret += map + ".put(" + tempRef + ", " + obj + ");\n";
+					}
+
+					ret += "}\n";
+
+					if (i == queryParam.size() - 2) {
+						ret += lastMap + " = (javamoprt.MOPMap)" + obj + ";\n";
+					} else {
+						ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
+					}
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
+	public String lookupExactMonitor(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
 			return ret;
 
 		if (isFullParam) {
-			if (queryParam.size() == 0) {
-				if (perthread)
-					ret += wrapper + " = " + retrieveTree() + ";\n";
-				else
-					ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ";\n";
-			} else {
-				for (int i = 0; i < queryParam.size(); i++) {
-					MOPParameter p = queryParam.get(i);
-
-					if (i == queryParam.size() - 1) {
-						if (i == 0) {
-							ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".get(" + p.getName() + ");\n";
-						} else {
-							ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + lastMap + ".get(" + p.getName() + ");\n";
-						}
-					} else if (i < queryParam.size() - 1) {
-						if (i == 0) {
-							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
-						} else {
-							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
-						}
-
-						MOPParameter nextP = queryParam.get(i + 1);
-
-						ret += "if (" + obj + " == null) {\n";
-
-						if (i == queryParam.size() - 2 && fullParam.size() == queryParam.size())
-							ret += obj + " = new javamoprt.MOPMapOfMonitor(" + fullParam.getIdnum(nextP) + ");\n";
-						else
-							ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
-
-						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
-						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
-						ret += "}\n";
-
-						if (i == 0)
-							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
-						else
-							ret += map + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
-
-						ret += "} else {\n";
-						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
-
-						if (i == 0)
-							ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
-						else
-							ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
-
-						ret += "}\n";
-
-						ret += "}\n";
-
-						if (i == queryParam.size() - 2) {
-							ret += lastMap + " = (javamoprt.MOPMap)" + obj + ";\n";
-						} else {
-							ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
-						}
-					}
-				}
-			}
+			ret += lookupExactMonitorFullParam(wrapper, lastMap, set, map, obj, tempRefs);
 		} else {
-			if (queryParam.size() == 0) {
-				ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ";\n";
-				ret += "if (" + set + " != null){\n";
-				ret += monitorSet.getNode(wrapper, set);
-				ret += "} else {\n";
-				ret += wrapper + " = null;\n";
-				ret += "}\n";
-			} else {
-				for (int i = 0; i < queryParam.size(); i++) {
-					MOPParameter p = queryParam.get(i);
-
-					if (i == queryParam.size() - 1) {
-						if (i == 0) {
-							ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".get(" + p.getName() + ");\n";
-						} else {
-							ret += set + " = " + "(" + monitorSet.getName() + ")" + lastMap + ".get(" + p.getName() + ");\n";
-						}
-
-						ret += "if (" + set + " != null){\n";
-						ret += monitorSet.getNode(wrapper, set);
-						ret += "} else {\n";
-						ret += set + " = new " + monitorSet.getName() + "();\n";
-
-						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
-						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
-						ret += "}\n";
-
-						if (i == 0) {
-							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + set + ");\n";
-						} else {
-							ret += lastMap + ".put(" + tempRefs.get(p.getName()) + ", " + set + ");\n";
-						}
-
-						ret += wrapper + " = " + "null;\n";
-						ret += "}\n";
-					} else if (i < queryParam.size() - 1) {
-						if (i == 0) {
-							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
-						} else {
-							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
-						}
-
-						MOPParameter nextP = queryParam.get(i + 1);
-
-						ret += "if (" + obj + " == null) {\n";
-
-						if (i == queryParam.size() - 2 && fullParam.size() != queryParam.size())
-							ret += obj + " = new javamoprt.MOPMapOfSet(" + fullParam.getIdnum(nextP) + ");\n";
-						else
-							ret += obj + " = new javamoprt.MOPMapOfMap(" + fullParam.getIdnum(nextP) + ");\n";
-
-						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
-						ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
-						ret += "}\n";
-
-						if (i == 0) {
-							ret += retrieveTree() + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
-						} else {
-							ret += map + ".put(" + tempRefs.get(p.getName()) + ", " + obj + ");\n";
-						}
-
-						ret += "} else {\n";
-						ret += "if (" + tempRefs.get(p.getName()) + " == null){\n";
-
-						if (i == 0) {
-							ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
-						} else {
-							ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
-						}
-
-						ret += "}\n";
-
-						ret += "}\n";
-
-						if (i == queryParam.size() - 2) {
-							ret += lastMap + " = (javamoprt.MOPMap)" + obj + ";\n";
-						} else {
-							ret += map + " = (javamoprt.MOPMap)" + obj + ";\n";
-						}
-					}
-				}
-			}
+			ret += lookupExactMonitorPartialParam(wrapper, lastMap, set, map, obj, tempRefs);
 		}
 
 		return ret;
 	}
 
 	public String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.checkTime(timeCheck, wrapper, fromWrapper, set, map, obj, tempRefs);
-		}
-
 		String ret = "";
 
 		if (contentParam != null && !contentParam.equals(queryParam))
@@ -478,7 +414,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 				ret += timeCheck + " = " + "false;\n";
 				ret += "}\n";
 			} else if (queryParam.size() == 1) {
-				ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".get(" + queryParam.get(0).getName() + ");\n";
+				ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + retrieveTree() + ".get(" + tempRefs.get(queryParam.get(0).getName()) + ");\n";
 
 				ret += "if (" + wrapper + " != null && (" + monitor.getDisable(wrapper) + " > " + monitor.getTau(fromWrapper);
 				ret += " || " + monitor.getTau(wrapper) + " < " + monitor.getTau(fromWrapper) + ")) {\n";
@@ -487,14 +423,15 @@ public class CentralizedIndexingTree extends IndexingTree {
 			} else {
 				for (int i = 0; i < queryParam.size(); i++) {
 					MOPParameter p = queryParam.get(i);
-
+					MOPVariable tempRef = tempRefs.get(p.getName());
+					
 					if (i == queryParam.size() - 1) {
-						ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + map + ".get(" + p.getName() + ");\n";
+						ret += wrapper + " = " + "(" + monitor.getOutermostName() + ")" + map + ".get(" + tempRef + ");\n";
 					} else if (i < queryParam.size() - 1) {
 						if (i == 0) {
-							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
 						} else {
-							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + map + ".get(" + tempRef + ");\n";
 						}
 
 						ret += "if (" + obj + " != null) {\n";
@@ -522,7 +459,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 				ret += "}\n";
 				ret += "}\n";
 			} else if (queryParam.size() == 1) {
-				ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".get(" + queryParam.get(0).getName() + ");\n";
+				ret += set + " = " + "(" + monitorSet.getName() + ")" + retrieveTree() + ".get(" + tempRefs.get(queryParam.get(0).getName()) + ");\n";
 				ret += "if (" + set + " != null){\n";
 				ret += monitorSet.getNode(wrapper, set);
 
@@ -535,16 +472,17 @@ public class CentralizedIndexingTree extends IndexingTree {
 			} else {
 				for (int i = 0; i < queryParam.size(); i++) {
 					MOPParameter p = queryParam.get(i);
-
+					MOPVariable tempRef = tempRefs.get(p.getName());
+					
 					if (i == queryParam.size() - 1) {
-						ret += set + " = " + "(" + monitorSet.getName() + ")" + map + ".get(" + p.getName() + ");\n";
+						ret += set + " = " + "(" + monitorSet.getName() + ")" + map + ".get(" + tempRef + ");\n";
 						ret += "if (" + set + " != null){\n";
 						ret += monitorSet.getNode(wrapper, set);
 					} else if (i < queryParam.size() - 1) {
 						if (i == 0) {
-							ret += obj + " = " + retrieveTree() + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + retrieveTree() + ".get(" + tempRef + ");\n";
 						} else {
-							ret += obj + " = " + map + ".get(" + p.getName() + ");\n";
+							ret += obj + " = " + map + ".get(" + tempRef + ");\n";
 						}
 
 						ret += "if (" + obj + " != null) {\n";
@@ -567,11 +505,6 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String getCachedValue(MOPVariable obj) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.getCachedValue(obj);
-		}
-
 		String ret = "";
 
 		if (this.cache == null)
@@ -584,15 +517,17 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String getCacheKeys() {
-		return "";
-	}
-	
-	public String setCacheKeys() {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.setCacheKeys();
-		}
+		String ret = "";
 
+		if (this.cache == null)
+			return ret;
+
+		ret += this.cache.getCacheKeys();
+
+		return ret;
+	}
+
+	public String setCacheKeys() {
 		String ret = "";
 
 		if (this.cache == null)
@@ -604,11 +539,6 @@ public class CentralizedIndexingTree extends IndexingTree {
 	}
 
 	public String setCacheValue(MOPVariable monitor) {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.setCacheValue(monitor);
-		}
-
 		String ret = "";
 
 		if (this.cache == null)
@@ -619,6 +549,7 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
+	//done
 	public boolean containsSet() {
 		if (queryParam.equals(fullParam))
 			return false;
@@ -627,12 +558,8 @@ public class CentralizedIndexingTree extends IndexingTree {
 		return true;
 	}
 
+	//done
 	public String retrieveTree() {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.retrieveTree();
-		}
-
 		if (perthread) {
 			String ret = "";
 
@@ -660,12 +587,8 @@ public class CentralizedIndexingTree extends IndexingTree {
 		}
 	}
 
+	//done
 	public String toString() {
-		if (combinedIndexingTree != null) {
-			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.toString();
-		}
-
 		String ret = "";
 
 		if (perthread) {

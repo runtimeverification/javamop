@@ -8,6 +8,7 @@ import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.output.combinedaspect.indexingtree.IndexingDecl;
 import javamop.output.combinedaspect.indexingtree.IndexingTree;
+import javamop.output.combinedaspect.indexingtree.RefTree;
 import javamop.output.monitor.WrapperMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -22,6 +23,7 @@ public abstract class AdviceBody {
 	public MOPVariable monitorName;
 	public HashMap<MOPParameters, IndexingTree> indexingTrees;
 	public IndexingDecl indexingDecl;
+	public HashMap<String, RefTree> refTrees;
 	
 	public MOPStatistics stat;
 
@@ -34,6 +36,7 @@ public abstract class AdviceBody {
 		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
 		this.indexingTrees = indexingDecl.getIndexingTrees();
 		this.stat = combinedAspect.statManager.getStat(mopSpec);
+		this.refTrees = combinedAspect.indexingTreeManager.refTrees;
 	}
 
 	public abstract String toString();

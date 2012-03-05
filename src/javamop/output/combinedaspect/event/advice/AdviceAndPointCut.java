@@ -72,10 +72,17 @@ public class AdviceAndPointCut {
 		this.globalLock = combinedAspect.lockManager.getLock();
 		this.isSync = mopSpec.isSync();
 
-		if (mopSpec.isGeneral())
-			this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
-		else
-			this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
+		if(Main.scalable){
+			if (mopSpec.isGeneral())
+				this.advices.put(event, new ScalableGeneralAdviceBody(mopSpec, event, combinedAspect));
+			else
+				this.advices.put(event, new ScalableSpecialAdviceBody(mopSpec, event, combinedAspect));
+		} else {
+			if (mopSpec.isGeneral())
+				this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
+			else
+				this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
+		}
 		
 		this.events.add(event);
 		
@@ -110,10 +117,17 @@ public class AdviceAndPointCut {
 		}
 
 		// add an advice body.
-		if (mopSpec.isGeneral())
-			this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
-		else
-			this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
+		if(Main.scalable){
+			if (mopSpec.isGeneral())
+				this.advices.put(event, new ScalableGeneralAdviceBody(mopSpec, event, combinedAspect));
+			else
+				this.advices.put(event, new ScalableSpecialAdviceBody(mopSpec, event, combinedAspect));
+		} else {
+			if (mopSpec.isGeneral())
+				this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
+			else
+				this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
+		}
 		
 		this.events.add(event);
 		return true;

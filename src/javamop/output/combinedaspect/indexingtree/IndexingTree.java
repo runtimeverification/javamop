@@ -2,10 +2,10 @@ package javamop.output.combinedaspect.indexingtree;
 
 import java.util.HashMap;
 
-import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.monitor.WrapperMonitor;
 import javamop.output.monitorset.MonitorSet;
+import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public abstract class IndexingTree {
@@ -54,6 +54,8 @@ public abstract class IndexingTree {
 		return cache != null;
 	}
 	
+	public abstract MOPParameter getQueryParam(int i);
+	
 	public abstract String retrieveTree();
 
 	public abstract String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor);
@@ -71,10 +73,12 @@ public abstract class IndexingTree {
 	public abstract String lookupExactMonitor(MOPVariable wrapper, MOPVariable lastMap, MOPVariable set, MOPVariable map, MOPVariable obj,
 			HashMap<String, MOPVariable> tempRefs);
 
-	public abstract String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj);
+	public abstract String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs);
 
 	public abstract String getCachedValue(MOPVariable obj);
 
+	public abstract String getCacheKeys();
+	
 	public abstract String setCacheKeys();
 
 	public abstract String setCacheValue(MOPVariable monitor);

@@ -49,6 +49,15 @@ public class DecentralizedIndexingTree extends IndexingTree {
 		if (queryParam.size() > 1)
 			this.cache = new IndexingCache(this.name, this.queryParam, this.fullParam, perthread);
 	}
+	
+	public MOPParameter getQueryParam(int i){
+		if (combinedIndexingTree != null) {
+			combinedIndexingTree.current_index_id = this.index_id;
+			return combinedIndexingTree.getQueryParam(i);
+		}
+
+		return queryParam.get(i);
+	}
 
 	public String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor) {
 		if (combinedIndexingTree != null) {
@@ -477,10 +486,10 @@ public class DecentralizedIndexingTree extends IndexingTree {
 		return ret;
 	}
 
-	public String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj) {
+	public String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
 		if (combinedIndexingTree != null) {
 			combinedIndexingTree.current_index_id = this.index_id;
-			return combinedIndexingTree.checkTime(timeCheck, wrapper, fromWrapper, set, map, obj);
+			return combinedIndexingTree.checkTime(timeCheck, wrapper, fromWrapper, set, map, obj, tempRefs);
 		}
 
 		String ret = "";
@@ -618,6 +627,10 @@ public class DecentralizedIndexingTree extends IndexingTree {
 		ret += "\n";
 
 		return ret;
+	}
+
+	public String getCacheKeys() {
+		return "";
 	}
 
 	public String setCacheKeys() {

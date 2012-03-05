@@ -13,7 +13,7 @@ public class MOPMultiMapOfMap extends MOPMap {
 	protected static final int DEFAULT_CLEANUP_PIECE = DEFAULT_CAPACITY / DEFAULT_CLEANUP_FACTOR;
 	protected static final int DEFAULT_THREADED_CLEANUP_THREASHOLD = 1<<8;
 
-	protected static final int cleanup_piece = 8;
+	protected static final int cleanup_piece = 12;
 
 	protected static final boolean multicore = Runtime.getRuntime().availableProcessors() > 1;
 	//protected static final boolean multicore = false;
@@ -60,8 +60,6 @@ public class MOPMultiMapOfMap extends MOPMap {
 		return addedMappings - deletedMappings;
 	}
 
-	public MOPWeakReference cachedKey;
-
 	final public Object get(Object key) {
 		if (key == null) {
 			return null;
@@ -76,12 +74,15 @@ public class MOPMultiMapOfMap extends MOPMap {
 		while (entry != null) {
 			if (entry.hashCode == hashCode && (key == entry.key.get())) {
 				lastValue = entry.getValue();
-				cachedKey = entry.key;
 
 				return entry.getValue();
 			}
 			entry = entry.next;
 		}
+		return null;
+	}
+	
+	public Object get(MOPWeakReference key){
 		return null;
 	}
 	
@@ -169,7 +170,7 @@ public class MOPMultiMapOfMap extends MOPMap {
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
 				MOPMap map = (MOPMap)entry.getValue();
-				map.endObject(signatures);
+				//map.endObject(signatures);
 				entry.next = null;
 				entry = next;
 			}
@@ -198,7 +199,7 @@ public class MOPMultiMapOfMap extends MOPMap {
 							previous.next = entry.next;
 						}
 						
-						map.endObject(valuePattern);
+						//map.endObject(valuePattern);
 						
 						entry.next = null;
 						this.deletedMappings++;
@@ -236,7 +237,7 @@ public class MOPMultiMapOfMap extends MOPMap {
 						previous.next = entry.next;
 					}
 					
-					map.endObject(valuePattern);
+					//map.endObject(valuePattern);
 
 					entry.next = null;
 					this.deletedMappings++;

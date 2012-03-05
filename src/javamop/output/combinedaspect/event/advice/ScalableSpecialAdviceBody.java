@@ -5,12 +5,13 @@ import java.util.HashMap;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.indexingtree.IndexingTree;
+import javamop.output.combinedaspect.indexingtree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
-public class SpecialAdviceBody extends AdviceBody {
+public class ScalableSpecialAdviceBody extends AdviceBody {
 	AroundAdviceLocalDecl aroundLocalDecl = null;
 	AroundAdviceReturn aroundAdviceReturn = null;
 	IndexingTree indexingTree;
@@ -23,7 +24,7 @@ public class SpecialAdviceBody extends AdviceBody {
 	HashMap<String, MOPVariable> tempRefs = new HashMap<String, MOPVariable>();
 	HashMap<String, MOPVariable> mopRefs = new HashMap<String, MOPVariable>();
 
-	public SpecialAdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
+	public ScalableSpecialAdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
 		super(mopSpec, event, combinedAspect);
 
 		if (mopSpec.has__SKIP() || event.getPos().equals("around"))
@@ -31,9 +32,11 @@ public class SpecialAdviceBody extends AdviceBody {
 		if (event.getPos().equals("around"))
 			aroundAdviceReturn = new AroundAdviceReturn(event.getRetType(), event.getParametersWithoutThreadVar());
 
+		for (MOPParameter p : event.getMOPParametersOnSpec()) {
+			tempRefs.put(p.getName(), new MOPVariable("TempRef_" + p.getName()));
+		}
 		if (event.isStartEvent()) {
 			for (MOPParameter p : event.getMOPParametersOnSpec()) {
-				tempRefs.put(p.getName(), new MOPVariable("TempRef_" + p.getName()));
 				mopRefs.put(p.getName(), new MOPVariable("MOPRef_" + p.getName()));
 			}
 		}
@@ -50,7 +53,9 @@ public class SpecialAdviceBody extends AdviceBody {
 		if (aroundLocalDecl != null)
 			ret += aroundLocalDecl;
 
-		if (mopSpec.getParameters().size() != 0) {
+		if (mopSpec.getParameters().size() == 0) {
+			ret += monitorClass.Monitoring(indexingTree.getName(), event, null, null);
+		} else {
 			if (event.getMOPParametersOnSpec().size() != 0) {
 				ret += "Object " + obj + " = null;\n";
 			}
@@ -60,10 +65,10 @@ public class SpecialAdviceBody extends AdviceBody {
 
 			if (event.isStartEvent()) {
 				ret += monitorSet.getName() + " " + monitors + " = null;\n";
+			}
 
-				for (MOPVariable tempRef : tempRefs.values()) {
-					ret += "javamoprt.MOPWeakReference " + tempRef + ";\n";
-				}
+			for (MOPVariable tempRef : tempRefs.values()) {
+				ret += "javamoprt.MOPWeakReference " + tempRef + ";\n";
 			}
 
 			if (ret.length() != 0)
@@ -71,16 +76,22 @@ public class SpecialAdviceBody extends AdviceBody {
 
 			if (event.getMOPParametersOnSpec().size() != 0) {
 				// cache
-				if (indexingTree.hasCache())
+				if (indexingTree.hasCache()){
 					ret += indexingTree.getCachedValue(obj);
-
-				if (indexingTree.hasCache())
 					ret += "if(" + obj + " == null) {\n";
-
-				// lookup a map to retrieve monitor(s)
-				ret += indexingTree.lookup(m, obj, tempRefs, event.isStartEvent());
-
+				}
+				
 				if (event.isStartEvent()) {
+					for (MOPParameter p : event.getMOPParametersOnSpec()) {
+						MOPVariable tempRef = tempRefs.get(p.getName());
+						RefTree refTree = refTrees.get(p.getType().toString());
+						
+						ret += refTree.get(tempRef, p);
+					}
+					
+					// lookup a map to retrieve monitor(s)
+					ret += indexingTree.lookup(m, obj, tempRefs, event.isStartEvent());
+
 					ret += "\n";
 					ret += monitor + " = (" + monitorName + ") " + obj + ";\n";
 					ret += "if (" + monitor + " == null" + "){\n";
@@ -89,12 +100,8 @@ public class SpecialAdviceBody extends AdviceBody {
 					for (int i = 0; i < event.getMOPParametersOnSpec().size(); i++) {
 						MOPParameter p = indexingTree.getQueryParam(i);
 
-						if (i != event.getMOPParametersOnSpec().size() - 1) {
-							ret += monitor + "." + mopRefs.get(p.getName()) + " = ";
-							ret += tempRefs.get(p.getName()) + ";\n";
-						} else {
-							ret += indexingTree.getWeakReferenceAfterLookup(m, monitor, mopRefs);
-						}
+						ret += monitor + "." + mopRefs.get(p.getName()) + " = ";
+						ret += tempRefs.get(p.getName()) + ";\n";
 					}
 					ret += indexingTree.addMonitorAfterLookup(m, monitor, mopRefs);
 
@@ -107,6 +114,29 @@ public class SpecialAdviceBody extends AdviceBody {
 					}
 
 					ret += "}\n";
+
+				} else {
+					for (MOPParameter p : event.getMOPParametersOnSpec()) {
+						MOPVariable tempRef = tempRefs.get(p.getName());
+						RefTree refTree = refTrees.get(p.getType().toString());
+						
+						ret += refTree.getRefNonCreative(tempRef, p);
+					}
+					
+					ret += "if (";
+					for (int i = 0; i < event.getMOPParametersOnSpec().size(); i++) {
+						MOPParameter p = indexingTree.getQueryParam(i);
+						MOPVariable tempRef = tempRefs.get(p.getName());
+						
+						if(i != 0)
+							ret += " && ";
+						
+						ret += tempRef + " != javamoprt.MOPRefMap.NULRef";
+					}
+					ret += "){\n";
+
+					// lookup a map to retrieve monitor(s)
+					ret += indexingTree.lookup(m, obj, tempRefs, event.isStartEvent());
 				}
 
 				if (indexingTree.hasCache()) {
@@ -126,6 +156,13 @@ public class SpecialAdviceBody extends AdviceBody {
 						ret += monitor + " = (" + monitorName + ") " + obj + ";\n";
 					}
 				}
+				
+				if (!event.isStartEvent()) {
+					ret += "}\n";
+				}
+
+				
+				
 			}
 
 			if (event.isStartEvent()) {
@@ -142,10 +179,6 @@ public class SpecialAdviceBody extends AdviceBody {
 			} else {
 				ret += monitorSet.Monitoring(obj, event, null, null);
 			}
-
-		} else {
-			ret += monitorClass.Monitoring(indexingTree.getName(), event, null, null);
-
 		}
 
 		if (aroundAdviceReturn != null)

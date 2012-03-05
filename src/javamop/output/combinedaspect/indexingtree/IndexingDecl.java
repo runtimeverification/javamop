@@ -3,6 +3,7 @@ package javamop.output.combinedaspect.indexingtree;
 import java.util.HashMap;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.EnableSet;
 import javamop.output.monitor.WrapperMonitor;
 import javamop.output.monitorset.MonitorSet;
@@ -20,7 +21,7 @@ public class IndexingDecl {
 
 	MonitorSet monitorSet;
 	WrapperMonitor monitor;
-	
+
 	public MOPParameters endObjectParameters = new MOPParameters();
 
 	public IndexingDecl(JavaMOPSpec mopSpec, MonitorSet monitorSet, WrapperMonitor monitor, EnableSet enableSet) throws MOPException {
@@ -31,7 +32,7 @@ public class IndexingDecl {
 			if (event.isEndObject() && event.getMOPParameters().size() != 0)
 				endObjectParameters.addAll(event.getMOPParameters());
 		}
-		
+
 		for (EventDefinition event : mopSpec.getEvents()) {
 			indexingParameterSet.add(event.getMOPParametersOnSpec());
 
@@ -77,29 +78,35 @@ public class IndexingDecl {
 
 		if (mopSpec.isCentralized()) {
 			for (MOPParameters param : indexingParameterSet) {
-				if(param.size() == 1 && this.endObjectParameters.getParam(param.get(0).getName()) != null){
-					indexingTrees.put(param, new DecentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec
-							.isPerThread()));
+				if (param.size() == 1 && this.endObjectParameters.getParam(param.get(0).getName()) != null) {
+					indexingTrees.put(param, new DecentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec.isPerThread()));
 				} else {
-					indexingTrees.put(param, new CentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec
-							.isPerThread()));
+					if (Main.scalable)
+						indexingTrees.put(param,
+								new ScalableCentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec.isPerThread()));
+					else
+						indexingTrees.put(param, new CentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec.isPerThread()));
 				}
 			}
 			if (mopSpec.isGeneral()) {
 				for (MOPParameterPair paramPair : indexingRestrictedParameterSet) {
-					indexingTreesForCopy.put(paramPair, new CentralizedIndexingTree(mopSpec.getName(), paramPair.getParam1(), paramPair.getParam2(), mopSpec
-							.getParameters(), monitorSet, monitor, mopSpec.isPerThread()));
+					if (Main.scalable)
+						indexingTreesForCopy.put(paramPair, new ScalableCentralizedIndexingTree(mopSpec.getName(), paramPair.getParam1(), paramPair.getParam2(), mopSpec.getParameters(),
+								monitorSet, monitor, mopSpec.isPerThread()));
+					else
+						indexingTreesForCopy.put(paramPair, new CentralizedIndexingTree(mopSpec.getName(), paramPair.getParam1(), paramPair.getParam2(), mopSpec.getParameters(),
+								monitorSet, monitor, mopSpec.isPerThread()));
+
 				}
 			}
 		} else {
 			for (MOPParameters param : indexingParameterSet) {
-				indexingTrees.put(param, new DecentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec
-						.isPerThread()));
+				indexingTrees.put(param, new DecentralizedIndexingTree(mopSpec.getName(), param, null, mopSpec.getParameters(), monitorSet, monitor, mopSpec.isPerThread()));
 			}
 			if (mopSpec.isGeneral()) {
 				for (MOPParameterPair paramPair : indexingRestrictedParameterSet) {
-					indexingTreesForCopy.put(paramPair, new DecentralizedIndexingTree(mopSpec.getName(), paramPair.getParam1(), paramPair.getParam2(), mopSpec
-							.getParameters(), monitorSet, monitor, mopSpec.isPerThread()));
+					indexingTreesForCopy.put(paramPair, new DecentralizedIndexingTree(mopSpec.getName(), paramPair.getParam1(), paramPair.getParam2(), mopSpec.getParameters(),
+							monitorSet, monitor, mopSpec.isPerThread()));
 				}
 			}
 		}

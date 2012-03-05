@@ -60,9 +60,11 @@ public class MOPMultiMapNode extends MOPMap {
 		return addedMappings - deletedMappings;
 	}
 
-	public MOPWeakReference cachedKey;
-
 	public Object get(Object key){
+		return null;
+	}
+	
+	public Object get(MOPWeakReference key){
 		return null;
 	}
 	
@@ -80,7 +82,6 @@ public class MOPMultiMapNode extends MOPMap {
 		while (entry != null) {
 			if (entry.hashCode == hashCode && (key == entry.key.get())) {
 				lastValue = null;
-				cachedKey = entry.key;
 
 				return entry.getValue();
 			}
@@ -103,14 +104,12 @@ public class MOPMultiMapNode extends MOPMap {
 		while (entry != null) {
 			if (entry.hashCode == hashCode && (key == entry.key.get())) {
 				lastValue = entry.getValue()[pos];
-				cachedKey = entry.key;
 
 				return entry.getValue()[pos];
 			}
 			entry = entry.next;
 		}
 		
-		cachedKey = null;
 		return null;
 	}
 

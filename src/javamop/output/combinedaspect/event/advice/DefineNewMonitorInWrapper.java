@@ -20,7 +20,8 @@ public class DefineNewMonitorInWrapper {
 	IndexingTree myIndexingTree;
 	MonitorInfo monitorInfo;
 
-	HashMap<String, MOPVariable> mopRefs = new HashMap<String, MOPVariable>();
+	HashMap<String, MOPVariable> mopRefs;
+	HashMap<String, MOPVariable> tempRefs;
 
 	public DefineNewMonitorInWrapper(MOPVariable wrapper, EventDefinition event, GeneralAdviceBody generalAdviceBody) {
 		this.wrapper = wrapper;
@@ -29,6 +30,7 @@ public class DefineNewMonitorInWrapper {
 		this.monitor = generalAdviceBody.monitorClass;
 		this.monitorSet = generalAdviceBody.monitorSet;
 		this.mopRefs = generalAdviceBody.mopRefs;
+		this.tempRefs = generalAdviceBody.tempRefs;
 		this.monitorInfo = generalAdviceBody.monitorInfo;
 
 		for (MOPParameters param : generalAdviceBody.indexingTrees.keySet()) {

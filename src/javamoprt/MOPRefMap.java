@@ -1,10 +1,9 @@
 package javamoprt;
 
 import java.lang.ref.Reference;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
-public abstract class MOPAbstractMap<V> extends MOPMap<V> {
-	protected static final int DEFAULT_CAPACITY = 16;
+public class MOPRefMap extends MOPMap {
+	protected static final int DEFAULT_CAPACITY = 128;
 	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 	protected static final int MAXIMUM_CAPACITY = 1 << 30;
 	protected static final float DEFAULT_REDUCE_FACTOR = 0.25f;
@@ -12,39 +11,38 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 	protected static final int DEFAULT_CLEANUP_THREASHOLD = 512;
 	protected static final int DEFAULT_CLEANUP_FACTOR = 256;
 	protected static final int DEFAULT_CLEANUP_PIECE = DEFAULT_CAPACITY / DEFAULT_CLEANUP_FACTOR;
-	protected static final int DEFAULT_THREADED_CLEANUP_THREASHOLD = 1<<10;
+	protected static final int DEFAULT_THREADED_CLEANUP_THREASHOLD = 1<<8;
 
 	protected static final int cleanup_piece = 12;
 
 	protected static final boolean multicore = Runtime.getRuntime().availableProcessors() > 1;
 	//protected static final boolean multicore = false;
 
-	protected int idnum;
-
-	// protected int datasize;
 	protected long addedMappings;
 	protected long deletedMappings;
 
 	protected int datathreshold;
 	// protected int datalowthreshold;
 
-	protected MOPHashEntry<V>[] data;
-	protected MOPHashEntry<V>[] newdata;
+	protected MOPHashEntry[] data;
+	protected MOPHashEntry[] newdata;
 
 	protected int putIndex = -1;
 	protected int cleanIndex = -1;
 
-	protected Object lastValue = null;
 	protected int lastsize;
 
 	// protected int cleanupThreshold;
-
-	public MOPAbstractMap() {
+	
+	static public MOPWeakReference NULRef = new MOPWeakReference(null);
+	
+	public MOPRefMap() {
 		this.data = new MOPHashEntry[DEFAULT_CAPACITY];
 		this.newdata = null;
-		// this.datasize = 0;
+
 		this.addedMappings = 0;
 		this.deletedMappings = 0;
+		
 		this.datathreshold = (int) (DEFAULT_CAPACITY * DEFAULT_LOAD_FACTOR);
 		// this.datalowthreshold = (int) (DEFAULT_CAPACITY *
 		// DEFAULT_REDUCE_FACTOR);
@@ -57,70 +55,39 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 		return addedMappings - deletedMappings;
 	}
 
-	final public V get(Object key) {
+	Object cachekey = null;
+	MOPWeakReference cachevalue = null;
+	
+	final public MOPWeakReference getRef(Object key) {
 		if (key == null) {
-			return null;
+			return NULRef;
 		}
+		
+		if(key == cachekey)
+			return cachevalue;
 
-		MOPHashEntry<V>[] data = this.data;
+		cachekey = key;
+
+		MOPHashEntry[] data = this.data;
 
 		int hashCode = System.identityHashCode(key);
 		int index = hashIndex(hashCode, data.length);
-		MOPHashEntry<V> entry = data[index];
+		MOPHashEntry entry = data[index];
 
 		while (entry != null) {
 			if (entry.hashCode == hashCode && (key == entry.key.get())) {
-				lastValue = entry.getValue();
-				cachedKey = entry.key;
-
-				return entry.getValue();
+				
+				return cachevalue = entry.key;
 			}
 			entry = entry.next;
 		}
-		return null;
-	}
-
-	final public V get(MOPWeakReference key) {
-		if (key == null || key.get() == null) {
-			return null;
-		}
-
-		MOPHashEntry<V>[] data = this.data;
-
-		int hashCode = key.hash;
-		int index = hashIndex(hashCode, data.length);
-		MOPHashEntry<V> entry = data[index];
-
-		while (entry != null) {
-			if (entry.hashCode == hashCode && (key == entry.key)) {
-				lastValue = entry.getValue();
-				cachedKey = entry.key;
-
-				return entry.getValue();
-			}
-			entry = entry.next;
-		}
-		return null;
-	}
-
-/*	final public V get(Object key, int pos) {
-		return get(key);
-	}
-	
-	final public Object[] getAll(Object key){
-		return null;
-	}
-*/
-
-	public boolean put(MOPWeakReference keyref, V value) {
-		lastValue = value;
-
+		
+		//create new weakreference 
+		MOPWeakReference keyref = new MOPWeakReference(key, hashCode);
+		
 		if (multicore && data.length > DEFAULT_THREADED_CLEANUP_THREASHOLD) {
-			MOPHashEntry<V>[] data = this.data;
-
-			int hashCode = keyref.hash;
 			putIndex = hashIndex(hashCode, data.length);
-
+			
 			while (this.newdata != null) {
 				putIndex = -1;
 				while (this.newdata != null) {
@@ -133,8 +100,8 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 			while (cleanIndex == putIndex) {
 				Thread.yield();
 			}
-
-			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref, value);
+			
+			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -151,43 +118,125 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 				}
 			}
 		} else {
-			int hashCode = keyref.hash;
-			int index = hashIndex(hashCode, data.length);
-
-			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref, value);
+			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref);
 			data[index] = newentry;
 			addedMappings++;
 
-			if (multicore)
-				checkCapacityNoOneIter();
-			else
-				checkCapacity();
+			//if (multicore)
+			//	checkCapacityNoOneIter();
+			//else
+			checkCapacity();
+		}
+		
+		return cachevalue = keyref;
+	}
+
+	final public MOPWeakReference getRefNonCreative(Object key) {
+		if (key == null) {
+			return NULRef;
 		}
 
-		return true;
+		MOPHashEntry[] data = this.data;
+
+		int hashCode = System.identityHashCode(key);
+		int index = hashIndex(hashCode, data.length);
+		MOPHashEntry entry = data[index];
+
+		while (entry != null) {
+			if (entry.hashCode == hashCode && (key == entry.key.get())) {
+
+				return entry.key;
+			}
+			entry = entry.next;
+		}
+		
+		return NULRef;
 	}
 	
-/*	public boolean put(MOPWeakReference keyref, V value, int pos) {
-		return put(keyref, value);
+	final public Object get(Object key) {
+		return getRef(key);
 	}
-*/
+	
+	final public MOPWeakReference get(MOPWeakReference keyref) {
+		if (keyref == null || keyref.get() == null) {
+			return NULRef;
+		}
+
+		MOPHashEntry[] data = this.data;
+
+		int hashCode = keyref.hash;
+		int index = hashIndex(hashCode, data.length);
+		MOPHashEntry entry = data[index];
+
+		while (entry != null) {
+			if (entry.hashCode == hashCode && (keyref.get() == entry.key.get())) {
+
+				return entry.key;
+			}
+			entry = entry.next;
+		}
+		
+		if (multicore && data.length > DEFAULT_THREADED_CLEANUP_THREASHOLD) {
+			putIndex = hashIndex(hashCode, data.length);
+			
+			while (this.newdata != null) {
+				putIndex = -1;
+				while (this.newdata != null) {
+					Thread.yield();
+				}
+				data = this.data;
+				putIndex = hashIndex(hashCode, data.length);
+			}
+
+			while (cleanIndex == putIndex) {
+				Thread.yield();
+			}
+			
+			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref);
+			data[putIndex] = newentry;
+			addedMappings++;
+
+			putIndex = -1;
+
+			if (!isCleaning && this.nextInQueue == null && addedMappings - deletedMappings >= data.length / 2
+					&& addedMappings - deletedMappings - lastsize > data.length / 10) {
+				this.isCleaning = true;
+				if (MOPMapManager.treeQueueTail == this) {
+					this.repeat = true;
+				} else {
+					MOPMapManager.treeQueueTail.nextInQueue = this;
+					MOPMapManager.treeQueueTail = this;
+				}
+			}
+		} else {
+			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref);
+			data[index] = newentry;
+			addedMappings++;
+
+			//if (multicore)
+			//	checkCapacityNoOneIter();
+			//else
+			checkCapacity();
+		}
+		
+		return keyref;
+	}
+
+	
+	public boolean put(MOPWeakReference keyref, Object value) {
+		//it does nothing
+		return false;
+	}
 
 	/* ************************************************************************************ */
 
-	abstract protected void endObject(int idnum);
-
-/*	public void endObject(MOPMultiMapSignature[] signatures){
-		return;
-	}
-*/
 	int cleancursor = -1;
 
-	abstract protected void cleanuponeiter();
-/*	{
+	protected void cleanuponeiter() {
 		if (cleancursor < 0)
 			cleancursor = data.length - 1;
 
-		while (cleancursor >= 0) {
+		for (int i = 0; i < cleanup_piece && cleancursor >= 0; i++) {
 			MOPHashEntry entry = data[cleancursor];
 			MOPHashEntry previous = null;
 			if (entry != null) {
@@ -212,9 +261,8 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 			cleancursor--;
 		}
 	}
-*/
-	abstract protected void cleanupiter();
-/*	{
+
+	protected void cleanupiter() {
 		for (int i = data.length - 1; i >= 0; i--) {
 			MOPHashEntry entry = data[i];
 			MOPHashEntry previous = null;
@@ -234,7 +282,7 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 				entry = next;
 			}
 		}
-	}*/
+	}
 
 	final protected int hashIndex(int hashCode, int dataSize) {
 		return hashCode & (dataSize - 1);
@@ -294,21 +342,15 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 
 	/* ************************************************************************************ */
 
-	static protected class MOPHashEntry<V> {
-		protected MOPHashEntry<V> next;
+	static protected class MOPHashEntry {
+		protected MOPHashEntry next;
 		protected int hashCode;
 		protected MOPWeakReference key;
-		protected V value;
 
-		protected MOPHashEntry(MOPHashEntry<V> next, int hashCode, MOPWeakReference keyref, V value) {
+		protected MOPHashEntry(MOPHashEntry next, int hashCode, MOPWeakReference keyref) {
 			this.next = next;
 			this.hashCode = hashCode;
 			this.key = keyref;
-			this.value = value;
-		}
-
-		final public V getValue() {
-			return value;
 		}
 
 		final public Object getKey() {
@@ -318,7 +360,6 @@ public abstract class MOPAbstractMap<V> extends MOPMap<V> {
 		final public Reference getKeyRef() {
 			return key;
 		}
-
 	}
 
 }

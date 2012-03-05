@@ -115,6 +115,11 @@ public class DefineToFromList {
 		ret += origSet + ".elementData[" + i + "] = " + origWrapper + ";\n";
 		ret += "}\n";
 		ret += "\n";
+		
+		for (MOPParameter p : newParam) {
+			ret += this.tempRefs.get(p.getName()) + " = " + origWrapper + "." + this.mopRefs.get(p.getName()) + ";\n";
+		}
+		ret += "\n";
 
 		boolean found = false;
 		for (MOPParameters param : generalAdviceBody.indexingTrees.keySet()) {
@@ -139,7 +144,7 @@ public class DefineToFromList {
 				IndexingTree indexingTree = generalAdviceBody.indexingTrees.get(param);
 
 				ret += "if (" + timeCheck + "){\n";
-				ret += indexingTree.checkTime(timeCheck, wrapper, origWrapper, monitors, m, obj);
+				ret += indexingTree.checkTime(timeCheck, wrapper, origWrapper, monitors, m, obj, tempRefs);
 				ret += "}\n"; // timeCheck
 				ret += "\n";
 			}

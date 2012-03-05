@@ -42,6 +42,12 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 			isFullParam = false;
 	}
 
+	public MOPParameter getQueryParam(int i){
+		bringParameters();
+		
+		return queryParam.get_lexicographic(i);
+	}
+
 	public String addMonitor(MOPVariable map, MOPVariable obj, MOPVariable monitors, HashMap<String, MOPVariable> mopRefs, MOPVariable monitor) {
 		String ret = "";
 
@@ -98,11 +104,18 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 
 		bringParameters();
 
+		ret += "if (objs != null){\n";
 		if (queryParam.size() == 1) {
 			ret += monitorVar + "." + mopRefs.get(queryParam.get_lexicographic(queryParam.size() - 1).getName()) + " = " + retrieveTree() + ".cachedKey;\n";
 		} else {
 			ret += monitorVar + "." + mopRefs.get(queryParam.get_lexicographic(queryParam.size() - 1).getName()) + " = " + map + ".cachedKey;\n";
 		}
+		ret += "} else {\n";
+		
+		ret += monitorVar + "." + mopRefs.get(queryParam.get_lexicographic(queryParam.size() - 1).getName()) + " = ";
+		ret += "new javamoprt.MOPWeakReference(" + queryParam.get_lexicographic(queryParam.size() - 1).getName() + ");\n";
+		
+		ret += "}\n";
 		
 		return ret;
 	}
@@ -360,8 +373,8 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 					ret += "if (" + retrieveTree() + ".cachedKey != null){\n";
 					ret += tempRefs.get(p.getName()) + " = " + retrieveTree() + ".cachedKey;\n";
 				} else {
-					ret += "if (" + map + ".cachedKey != null){\n";
-					ret += tempRefs.get(p.getName()) + " = " + map + ".cachedKey;\n";
+					ret += "if (" + lastMap + ".cachedKey != null){\n";
+					ret += tempRefs.get(p.getName()) + " = " + lastMap + ".cachedKey;\n";
 				}
 				ret += "} else {\n";
 				ret += tempRefs.get(p.getName()) + " = new javamoprt.MOPWeakReference(" + p.getName() + ");\n";
@@ -451,7 +464,7 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 		return ret;
 	}
 
-	public String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj) {
+	public String checkTime(MOPVariable timeCheck, MOPVariable wrapper, MOPVariable fromWrapper, MOPVariable set, MOPVariable map, MOPVariable obj, HashMap<String, MOPVariable> tempRefs) {
 		String ret = "";
 
 		bringParameters();
@@ -549,6 +562,10 @@ public class CentralizedMultiIndexingTree extends IndexingTree {
 		ret += "\n";
 
 		return ret;
+	}
+
+	public String getCacheKeys() {
+		return "";
 	}
 
 	public String setCacheKeys() {

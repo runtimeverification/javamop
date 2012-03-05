@@ -159,7 +159,43 @@ public class MOPMapCleaner extends Thread {
 		map.deletedMappings += numDeleted;
 	}
 	
-	protected void cleanupMultiMapNode(MOPMultiMapNode map){
+	protected void cleanupMapRefMap(MOPRefMap map){
+		int numDeleted = 0;
+		for (int i = map.data.length - 1; i >= 0; i--) {
+			map.cleanIndex = i;
+			while (map.putIndex == i) {
+				map.cleanIndex = -1;
+				while (map.putIndex == i) {
+					Thread.yield();
+				}
+				map.cleanIndex = i;
+			}
+
+			MOPRefMap.MOPHashEntry previous = null;
+			MOPRefMap.MOPHashEntry entry = map.data[i];
+			while (entry != null) {
+				MOPRefMap.MOPHashEntry next = entry.next;
+				if (entry.key.get() == null) {
+					if (previous == null) {
+						map.data[i] = entry.next;
+					} else {
+						previous.next = entry.next;
+					}
+
+					entry.next = null;
+					numDeleted++;
+				} else {
+					previous = entry;
+				}
+				entry = next;
+			}
+		}
+
+		map.cleanIndex = -1;
+		map.deletedMappings += numDeleted;
+	}
+	
+/*	protected void cleanupMultiMapNode(MOPMultiMapNode map){
 		int numDeleted = 0;
 
 		for (int i = map.data.length - 1; i >= 0; i--) {
@@ -240,9 +276,9 @@ public class MOPMapCleaner extends Thread {
 
 		map.cleanIndex = -1;
 		map.deletedMappings += numDeleted;
-	}
+	}*/
 
-	protected void cleanupMultiMapOfMap(MOPMultiMapOfMap map){
+/*	protected void cleanupMultiMapOfMap(MOPMultiMapOfMap map){
 		int numDeleted = 0;
 
 		for (int i = map.data.length - 1; i >= 0; i--) {
@@ -288,7 +324,7 @@ public class MOPMapCleaner extends Thread {
 
 		map.cleanIndex = -1;
 		map.deletedMappings += numDeleted;		
-	}
+	}*/
 
 	protected void cleanup(MOPMap map) {
 		int numDeleted = 0;
@@ -301,14 +337,18 @@ public class MOPMapCleaner extends Thread {
 		} else if (map instanceof MOPMapOfMonitor) {
 			MOPMapOfMonitor mapOfMonitor = (MOPMapOfMonitor) map;
 			cleanupMapOfMonitor(mapOfMonitor);
-		} else if (map instanceof MOPMultiMapNode) {
+		} else if (map instanceof MOPRefMap){
+			MOPRefMap mapRefMap = (MOPRefMap) map;
+			cleanupMapRefMap(mapRefMap);
+		}
+/*		else if (map instanceof MOPMultiMapNode) {
 			MOPMultiMapNode multiMapNode = (MOPMultiMapNode) map;
 			cleanupMultiMapNode(multiMapNode);
 		} else if (map instanceof MOPMultiMapOfMap) {
 			MOPMultiMapOfMap multiMapOfMap = (MOPMultiMapOfMap) map;
 			cleanupMultiMapOfMap(multiMapOfMap);
 		}
-	}
+*/	}
 
 	protected void maintainMap(MOPAbstractMap map) {
 		cleanup(map);
@@ -349,7 +389,45 @@ public class MOPMapCleaner extends Thread {
 		}
 	}
 	
-	protected void maintainMultiMapNode(MOPMultiMapNode map) {
+	protected void maintainMap(MOPRefMap map) {
+		cleanup(map);
+		if (map.addedMappings - map.deletedMappings >= map.datathreshold) {
+			int oldCapacity = map.data.length;
+			int newCapacity = oldCapacity * 2;
+			if (newCapacity <= map.MAXIMUM_CAPACITY) {
+				map.newdata = new MOPRefMap.MOPHashEntry[newCapacity];
+
+				while (map.putIndex != -1) {
+					Thread.yield();
+				}
+
+				MOPRefMap.MOPHashEntry oldEntries[] = map.data;
+				MOPRefMap.MOPHashEntry newEntries[] = map.newdata;
+
+				for (int i = oldCapacity - 1; i >= 0; i--) {
+					MOPRefMap.MOPHashEntry entry = oldEntries[i];
+					if (entry != null) {
+						oldEntries[i] = null;
+						do {
+							MOPRefMap.MOPHashEntry next = entry.next;
+							int index = map.hashIndex(entry.hashCode, newCapacity);
+							entry.next = newEntries[index];
+							newEntries[index] = entry;
+							entry = next;
+						} while (entry != null);
+					}
+				}
+				map.datathreshold = (int) (newCapacity * map.DEFAULT_LOAD_FACTOR);
+				// map.datalowthreshold = (int) (newCapacity *
+				// map.DEFAULT_REDUCE_FACTOR);
+				// map.cleanupThreshold = map.data.length / 5;
+
+				map.data = map.newdata;
+				map.newdata = null;
+			}
+		}
+	}	
+/*	protected void maintainMultiMapNode(MOPMultiMapNode map) {
 		cleanup(map);
 		if (map.addedMappings - map.deletedMappings >= map.datathreshold) {
 			int oldCapacity = map.data.length;
@@ -387,8 +465,8 @@ public class MOPMapCleaner extends Thread {
 			}
 		}
 	}
-
-	protected void maintainMultiMapOfMap(MOPMultiMapOfMap map) {
+*/
+/*	protected void maintainMultiMapOfMap(MOPMultiMapOfMap map) {
 		cleanup(map);
 		if (map.addedMappings - map.deletedMappings >= map.datathreshold) {
 			int oldCapacity = map.data.length;
@@ -426,7 +504,7 @@ public class MOPMapCleaner extends Thread {
 			}
 		}
 	}
-
+*/
 	public void run() {
 		while (true) {
 			if (map != null) {
@@ -437,7 +515,13 @@ public class MOPMapCleaner extends Thread {
 						maintainMap(mopMap);
 						mopMap.lastsize = (int) (mopMap.addedMappings - mopMap.deletedMappings);
 						map.isCleaning = false;
-					} else if(map instanceof MOPMultiMapNode){
+					} else if(map instanceof MOPRefMap){
+						MOPRefMap mopMap = (MOPRefMap) map;
+						maintainMap(mopMap);
+						mopMap.lastsize = (int) (mopMap.addedMappings - mopMap.deletedMappings);
+						map.isCleaning = false;
+					}					
+/*					else if(map instanceof MOPMultiMapNode){
 						MOPMultiMapNode mopMultiMap = (MOPMultiMapNode) map;
 						maintainMultiMapNode(mopMultiMap);
 						mopMultiMap.lastsize = (int) (mopMultiMap.addedMappings - mopMultiMap.deletedMappings);
@@ -448,7 +532,7 @@ public class MOPMapCleaner extends Thread {
 						mopMultiMap.lastsize = (int) (mopMultiMap.addedMappings - mopMultiMap.deletedMappings);
 						map.isCleaning = false;
 					}
-				}
+*/				}
 
 				map = null;
 				Thread.yield();
