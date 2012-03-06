@@ -18,4 +18,9 @@ public class Fail implements AbstractSequence {
     return theFail;
   }
 
+  @Override
+  public int dotLength(){
+    return 5;
+  }
+
 }

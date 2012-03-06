@@ -17,4 +17,9 @@ public class Succeed implements AbstractSequence {
   public static Succeed get(){
     return theSucceed;
   }
+
+  @Override 
+  public int dotLength(){
+    return 8;
+  }
 }

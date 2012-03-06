@@ -54,4 +54,14 @@ public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
     }
     System.out.println();
   }
+
+  @Override
+  public int dotLength(){
+    if(isEmpty()) return 8;
+    int len = 0;
+    for(Symbol s: this){
+      len += s.length();
+    }
+    return len;
+  }
 }

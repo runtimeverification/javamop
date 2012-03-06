@@ -311,7 +311,7 @@ DONE:
   public String toDotString(){
     StringBuilder sb = new StringBuilder("digraph A");
     sb.append((long) (Math.random()* 2e61d)); 
-    sb.append("{\n    rankdir=LR;\n    node [shape=circle];\n");
+    sb.append("{\n    rankdir=TB;\n    node [shape=circle];\n");
    // sb.append("    edge [style=\">=stealth' ,shorten >=1pt\"];\n");
     for(State state : keySet()){
       sb.append("    ");
@@ -473,13 +473,23 @@ class State {
 
   public String toFullDotString(){
     String name = toNameDotString();
-    String texlbl= number 
-                + ((matchedRule == null)?
-                    ""
-                   : "(" + matchedRule.toDotString() + ")"
-
-                   );
-    return name + " [texlbl=\"$" + texlbl + "$\" label=\"" + mkSpaces(Math.max(texlbl.length() - 14, 6)) + "\"];";
+    String ruleStr;
+    int ruleLen; 
+    if(matchedRule == null){
+      ruleStr = "";
+      ruleLen = 0;
+    }
+    else {
+      ruleStr = "\\\\ (" + matchedRule.toDotString() + ")";
+      ruleLen = matchedRule.dotLength() + 4; //add a bit extra padding
+    }
+    String texlbl= number + " : " + depth 
+                + ruleStr;
+    return name + " [texlbl=\"$\\begin{array}{c}" + texlbl 
+      + "\\end{array}$\" label=\"" 
+      + mkSpaces(Math.max(new Integer(number).toString().length()
+                        + new Integer(depth).toString().length() + 5, 
+                          ruleLen)) + "\"];";
   }
 
   static String mkSpaces(int len){

@@ -58,6 +58,10 @@ public class Rule {
     return lhs.toDotString() + " \\rightarrow " + rhs.toDotString(); 
   }
 
+  public int dotLength(){
+    return lhs.dotLength() + rhs.dotLength() + 3;
+  }
+
   @Override
   public boolean equals(Object o){
     if(!(o instanceof Rule)) return false;

@@ -35,6 +35,10 @@ public class Symbol {
     return name;
   }
 
+  public int length(){
+    return name.length();
+  }
+
   public static void main(String[] args){
     Symbol foo = Symbol.get("foo");
     Symbol foo2 = Symbol.get("foo");
