@@ -8,6 +8,10 @@ public class Fail implements AbstractSequence {
     return "#fail";
   }
 
+  public String toDotString(){
+    return "\\#fail";
+  }
+
   public static Fail theFail = new Fail();
 
   public static Fail get(){

@@ -3,6 +3,7 @@
 package logicrepository.plugins.srs;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -306,6 +307,79 @@ DONE:
     }
     return sb.toString();
   }
+
+  public String toDotString(){
+    StringBuilder sb = new StringBuilder("digraph A");
+    sb.append((long) (Math.random()* 2e61d)); 
+    sb.append("{\n    rankdir=LR;\n    node [shape=circle];\n");
+   // sb.append("    edge [style=\">=stealth' ,shorten >=1pt\"];\n");
+    for(State state : keySet()){
+      sb.append("    ");
+      sb.append(state.toFullDotString());
+      sb.append("\n");
+    }
+    for(State state : keySet()){
+       HashMap<Symbol, ActionState> transition = get(state);
+       sb.append(transitionToDotString(state, transition));
+    }
+    sb.append("}");
+    return sb.toString();
+  }
+
+  public StringBuilder transitionToDotString(State state, Map<Symbol, ActionState> transition){
+    Map<ActionState, ArrayList<Symbol>> edgeCondensingMap = new
+      LinkedHashMap<ActionState, ArrayList<Symbol>>();
+      
+    for(Symbol symbol : transition.keySet()){
+      ActionState next = transition.get(symbol);
+      ArrayList<Symbol> edges = edgeCondensingMap.get(next);
+      if(edges == null){
+        edges = new ArrayList<Symbol>();
+        edgeCondensingMap.put(next, edges);
+      }
+      edges.add(symbol);
+    }
+
+ //  System.out.println(edgeCondensingMap);
+
+  // if(true) throw new RuntimeException();
+
+    StringBuilder sb = new StringBuilder();
+
+    for(ActionState next : edgeCondensingMap.keySet()){
+       sb.append("    ");
+       sb.append(state.toNameDotString());
+       sb.append(" -> ");
+       sb.append(next.getState().toNameDotString());
+       sb.append(" [label=\"$");
+       StringBuilder label = new StringBuilder();
+       for(Symbol symbol : edgeCondensingMap.get(next)){
+         label.append(symbol.toString());
+         label.append(", ");
+       }
+       label.setCharAt(label.length() - 1, '/');
+       label.setCharAt(label.length() - 2, ' ');
+       label.append(" ");
+       label.append(next.getAction());
+       sb.append(label);
+       sb.append("\"];\n");
+    }
+
+    return sb;
+
+//    for(Symbol symbol : transition.keySet()){
+//      sb.append("    ");
+//      sb.append(state.toNameDotString());
+//      sb.append(" -> ");
+//      ActionState next = transition.get(symbol);
+//      sb.append(next.getState().toNameDotString());
+//      sb.append(" [texlbl=\"$");
+//      sb.append(symbol.toDotString());
+//      sb.append(" / ");
+//      sb.append(next.getAction());
+//      sb.append("$\"];\n");
+//    } 
+  } 
 }
 
 class ActionState {
@@ -327,6 +401,19 @@ class ActionState {
 
   @Override public String toString(){
     return "[" + action + "] " + state.toString();
+  }
+
+  @Override
+  public int hashCode(){
+    return action ^ state.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o){
+    if(this == o) return true;
+    if(!(o instanceof ActionState)) return false;
+    ActionState as = (ActionState) o;
+    return(as.action == action && state.equals(as.state));
   }
 }
 
@@ -357,6 +444,21 @@ class State {
     matchedRule = r;
   }
 
+  //matched rule must always be equal if number is equal
+  //ditto with depth
+  @Override
+  public int hashCode(){
+    return number;
+  }
+
+  @Override
+  public boolean equals(Object o){
+    if(this == o) return true;
+    if(!(o instanceof State)) return false;
+    State s = (State) o;
+    return s.number == number;
+  }
+
   @Override
   public String toString(){
       return "<" + number 
@@ -367,5 +469,28 @@ class State {
                    : " matches " + matchedRule.toString()
                    ) 
               + ">";
+  }
+
+  public String toFullDotString(){
+    String name = toNameDotString();
+    String texlbl= number 
+                + ((matchedRule == null)?
+                    ""
+                   : "(" + matchedRule.toDotString() + ")"
+
+                   );
+    return name + " [texlbl=\"$" + texlbl + "$\" label=\"" + mkSpaces(Math.max(texlbl.length() - 14, 6)) + "\"];";
+  }
+
+  static String mkSpaces(int len){
+    StringBuilder sb = new StringBuilder();
+    for(; len > 0; --len){
+      sb.append(' ');
+    }
+    return sb.toString();
+  }
+
+  public String toNameDotString(){
+    return "s_" + number;
   }
 }

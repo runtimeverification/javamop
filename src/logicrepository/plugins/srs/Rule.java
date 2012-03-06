@@ -54,6 +54,10 @@ public class Rule {
     return lhs.toString() + " -> " + rhs.toString();
   }
 
+  public String toDotString(){
+    return lhs.toDotString() + " \\rightarrow " + rhs.toDotString(); 
+  }
+
   @Override
   public boolean equals(Object o){
     if(!(o instanceof Rule)) return false;

@@ -29,6 +29,12 @@ public class Symbol {
     return name;
   }
 
+  public String toDotString(){
+    if(name.equals("^")) return "\\mathbin{\\char`\\^}";
+    if(name.equals("$")) return "\\$";
+    return name;
+  }
+
   public static void main(String[] args){
     Symbol foo = Symbol.get("foo");
     Symbol foo2 = Symbol.get("foo");

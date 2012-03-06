@@ -35,6 +35,9 @@ PARSER_BEGIN(SRSParser)
       }
       PatternMatchAutomaton p = new PatternMatchAutomaton(srs, extraTerminals);
       System.out.println(p);
+     // if(args.length == 0){
+        System.out.println(p.toDotString());
+     // }
       SpliceList<Symbol> l = new SpliceList<Symbol>();
       for(String s : args){
         l.add(Terminal.get(s)); 

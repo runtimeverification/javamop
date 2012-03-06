@@ -29,6 +29,16 @@ public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
     return sb.toString();
   }
 
+  public String toDotString(){
+    if(size() == 0) return "\\#epsilon";
+    StringBuilder sb = new StringBuilder();
+    for(Symbol s : this){
+      sb.append(s.toDotString());
+      sb.append("\\ ");
+    }
+    return sb.toString();
+  }
+
   public Sequence copy(){
     Sequence ret = new Sequence(size());
     for(Symbol s : this){

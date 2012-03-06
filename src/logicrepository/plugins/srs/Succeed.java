@@ -8,6 +8,10 @@ public class Succeed implements AbstractSequence {
     return "#succeed";
   }
 
+  public String toDotString(){
+    return "\\#succeed";
+  }
+
   public static Succeed theSucceed = new Succeed();
 
   public static Succeed get(){
