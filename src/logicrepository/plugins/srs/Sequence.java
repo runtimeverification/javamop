@@ -36,7 +36,8 @@ public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
       sb.append(s.toDotString());
       sb.append("\\ ");
     }
-    return sb.toString();
+    String ret = sb.toString();
+    return ret.substring(0,ret.length() - 2);
   }
 
   public Sequence copy(){
