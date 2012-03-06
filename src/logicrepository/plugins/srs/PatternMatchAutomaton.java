@@ -351,7 +351,7 @@ DONE:
        sb.append(state.toNameDotString());
        sb.append(" -> ");
        sb.append(next.getState().toNameDotString());
-       sb.append(" [label=\"$");
+       sb.append(" [label=\"");
        StringBuilder label = new StringBuilder();
        for(Symbol symbol : edgeCondensingMap.get(next)){
          label.append(symbol.toString());
