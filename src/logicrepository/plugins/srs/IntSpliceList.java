@@ -58,7 +58,7 @@ public class IntSpliceList {
   }
 
   public IntSpliceList(IntSpliceList c){
-    SLIIntIterator I = c.head();
+    SLIntIterator I = c.head();
     do {
       add(I.get());
     } while(I.next());  
@@ -111,15 +111,15 @@ public class IntSpliceList {
   } 
 
   //C++ style iterator, because it's far superior
-  public class SLIIntIterator {
+  public class SLIntIteratorImpl implements SLIntIterator {
     protected Node node; 
 
-    protected SLIIntIterator(Node node){
+    protected SLIntIteratorImpl(Node node){
       this.node = node;
     }
 
-    public SLIIntIterator copy(){
-      return new SLIIntIterator(node);
+    public SLIntIteratorImpl copy(){
+      return new SLIntIteratorImpl(node);
     }
 
     public boolean next(){
@@ -154,13 +154,13 @@ public class IntSpliceList {
     }
 
     //WARNING:  This assumes iterators point to the same list!
-    public void splice(SLIIntIterator end, IntSpliceList replacement){
-      SLIIntIterator endImpl;
+    public void splice(SLIntIterator end, IntSpliceList replacement){
+      SLIntIteratorImpl endImpl;
       try {
-        endImpl = (SLIIntIterator) end;
+        endImpl = (SLIntIteratorImpl) end;
       }
       catch(ClassCastException e){
-        throw new IllegalArgumentException("Must provide an SLIIntIterator to splice");
+        throw new IllegalArgumentException("Must provide an SLIntIteratorImpl to splice");
       }
       if(isEmpty()) {
         if(replacement.isEmpty()) return;
@@ -179,7 +179,7 @@ public class IntSpliceList {
       spliceNonEmptyRepl(endImpl, replacement);
     }
 
-    private void spliceEmptyRepl(SLIIntIterator endImpl){
+    private void spliceEmptyRepl(SLIntIteratorImpl endImpl){
       if(node == head){
         if(endImpl.node == tail){
           head = tail = node = endImpl.node = null;
@@ -209,7 +209,7 @@ public class IntSpliceList {
       endImpl.node = next;
     }
 
-    private void spliceNonEmptyRepl(SLIIntIterator endImpl, IntSpliceList replacement){
+    private void spliceNonEmptyRepl(SLIntIteratorImpl endImpl, IntSpliceList replacement){
       if(node == head){
         if(endImpl.node == tail){
           head = replacement.head;
@@ -253,16 +253,16 @@ public class IntSpliceList {
     }
 
     
-    public void nonDestructiveSplice(SLIIntIterator end, IntSpliceList replacement){
+    public void nonDestructiveSplice(SLIntIterator end, IntSpliceList replacement){
       splice(end, new IntSpliceList(replacement));
     }
 
 
-    public void nonDestructiveSplice(SLIIntIterator end, Collection<Integer> replacement){
+    public void nonDestructiveSplice(SLIntIterator end, Collection<Integer> replacement){
       splice(end, new IntSpliceList(replacement));
     }
 
-    public void nonDestructiveSplice(SLIIntIterator end, int[] replacement){
+    public void nonDestructiveSplice(SLIntIterator end, int[] replacement){
       splice(end, new IntSpliceList(replacement));
     }
 
@@ -277,9 +277,9 @@ public class IntSpliceList {
     public boolean equals(Object o){
       if(o == null) return false;
       if(this == o) return true;
-      SLIIntIterator other;
+      SLIntIteratorImpl other;
       try{
-         other = (SLIIntIterator) o;
+         other = (SLIntIteratorImpl) o;
       }
       catch(ClassCastException e){
         return false;
@@ -295,12 +295,12 @@ public class IntSpliceList {
     }
   }
 
-  public SLIIntIterator head(){
-    return new SLIIntIterator(head);
+  public SLIntIterator head(){
+    return new SLIntIteratorImpl(head);
   }
 
-  public SLIIntIterator tail(){
-    return new SLIIntIterator(tail);
+  public SLIntIterator tail(){
+    return new SLIntIteratorImpl(tail);
   }
 
   public static void main(String[] args){
@@ -308,7 +308,7 @@ public class IntSpliceList {
     //complete tests
     IntSpliceList l = new IntSpliceList(new int [] {1,2,3,4,5});
     System.out.println(l);
-    SLIIntIterator first, second;
+    SLIntIterator first, second;
     first = l.head();
     second = l.tail();
     first.next(1);
