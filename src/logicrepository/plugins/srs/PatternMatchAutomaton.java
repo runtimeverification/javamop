@@ -326,40 +326,6 @@ DONE:
     return sb.toString();
   }
 
-  private static void getStateImpl(StringBuilder sb){
-    sb.append("class StateImpl {\n");
-    sb.append("  int number;\n");
-    sb.append("  int[] replacement;\n");
-    sb.append("  int category;\n\n");
-    sb.append("  public StateImpl(int number){\n");
-    sb.append("    this.number = number;\n");
-    sb.append("    this.replacement = null;\n");
-    sb.append("    this.category = -1;\n");
-    sb.append("  }\n\n");
-    sb.append("  public StateImpl(int number, int[] replacement){\n");
-    sb.append("    this.number = number;\n");
-    sb.append("    this.replacement = replacement;\n");
-    sb.append("    this.category = -1;\n");
-    sb.append("  }\n\n");
-    sb.append("  public StateImpl(int number, int category){\n");
-    sb.append("    this.number = number;\n");
-    sb.append("    this.replacement = null;\n");
-    sb.append("    this.category = category;\n");
-    sb.append("  }\n");
-    sb.append("}\n");
-  }
-
-  private static void getTransitionImpl(StringBuilder sb){
-    sb.append("class TransitionImpl {\n");
-    sb.append("  int action;\n");
-    sb.append("  StateImpl state;\n\n");
-    sb.append("  public TransitionImpl(int action, StateImpl state){\n");
-    sb.append("    this.action = action;\n");
-    sb.append("    this.state = state;\n");
-    sb.append("  }\n");
-    sb.append("}\n");
-  }
-
   public Map<Symbol, Integer> mkSymToNum(){
     HashMap<Symbol, ActionState> transition = get(s0);
     HashMap<Symbol, Integer> symToNum = new HashMap<Symbol, Integer>();
@@ -375,18 +341,16 @@ DONE:
     StringBuilder sb = new StringBuilder();
     sb.append(symToNum.toString());
     sb.append("\n\n");
-    getStateImpl(sb);
-    getTransitionImpl(sb);
-    sb.append("static TransitionImpl [][] pma = {");
+    sb.append("static MOPPMATransitionImpl [][] pma = {");
     for(State state : keySet()){
       sb.append("{");
       HashMap<Symbol, ActionState> transition = get(state);
       for(Symbol symbol : transition.keySet()){
         ActionState astate = transition.get(symbol);
         State s = astate.getState();
-        sb.append("new TransitionImpl(");
+        sb.append("new MOPPMATransitionImpl(");
         sb.append(astate.getAction());
-        sb.append(", new StateImpl(");
+        sb.append(", new MOPPMAStateImpl(");
         sb.append(s.getNumber());
         if(s.getMatch() != null){
           s.getMatch().getRhs().getImpl(sb, symToNum);
