@@ -138,7 +138,7 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
 
   public void rewrite(SinglyLinkedList<Symbol> l){
     System.out.println("rewriting:");
-    System.out.println("   " + l + "\n=========================================");
+    //System.out.println("   " + l + "\n=========================================");
     if(l.size() == 0) return;
     Iterator<Symbol> first  = l.iterator();
     first.next(); //make sure first points to an element
@@ -149,10 +149,10 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     Symbol symbol = second.next();
     while(true){
       as = get(currentState).get(symbol);
-      System.out.println("*" + symbol + " -- " + as);
+      //System.out.println("*" + symbol + " -- " + as);
       //adjust the first pointer
       if(currentState == s0 && as.getState() == s0){
-        System.out.println("false 0 transition");
+        //System.out.println("false 0 transition");
         if(!first.hasNext()) break;
         first.next();
       }
@@ -172,14 +172,14 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
           return;
         }
         if(repl instanceof Sequence){
-          System.out.println("==========Replacing==============" + first);
-          System.out.println("==========Replacing==============" + second);
-          System.out.println("in: " + l);
+          //System.out.println("==========Replacing==============" + first);
+          //System.out.println("==========Replacing==============" + second);
+          //System.out.println("in: " + l);
           l.nonDestructiveReplace(first, second, (Sequence) repl);
           if(l.isEmpty()) break;
           first = l.iterator();
-          System.out.println("out: " + l);
-          System.out.println("out: " + first);
+          //System.out.println("out: " + l);
+          //System.out.println("out: " + first);
           //lastRepl = l.iterator(second);
           //System.out.println("lastRepl: " + lastRepl);
           symbol = first.next();
@@ -221,13 +221,13 @@ DONE:
     first = l.head();
     second = l.head();
     symbol = second.get();
-    System.out.println("******************outer*****");
+    //System.out.println("******************outer*****");
     while(true){
       as = get(currentState).get(symbol);
-      System.out.println("*" + symbol + " -- " + as);
+      //System.out.println("*" + symbol + " -- " + as);
       //adjust the first pointer
       if(currentState == s0 && as.getState() == s0){
-        System.out.println("false 0 transition");
+        //System.out.println("false 0 transition");
         if(!first.next()) break;
       }
       else {
@@ -248,18 +248,18 @@ DONE:
         if(repl instanceof Sequence){
           changed = true;
           atOrPastLastChange = false; 
-          System.out.println("==========Replacing==============" + first);
-          System.out.println("==========Replacing==============" + second);
-          System.out.println("in: " + l);
+          //System.out.println("==========Replacing==============" + first);
+          //System.out.println("==========Replacing==============" + second);
+          //System.out.println("in: " + l);
           first.nonDestructiveSplice(second, (Sequence) repl);
           if(l.isEmpty()) break DONE;
-          System.out.println("out: " + l);
-          System.out.println("out: " + first);
+          //System.out.println("out: " + l);
+          //System.out.println("out: " + first);
           lastRepl = second;
-          System.out.println("lastRepl: " + lastRepl);
+          //System.out.println("lastRepl: " + lastRepl);
           second = first.copy();
-          System.out.println("first: " + first);
-          System.out.println("second: " + second);
+          //System.out.println("first: " + first);
+          //System.out.println("second: " + second);
           currentState = s0;
           symbol = second.get();
           if(symbol == null) break;
@@ -270,15 +270,15 @@ DONE:
       //normal transition
       if(as.getAction() == 0){
         if(!second.next()) break;
-        System.out.println("*********first " + second);
-        System.out.println("*********second " + second);
-        System.out.println("*********lastRepl " + lastRepl);
+        //System.out.println("*********first " + second);
+        //System.out.println("*********second " + second);
+        //System.out.println("*********lastRepl " + lastRepl);
         if(!changed){
           if(second.equals(lastRepl)){
             atOrPastLastChange = true; 
           }
           if(atOrPastLastChange && currentState == s0){
-            System.out.println("early exit at symbol " + second);
+            //System.out.println("early exit at symbol " + second);
             break DONE;
           }
         }
