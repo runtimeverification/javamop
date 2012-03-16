@@ -29,9 +29,9 @@ new TransitionImpl(1, new StateImpl(0)),
   public static void main(String[] args){
     IntSpliceList l = new IntSpliceList();
     for(String s : args){
-      if(s.equals("hasnext"))
-        l.add(0);
       if(s.equals("next"))
+        l.add(0);
+      else if(s.equals("hasnext"))
         l.add(1);
       else throw new RuntimeException("unknown input " + s);
     }
