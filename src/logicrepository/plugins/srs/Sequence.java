@@ -1,6 +1,7 @@
 package logicrepository.plugins.srs;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
 
@@ -64,5 +65,15 @@ public class Sequence extends ArrayList<Symbol> implements AbstractSequence {
       len += s.length();
     }
     return len;
+  }
+
+  @Override
+  public void getImpl(StringBuilder sb, Map<Symbol, Integer> symToNum){
+    sb.append(", new int[] {");
+    for(Symbol s : this){
+      sb.append(symToNum.get(s));
+      sb.append(",");
+    }
+    sb.append("}");
   }
 }

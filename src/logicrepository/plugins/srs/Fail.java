@@ -1,5 +1,7 @@
 package logicrepository.plugins.srs;
 
+import java.util.Map;
+
 public class Fail implements AbstractSequence {
 
   private Fail(){}
@@ -23,4 +25,8 @@ public class Fail implements AbstractSequence {
     return 5;
   }
 
+ @Override
+  public void getImpl(StringBuilder sb, Map<Symbol, Integer> symToNum){
+    sb.append(0);
+  }
 }

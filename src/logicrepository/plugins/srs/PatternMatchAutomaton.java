@@ -360,8 +360,13 @@ DONE:
     sb.append("}\n");
   }
 
+  public Map<Symbol, Integer> mkSymToNum(){
+
+     return null;
+  }
 
   public String toImplString(){
+    Map<Symbol, Integer> symToNum = mkSymToNum();
     StringBuilder sb = new StringBuilder();
     getStateImpl(sb);
     getTransitionImpl(sb);
@@ -377,10 +382,11 @@ DONE:
         sb.append(", new StateImpl(");
         sb.append(s.getNumber());
         if(s.getMatch() != null){
-
+          s.getMatch().getRhs().getImpl(sb, symToNum);
         }
+        sb.append("),");
       }
-      sb.append("}");
+      sb.append("},");
     }
     sb.append("};");
     return sb.toString();

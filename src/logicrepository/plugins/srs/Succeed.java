@@ -1,5 +1,7 @@
 package logicrepository.plugins.srs;
 
+import java.util.Map;
+
 public class Succeed implements AbstractSequence {
 
   private Succeed(){}
@@ -21,5 +23,10 @@ public class Succeed implements AbstractSequence {
   @Override 
   public int dotLength(){
     return 8;
+  }
+
+ @Override
+  public void getImpl(StringBuilder sb, Map<Symbol, Integer> symToNum){
+    sb.append(1);
   }
 }
