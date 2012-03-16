@@ -362,12 +362,19 @@ DONE:
 
   public Map<Symbol, Integer> mkSymToNum(){
     HashMap<Symbol, ActionState> transition = get(s0);
-     return null;
+    HashMap<Symbol, Integer> symToNum = new HashMap<Symbol, Integer>();
+    int i = 0;
+    for(Symbol key : transition.keySet()){
+      symToNum.put(key, i++); 
+    }
+    return symToNum;
   }
 
   public String toImplString(){
     Map<Symbol, Integer> symToNum = mkSymToNum();
     StringBuilder sb = new StringBuilder();
+    sb.append(symToNum.toString());
+    sb.append("\n\n");
     getStateImpl(sb);
     getTransitionImpl(sb);
     sb.append("static TransitionImpl [][] arr = {");
