@@ -1,7 +1,9 @@
-class MOPPMAStateImpl {
-  int number;
-  int[] replacement;
-  int category;
+package javamoprt;
+
+public class MOPPMAStateImpl {
+  public int number;
+  public int[] replacement;
+  public int category;
 
   public MOPPMAStateImpl(int number){
     this.number = number;

@@ -2,7 +2,7 @@ package javamoprt;
 
 import java.util.Collection;
 
-interface MOPSLIntIterator {
+public interface MOPSLIntIterator {
   public MOPSLIntIterator copy();
   public boolean next();
   public boolean next(int amount);
