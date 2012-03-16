@@ -326,6 +326,66 @@ DONE:
     return sb.toString();
   }
 
+  private static void getStateImpl(StringBuilder sb){
+    sb.append("class StateImpl {\n");
+    sb.append("  int number;\n");
+    sb.append("  int[] replacement;\n");
+    sb.append("  int category;\n\n");
+    sb.append("  public StateImpl(int number){\n");
+    sb.append("    this.number = number;\n");
+    sb.append("    this.replacement = null;\n");
+    sb.append("    this.category = -1;\n");
+    sb.append("  }\n\n");
+    sb.append("  public StateImpl(int number, int[] replacement){\n");
+    sb.append("    this.number = number;\n");
+    sb.append("    this.replacement = replacement;\n");
+    sb.append("    this.category = -1;\n");
+    sb.append("  }\n\n");
+    sb.append("  public StateImpl(int number, int category){\n");
+    sb.append("    this.number = number;\n");
+    sb.append("    this.replacement = null;\n");
+    sb.append("    this.category = category;\n");
+    sb.append("  }\n");
+    sb.append("}\n");
+  }
+
+  private static void getTransitionImpl(StringBuilder sb){
+    sb.append("class TransitionImpl {\n");
+    sb.append("  int action;\n");
+    sb.append("  StateImpl state;\n\n");
+    sb.append("  public TransitionImpl(int action, StateImpl state){\n");
+    sb.append("    this.action = action;\n");
+    sb.append("    this.state = state;\n");
+    sb.append("  }\n");
+    sb.append("}\n");
+  }
+
+
+  public String toImplString(){
+    StringBuilder sb = new StringBuilder();
+    getStateImpl(sb);
+    getTransitionImpl(sb);
+    sb.append("static TransitionImpl [][] arr = {");
+    for(State state : keySet()){
+      sb.append("{");
+      HashMap<Symbol, ActionState> transition = get(state);
+      for(Symbol symbol : transition.keySet()){
+        ActionState astate = transition.get(symbol);
+        State s = astate.getState();
+        sb.append("new TransitionImpl(");
+        sb.append(astate.getAction());
+        sb.append(", new StateImpl(");
+        sb.append(s.getNumber());
+        if(s.getMatch() != null){
+
+        }
+      }
+      sb.append("}");
+    }
+    sb.append("};");
+    return sb.toString();
+  }
+
   public StringBuilder transitionToDotString(State state, Map<Symbol, ActionState> transition){
     Map<ActionState, ArrayList<Symbol>> edgeCondensingMap = new
       LinkedHashMap<ActionState, ArrayList<Symbol>>();
