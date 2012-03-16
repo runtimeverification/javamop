@@ -1,5 +1,7 @@
 package logicrepository.plugins.srs;
 
+import javamoprt.*;
+
 public class Test {
 
 static TransitionImpl [][] pma = {
@@ -110,38 +112,3 @@ new TransitionImpl(1, new StateImpl(0)),
   }
 }
 
-
-
-class TransitionImpl {
-  int action;
-  StateImpl state;
-
-  public TransitionImpl(int action, StateImpl state){
-    this.action = action;
-    this.state = state;
-  }
-}
-
-class StateImpl {
-  int number;
-  int[] replacement;
-  int category;
-
-  public StateImpl(int number){
-    this.number = number;
-    this.replacement = null;
-    this.category = -1;
-  }
-
-  public StateImpl(int number, int[] replacement){
-    this.number = number;
-    this.replacement = replacement;
-    this.category = -1;
-  }
-
-  public StateImpl(int number, int category){
-    this.number = number;
-    this.replacement = null;
-    this.category = category;
-  }
-}
