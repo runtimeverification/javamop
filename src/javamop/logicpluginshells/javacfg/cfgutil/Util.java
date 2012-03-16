@@ -60,6 +60,13 @@ class Util {
       return ret;
    }
 
+
+   static HashSet<Terminal> termUnion(HashSet<Terminal> a, HashSet<Terminal> b){
+      HashSet<Terminal> ret = (HashSet<Terminal>)DeepCopy.copy(a);
+      ret.addAll(b);
+      return ret;
+   }
+
    static <T,A extends T, B extends T> HashSet<T> union(HashSet<A> a, HashSet<B> b) {
       HashSet<T> ret = (HashSet<T>)DeepCopy.copy(a);
       ret.addAll(b);

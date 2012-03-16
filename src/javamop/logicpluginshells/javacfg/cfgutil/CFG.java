@@ -319,13 +319,13 @@ public class CFG implements java.io.Serializable {
                for (HashSet<Terminal> x : ret.get(p.lhs))
                   for (ArrayList<Symbol> rhs : p.beforeSymS(t))
                      for (HashSet<Terminal> y : genSets.get(rhs))
-                        temp.get(t).add(Util.union(x,y));
+                        temp.get(t).add(Util.termUnion(x,y));
          for (NonTerminal nt : nonTerminals())
             for (Production p : prodsMentioning(nt)) {
                for (HashSet<Terminal> x : ret.get(p.lhs)) {
                   for (ArrayList<Symbol> rhs : p.beforeSymS(nt)) {
                      for (HashSet<Terminal> y : genSets.get(rhs)) {
-                        temp.get(nt).add(Util.union(x,y));
+                        temp.get(nt).add(Util.termUnion(x,y));
                      }
                   }
                }
