@@ -27,6 +27,7 @@ public class Fail implements AbstractSequence {
 
  @Override
   public void getImpl(StringBuilder sb, Map<Symbol, Integer> symToNum){
+    sb.append(", ");
     sb.append(0);
   }
 }

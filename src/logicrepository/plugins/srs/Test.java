@@ -1,17 +1,30 @@
 public class Test {
 
-  static TransitionImpl [][] arr = 
-   {
-     {new TransitionImpl(0, new StateImpl(1, new int[] {1, 2, 3})),
-    new TransitionImpl(0, new StateImpl(15))},
-   
-     {new TransitionImpl(0, new StateImpl(1, new int[] {1, 2, 3})),
-    new TransitionImpl(0, new StateImpl(0))},
-   };
+  static TransitionImpl [][] arr = {{new TransitionImpl(0, new StateImpl(40)),
+new TransitionImpl(0, new StateImpl(1)),
+},
+
+{new TransitionImpl(0, new StateImpl(2, new int[] {})),
+new TransitionImpl(0, new StateImpl(3, new int[] {1,})),
+},
+
+{new TransitionImpl(1, new StateImpl(40)),
+new TransitionImpl(1, new StateImpl(40)),
+},
+
+{new TransitionImpl(1, new StateImpl(1)),
+new TransitionImpl(1, new StateImpl(1)),
+},
+
+{new TransitionImpl(1, new StateImpl(0)),
+new TransitionImpl(1, new StateImpl(0)),
+},
+
+};
+
 
   public static void main(String[] args){
-    TransitionImpl trans = arr[0][1];
-    System.out.println(trans.state.number);
+    System.out.println("ran");
   }
 }
 

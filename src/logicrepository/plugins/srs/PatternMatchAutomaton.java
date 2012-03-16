@@ -377,7 +377,7 @@ DONE:
     sb.append("\n\n");
     getStateImpl(sb);
     getTransitionImpl(sb);
-    sb.append("static TransitionImpl [][] arr = {");
+    sb.append("static TransitionImpl [][] pma = {");
     for(State state : keySet()){
       sb.append("{");
       HashMap<Symbol, ActionState> transition = get(state);
@@ -391,11 +391,11 @@ DONE:
         if(s.getMatch() != null){
           s.getMatch().getRhs().getImpl(sb, symToNum);
         }
-        sb.append("),");
+        sb.append(")),\n");
       }
-      sb.append("},");
+      sb.append("},\n\n");
     }
-    sb.append("};");
+    sb.append("};\n");
     return sb.toString();
   }
 
