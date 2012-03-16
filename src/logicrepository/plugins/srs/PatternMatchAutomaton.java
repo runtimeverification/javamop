@@ -361,7 +361,7 @@ DONE:
   }
 
   public Map<Symbol, Integer> mkSymToNum(){
-
+    HashMap<Symbol, ActionState> transition = get(s0);
      return null;
   }
 
