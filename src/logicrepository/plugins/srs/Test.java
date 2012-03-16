@@ -1,6 +1,6 @@
 public class Test {
 
-  static TransitionImpl [][] arr = {{new TransitionImpl(0, new StateImpl(40)),
+static TransitionImpl [][] pma = {{new TransitionImpl(0, new StateImpl(4, 0)),
 new TransitionImpl(0, new StateImpl(1)),
 },
 
@@ -8,8 +8,8 @@ new TransitionImpl(0, new StateImpl(1)),
 new TransitionImpl(0, new StateImpl(3, new int[] {1,})),
 },
 
-{new TransitionImpl(1, new StateImpl(40)),
-new TransitionImpl(1, new StateImpl(40)),
+{new TransitionImpl(1, new StateImpl(4, 0)),
+new TransitionImpl(1, new StateImpl(4, 0)),
 },
 
 {new TransitionImpl(1, new StateImpl(1)),
