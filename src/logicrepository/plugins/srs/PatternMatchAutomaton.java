@@ -21,6 +21,18 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
     addFailureTransitions(srs.getTerminals());
   }
 
+  public PatternMatchAutomaton(SRS srs, Symbol[] extraTerminals){
+    Set<Symbol> et = new HashSet<Symbol>();
+    for(Symbol s : extraTerminals){
+      et.add(s);
+    }
+    Set<Symbol> terminals = new HashSet<Symbol>();
+    terminals.addAll(srs.getTerminals());
+    terminals.addAll(et);
+    mkGotoMachine(srs, terminals);
+    addFailureTransitions(terminals);
+  }
+
   public PatternMatchAutomaton(SRS srs, Set<Symbol> extraTerminals){
     Set<Symbol> terminals = new HashSet<Symbol>();
     terminals.addAll(srs.getTerminals());

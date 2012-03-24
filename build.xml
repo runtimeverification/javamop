@@ -81,6 +81,7 @@
 		<jar destfile="${plugins}/PTLTL.jar" basedir="${build}" includes="${lr}/plugins/ptltl/**" />
 		<jar destfile="${plugins}/PTCARET.jar" basedir="${build}" includes="${lr}/plugins/ptcaret/**" />
 		<jar destfile="${plugins}/PDA.jar" basedir="${build}" includes="${lr}/plugins/pda/**" />
+		<jar destfile="${plugins}/SRS.jar" basedir="${build}" includes="${lr}/plugins/srs/**" />
 	</target>
 
 	<!---   

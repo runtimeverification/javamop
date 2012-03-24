@@ -24,6 +24,18 @@ PARSER_BEGIN(SRSParser)
       return srsParser;
     }
 
+    public static SRSParser parse(String input) {
+      SRSParser srsParser = new SRSParser(new StringReader(input));
+      try{
+        srsParser.Start();
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+        System.exit(1);
+      }
+      return srsParser;
+    }
+
     public static void main(String[] args) throws ParseException, TokenMgrError {
       SRSParser parser = new SRSParser(System.in);
       parser.Start();
@@ -46,8 +58,13 @@ PARSER_BEGIN(SRSParser)
     }
   
     private SRS srs;
+    private PatternMatchAutomaton pma = null;
     public SRS getSRS() { return srs; }
-
+    public PatternMatchAutomaton getPMA(Symbol[] extraTerminals){
+      if(pma != null) return pma;
+      pma = new PatternMatchAutomaton(srs, extraTerminals);
+      return pma;
+    }
   }
 
 PARSER_END(SRSParser)
