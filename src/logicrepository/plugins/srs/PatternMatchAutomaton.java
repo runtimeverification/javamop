@@ -16,12 +16,17 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
   private ArrayList<Set<State>> depthMap = new ArrayList<Set<State>>();
   private HashMap<State, State> fail;
 
+  private boolean needsBegin = false;
+  private boolean needsEnd = false;
+
   public PatternMatchAutomaton(SRS srs){
+    init(srs);
     mkGotoMachine(srs, srs.getTerminals());    
     addFailureTransitions(srs.getTerminals());
   }
 
   public PatternMatchAutomaton(SRS srs, Symbol[] extraTerminals){
+    init(srs);
     Set<Symbol> et = new HashSet<Symbol>();
     for(Symbol s : extraTerminals){
       et.add(s);
@@ -34,11 +39,25 @@ public class PatternMatchAutomaton extends LinkedHashMap<State, HashMap<Symbol, 
   }
 
   public PatternMatchAutomaton(SRS srs, Set<Symbol> extraTerminals){
+    init(srs);
     Set<Symbol> terminals = new HashSet<Symbol>();
     terminals.addAll(srs.getTerminals());
     terminals.addAll(extraTerminals);
     mkGotoMachine(srs, terminals);
     addFailureTransitions(terminals);
+  }
+
+  private void init(SRS srs){
+    Symbol begin = Symbol.get("^");
+    Symbol end = Symbol.get("$");
+    for(Symbol s : srs.getTerminals()){
+      if(s.equals(begin)){
+        needsBegin = true;
+      }
+      else if(s.equals(end)){
+        needsEnd = true;
+      }
+    }
   }
 
   private void mkGotoMachine(SRS srs, Set<Symbol> terminals){

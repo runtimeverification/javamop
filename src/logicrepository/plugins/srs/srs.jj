@@ -77,9 +77,11 @@ TOKEN : {
     <EPSILON   : "#epsilon" >
   | <FAIL      : "#fail"    >
   | <SUCCEED   : "#succeed" >
+  | <BEGIN     : "^"        >
+  | <END       : "$"        >
   | <PERIOD    : "."        >
   | <ARROW     : "->"       > 
-  | <TERMINAL  : ["A"-"z"](["A"-"z"]|"_"|["0"-"9"])* >
+  | <TERMINAL  : ["A"-"Z","a"-"z"](["A"-"Z","a"-"z"]|"_"|["0"-"9"])* >
 }
 
 void Start() : {
@@ -107,10 +109,24 @@ Rule Rule() : {
   AbstractSequence rhs;
 }
 {
-  lhs = Sequence() 
+  lhs = LhsSequence() 
   "->"
   (rhs = Sequence() | rhs = Epsilon() | rhs = SucceedOrFail() )
-  { return new Rule(lhs,rhs); }
+  { 
+   
+     return new Rule(lhs,rhs); 
+  }
+}
+
+Sequence LhsSequence() : {
+  Sequence ret = new Sequence();
+  Sequence seq;
+}
+{
+  [ "^" {ret.add(Symbol.get("^")); } ]
+   seq = Sequence() { ret.addAll(seq); }
+  [ "$" {ret.add(Symbol.get("$")); } ]
+   {return ret;}
 }
 
 Sequence Sequence() : {
