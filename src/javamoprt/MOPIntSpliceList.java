@@ -84,6 +84,16 @@ public class MOPIntSpliceList {
     tail = tail.next;
   }
 
+  public void addFront(int element){
+    if(head == null){
+      head = tail = new Node(element);
+      return;
+    } 
+    head.prev = new Node(element);
+    head.prev.next = head;
+    head = head.prev;
+  }
+
   public void add(Collection<Integer> c){
     for(Integer e : c){
       add(e);
