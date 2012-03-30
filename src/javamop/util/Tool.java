@@ -111,9 +111,10 @@ public class Tool {
 				String str = removeComments(aLine).trim();
 				
 				if (str.endsWith("}")){
-					String s = str.substring(0, str.length()-1).trim();
-					if (s.length() == 0)
+					String s = str.substring(0, str.length() - 1).trim();
+					if (s.length() == 0){
 						offset = offset.substring(0, offset.length() - prefix.length());
+					}
 				}
 				else if (str.startsWith("} else") || str.startsWith("}else")){
 					offset = offset.substring(0, offset.length() - prefix.length());
@@ -130,6 +131,9 @@ public class Tool {
 				else if (str.endsWith("};")){
 					offset = offset.substring(0, offset.length() - prefix.length());
 				}
+				else if (str.endsWith("},")){
+					offset = offset.substring(0, offset.length() - prefix.length());
+				}
 				aLine = offset + aLine;
 				output.append(aLine + "\n");
 				str = removeComments(aLine).trim();
@@ -141,7 +145,8 @@ public class Tool {
 			}
 		} catch (Exception e){
 			System.out.println("weird error!" + e.getMessage() + " at " + aLine + ", " + lineNum);
-			System.out.println(output);
+			//System.out.println(output);
+			e.printStackTrace();
 			return content;
 		}
 		return output.toString();
