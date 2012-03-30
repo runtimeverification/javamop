@@ -52,131 +52,43 @@ public class JavaSRS extends LogicPluginShell {
 //		
     int countEvent = EventNum.size();
     System.out.println(countEvent);
-    int begin = end = -1;
-    if(pma.hasBegin()) begin = EventNum.get(Symbol.get("^"));
-    if(pma.hasEnd())   end   = EventNum.get(Symbol.get("$"));
+    int begin = -1, end = -1;
+    if(pmaInput.hasBegin()) begin = EventNum.get(Symbol.get("^"));
+    if(pmaInput.hasEnd())   end   = EventNum.get(Symbol.get("$"));
     for(String event: monitoredEvents){
       Symbol s = Symbol.get(event);
       if(!EventNum.containsKey(s)){
         EventNum.put(s, new Integer(countEvent++));
       }
+      monitoredEventsStr.append("\n" + event + ":{\n");
       if(pmaInput.hasBegin()){
-        monitoredEventsStr.append("if(MOPl.headElem() != " begin + ") {");
-        monitoredEventsStr.append("  MOPl.addFront(" + begin + ");");
-        monitoredEventsStr.append("}");
+        monitoredEventsStr.append("if($l$.headElem() != " + begin + ") {\n");
+        monitoredEventsStr.append("  $l$.addFront(" + begin + ");");
+        monitoredEventsStr.append("\n}\n");
       }
       if(pmaInput.hasEnd()){
-        monitoredEventsStr.append("if(MOPl.tailElem() != " end + ") {");
-        monitoredEventsStr.append("  MOPl.add(" + end + ");");
-        monitoredEventsStr.append("}");
-        monitoredEventsStr.append(event + ":{\n MOPl.insertBeforeTail(" + EventNum.get(s) + ");");
+        monitoredEventsStr.append("if($l$.tailElem() != " + end + ") {\n");
+        monitoredEventsStr.append("  $l$.add(" + end + ");");
+        monitoredEventsStr.append("\n}\n");
+        monitoredEventsStr.append("$l$.add(" + EventNum.get(s) + ");");
       }
       else{
-        monitoredEventsStr.append(event + ":{\n MOPl.add(" + EventNum.get(s) + ");");
+        monitoredEventsStr.append("$l$.add(" + EventNum.get(s) + ");");
       }
-      monitoredEventsStr += "\n}}\n\n";
+      monitoredEventsStr.append("int out = rewrite($l$);\n}}\n\n");
     }
-//			
-//			monitoredEventsStr += event + ":{\n  $state$ = $transition_" + event + "$[$state$];\n}\n\n";
-//			
-//			countEvent++;
-//		}
-//		
-//		Map<String, Integer> StateNum = new HashMap<String, Integer>();
-//		Map<Integer, SRSItem> StateName = new HashMap<Integer, SRSItem>();
-//		int countState = 0;
-//		
-//		if(pmaInput.getItems() != null){
-//			for(SRSItem i : pmaInput.getItems()){
-//				String stateName = i.getState();
-//				StateNum.put(stateName, new Integer(countState));
-//				StateName.put(new Integer(countState), i);
-//				countState++;
-//			}
-//		}
-//		
-      result.put("monitored events", monitoredEventsStr);
-//		
-//		String monitoredEventsStrForSet = "";
-//		for(String event: monitoredEvents){
-//			monitoredEventsStrForSet += event + ":{\n  $monitor$.$state$ = $transition_" + event + "$[$monitor$.$state$];\n}\n\n";
-//		}
-//		result.put("monitored events for set", monitoredEventsStrForSet);
-//		
-//		String transitionArray = "";
-//
-//		for(String event : this.allEvents){
-//			transitionArray += "static final int $transition_" + event + "$[] = {";
-//			for(int i = 0; i < countState; i++){
-//				SRSItem state = StateName.get(new Integer(i));
-//				
-//				int default_transition = countState;
-//
-//				for(SRSTransition t : state.getTransitions()){
-//					if(t.isDefaultFlag()){
-//						if(StateNum.get(t.getStateName()) == null)
-//							throw new MOPException("Incorrect Monitor");
-//						
-//						default_transition = StateNum.get(t.getStateName());
-//					}
-//				}
-//
-//				boolean found = false;
-//				for(SRSTransition t : state.getTransitions()){
-//					if(!t.isDefaultFlag() && t.getEventName().equals(event)){
-//						found = true;
-//						if(i != 0)
-//							transitionArray += ", ";
-//						transitionArray += StateNum.get(t.getStateName());
-//					}
-//				}
-//				
-//				if(!found){
-//					if(i != 0)
-//						transitionArray += ", ";
-//					transitionArray += default_transition;
-//				}
-//			}
-//
-//			if(countState > 0)
-//				transitionArray += ", ";
-//			transitionArray += countState;
-//			
-//			transitionArray += "};;\n";
-//		}
-//		
-//		result.put("state declaration", "int $state$;\n" + transitionArray);
-//		result.put("state declaration for set", transitionArray);
-//		result.put("reset", "$state$ = 0;\n");
-//		result.put("initialization", "$state$ = 0;\n");
-//
-//		result.put("monitoring body", "");
-//		
-//		for(String state : StateNum.keySet()){
-//			result.put(state.toLowerCase() + " condition", "$state$ == " + StateNum.get(state));
-//		}
-      result.put("fail condition", "foo\n");
-//		if(pmaInput.getAliases() != null){
-//			for(SRSAlias a : pmaInput.getAliases()){
-//				String stateName = a.getGroupName();
-//				String conditionStr = "";
-//				boolean firstFlag = true;
-//				for(String state : a.getStates()){
-//					if(firstFlag){
-//						conditionStr += "$state$ == " + StateNum.get(state);
-//						firstFlag = false;
-//					} else{
-//						conditionStr += "|| $state$ == " + StateNum.get(state);
-//					}
-//				}
-//				
-//				if(a.getStates().size() == 0)
-//					conditionStr = "false";
-//				
-//				result.put(stateName.toLowerCase() + " condition", conditionStr);
-//			}
-//		}
-//		
+    result.put("monitored events", monitoredEventsStr.toString());
+    result.put("state declaration", "MOPIntSpliceList $l$;\n" 
+              + pmaInput.toImplString() 
+              + rewriteStr);
+    result.put("state declaration for set", "MOPIntSpliceList $l$;\n" 
+              + pmaInput.toImplString()
+              + rewriteStr);
+    result.put("reset", "$l$ = new MOPIntSpliceList();\n");
+    result.put("initialization", "$l$ = new MOPIntSpliceList();\n");
+  	result.put("monitoring body", "");
+    result.put("fail condition", "out == 0\n");
+    result.put("succeed condition", "out == 1\n");
 		return result;
 	}
 
@@ -191,4 +103,69 @@ public class JavaSRS extends LogicPluginShell {
 
 		return logicShellResult;
 	}
+
+  static String rewriteStr = 
+  " static private int rewrite(MOPIntSpliceList l){\n"
++ "    if(l.isEmpty()) return false;\n"
++ "    MOPSLIntIterator first;\n"
++ "    MOPSLIntIterator second;\n"
++ "    MOPSLIntIterator lastRepl = null;\n"
++ "    int currentState;\n"
++ "    MOPPMATransitionImpl trans;\n"
++ "    int symbol; \n"
++ "    boolean changed;\n"
++ "    boolean atOrPastLastChange;\n"
++ "    do {\n"
++ "    currentState = 0;\n"
++ "    atOrPastLastChange = false;\n"
++ "    changed = false;\n"
++ "    first = l.head();\n"
++ "    second = l.head();\n"
++ "    symbol = second.get();\n"
++ "    while(true){\n"
++ "      trans = $pma$[currentState][symbol];\n"
++ "      if(currentState == 0 && trans.state.number == 0){\n"
++ "        if(!first.next()) break;\n"
++ "      }\n"
++ "      else {\n"
++ "        first.next(trans.action);\n"
++ "      }\n"
++ "      if(trans.state.category == 0){\n"
++ "        return 0;\n"
++ "      }\n"
++ "      if(trans.state.category == 1){\n"
++ "        return 1;\n"
++ "      }\n"
++ "      if(trans.state.replacement != null){\n"
++ "        first.nonDestructiveSplice(second, trans.state.replacement);\n"
++ "        if(l.isEmpty()) return false;\n"
++ "        changed = true;\n"
++ "        atOrPastLastChange = false; \n"
++ "        lastRepl = second;\n"
++ "        second = first.copy();\n"
++ "        currentState = 0;\n"
++ "        symbol = second.get();\n"
++ "        if(symbol == -1) break;\n"
++ "        continue;\n"
++ "      }\n"
++ "      currentState = trans.state.number;\n"
++ "      //normal transition\n"
++ "      if(trans.action == 0){\n"
++ "        if(!second.next()) break;\n"
++ "        if(!changed){\n"
++ "          if(second.equals(lastRepl)){\n"
++ "            atOrPastLastChange = true; \n"
++ "          }\n"
++ "          if(atOrPastLastChange && currentState == 0){\n"
++ "            return false;\n"
++ "          }\n"
++ "        }\n"
++ "        symbol = second.get();\n"
++ "      }\n"
++ "      //fail transition, need to reconsider he same symbol in next state\n"
++ "    }\n"
++ "    } while(changed);\n"
++ "    return -1;\n"
++ "  }\n\n";
+
 }
