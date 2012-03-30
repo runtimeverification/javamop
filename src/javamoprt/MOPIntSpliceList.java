@@ -116,7 +116,6 @@ public class MOPIntSpliceList {
     tail.prev.next = node;
     tail.prev = node;
     node.next = tail;
-    System.out.println(tail);
   }
 
   public void add(Collection<Integer> c){

@@ -70,7 +70,7 @@ public class JavaSRS extends LogicPluginShell {
         monitoredEventsStr.append("if($l$.tailElem() != " + end + ") {\n");
         monitoredEventsStr.append("  $l$.add(" + end + ");");
         monitoredEventsStr.append("\n}\n");
-        monitoredEventsStr.append("$l$.add(" + EventNum.get(s) + ");\n");
+        monitoredEventsStr.append("$l$.insertBeforeTail(" + EventNum.get(s) + ");\n");
       }
       else{
         monitoredEventsStr.append("$l$.add(" + EventNum.get(s) + ");\n");
