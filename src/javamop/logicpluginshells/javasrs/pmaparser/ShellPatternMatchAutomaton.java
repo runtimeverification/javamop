@@ -15,6 +15,7 @@ public class ShellPatternMatchAutomaton extends LinkedHashMap<State, HashMap<Sym
   private State s0;
   private boolean hasBegin = false;
   private boolean hasEnd = false;
+  private Map<Symbol, Integer> symToNum = null;
 
   public ShellPatternMatchAutomaton(State s0){
     this.s0 = s0;
@@ -50,12 +51,19 @@ public class ShellPatternMatchAutomaton extends LinkedHashMap<State, HashMap<Sym
     return sb.toString();
   }
 
-  public Map<Symbol, Integer> mkSymToNum(){
+  private Map<Symbol, Integer> mkSymToNum(){
     HashMap<Symbol, ActionState> transition = get(s0);
-    HashMap<Symbol, Integer> symToNum = new HashMap<Symbol, Integer>();
+    HashMap<Symbol, Integer> ret = new HashMap<Symbol, Integer>();
     int i = 0;
     for(Symbol key : transition.keySet()){
-      symToNum.put(key, i++); 
+      ret.put(key, i++); 
+    }
+    return ret;
+  }
+
+  public Map<Symbol, Integer> getSymToNum(){
+    if(symToNum == null){
+      symToNum = mkSymToNum();
     }
     return symToNum;
   }
@@ -63,7 +71,7 @@ public class ShellPatternMatchAutomaton extends LinkedHashMap<State, HashMap<Sym
   public String toImplString(){
     Map<Symbol, Integer> symToNum = mkSymToNum();
     StringBuilder sb = new StringBuilder();
-    sb.append(symToNum.toString());
+    //sb.append(symToNum.toString());
     sb.append("\n\n");
     sb.append("static MOPPMATransitionImpl [][] pma = {");
     for(State state : keySet()){

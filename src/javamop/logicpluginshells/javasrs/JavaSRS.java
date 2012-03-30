@@ -29,14 +29,17 @@ public class JavaSRS extends LogicPluginShell {
 	}
 
 	private Properties getMonitorCode(LogicRepositoryType logicOutput) throws MOPException {
-    System.out.println("SRS");
 		Properties result = new Properties();
     
     ShellPatternMatchAutomaton pmaInput;
 
     String monitor = logicOutput.getProperty().getFormula();
     try {
-      pmaInput = PMAParser.parse(new ByteArrayInputStream(monitor.getBytes()));
+      pmaInput = PMAParser.parse(new ByteArrayInputStream(monitor.getBytes())).getPMA();
+    }
+    catch (Exception e) {
+      System.out.println(e.getMessage());
+      throw new MOPException("SRS to Java Plugin cannot parse SRS formula");
     }
 
     System.out.println(pmaInput.toImplString());

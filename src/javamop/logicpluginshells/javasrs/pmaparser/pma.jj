@@ -41,6 +41,7 @@ PARSER_BEGIN(PMAParser)
       parser.Start();
       ShellPatternMatchAutomaton pma = parser.getPMA();
       System.out.println(pma);
+      System.out.println(pma.toImplString());
     }
   
     private Symbol begin = Symbol.get("^");
