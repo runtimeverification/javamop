@@ -322,7 +322,11 @@ DONE:
   }
 
   @Override public String toString(){
-    StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder("\n");
+    sb.append(needsBegin);
+    sb.append("\n");
+    sb.append(needsEnd);
+    sb.append("\n");
     for(State state : keySet()){
       sb.append(state);
       sb.append("\n[");
