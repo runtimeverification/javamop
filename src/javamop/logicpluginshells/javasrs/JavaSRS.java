@@ -48,18 +48,31 @@ public class JavaSRS extends LogicPluginShell {
   	Map<Symbol, Integer> EventNum = pmaInput.getSymToNum();
     System.out.println(EventNum);
 //
-    String monitoredEventsStr = "";
+    StringBuilder monitoredEventsStr = new StringBuilder();
 //		
     int countEvent = EventNum.size();
     System.out.println(countEvent);
+    int begin = end = -1;
+    if(pma.hasBegin()) begin = EventNum.get(Symbol.get("^"));
+    if(pma.hasEnd())   end   = EventNum.get(Symbol.get("$"));
     for(String event: monitoredEvents){
       Symbol s = Symbol.get(event);
       if(!EventNum.containsKey(s)){
         EventNum.put(s, new Integer(countEvent++));
       }
-      monitoredEventsStr += event + ":{\n MOPl.add(" + EventNum.get(s) + ");";
       if(pmaInput.hasBegin()){
-        monitoredEventsStr += "if(";
+        monitoredEventsStr.append("if(MOPl.headElem() != " begin + ") {");
+        monitoredEventsStr.append("  MOPl.addFront(" + begin + ");");
+        monitoredEventsStr.append("}");
+      }
+      if(pmaInput.hasEnd()){
+        monitoredEventsStr.append("if(MOPl.tailElem() != " end + ") {");
+        monitoredEventsStr.append("  MOPl.add(" + end + ");");
+        monitoredEventsStr.append("}");
+        monitoredEventsStr.append(event + ":{\n MOPl.insertBeforeTail(" + EventNum.get(s) + ");");
+      }
+      else{
+        monitoredEventsStr.append(event + ":{\n MOPl.add(" + EventNum.get(s) + ");");
       }
       monitoredEventsStr += "\n}}\n\n";
     }

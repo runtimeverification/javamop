@@ -38,6 +38,7 @@ public class MOPIntSpliceList {
 
     private StringBuilder toStringNext(){
       StringBuilder sb = new StringBuilder(element);
+      sb.append(element);
       sb.append(" ");
       sb.append((next == null)?"<>":next.toStringNext());
       return sb;
@@ -97,9 +98,23 @@ public class MOPIntSpliceList {
       head = tail = new Node(element);
       return;
     } 
-    head.prev = new Node(element);
-    head.prev.next = head;
-    head = head.prev;
+    Node node = new Node(element);
+    head.prev = node;
+    node.next = head;
+    head = node;
+  }
+
+  public void insertBeforeTail(int element){
+    if(head == null){
+      head = tail = new Node(element);
+      return;
+    } 
+    Node node = new Node(element);
+    node.prev = tail.prev;
+    tail.prev.next = node;
+    tail.prev = node;
+    node.next = tail;
+    System.out.println(tail);
   }
 
   public void add(Collection<Integer> c){
@@ -342,6 +357,17 @@ public class MOPIntSpliceList {
     second.previous(2);
     first.nonDestructiveSplice(second,new int[]{9,9,9,9,9,9,9,9});
     System.out.println(l);
+    System.out.println(l.head());
+    System.out.println(l.tail());
+    l.addFront(91);
+    l.addFront(92);
+    System.out.println(l);
+    System.out.println(l.head());
+    System.out.println(l.tail());
+    l.insertBeforeTail(99);
+    l.insertBeforeTail(100);
+    System.out.println(l);
+    System.out.println(l.tail());
   }
 }
 
