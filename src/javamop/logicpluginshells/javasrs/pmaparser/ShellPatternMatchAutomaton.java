@@ -29,6 +29,14 @@ public class ShellPatternMatchAutomaton extends LinkedHashMap<State, HashMap<Sym
     hasEnd = b;
   }
 
+  public boolean hasBegin(){
+    return hasBegin;
+  }
+
+  public boolean hasEnd(){
+    return hasEnd;
+  }
+
   @Override public String toString(){
     StringBuilder sb = new StringBuilder("\n");
     sb.append(hasBegin);

@@ -41,34 +41,28 @@ public class JavaSRS extends LogicPluginShell {
       System.out.println(e.getMessage());
       throw new MOPException("SRS to Java Plugin cannot parse SRS formula");
     }
-
-    System.out.println(pmaInput.toImplString());
     
+		List<String> monitoredEvents;
+		monitoredEvents = allEvents;
+		
+  	Map<Symbol, Integer> EventNum = pmaInput.getSymToNum();
+    System.out.println(EventNum);
+//
+    String monitoredEventsStr = "";
 //		
-//		SRSInput pmaInput = null;
-//		try {
-//			pmaInput = PMAParser.parse(new ByteArrayInputStream(monitor.getBytes()));
-//		} catch (Exception e) {
-//			System.out.println(e.getMessage());
-//			throw new MOPException("SRS to Java Plugin cannot parse SRS formula");
-//		}
-//
-//		if (pmaInput == null)
-//			throw new MOPException("SRS to Java Plugin cannot parse SRS formula");
-//
-//		HasDefaultVisitor hasDefaultVisitor = new HasDefaultVisitor();
-//		boolean[] hasDefault = pmaInput.accept(hasDefaultVisitor, null);
-//
-//		List<String> monitoredEvents;
-//		monitoredEvents = allEvents;
-//		
-//		Map<String, Integer> EventNum = new HashMap<String, Integer>();
-//		int countEvent = 1;
-//
-//		String monitoredEventsStr = "";
-//		
-//		for(String event: monitoredEvents){
-//			EventNum.put(event, new Integer(countEvent));
+    int countEvent = EventNum.size();
+    System.out.println(countEvent);
+    for(String event: monitoredEvents){
+      Symbol s = Symbol.get(event);
+      if(!EventNum.containsKey(s)){
+        EventNum.put(s, new Integer(countEvent++));
+      }
+      monitoredEventsStr += event + ":{\n MOPl.add(" + EventNum.get(s) + ");";
+      if(pmaInput.hasBegin()){
+        monitoredEventsStr += "if(";
+      }
+      monitoredEventsStr += "\n}}\n\n";
+    }
 //			
 //			monitoredEventsStr += event + ":{\n  $state$ = $transition_" + event + "$[$state$];\n}\n\n";
 //			
@@ -88,7 +82,7 @@ public class JavaSRS extends LogicPluginShell {
 //			}
 //		}
 //		
-//		result.put("monitored events", monitoredEventsStr);
+      result.put("monitored events", monitoredEventsStr);
 //		
 //		String monitoredEventsStrForSet = "";
 //		for(String event: monitoredEvents){

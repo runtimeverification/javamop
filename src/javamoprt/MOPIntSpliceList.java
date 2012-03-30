@@ -74,6 +74,14 @@ public class MOPIntSpliceList {
     return head == null;
   }
 
+  public int headElem(){
+    return head.element;
+  }
+
+  public int tailElem(){
+    return tail.element;
+  }
+
   public void add(int element){
     if(head == null){
       head = tail = new Node(element);
