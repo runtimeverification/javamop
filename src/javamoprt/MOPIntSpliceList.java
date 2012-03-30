@@ -76,10 +76,12 @@ public class MOPIntSpliceList {
   }
 
   public int headElem(){
+    if(head == null) return -1;
     return head.element;
   }
 
   public int tailElem(){
+    if(tail == null) return -1;
     return tail.element;
   }
 

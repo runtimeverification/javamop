@@ -1,0 +1,14 @@
+HasNext(Iterator i) {
+       event hasnext after(Iterator i) : call(* Iterator.hasNext()) && target(i) {}
+       event next before(Iterator i) : call(* Iterator.next()) && target(i) {}
+
+       srs : hasnext hasnext -> hasnext .
+             hasnext next -> #epsilon .
+             ^ next -> #fail .
+
+       @fail {
+               System.err.println("! hasNext() not called before calling next()");
+               __RESET;
+       }
+
+}

@@ -46,12 +46,12 @@ public class JavaSRS extends LogicPluginShell {
 		monitoredEvents = allEvents;
 		
   	Map<Symbol, Integer> EventNum = pmaInput.getSymToNum();
-    System.out.println(EventNum);
+    //System.out.println(EventNum);
 //
     StringBuilder monitoredEventsStr = new StringBuilder();
 //		
     int countEvent = EventNum.size();
-    System.out.println(countEvent);
+    //System.out.println(countEvent);
     int begin = -1, end = -1;
     if(pmaInput.hasBegin()) begin = EventNum.get(Symbol.get("^"));
     if(pmaInput.hasEnd())   end   = EventNum.get(Symbol.get("$"));
@@ -106,7 +106,7 @@ public class JavaSRS extends LogicPluginShell {
 
   static String rewriteStr = 
   " static private int rewrite(MOPIntSpliceList l){\n"
-+ "    if(l.isEmpty()) return false;\n"
++ "    if(l.isEmpty()) return -1;\n"
 + "    MOPSLIntIterator first;\n"
 + "    MOPSLIntIterator second;\n"
 + "    MOPSLIntIterator lastRepl = null;\n"
@@ -138,7 +138,7 @@ public class JavaSRS extends LogicPluginShell {
 + "      }\n"
 + "      if(trans.state.replacement != null){\n"
 + "        first.nonDestructiveSplice(second, trans.state.replacement);\n"
-+ "        if(l.isEmpty()) return false;\n"
++ "        if(l.isEmpty()) return -1;\n"
 + "        changed = true;\n"
 + "        atOrPastLastChange = false; \n"
 + "        lastRepl = second;\n"
@@ -157,7 +157,7 @@ public class JavaSRS extends LogicPluginShell {
 + "            atOrPastLastChange = true; \n"
 + "          }\n"
 + "          if(atOrPastLastChange && currentState == 0){\n"
-+ "            return false;\n"
++ "            return -1;\n"
 + "          }\n"
 + "        }\n"
 + "        symbol = second.get();\n"
