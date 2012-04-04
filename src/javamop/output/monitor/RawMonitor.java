@@ -174,6 +174,10 @@ public class RawMonitor extends Monitor{
 		
 		return ret;
 	}
+	
+	public MonitorInfo getMonitorInfo(){
+		return monitorInfo;
+	}
 
 	public String toString() {
 		String ret = "";

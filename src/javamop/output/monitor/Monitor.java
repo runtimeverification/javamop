@@ -80,7 +80,8 @@ public abstract class Monitor {
 
 	public abstract String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig);
 
+	public abstract MonitorInfo getMonitorInfo();
+	
 	public abstract String toString();
 
-	
 }

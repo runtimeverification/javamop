@@ -43,8 +43,7 @@ public class GeneralAdviceBody extends AdviceBody {
 		this.isFullBinding = mopSpec.isFullBinding();
 		this.isConnected = mopSpec.isConnected();
 
-		if (this.isFullBinding || this.isConnected)
-			this.monitorInfo = new MonitorInfo(mopSpec);
+		this.monitorInfo = monitorClass.getMonitorInfo();
 
 		this.timestamp = combinedAspect.timestampManager.getTimestamp(mopSpec);
 		this.indexingTree = indexingTrees.get(eventParams);

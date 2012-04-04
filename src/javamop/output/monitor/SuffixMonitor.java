@@ -202,6 +202,14 @@ public class SuffixMonitor extends Monitor {
 		return ret;
 	}
 
+	public MonitorInfo getMonitorInfo(){
+		if (isDefined)
+			return monitorInfo;
+		else
+			return innerMonitor.getMonitorInfo();
+		
+	}
+
 	public String toString() {
 		String ret = "";
 
