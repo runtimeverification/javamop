@@ -13,7 +13,7 @@ import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 
-public class JavaMOPSpec extends Node {
+public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 	int modifiers;
 	String name;
 	MOPParameters parameters;
@@ -356,6 +356,27 @@ public class JavaMOPSpec extends Node {
 		}
 		cachedHasThisJoinPoint = new Boolean(false);
 		return false;
+	}
+	
+	private Boolean cachedHasNoParamEvent = null;
+	
+	public boolean hasNoParamEvent(){
+		if (cachedHasNoParamEvent != null)
+			return cachedHasNoParamEvent;
+		
+		for(EventDefinition event : getEvents()){
+			if (event.getMOPParametersOnSpec().size() == 0){
+				cachedHasNoParamEvent = true;
+				return true;
+			}
+		}
+		cachedHasNoParamEvent = false;
+		return false;
+	}
+
+	
+	public int compareTo(JavaMOPSpec o){
+		return getName().compareTo(o.getName());
 	}
 	
 	@Override

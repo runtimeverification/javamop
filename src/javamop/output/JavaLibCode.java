@@ -6,7 +6,7 @@ package javamop.output;
 import java.util.HashMap;
 
 import javamop.MOPException;
-import javamop.output.monitor.WrapperMonitor;
+import javamop.output.monitor.SuffixMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -16,7 +16,7 @@ public class JavaLibCode {
 	Package packageDecl;
 	Imports imports;
 	HashMap<JavaMOPSpec, MonitorSet> monitorSets = new HashMap<JavaMOPSpec, MonitorSet>();
-	HashMap<JavaMOPSpec, WrapperMonitor> monitors = new HashMap<JavaMOPSpec, WrapperMonitor>();
+	HashMap<JavaMOPSpec, SuffixMonitor> monitors = new HashMap<JavaMOPSpec, SuffixMonitor>();
 	HashMap<JavaMOPSpec, EnableSet> enableSets = new HashMap<JavaMOPSpec, EnableSet>();
 	HashMap<JavaMOPSpec, CoEnableSet> coenableSets = new HashMap<JavaMOPSpec, CoEnableSet>();
 
@@ -38,14 +38,11 @@ public class JavaLibCode {
 			enableSets.put(mopSpec, enableSet);
 			coenableSets.put(mopSpec, optimizedCoenableSet);
 
-			WrapperMonitor monitor = new WrapperMonitor(name, mopSpec, optimizedCoenableSet, true);
+			SuffixMonitor monitor = new SuffixMonitor(name, mopSpec, optimizedCoenableSet, true);
 
 			monitors.put(mopSpec, monitor);
 
-			if(mopSpec.isGeneral())
-				monitorSets.put(mopSpec, new MonitorSet(name, mopSpec, monitor, true));
-			else
-				monitorSets.put(mopSpec, new MonitorSet(name, mopSpec, monitor, false));
+			monitorSets.put(mopSpec, new MonitorSet(name, mopSpec, monitor));
 
 		}
 	}
@@ -61,7 +58,7 @@ public class JavaLibCode {
 			ret += monitorSet;
 		ret += "\n";
 
-		for (WrapperMonitor monitor : this.monitors.values())
+		for (SuffixMonitor monitor : this.monitors.values())
 			ret += monitor;
 		ret += "\n";
 

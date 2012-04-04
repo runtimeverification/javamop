@@ -1,6 +1,7 @@
 package javamop.output.monitor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
@@ -27,7 +29,7 @@ public class SuffixMonitor extends Monitor {
 	ArrayList<String> categories;
 	MOPVariable monitorList = new MOPVariable("monitorList");
 	boolean existSkip = false;
-
+	
 	public SuffixMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost);
 
@@ -37,6 +39,7 @@ public class SuffixMonitor extends Monitor {
 			monitorName = new MOPVariable(mopSpec.getName() + "SuffixMonitor");
 
 			if (isOutermost) {
+				varInOutermostMonitor = new VarInOutermostMonitor(name, mopSpec, mopSpec.getEvents());
 				monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
 			}
 			
@@ -75,6 +78,14 @@ public class SuffixMonitor extends Monitor {
 			if(mopSpec.isFullBinding() || mopSpec.isConnected())
 				monitorInfo = new MonitorInfo(mopSpec);
 		}
+	}
+	
+	public void setRefTrees(HashMap<String, RefTree> refTrees){
+		this.refTrees = refTrees;
+		innerMonitor.setRefTrees(refTrees);
+		
+		if(monitorTermination != null)
+			monitorTermination.setRefTrees(refTrees);
 	}
 
 	public MOPVariable getOutermostName() {
@@ -203,6 +214,9 @@ public class SuffixMonitor extends Monitor {
 				ret += " extends javamoprt.MOPMonitor";
 			ret += " implements Cloneable, javamoprt.MOPObject {\n";
 
+			if(varInOutermostMonitor != null)
+				ret += varInOutermostMonitor;
+			
 			ret += "Vector<" + innerMonitor.getOutermostName() + "> " + monitorList + " = new Vector<" + innerMonitor.getOutermostName() + ">();\n";
 
 			if (this.has__LOC)

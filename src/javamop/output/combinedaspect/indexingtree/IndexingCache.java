@@ -3,113 +3,218 @@ package javamop.output.combinedaspect.indexingtree;
 import java.util.HashMap;
 
 import javamop.output.MOPVariable;
+import javamop.output.combinedaspect.event.advice.LocalVariables;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
+import javamop.output.monitor.SuffixMonitor;
+import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
-public class IndexingCache{
-	MOPVariable name;
+public class IndexingCache {
 	MOPParameters param;
-	MOPParameters fullParam;
-
-	MOPVariable value;
-	HashMap<String, MOPVariable> keys = new HashMap<String, MOPVariable>();
-	
 	boolean perthread = false;
-	
-	public IndexingCache(){
-	}
-	
-	public IndexingCache(MOPVariable name, MOPParameters param, MOPParameters fullParam, boolean perthread) {
-		this.name = name;
-		this.param = param;
-		this.fullParam = fullParam;
-		this.perthread = perthread;
+	boolean isGeneral = false;
+	SuffixMonitor monitor;
 
-		this.value = new MOPVariable(name + "_cachevalue");
+	public boolean hasSet = false;
+	public boolean hasNode = false;
+	MOPVariable setType;
+	MOPVariable set;
+
+	MOPVariable nodeType;
+	MOPVariable node;
+
+	HashMap<String, MOPVariable> keys = new HashMap<String, MOPVariable>();
+	HashMap<String, RefTree> refTrees;
+
+	public IndexingCache(MOPVariable name, MOPParameters param, MOPParameters fullParam, SuffixMonitor monitor, MonitorSet monitorSet, HashMap<String, RefTree> refTrees, boolean perthread, boolean isGeneral) {
+		this.param = param;
+		this.perthread = perthread;
+		this.monitor = monitor;
+		this.isGeneral = isGeneral;
+
 		for (int i = 0; i < param.size(); i++) {
 			this.keys.put(param.get(i).getName(), new MOPVariable(name + "_cachekey_" + fullParam.getIdnum(param.get(i))));
 		}
-	}
-	
-	public String getCacheKeys(){
-		return "";
+
+		this.hasSet = !fullParam.equals(param);
+		this.hasNode = !hasSet || isGeneral;
+		
+		this.setType = monitorSet.getName();
+		this.set = new MOPVariable(name + "_cacheset");
+		this.nodeType = monitor.getOutermostName();
+		this.node = new MOPVariable(name + "_cachenode");
+		this.refTrees = refTrees;
 	}
 
-	public String getCacheValue(MOPVariable obj) {
+	public String getKeyType(MOPParameter p) {
+		return refTrees.get(p.getType().toString()).getResultType();
+	}
+
+	public String getTreeType(MOPParameter p) {
+		return refTrees.get(p.getType().toString()).getType();
+	}
+
+	public MOPVariable getKey(MOPParameter p) {
+		return keys.get(p.getName());
+	}
+
+	public MOPVariable getKey(int i) {
+		return keys.get(param.get(i).getName());
+	}
+
+	public String getKeyComparison() {
 		String ret = "";
 
-		if(perthread){
-			ret += "if(";
-			for (int i = 0; i < param.size(); i++) {
-				if (i > 0)
-					ret += " && ";
-				ret += param.get(i).getName() + " == " + keys.get(param.get(i).getName()) + ".get()";
+		for (int i = 0; i < param.size(); i++) {
+			if (i > 0) {
+				ret += " && ";
 			}
-			ret += "){\n";
-			ret += obj + " = " + value + ".get();\n";
-			ret += "}\n";
-		} else {
-			ret += "if(";
-			for (int i = 0; i < param.size(); i++) {
-				if (i > 0)
-					ret += " && ";
-				ret += param.get(i).getName() + " == " + keys.get(param.get(i).getName());
+			if (perthread) {
+				ret += param.get(i).getName() + " == " + "((" + getKeyType(param.get(i)) + ")" + getKey(i) + ".get()).get()";
+			} else {
+				ret += param.get(i).getName() + " == " + getKey(i) + ".get()";
 			}
-			ret += "){\n";
-			ret += obj + " = " + value + ";\n";
-			ret += "}\n";
 		}
 
 		return ret;
 	}
 
-	public String setCacheKeys() {
+	public String getCacheKeys(LocalVariables localVars) {
 		String ret = "";
 
 		for (MOPParameter p : param) {
-			if(perthread){
-				ret += keys.get(p.getName()) + ".set(" + p.getName() + ");\n";
+			MOPVariable tempRef = localVars.getTempRef(p);
+
+			ret += tempRef + " = ";
+
+			if (perthread) {
+				ret += "(" + getKeyType(p) + ")" + getKey(p) + ".get();\n";
 			} else {
-				ret += keys.get(p.getName()) + " = " + p.getName() + ";\n";
+				ret += getKey(p) + ";\n";
 			}
 		}
 
 		return ret;
 	}
 
-	public String setCacheValue(MOPVariable monitor) {
+	public String getCacheSet(MOPVariable obj) {
 		String ret = "";
 
-		if(perthread){
-			ret += value + ".set(" + monitor + ");\n";
+		if (!hasSet)
+			return ret;
+
+		if (perthread) {
+			ret += obj + " = " + "(" + setType + ")" + set + ".get();\n";
 		} else {
-			ret += value + " = " + monitor + ";\n";
+			ret += obj + " = " + set + ";\n";
 		}
 
 		return ret;
+	}
+
+	public String getCacheNode(MOPVariable obj) {
+		String ret = "";
+
+		if (perthread) {
+			ret += obj + " = " + "(" + nodeType + ")" + node + ".get();\n";
+		} else {
+			ret += obj + " = " + node + ";\n";
+		}
+
+		return ret;
+	}
+
+	public String setCacheKeys(LocalVariables localVars) {
+		String ret = "";
+
+		for (MOPParameter p : param) {
+			MOPVariable tempRef = localVars.getTempRef(p);
+
+			if (perthread) {
+				ret += getKey(p) + ".set(" + tempRef + ");\n";
+			} else {
+				ret += getKey(p) + " = " + tempRef + ";\n";
+			}
+		}
+
+		return ret;
+	}
+
+	public String setCacheSet(MOPVariable obj) {
+		String ret = "";
+
+		if (!hasSet)
+			return ret;
+
+		if (perthread) {
+			ret += set + ".set(" + obj + ");\n";
+		} else {
+			ret += set + " = " + obj + ";\n";
+		}
+
+		return ret;
+	}
+
+	public String setCacheNode(MOPVariable obj) {
+		String ret = "";
+
+		if(!hasNode)
+			return ret;
+		
+		if (perthread) {
+			ret += node + ".set(" + obj + ");\n";
+		} else {
+			ret += node + " = " + obj + ";\n";
+		}
+
+		return ret;
+	}
+	
+	public String init(){
+		return "";
 	}
 
 	public String toString() {
 		String ret = "";
 
-		if(perthread){
-			for (MOPVariable key : keys.values()) {
+		if (perthread) {
+			for (MOPParameter p : param) {
+				MOPVariable key = keys.get(p.getName());
+
 				ret += "static final ThreadLocal " + key + " = new ThreadLocal() {\n";
-				ret += "protected Object initialValue(){\n";
+				ret += "protected " + getKeyType(p) + " initialValue(){\n";
+				ret += "return " + getTreeType(p) + ".NULRef;\n";
+				ret += "}\n";
+				ret += "};\n";
+			}
+			
+			if (hasSet) {
+				ret += "static final ThreadLocal " + set + " = new ThreadLocal() {\n";
+				ret += "protected " + setType + " initialValue(){\n";
 				ret += "return null;\n";
 				ret += "}\n";
 				ret += "};\n";
 			}
-			ret += "static final ThreadLocal " + value + " = new ThreadLocal() {\n";
-			ret += "protected Object initialValue(){\n";
-			ret += "return null;\n";
-			ret += "}\n";
-			ret += "};\n";
-		} else {
-			for (MOPVariable key : keys.values()) {
-				ret += "static Object " + key + " = null;\n";
+
+			if (hasNode) {
+				ret += "static final ThreadLocal " + node + " = new ThreadLocal() {\n";
+				ret += "protected " + nodeType + " initialValue(){\n";
+				ret += "return null;\n";
+				ret += "}\n";
+				ret += "};\n";
 			}
-			ret += "static Object " + value + " = null;\n";
+		} else {
+			for (MOPParameter p : param) {
+				MOPVariable key = keys.get(p.getName());
+				ret += "static " + getKeyType(p) + " " + key + " = " + getTreeType(p) + ".NULRef;\n";
+			}
+			if (hasSet) {
+				ret += "static " + setType + " " + set + " = null;\n";
+			}
+			if (hasNode) {
+				ret += "static " + nodeType + " " + node + " = null;\n";
+			}
 		}
 
 		return ret;

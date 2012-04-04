@@ -1,12 +1,14 @@
 package javamop.output.monitor;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javamop.MOPNameSpace;
 import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
-import javamop.output.aspect.MOPStatistics;
+import javamop.output.combinedaspect.MOPStatistics;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
@@ -21,12 +23,29 @@ public class MonitorTermination {
 
 	MOPStatistics stat;
 	
+	HashMap<MOPParameter, MOPVariable> references = new HashMap<MOPParameter, MOPVariable>();
+	HashMap<String, RefTree> refTrees;
+
 	public MonitorTermination(String name, JavaMOPSpec mopSpec, List<EventDefinition> events, OptimizedCoenableSet coenableSet){
 		this.parameters = mopSpec.getParameters();
 		this.events = events;
 		this.coenableSet = coenableSet;
 		
 		this.stat = new MOPStatistics(name, mopSpec);
+	}
+	
+	public String getRefType(MOPParameter p){
+		RefTree refTree = refTrees.get(p.getType().toString());
+
+		return refTree.getResultType();
+	}
+	
+	public void setRefTrees(HashMap<String, RefTree> refTrees){
+		this.refTrees = refTrees;
+
+		for (MOPParameter param : parameters) {
+			references.put(param, new MOPVariable("MOPRef_" + param.getName()));
+		}
 	}
 	
 	public String copyAliveParameters(MOPVariable toMonitor, MOPVariable fromMonitor){
@@ -43,9 +62,9 @@ public class MonitorTermination {
 	
 	public String toString(){
 		String ret = "";
-		
+
 		for (MOPParameter param : parameters) {
-			ret += "public javamoprt.MOPWeakReference " + MOPNameSpace.getMOPVar("MOPRef_" + param.getName()) + ";\n";
+			ret += "public " + getRefType(param) + " " + references.get(param) + ";\n";
 		}
 		ret += "\n";
 

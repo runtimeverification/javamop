@@ -18,6 +18,10 @@ public class MOPParameter extends Node{
 	public TypePattern getType() {return type;}
 	public String getName() {return name;}
 	
+	public boolean equals(MOPParameter param){
+		return type.equals(param.getType()) && name.equals(param.getName());
+	}
+	
 	@Override
 	public int hashCode(){
 		return name.hashCode();

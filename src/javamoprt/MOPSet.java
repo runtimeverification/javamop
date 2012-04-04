@@ -1,17 +1,19 @@
 package javamoprt;
 
-public interface MOPSet extends MOPObject{
+public abstract class MOPSet implements MOPObject{
+
+	public int size = 0;
 	
-	public int size();
+	abstract public int size();
+
+	abstract public boolean add(MOPMonitor e);
 	
-	public boolean add(MOPMonitor e);
+	abstract public void endObject(int idnum);
 	
-	public void endObject(int idnum);
+	abstract public boolean alive();
 	
-	public boolean alive();
+	abstract public void endObjectAndClean(int idnum);
 	
-	public void endObjectAndClean(int idnum);
-	
-	public void ensureCapacity();
+	abstract public void ensureCapacity();
 	
 }

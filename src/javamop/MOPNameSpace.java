@@ -13,16 +13,11 @@ public class MOPNameSpace {
 
 	static {
 		keywords.add("this");
+		keywords.add("null");
 		keywords.add("MOP_lastevent");
 		keywords.add("MOP_terminated");
 		keywords.add("thisJoinPoint");
 		
-//		keywords.add("javamoprt.MOPMonitor");
-//		keywords.add("javamoprt.MOPSet");
-//		keywords.add("javamoprt.MOPMap");
-//		keywords.add("javamoprt.MOPMapOfMap");
-//		keywords.add("javamoprt.MOPMapOfMonitor");
-//		keywords.add("javamoprt.MOPMapOfMap");
 	}
 	
 	static public void init(){

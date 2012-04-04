@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javamop.output.MOPVariable;
-import javamop.output.aspect.MOPStatistics;
-import javamop.output.monitor.WrapperMonitor;
+import javamop.output.combinedaspect.MOPStatistics;
+import javamop.output.monitor.SuffixMonitor;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameters;
@@ -15,9 +15,7 @@ import javamop.parser.ast.stmt.BlockStmt;
 public class MonitorSet {
 	MOPVariable setName;
 	MOPVariable monitorName;
-	WrapperMonitor monitor;
-
-	boolean extendedNode = false;
+	SuffixMonitor monitor;
 
 	ArrayList<EventDefinition> events;
 	List<PropertyAndHandlers> properties;
@@ -33,13 +31,12 @@ public class MonitorSet {
 
 	MOPStatistics stat;
 
-	public MonitorSet(String name, JavaMOPSpec mopSpec, WrapperMonitor monitor, boolean extendedNode) {
+	public MonitorSet(String name, JavaMOPSpec mopSpec, SuffixMonitor monitor) {
 		this.monitorName = monitor.getOutermostName();
 		this.monitor = monitor;
 		this.setName = new MOPVariable(monitorName + "_Set");
 		this.events = new ArrayList<EventDefinition>(mopSpec.getEvents());
 		this.properties = mopSpec.getPropertiesAndHandlers();
-		this.extendedNode = extendedNode;
 
 		this.has__LOC = mopSpec.has__LOC();
 		this.has__STATICSIG = mopSpec.has__STATICSIG();
@@ -62,36 +59,8 @@ public class MonitorSet {
 		this.stat = new MOPStatistics(name, mopSpec);
 	}
 
-	public MonitorSet(String name, JavaMOPSpec mopSpec, WrapperMonitor monitor) {
-		this(name, mopSpec, monitor, false);
-	}
-
 	public MOPVariable getName() {
 		return setName;
-	}
-
-	public String getNode(MOPVariable monitorVar, MOPVariable monitorSetVar) {
-		String ret = "";
-
-		ret += monitorVar + " = " + "((" + setName + ")" + monitorSetVar + ")" + ".node;\n";
-
-		return ret;
-	}
-
-	public String setNode(String monitorSetVar, MOPVariable monitorVar) {
-		String ret = "";
-
-		ret += "((" + setName + ")" + monitorSetVar + ")" + ".node" + " = " + monitorVar + ";\n";
-
-		return ret;
-	}
-
-	public String addMonitor(String monitorSetVar, MOPVariable monitorVar) {
-		String ret = "";
-
-		ret += monitorSetVar + ".add(" + monitorVar + ");\n";
-
-		return ret;
 	}
 
 	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
@@ -99,31 +68,31 @@ public class MonitorSet {
 
 		boolean isAround = event.getPos().equals("around");
 
-		ret += "if (" + monitorSetVar + " != null) {\n";
+		ret += "if(" + monitorSetVar + " != null) {\n";
 
 		if (has__LOC) {
 			if (loc != null)
-				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + loc + ";\n";
+				ret += monitorSetVar + "." + this.loc + " = " + loc + ";\n";
 			else
-				ret += "((" + setName + ")" + monitorSetVar + ")." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+				ret += monitorSetVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 		
 		if (has__STATICSIG) {
 			if(staticsig != null)
-				ret += "((" + setName + ")" + monitorSetVar + ")." + this.staticsig + " = " + staticsig + ";\n";
+				ret +=  monitorSetVar + "." + this.staticsig + " = " + staticsig + ";\n";
 			else
-				ret += "((" + setName + ")" + monitorSetVar + ")." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
+				ret +=  monitorSetVar + "." + this.staticsig + " = " + "thisJoinPoint.getStaticPart().getSignature()" + ";\n";
 		}
 
 		if (this.hasThisJoinPoint) {
-			ret += "((" + setName + ") " + monitorSetVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
+			ret += monitorSetVar + "." + this.thisJoinPoint + " = " + this.thisJoinPoint + ";\n";
 		}
 
 		if (isAround && event.has__SKIP()) {
 			ret += monitorSetVar + "." + skipAroundAdvice + " = false;\n";
 		}
 
-		ret += "((" + setName + ")" + monitorSetVar + ").event_" + event.getUniqueId() + "(";
+		ret += monitorSetVar + ".event_" + event.getUniqueId() + "(";
 		ret += event.getMOPParameters().parameterString();
 		ret += ");\n";
 
@@ -134,7 +103,7 @@ public class MonitorSet {
 		ret += "}\n";
 
 		if (this.hasThisJoinPoint) {
-			ret += "((" + setName + ") " + monitorSetVar + "." + this.thisJoinPoint + " = null;\n";
+			ret += monitorSetVar + "." + this.thisJoinPoint + " = null;\n";
 		}
 		
 		return ret;
@@ -144,15 +113,14 @@ public class MonitorSet {
 		String ret = "";
 
 		MOPVariable monitor = new MOPVariable("monitor");
-		MOPVariable num_terminated_monitors = new MOPVariable("num_terminated_monitors");
+//		MOPVariable num_terminated_monitors = new MOPVariable("num_terminated_monitors");
+		MOPVariable numAlive = new MOPVariable("numAlive");
 		MOPVariable i = new MOPVariable("i");
 		// elementData and size are safe since they will be accessed by the prefix "this.".
 
-		ret += "class " + setName + " implements javamoprt.MOPSet {\n";
-		if (extendedNode)
-			ret += "public " + monitorName + " node;\n";
+		ret += "class " + setName + " extends javamoprt.MOPSet {\n";
 		ret += "protected " + monitorName + "[] elementData;\n";
-		ret += "public int size;\n";
+//		ret += "public int size;\n";
 
 		if (has__LOC)
 			ret += "String " + loc + " = null;\n";
@@ -189,12 +157,20 @@ public class MonitorSet {
 		ret += "\n";
 
 		ret += "public final void endObject(int idnum){\n";
+		ret += "int numAlive = 0;\n";
 		ret += "for(int i = 0; i < size; i++){\n";
-		ret += "MOPMonitor monitor = elementData[i];\n";
+		ret += monitorName + " monitor = elementData[i];\n";
 		ret += "if(!monitor.MOP_terminated){\n";
 		ret += "monitor.endObject(idnum);\n";
 		ret += "}\n";
+		ret += "if(!monitor.MOP_terminated){\n";
+		ret += "elementData[numAlive++] = monitor;\n";
 		ret += "}\n";
+		ret += "}\n";
+		ret += "for(int i = numAlive; i < size; i++){\n";
+		ret += "elementData[i] = null;\n";
+		ret += "}\n";
+		ret += "size = numAlive;\n";
 		ret += "}\n";
 		ret += "\n";
 
@@ -210,7 +186,9 @@ public class MonitorSet {
 		ret += "\n";
 
 		ret += "public final void endObjectAndClean(int idnum){\n";
-		ret += "for(int i = size - 1; i > 0; i--){\n";
+		ret += "int size = this.size;\n";
+		ret += "this.size = 0;\n";
+		ret += "for(int i = size - 1; i >= 0; i--){\n";
 		ret += "MOPMonitor monitor = elementData[i];\n";
 		ret += "if(monitor != null && !monitor.MOP_terminated){\n";
 		ret += "monitor.endObject(idnum);\n";
@@ -227,47 +205,64 @@ public class MonitorSet {
 		ret += "cleanup();\n";
 		ret += "}\n";
 		ret += "if (size + 1 > oldCapacity) {\n";
-		ret += "Object oldData[] = elementData;\n";
+		ret += monitorName + "[] oldData = elementData;\n";
 		ret += "int newCapacity = (oldCapacity * 3) / 2 + 1;\n";
 		ret += "if (newCapacity < size + 1){\n";
 		ret += "newCapacity = size + 1;\n";
 		ret += "}\n";
-		ret += "elementData = Arrays.copyOf(elementData, newCapacity);\n";
+		ret += "elementData = Arrays.copyOf(oldData, newCapacity);\n";
 		ret += "}\n";
 		ret += "}\n";
 		ret += "\n";
 
+//		ret += "public final void cleanup() {\n";
+//		ret += "int num_terminated_monitors = 0 ;\n";
+//		ret += "for(int i = 0; i + num_terminated_monitors < size; i ++){\n";
+//		ret += monitorName + " monitor = ";
+//		ret += "(" + monitorName + ")elementData[i + num_terminated_monitors];\n";
+//		ret += "if(monitor.MOP_terminated){\n";
+//		ret += "if(i + num_terminated_monitors + 1 < size){\n";
+//		ret += "do{\n";
+//		ret += "monitor = (" + monitorName + ")elementData[i + (++num_terminated_monitors)];\n";
+//		ret += "} while(monitor.MOP_terminated && i + num_terminated_monitors + 1 < size);\n";
+//		ret += "if(monitor.MOP_terminated){\n";
+//		ret += "num_terminated_monitors++;\n";
+//		ret += "break;\n";
+//		ret += "}\n";
+//		ret += "} else {\n";
+//		ret += "num_terminated_monitors++;\n";
+//		ret += "break;\n";
+//		ret += "}\n";
+//		ret += "}\n";
+//		ret += "if(num_terminated_monitors != 0){\n";
+//		ret += "elementData[i] = monitor;\n";
+//		ret += "}\n";
+//		ret += "}\n";
+//		ret += "if(num_terminated_monitors != 0){\n";
+//		ret += "size -= num_terminated_monitors;\n";
+//		ret += "for(int i = size; i < size + num_terminated_monitors ; i++){\n";
+//		ret += "elementData[i] = null;\n";
+//		ret += "}\n";
+//		ret += "}\n";
+//		ret += "}\n";
+
 		ret += "public final void cleanup() {\n";
-		ret += "int num_terminated_monitors = 0 ;\n";
-		ret += "for(int i = 0; i + num_terminated_monitors < size; i ++){\n";
+		ret += "int numAlive = 0 ;\n";
+		ret += "for(int i = 0; i < size; i++){\n";
 		ret += monitorName + " monitor = ";
-		ret += "(" + monitorName + ")elementData[i + num_terminated_monitors];\n";
-		ret += "if(monitor.MOP_terminated){\n";
-		ret += "if(i + num_terminated_monitors + 1 < size){\n";
-		ret += "do{\n";
-		ret += "monitor = (" + monitorName + ")elementData[i + (++num_terminated_monitors)];\n";
-		ret += "} while(monitor.MOP_terminated && i + num_terminated_monitors + 1 < size);\n";
-		ret += "if(monitor.MOP_terminated){\n";
-		ret += "num_terminated_monitors++;\n";
-		ret += "break;\n";
-		ret += "}\n";
-		ret += "} else {\n";
-		ret += "num_terminated_monitors++;\n";
-		ret += "break;\n";
+		ret += "(" + monitorName + ")elementData[i];\n";
+		ret += "if(!monitor.MOP_terminated){\n";
+		ret += "elementData[numAlive] = monitor;\n";
+		ret += "numAlive++;\n";
 		ret += "}\n";
 		ret += "}\n";
-		ret += "if(num_terminated_monitors != 0){\n";
-		ret += "elementData[i] = monitor;\n";
-		ret += "}\n";
-		ret += "}\n";
-		ret += "if(num_terminated_monitors != 0){\n";
-		ret += "size -= num_terminated_monitors;\n";
-		ret += "for(int i = size; i < size + num_terminated_monitors ; i++){\n";
+		ret += "for(int i = numAlive; i < size; i++){\n";
 		ret += "elementData[i] = null;\n";
 		ret += "}\n";
-		ret += "}\n";
+		ret += "size = numAlive;\n";
 		ret += "}\n";
 
+		
 		for (EventDefinition event : this.events) {
 			String eventName = event.getUniqueId();
 			MOPParameters parameters = event.getMOPParameters();
@@ -278,41 +273,21 @@ public class MonitorSet {
 			ret += parameters.parameterDeclString();
 			ret += ") {\n";
 
-			ret += "int " + num_terminated_monitors + " = 0 ;\n";
-			ret += "for(int " + i + " = 0; " + i + " + " + num_terminated_monitors + " < this.size; " + i + " ++){\n";
-			ret += monitorName + " " + monitor + " = (" + monitorName + ")this.elementData[" + i + " + " + num_terminated_monitors + "];\n";
-			ret += "if(" + monitor + ".MOP_terminated){\n";
-			ret += "if(" + i + " + " + num_terminated_monitors + " + 1 < this.size){\n";
-			ret += "do{\n";
-			ret += monitor + " = (" + monitorName + ")this.elementData[" + i + " + (++" + num_terminated_monitors + ")];\n";
-			ret += "} while(" + monitor + ".MOP_terminated && " + i + " + " + num_terminated_monitors + " + 1 < this.size);\n";
-			ret += "if(" + monitor + ".MOP_terminated" + "){\n";
-			ret += num_terminated_monitors + "++;\n";
-			ret += "break;\n";
-			ret += "}\n";
-			ret += "} else {\n";
-			ret += num_terminated_monitors + "++;\n";
-			ret += "break;\n";
-			ret += "}\n";
-			ret += "}\n";
-
-			ret += "if(" + num_terminated_monitors + " != 0){\n";
-			ret += "this.elementData[" + i + "] = " + monitor + ";\n";
-			ret += "}\n";
-
+			ret += "int " + numAlive + " = 0 ;\n";
+			ret += "for(int " + i + " = 0; " + i + " < this.size; " + i + "++){\n";
+			ret += monitorName + " " + monitor + " = (" + monitorName + ")this.elementData[" + i + "];\n";
+			ret += "if(!" + monitor + ".MOP_terminated){\n";
+			ret += "elementData[" + numAlive + "] = " + monitor + ";\n";
+			ret += numAlive + "++;\n";
+			ret += "\n";
 			ret += this.monitor.Monitoring(monitor, event, loc, staticsig);
-
+			ret += "}\n";
 			ret += "}\n";
 
-			ret += "if(" + num_terminated_monitors + " != 0){\n";
-			ret += "this.size -= " + num_terminated_monitors + ";\n";
-			ret += "for(int " + i + " = this.size;";
-			ret += " " + i + " < this.size + " + num_terminated_monitors + ";";
-			ret += " " + i + "++){\n";
+			ret += "for(int " + i + " = " + numAlive + "; " + i + " < this.size; " + i + "++){\n";
 			ret += "this.elementData[" + i + "] = null;\n";
 			ret += "}\n";
-			ret += "}\n";
-
+			ret += "size = numAlive;\n";
 			ret += "}\n";
 		}
 

@@ -29,7 +29,7 @@ public class MOPParameterPairSet implements Iterable<MOPParameterPair>{
 	
 	public void add(MOPParameterPair paramPair) {
 		if (getParameterPair(paramPair.getParam1(), paramPair.getParam2()) == null) {
-			paramPairSet.add(new MOPParameterPair(paramPair.getParam1(), paramPair.getParam2()));
+			paramPairSet.add(paramPair);
 		}
 	}
 	

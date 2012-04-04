@@ -1,5 +1,6 @@
 package javamop.output.monitor;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import javamop.output.MOPJavaCode;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
@@ -40,6 +42,7 @@ public class RawMonitor extends Monitor{
 		this.monitorName = new MOPVariable(mopSpec.getName() + "RawMonitor");
 
 		if (isOutermost) {
+			varInOutermostMonitor = new VarInOutermostMonitor(name, mopSpec, mopSpec.getEvents());
 			monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
 		}
 
@@ -51,6 +54,13 @@ public class RawMonitor extends Monitor{
 			if(mopSpec.isFullBinding() || mopSpec.isConnected())
 				monitorInfo = new MonitorInfo(mopSpec);
 		}
+	}
+
+	public void setRefTrees(HashMap<String, RefTree> refTrees){
+		this.refTrees = refTrees;
+		
+		if(monitorTermination != null)
+			monitorTermination.setRefTrees(refTrees);
 	}
 
 	public MOPVariable getOutermostName() {
@@ -173,6 +183,9 @@ public class RawMonitor extends Monitor{
 			ret += " extends javamoprt.MOPMonitor";
 		ret += " implements Cloneable, javamoprt.MOPObject {\n";
 	
+		if(varInOutermostMonitor != null)
+			ret += varInOutermostMonitor;
+
 		//clone()
 		ret += "public Object clone() {\n";
 		ret += "try {\n";

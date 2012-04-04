@@ -4,12 +4,11 @@ import java.util.HashMap;
 
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
-import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.output.combinedaspect.indexingtree.IndexingDecl;
 import javamop.output.combinedaspect.indexingtree.IndexingTree;
-import javamop.output.combinedaspect.indexingtree.RefTree;
-import javamop.output.monitor.WrapperMonitor;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
+import javamop.output.monitor.SuffixMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -19,17 +18,23 @@ public abstract class AdviceBody {
 	JavaMOPSpec mopSpec;
 	public EventDefinition event;
 	public MonitorSet monitorSet;
-	public WrapperMonitor monitorClass;
+	public SuffixMonitor monitorClass;
 	public MOPVariable monitorName;
 	public HashMap<MOPParameters, IndexingTree> indexingTrees;
 	public IndexingDecl indexingDecl;
 	public HashMap<String, RefTree> refTrees;
 	
 	public MOPStatistics stat;
+	
+	public boolean isGeneral;
+	MOPParameters eventParams;
 
+	public boolean isFullParam;
+	
 	public AdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
 		this.mopSpec = mopSpec;
 		this.event = event;
+		this.eventParams = event.getMOPParametersOnSpec();
 		this.monitorSet = combinedAspect.monitorSets.get(mopSpec);
 		this.monitorClass = combinedAspect.monitors.get(mopSpec);
 		this.monitorName = monitorClass.getOutermostName();
@@ -37,6 +42,8 @@ public abstract class AdviceBody {
 		this.indexingTrees = indexingDecl.getIndexingTrees();
 		this.stat = combinedAspect.statManager.getStat(mopSpec);
 		this.refTrees = combinedAspect.indexingTreeManager.refTrees;
+		this.isGeneral = mopSpec.isGeneral();
+		this.isFullParam = eventParams.equals(mopSpec.getParameters());
 	}
 
 	public abstract String toString();

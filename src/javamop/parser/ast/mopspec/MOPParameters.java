@@ -154,14 +154,16 @@ public class MOPParameters implements Iterable<MOPParameter> {
 	public boolean equals(Object set) {
 		if (!(set instanceof MOPParameters))
 			return false;
-		MOPParameters set2 = (MOPParameters) set;
-		if (this.size() != set2.size())
-			return false;
-		return this.contains(set2) && set2.contains(this);
+		
+		return this.equals((MOPParameters) set);
 	}
 
 	public boolean equals(MOPParameters set) {
-		return this.equals((Object) set);
+		if(set == null)
+			return false;
+		if (this.size() != set.size())
+			return false;
+		return this.contains(set) && set.contains(this);
 	}
 	
 	public boolean matchTypes(MOPParameters set){
@@ -274,6 +276,16 @@ public class MOPParameters implements Iterable<MOPParameter> {
 			}
 		}
 		return -1;
+	}
+	
+	public int hashCode() {
+		int code = 0;
+				
+		for (MOPParameter param : this.parameters) {
+			code ^= param.hashCode();
+		}
+		
+		return code;
 	}
 
 	public String toString() {

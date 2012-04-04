@@ -1,7 +1,6 @@
 package javamop.parser.ast.mopspec;
 
 public class MOPParameterPair {
-
 	MOPParameters param1;
 	MOPParameters param2;
 	
@@ -24,5 +23,9 @@ public class MOPParameterPair {
 
 	public String toString() {
 		return "(" + param1.toString() + ", " + param2.toString() + ")";
+	}
+	
+	public int hashCode() {
+		return param1.hashCode() ^ param2.hashCode();
 	}
 }

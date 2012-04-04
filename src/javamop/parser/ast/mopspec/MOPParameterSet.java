@@ -54,7 +54,12 @@ public class MOPParameterSet implements Iterable<MOPParameters>{
 	}
 	
 	public boolean contains(MOPParameters param){
-		return this.paramSet.contains(param);
+		for(MOPParameters param2 : paramSet){
+			if(param2.equals(param))
+				return true;
+		}
+		
+		return false;
 	}
 
 	public MOPParameters get(int i){

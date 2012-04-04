@@ -1,13 +1,16 @@
 package javamop.output.monitor;
 
+import java.util.HashMap;
 import java.util.Set;
 
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
-import javamop.output.aspect.MOPStatistics;
+import javamop.output.combinedaspect.MOPStatistics;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
 
@@ -29,6 +32,12 @@ public abstract class Monitor {
 	MonitorInfo monitorInfo = null;
 
 	MOPStatistics stat;
+	
+	VarInOutermostMonitor varInOutermostMonitor = null;
+
+	HashMap<String, MOPVariable> mopRefs = new HashMap<String, MOPVariable>();
+
+	HashMap<String, RefTree> refTrees;
 
 	public Monitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
 		this.isOutermost = isOutermost;
@@ -50,7 +59,18 @@ public abstract class Monitor {
 		this.coenableSet = coenableSet;
 		
 		this.stat = new MOPStatistics(name, mopSpec);
+		
+		for (MOPParameter p : mopSpec.getParameters()) {
+			mopRefs.put(p.getName(), new MOPVariable("MOPRef_" + p.getName()));
+		}
+
 	}
+	
+	public MOPVariable getMOPRef(MOPParameter p){
+		return mopRefs.get(p.getName());
+	}
+	
+	public abstract void setRefTrees(HashMap<String, RefTree> refTrees);
 
 	public abstract MOPVariable getOutermostName();
 	

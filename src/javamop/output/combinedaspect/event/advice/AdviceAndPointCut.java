@@ -1,12 +1,14 @@
 package javamop.output.combinedaspect.event.advice;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import javamop.MOPException;
 import javamop.Main;
 import javamop.output.MOPVariable;
+import javamop.output.combinedaspect.ActivatorManager;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatManager;
@@ -19,6 +21,7 @@ import javamop.parser.ast.mopspec.MOPParameters;
 
 public class AdviceAndPointCut {
 	public MOPStatManager statManager;
+	public ActivatorManager activatorsManager;
 
 	MOPVariable inlineFuncName;
 	MOPParameters inlineParameters;
@@ -38,10 +41,15 @@ public class AdviceAndPointCut {
 	boolean isSync;
 
 	LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
+	HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
+	HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
 	
 	HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
 
 	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+
+	AroundAdviceLocalDecl aroundLocalDecl = null;
+	AroundAdviceReturn aroundAdviceReturn = null;
 
 	public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
 		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
@@ -69,24 +77,26 @@ public class AdviceAndPointCut {
 
 		this.statManager = combinedAspect.statManager;
 		
+		this.activatorsManager = combinedAspect.activatorsManager;
+		
 		this.globalLock = combinedAspect.lockManager.getLock();
 		this.isSync = mopSpec.isSync();
 
-		if(Main.scalable){
-			if (mopSpec.isGeneral())
-				this.advices.put(event, new ScalableGeneralAdviceBody(mopSpec, event, combinedAspect));
-			else
-				this.advices.put(event, new ScalableSpecialAdviceBody(mopSpec, event, combinedAspect));
-		} else {
-			if (mopSpec.isGeneral())
-				this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
-			else
-				this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
-		}
+		this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
 		
 		this.pointcut = event.getPointCut();
+		
+		if (mopSpec.has__SKIP() || event.getPos().equals("around"))
+			aroundLocalDecl = new AroundAdviceLocalDecl();
+		if (event.getPos().equals("around"))
+			aroundAdviceReturn = new AroundAdviceReturn(event.getRetType(), event.getParametersWithoutThreadVar());
+
+		if(event.isStartEvent())
+			specsForActivation.add(mopSpec);
+		else
+			specsForChecking.add(mopSpec);
 	}
 
 	public PointCut getPointCut() {
@@ -117,19 +127,13 @@ public class AdviceAndPointCut {
 		}
 
 		// add an advice body.
-		if(Main.scalable){
-			if (mopSpec.isGeneral())
-				this.advices.put(event, new ScalableGeneralAdviceBody(mopSpec, event, combinedAspect));
-			else
-				this.advices.put(event, new ScalableSpecialAdviceBody(mopSpec, event, combinedAspect));
-		} else {
-			if (mopSpec.isGeneral())
-				this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
-			else
-				this.advices.put(event, new SpecialAdviceBody(mopSpec, event, combinedAspect));
-		}
+		this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
+		if(event.isStartEvent())
+			specsForActivation.add(mopSpec);
+		else
+			specsForChecking.add(mopSpec);
 		return true;
 	}
 	
@@ -159,9 +163,14 @@ public class AdviceAndPointCut {
 				ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
 			}
 			
+			for(JavaMOPSpec spec : specsForActivation){
+				ret += activatorsManager.getActivator(spec) + " = true;\n";
+			}			
+			
 			if (isSync)
 				ret += "synchronized(" + globalLock.getName() + ") {\n";
 	
+			
 			Iterator<EventDefinition> iter;
 			if(this.pos.equals("before"))
 				iter = this.events.descendingIterator();
@@ -172,10 +181,18 @@ public class AdviceAndPointCut {
 				EventDefinition event = iter.next(); 
 						
 				AdviceBody advice = advices.get(event);
-	
-				if(advices.size() > 1){
-					ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
-					ret += "{\n";
+
+				if(specsForChecking.contains(advice.mopSpec)){
+					if(advices.size() > 1){
+						ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
+					}
+
+					ret += "if (" + activatorsManager.getActivator(advice.mopSpec) + ") {\n";
+				} else {
+					if(advices.size() > 1){
+						ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
+						ret += "{\n";
+					}
 				}
 				
 				if (Main.statistics) {
@@ -191,9 +208,13 @@ public class AdviceAndPointCut {
 				}
 	
 				ret += advice;
-				
-				if(advices.size() > 1){
+
+				if(specsForChecking.contains(advice.mopSpec)){
 					ret += "}\n";
+				} else {
+					if(advices.size() > 1){
+						ret += "}\n";
+					}
 				}
 			}
 			
@@ -256,6 +277,9 @@ public class AdviceAndPointCut {
 
 		ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
 
+		if (aroundLocalDecl != null)
+			ret += aroundLocalDecl;
+		
 		if(Main.inline && !isAround){
 			ret += inlineFuncName + "(" + inlineParameters.parameterString();
 			if(hasThisJoinPoint){
@@ -267,6 +291,9 @@ public class AdviceAndPointCut {
 		} else {
 			ret += adviceBody();
 		}
+
+		if (aroundAdviceReturn != null)
+			ret += aroundAdviceReturn;
 
 		ret += "}\n";
 

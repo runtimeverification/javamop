@@ -13,6 +13,7 @@ import javamop.output.MOPJavaCodeNoNewLine;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
@@ -72,6 +73,7 @@ public class BaseMonitor extends Monitor {
 		this.specParam = mopSpec.getParameters();
 
 		if (isOutermost) {
+			varInOutermostMonitor = new VarInOutermostMonitor(name, mopSpec, mopSpec.getEvents());
 			monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
 		}
 
@@ -140,6 +142,13 @@ public class BaseMonitor extends Monitor {
 				break;
 			}
 		}
+	}
+
+	public void setRefTrees(HashMap<String, RefTree> refTrees){
+		this.refTrees = refTrees;
+		
+		if(monitorTermination != null)
+			monitorTermination.setRefTrees(refTrees);
 	}
 
 	public MOPVariable getOutermostName() {
@@ -358,6 +367,9 @@ public class BaseMonitor extends Monitor {
 		if (isOutermost)
 			ret += " extends javamoprt.MOPMonitor";
 		ret += " implements Cloneable, javamoprt.MOPObject {\n";
+		
+		if (isOutermost && varInOutermostMonitor != null)
+			ret += varInOutermostMonitor;
 
 		// clone()
 		ret += "public Object clone() {\n";

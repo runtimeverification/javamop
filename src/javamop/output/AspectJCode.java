@@ -4,7 +4,8 @@ import java.util.HashMap;
 
 import javamop.MOPException;
 import javamop.output.combinedaspect.CombinedAspect;
-import javamop.output.monitor.WrapperMonitor;
+import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
+import javamop.output.monitor.SuffixMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -16,7 +17,7 @@ public class AspectJCode {
 	Package packageDecl;
 	Imports imports;
 	HashMap<JavaMOPSpec, MonitorSet> monitorSets = new HashMap<JavaMOPSpec, MonitorSet>();
-	HashMap<JavaMOPSpec, WrapperMonitor> monitors = new HashMap<JavaMOPSpec, WrapperMonitor>();
+	HashMap<JavaMOPSpec, SuffixMonitor> monitors = new HashMap<JavaMOPSpec, SuffixMonitor>();
 	//Aspect aspect;
 	CombinedAspect aspect;
 	HashMap<JavaMOPSpec, EnableSet> enableSets = new HashMap<JavaMOPSpec, EnableSet>();
@@ -44,19 +45,22 @@ public class AspectJCode {
 			enableSets.put(mopSpec, enableSet);
 			coenableSets.put(mopSpec, optimizedCoenableSet);
 
-			WrapperMonitor monitor = new WrapperMonitor(name, mopSpec, optimizedCoenableSet, true);
+			SuffixMonitor monitor = new SuffixMonitor(name, mopSpec, optimizedCoenableSet, true);
 
 			monitors.put(mopSpec, monitor);
 
-			if(mopSpec.isGeneral())
-				monitorSets.put(mopSpec, new MonitorSet(name, mopSpec, monitor, true));
-			else
-				monitorSets.put(mopSpec, new MonitorSet(name, mopSpec, monitor, false));
+			monitorSets.put(mopSpec, new MonitorSet(name, mopSpec, monitor));
 
 		}
 
 		//aspect = new Aspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
 		aspect = new CombinedAspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
+		
+		HashMap<String, RefTree> refTrees = aspect.indexingTreeManager.refTrees;
+		
+		for(SuffixMonitor monitor : monitors.values()){
+			monitor.setRefTrees(refTrees);
+		}
 		
 		if(versionedStack)
 			systemAspect = new SystemAspect(name); 
@@ -73,7 +77,7 @@ public class AspectJCode {
 			ret += monitorSet;
 		ret += "\n";
 
-		for (WrapperMonitor monitor : this.monitors.values())
+		for (SuffixMonitor monitor : this.monitors.values())
 			ret += monitor;
 		ret += "\n";
 

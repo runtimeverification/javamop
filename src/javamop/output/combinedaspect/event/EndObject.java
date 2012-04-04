@@ -8,10 +8,9 @@ import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
 import javamop.output.combinedaspect.event.advice.GeneralAdviceBody;
-import javamop.output.combinedaspect.event.advice.SpecialAdviceBody;
 import javamop.output.combinedaspect.indexingtree.IndexingDecl;
 import javamop.output.combinedaspect.indexingtree.IndexingTree;
-import javamop.output.monitor.WrapperMonitor;
+import javamop.output.monitor.SuffixMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -23,7 +22,7 @@ public class EndObject {
 	JavaMOPSpec mopSpec;
 	EventDefinition event;
 	MonitorSet monitorSet;
-	WrapperMonitor monitorClass;
+	SuffixMonitor monitorClass;
 	IndexingDecl indexingDecl;
 	HashMap<MOPParameters, IndexingTree> indexingTrees;
 	GlobalLock globalLock;
@@ -67,10 +66,7 @@ public class EndObject {
 				this.indexingTree = indexingTrees.get(params);
 		}
 		
-		if (mopSpec.isGeneral())
-			this.eventBody = new GeneralAdviceBody(mopSpec, event, combinedAspect);
-		else
-			this.eventBody = new SpecialAdviceBody(mopSpec, event, combinedAspect);
+		this.eventBody = new GeneralAdviceBody(mopSpec, event, combinedAspect);
 	}
 
 	public String printDecl() {

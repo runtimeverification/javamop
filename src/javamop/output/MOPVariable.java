@@ -15,6 +15,10 @@ public class MOPVariable {
 		this.varName = varName;
 	}
 
+	public String getVarName(){
+		return varName;
+	}
+	
 	public String toString(){
 		if(pred != null)
 			return pred.toString() + "." + MOPNameSpace.getMOPVar(varName);

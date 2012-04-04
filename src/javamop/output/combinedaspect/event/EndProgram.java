@@ -7,7 +7,6 @@ import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
 import javamop.output.combinedaspect.event.advice.GeneralAdviceBody;
-import javamop.output.combinedaspect.event.advice.SpecialAdviceBody;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
@@ -25,10 +24,7 @@ public class EndProgram {
 		if (!event.isEndProgram())
 			throw new MOPException("EndProgram should be defined only for an endProgram pointcut.");
 
-		if (mopSpec.isGeneral())
-			this.eventBodies.add(new GeneralAdviceBody(mopSpec, event, combinedAspect));
-		else
-			this.eventBodies.add(new SpecialAdviceBody(mopSpec, event, combinedAspect));
+		this.eventBodies.add(new GeneralAdviceBody(mopSpec, event, combinedAspect));
 	}
 
 	public void registerEndThreadEvents(ArrayList<EndThread> endThreadEvents) {

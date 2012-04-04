@@ -10,7 +10,7 @@ import javamop.output.EnableSet;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
-import javamop.output.monitor.WrapperMonitor;
+import javamop.output.monitor.SuffixMonitor;
 import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -26,7 +26,7 @@ public class EventManager {
 	public EndProgram endProgramEvent = null;
 
 	public HashMap<JavaMOPSpec, MonitorSet> monitorSets;
-	public HashMap<JavaMOPSpec, WrapperMonitor> monitors;
+	public HashMap<JavaMOPSpec, SuffixMonitor> monitors;
 	public HashMap<JavaMOPSpec, EnableSet> enableSets;
 	
 	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
@@ -105,7 +105,7 @@ public class EventManager {
 		return monitorSets.get(spec);
 	}
 
-	public WrapperMonitor getMonitor(JavaMOPSpec spec) {
+	public SuffixMonitor getMonitor(JavaMOPSpec spec) {
 		return monitors.get(spec);
 	}
 

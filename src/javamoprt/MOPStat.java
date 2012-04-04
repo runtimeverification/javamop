@@ -1,5 +1,8 @@
 package javamoprt;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class MOPStat implements MOPObject{
 	static public int created_monitors = 0;
 	static public int terminated_montors = 0;
@@ -19,6 +22,20 @@ public class MOPStat implements MOPObject{
 	static public MOPTimer timer3 = new MOPTimer();
 	static public MOPTimer timer4 = new MOPTimer();
 	static public MOPTimer timer5 = new MOPTimer();
-	
 
+	
+	static public long point1 = 0;
+	static public long point2 = 0;
+	static public long point3 = 0;
+	static public long point4 = 0;
+	static public long point5 = 0;
+	static public long point6 = 0;
+
+	
+	static public HashSet<String> locations = new HashSet<String>();
+	static public ArrayList<Boolean> idSet = new ArrayList<Boolean>();
+	
+	
+	
+	
 }

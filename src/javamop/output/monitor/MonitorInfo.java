@@ -19,10 +19,6 @@ public class MonitorInfo {
 	}
 
 	public String newInfo(MOPVariable monitorVar, MOPParameters vars) {
-		return newInfo(monitorVar.toString(), vars);
-	}
-
-	public String newInfo(String monitorVar, MOPParameters vars) {
 		String ret = "";
 
 		ret += monitorVar + "." + monitorInfo + " = " + "new javamoprt.MOPMonitorInfo();\n";
@@ -84,7 +80,7 @@ public class MonitorInfo {
 		return ret;
 	}
 
-	public String expand(String monitorVar, SuffixMonitor suffixMonitor, MOPParameters vars) {
+	public String expand(MOPVariable monitorVar, SuffixMonitor suffixMonitor, MOPParameters vars) {
 		String ret = "";
 		MOPVariable monitor = new MOPVariable("monitor");
 		MOPVariable monitorList = new MOPVariable("monitorList");

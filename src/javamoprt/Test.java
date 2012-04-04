@@ -470,7 +470,7 @@ public class Test {
 		// testMOPRefSet();
 		// testApacheSet();
 
-		memoryClean();
+		//memoryClean();
 		// testMOPRefMap();
 		// testApacheMap();
 		// testApacheMap2();
@@ -498,6 +498,10 @@ public class Test {
 //
 //		System.out.println("== size of ReferenceIdentityMap ==");
 //		System.out.println(sizeof(new ReferenceIdentityMap(AbstractReferenceMap.WEAK, AbstractReferenceMap.WEAK, 4096, 0.75f, true)) + "bytes");
+
+		
+		
+		
 
 		System.exit(0);
 	}
