@@ -326,7 +326,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 			while (entry != null) {
 				MOPHashAllEntry next = entry.next;
 
-				MOPAbstractMapSolo map = (MOPAbstractMapSolo) entry.map;
+				MOPAbstractMap map = (MOPAbstractMap) entry.map;
 				MOPSet set = (MOPSet) entry.set;
 				MOPMonitor monitor = (MOPMonitor) entry.node;
 
@@ -357,7 +357,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 			while (entry != null) {
 				MOPHashAllEntry next = entry.next;
 
-				MOPAbstractMapSolo map = (MOPAbstractMapSolo) entry.map;
+				MOPAbstractMap map = (MOPAbstractMap) entry.map;
 				MOPSet set = (MOPSet) entry.set;
 				MOPMonitor monitor = (MOPMonitor) entry.node;
 

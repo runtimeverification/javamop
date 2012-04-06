@@ -33,7 +33,7 @@ public class MOPMapCleaner extends Thread {
 			MOPHashEntry entry = map.data[i];
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
-				MOPAbstractMapSolo value = (MOPAbstractMapSolo) entry.value;
+				MOPAbstractMap value = (MOPAbstractMap) entry.value;
 				if (entry.key.get() == null) {
 					if (previous == null) {
 						map.data[i] = entry.next;
@@ -84,7 +84,7 @@ public class MOPMapCleaner extends Thread {
 			MOPHashEntry entry = map.data[i];
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
-				MOPAbstractMapSolo value = (MOPAbstractMapSolo) entry.value;
+				MOPAbstractMap value = (MOPAbstractMap) entry.value;
 				if (entry.key.get() == null) {
 					if (previous == null) {
 						map.data[i] = entry.next;

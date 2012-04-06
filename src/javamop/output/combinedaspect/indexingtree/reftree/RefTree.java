@@ -31,6 +31,8 @@ public class RefTree {
 
 			typeStr = typeStr.substring(0, firstBracket);
 
+			typeStr += "Array";
+			
 			if (dim > 1)
 				typeStr += dim;
 		}

@@ -298,7 +298,7 @@ public class MOPBasicRefMapOfMap extends MOPMapOfMap implements MOPRefMap {
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
 
-				MOPAbstractMapSolo map = (MOPAbstractMapSolo) entry.value;
+				MOPAbstractMap map = (MOPAbstractMap) entry.value;
 
 				if (map != null)
 					map.endObject(idnum);
@@ -330,7 +330,7 @@ public class MOPBasicRefMapOfMap extends MOPMapOfMap implements MOPRefMap {
 						previous.next = entry.next;
 					}
 
-					MOPAbstractMapSolo map = (MOPAbstractMapSolo) entry.value;
+					MOPAbstractMap map = (MOPAbstractMap) entry.value;
 
 					if (map != null)
 						map.endObject(idnum);
@@ -361,7 +361,7 @@ public class MOPBasicRefMapOfMap extends MOPMapOfMap implements MOPRefMap {
 						previous.next = entry.next;
 					}
 
-					MOPAbstractMapSolo map = (MOPAbstractMapSolo) entry.value;
+					MOPAbstractMap map = (MOPAbstractMap) entry.value;
 
 					if (map != null)
 						map.endObject(idnum);
