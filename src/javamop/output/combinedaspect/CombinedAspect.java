@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.EnableSet;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.event.EventManager;
@@ -171,6 +172,20 @@ public class CombinedAspect {
 
 		ret += this.statManager.advice();
 
+		if(Main.dacapo2){
+			ret += "after () : (execution(* avrora.Main.main(..)) || call(* dacapo.Benchmark.run(..)) || call(* org.dacapo.harness.Benchmark.run(..))) {\n";
+
+			//ret += "System.err.println(\"reset \" + Thread.currentThread().getName());\n";
+			
+			ret += this.timestampManager.reset();
+
+			ret += this.activatorsManager.reset();
+
+			ret += this.indexingTreeManager.reset();
+			
+			ret += "}\n";
+		}
+		
 		ret += "}\n";
 
 		return ret;

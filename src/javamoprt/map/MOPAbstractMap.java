@@ -13,12 +13,12 @@ public abstract class MOPAbstractMap extends MOPMap {
 	protected static final int DEFAULT_CLEANUP_PIECE = DEFAULT_CAPACITY / DEFAULT_CLEANUP_FACTOR;
 	protected static final int DEFAULT_THREADED_CLEANUP_THREASHOLD = 1 << 10;
 
-	protected int cleanup_piece = 5;
+	protected static final int cleanup_piece = 5;
 
 	public int idnum;
 
-	protected long addedMappings;
-	protected long deletedMappings;
+	public long addedMappings;
+	public long deletedMappings;
 
 	protected int datathreshold;
 

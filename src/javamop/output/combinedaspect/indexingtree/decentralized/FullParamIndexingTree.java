@@ -289,4 +289,30 @@ public class FullParamIndexingTree extends IndexingTree {
 
 		return ret;
 	}
+	
+	public String reset() {
+		String ret = "";
+
+		if(parentTree == null){
+			if(isGeneral){
+				if (queryParam.size() == 1) {
+					ret += name + " = null;\n";
+				} else {
+					ret += name + " = null;\n";
+				}
+			} else {
+				if (queryParam.size() == 1) {
+					ret += name + " = null;\n";
+				} else {
+					ret += name + " = null;\n";
+				}
+			}
+		}
+		
+		if (cache != null)
+			ret += cache.reset();
+
+		return ret;
+	}
+
 }

@@ -35,6 +35,7 @@ public class Main {
 	public static boolean noopt1 = false;
 	public static boolean toJavaLib = false;
 	public static boolean statistics = false;
+	public static boolean statistics2 = false;
 	public static String aspectname = null;
 	public static boolean isJarFile = false;
 	public static String jarFilePath = null;
@@ -45,6 +46,7 @@ public class Main {
 	public static int logLevel = NONE;
 
 	public static boolean dacapo = false;
+	public static boolean dacapo2 = false;
 	public static boolean silent = false;
 	public static boolean empty_advicebody = false;
 
@@ -380,6 +382,8 @@ public class Main {
 				Main.noopt1 = true;
 			} else if (args[i].compareTo("-s") == 0 || args[i].compareTo("-statistics") == 0) {
 				Main.statistics = true;
+			} else if (args[i].compareTo("-s2") == 0 || args[i].compareTo("-statistics2") == 0) {
+				Main.statistics2 = true;
 			} else if (args[i].compareTo("-n") == 0 || args[i].compareTo("-aspectname") == 0) {
 				i++;
 				Main.aspectname = args[i];
@@ -391,6 +395,8 @@ public class Main {
 					Main.logLevel = Main.EVENTS;
 			} else if (args[i].compareTo("-dacapo") == 0) {
 				Main.dacapo = true;
+			} else if (args[i].compareTo("-dacapo2") == 0) {
+				Main.dacapo2 = true;
 			} else if (args[i].compareTo("-silent") == 0) {
 				Main.silent = true;
 			} else if (args[i].compareTo("-merge") == 0) {

@@ -346,4 +346,43 @@ public class FullParamIndexingTree extends IndexingTree {
 
 		return ret;
 	}
+	
+	public String reset() {
+		String ret = "";
+
+		if(parentTree == null){
+			if (perthread) {
+			} else {
+				//ret += "System.err.println(\""+ name + " size: \" + (" + name + ".addedMappings - " + name + ".deletedMappings" + "));\n";
+				
+				if(parasiticRefTree == null){
+					if(isGeneral){
+						if (queryParam.size() == 1) {
+							ret += name + " = new javamoprt.map.MOPMapOfMonitor(" + fullParam.getIdnum(queryParam.get(0)) + ");\n";
+						} else {
+							ret += name + " = new javamoprt.map.MOPMapOfAll(" + fullParam.getIdnum(queryParam.get(0)) + ");\n";
+						}
+					} else {
+						if (queryParam.size() == 1) {
+							ret += name + " = new javamoprt.map.MOPMapOfMonitor(" + fullParam.getIdnum(queryParam.get(0)) + ");\n";
+						} else {
+							ret += name + " = new javamoprt.map.MOPMapOfMapSet(" + fullParam.getIdnum(queryParam.get(0)) + ");\n";
+						}
+					}
+				} else {
+					if(parasiticRefTree.generalProperties.size() <= 1){
+						ret += name + " = new " + getRefTreeType() + "(" + fullParam.getIdnum(queryParam.get(0)) + ");\n";
+					} else {
+						ret += name + " = new " + getRefTreeType() + "(" + fullParam.getIdnum(queryParam.get(0)) + ", " + parasiticRefTree.generalProperties.size() + ");\n";
+					}
+				}
+			}
+		}
+		
+		if (cache != null)
+			ret += cache.reset();
+
+		return ret;
+	}
+
 }

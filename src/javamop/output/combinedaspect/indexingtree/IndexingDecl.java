@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.EnableSet;
 import javamop.output.combinedaspect.indexingtree.centralized.CentralizedIndexingTree;
 import javamop.output.combinedaspect.indexingtree.decentralized.DecentralizedIndexingTree;
@@ -107,31 +108,6 @@ public class IndexingDecl {
 					IndexingTree indexingTree = CentralizedIndexingTree.defineIndexingTree(mopSpec.getName(), param, null, specParam, monitorSet, monitor, refTrees,
 							mopSpec.isPerThread(), mopSpec.isGeneral());
 					indexingTrees.put(param, indexingTree);
-
-					if (param.size() == 1 && !mopSpec.isPerThread()) {
-						MOPParameter p = param.get(0);
-						RefTree refTree = refTrees.get(p.getType().toString());
-
-						if (refTree.hostIndexingTree == null) {
-							refTree.setHost(indexingTree);
-							indexingTree.parasiticRefTree = refTree;
-						}
-					}
-				}
-			}
-			for (MOPParameters param : indexingParameterSet) {
-				if (param.size() != 1 || this.endObjectParameters.getParam(param.get(0).getName()) != null) {
-					IndexingTree indexingTree = indexingTrees.get(param);
-
-					if (param.size() > 1 && !mopSpec.isPerThread()) {
-						MOPParameter p = param.get(0);
-						RefTree refTree = refTrees.get(p.getType().toString());
-
-						if (refTree.hostIndexingTree == null) {
-							refTree.setHost(indexingTree);
-							indexingTree.parasiticRefTree = refTree;
-						}
-					}
 				}
 			}
 			
@@ -143,6 +119,8 @@ public class IndexingDecl {
 			}
 
 			combineCentralIndexingTrees();
+			
+			combineRefTreesIntoIndexingTrees();
 		} else {
 
 			/* TODO: Decentralized RefTree which does not require any mapping. */
@@ -223,6 +201,31 @@ public class IndexingDecl {
 			}
 		}
 	}
+	
+	protected void combineRefTreesIntoIndexingTrees(){
+		if(mopSpec.isPerThread())
+			return;
+		
+		if(mopSpec.isGeneral())
+			return;
+		
+		for (MOPParameters param : indexingTrees.keySet()) {
+			if (param.size() == 1 && this.endObjectParameters.getParam(param.get(0).getName()) != null)
+				continue;
+		
+			IndexingTree indexingTree = indexingTrees.get(param);
+			
+			if (indexingTree.parentTree == null && param.size() == 1) {
+				MOPParameter p = param.get(0);
+				RefTree refTree = refTrees.get(p.getType().toString());
+				
+				if (refTree.generalProperties.size() == 0 && refTree.hostIndexingTree == null) {
+					refTree.setHost(indexingTree);
+					indexingTree.parasiticRefTree = refTree;
+				}
+			}
+		}
+	}
 
 	public String toString() {
 		String ret = "";
@@ -238,4 +241,20 @@ public class IndexingDecl {
 		return ret;
 	}
 
+	public String reset() {
+		String ret = "";
+
+		for (IndexingTree indexingTree : indexingTrees.values()) {
+			ret += indexingTree.reset();
+		}
+
+		for (IndexingTree indexingTree : indexingTreesForCopy.values()) {
+			ret += indexingTree.reset();
+		}
+
+		return ret;
+	}
+
+	
+	
 }

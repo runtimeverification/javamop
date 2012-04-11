@@ -161,4 +161,21 @@ public class RefTree {
 		return ret;
 	}
 
+	public String reset() {
+		String ret = "";
+
+		ret += name;
+		ret += " = ";
+		if(hostIndexingTree == null){
+			if(generalProperties.size() > 1)
+				ret += "new " + getType() + "(" + generalProperties.size() + ");\n";
+			else
+				ret += "new " + getType() + "();\n";
+		} else {
+			ret += hostIndexingTree.getName() + ";\n";
+		}
+
+		return ret;
+	}
+
 }

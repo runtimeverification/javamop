@@ -100,4 +100,15 @@ public class OneFullParamIndexingTree extends IndexingTree {
 		return ret;
 	}
 
+	public String reset() {
+		String ret = "";
+
+		ret += firstKey.getType() + "." + name + " = null;\n";
+
+		if (cache != null)
+			ret += cache.reset();
+
+		return ret;
+	}
+
 }

@@ -57,7 +57,7 @@ public abstract class MOPAbstractMapSolo extends MOPAbstractMap {
 				Thread.yield();
 			}
 
-			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref, value);
+			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], keyref, value);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -76,7 +76,7 @@ public abstract class MOPAbstractMapSolo extends MOPAbstractMap {
 			int hashCode = keyref.hash;
 			int index = hashIndex(hashCode, data.length);
 
-			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref, value);
+			MOPHashEntry newentry = new MOPHashEntry(data[index], keyref, value);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -132,7 +132,7 @@ public abstract class MOPAbstractMapSolo extends MOPAbstractMap {
 				oldEntries[i] = null;
 				do {
 					MOPHashEntry next = entry.next;
-					int index = hashIndex(entry.hashCode, newCapacity);
+					int index = hashIndex(entry.key.hash, newCapacity);
 					entry.next = newEntries[index];
 					newEntries[index] = entry;
 					entry = next;

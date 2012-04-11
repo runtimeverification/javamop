@@ -209,4 +209,25 @@ public class NoParamIndexingTree extends IndexingTree {
 
 		return ret;
 	}
+	
+	public String reset() {
+		String ret = "";
+
+		if (perthread) {
+		} else {
+			if (isFullParam) {
+				ret += name + " = new " + monitorClass.getOutermostName() + "();\n";
+			} else {
+				//ret += "System.err.println(\""+ name + " size: \" + " + name + ".size" + ");\n";
+				
+				ret += name + " = new " + monitorSet.getName() + "();\n";
+				if (globalNode != null) {
+					ret += globalNode + " = null;\n";
+				}
+			}
+		}
+
+		return ret;
+	}
+
 }

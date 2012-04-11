@@ -5,8 +5,8 @@ import javamoprt.ref.MOPTagWeakReference;
 import javamoprt.ref.MOPWeakReference;
 
 public interface MOPRefMap {
-	static int ref_cleanup_piece = 5;
-	static int ref_locality_cache_size = 32;
+	static final int ref_cleanup_piece = 16;
+	static final int ref_locality_cache_size = 32;
 	
 	public MOPWeakReference getRef(Object key, int joinPointId);
 

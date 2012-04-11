@@ -36,5 +36,20 @@ public class TimestampManager {
 
 		return ret;
 	}
+	
+	public String reset() {
+		String ret = "";
+
+		if (timestamps.size() <= 0)
+			return ret;
+
+		for (MOPVariable timestamp : timestamps.values()) {
+			ret += timestamp + " = 1;\n";
+		}
+		ret += "\n";
+
+		return ret;
+	}
+
 
 }

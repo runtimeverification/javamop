@@ -28,8 +28,6 @@ public class IndexingTreeManager {
 
 			trees.put(spec, new IndexingDecl(spec, monitorSet, monitor, enableSet, refTrees));
 		}
-		
-		
 	}
 	
 	protected void getRefTrees(String name, List<JavaMOPSpec> specs) throws MOPException {
@@ -58,6 +56,22 @@ public class IndexingTreeManager {
 		if (trees.size() <= 0)
 			return ret;
 
+//		int count = 0;
+//		for (IndexingDecl indexDecl : trees.values()) {
+//			for(IndexingTree tree : indexDecl.indexingTrees.values()){
+//				//if(tree.parentTree == null && tree.queryParam.size() > 0)
+//				if(tree.queryParam.size() > 0)
+//					count++;
+//			}
+//			
+//			for(IndexingTree tree : indexDecl.indexingTreesForCopy.values()){
+//				//if(tree.parentTree == null && tree.queryParam.size() > 0)
+//				if(tree.queryParam.size() > 0)
+//					count++;
+//			}
+//		}
+//		System.out.println(count);
+
 		ret += "// Declarations for Indexing Trees \n";
 		for (IndexingDecl indexDecl : trees.values()) {
 			ret += indexDecl;
@@ -67,6 +81,25 @@ public class IndexingTreeManager {
 		ret += "// Trees for References\n";
 		for (RefTree refTree : refTrees.values()){
 			ret += refTree;
+		}
+		ret += "\n";
+
+		return ret;
+	}
+
+	public String reset() {
+		String ret = "";
+
+		if (trees.size() <= 0)
+			return ret;
+
+		for (IndexingDecl indexDecl : trees.values()) {
+			ret += indexDecl.reset();
+		}
+		ret += "\n";
+
+		for (RefTree refTree : refTrees.values()){
+			ret += refTree.reset();
 		}
 		ret += "\n";
 

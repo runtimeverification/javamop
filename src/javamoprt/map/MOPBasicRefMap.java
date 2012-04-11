@@ -121,7 +121,7 @@ public class MOPBasicRefMap extends MOPCleanable implements MOPRefMap {
 				Thread.yield();
 			}
 
-			MOPHashRefEntry newentry = new MOPHashRefEntry(data[putIndex], hashCode, keyref);
+			MOPHashRefEntry newentry = new MOPHashRefEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -137,7 +137,7 @@ public class MOPBasicRefMap extends MOPCleanable implements MOPRefMap {
 				}
 			}
 		} else {
-			MOPHashRefEntry newentry = new MOPHashRefEntry(data[index], hashCode, keyref);
+			MOPHashRefEntry newentry = new MOPHashRefEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -248,7 +248,7 @@ public class MOPBasicRefMap extends MOPCleanable implements MOPRefMap {
 				Thread.yield();
 			}
 
-			MOPHashRefEntry newentry = new MOPHashRefEntry(data[putIndex], hashCode, keyref);
+			MOPHashRefEntry newentry = new MOPHashRefEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -264,7 +264,7 @@ public class MOPBasicRefMap extends MOPCleanable implements MOPRefMap {
 				}
 			}
 		} else {
-			MOPHashRefEntry newentry = new MOPHashRefEntry(data[index], hashCode, keyref);
+			MOPHashRefEntry newentry = new MOPHashRefEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -420,7 +420,7 @@ public class MOPBasicRefMap extends MOPCleanable implements MOPRefMap {
 				oldEntries[i] = null;
 				do {
 					MOPHashRefEntry next = entry.next;
-					int index = hashIndex(entry.hashCode, newCapacity);
+					int index = hashIndex(entry.key.hash, newCapacity);
 					entry.next = newEntries[index];
 					newEntries[index] = entry;
 					entry = next;

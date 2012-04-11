@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 
+import javamoprt.map.MOPMapOfMap;
+import javamoprt.map.MOPMapOfMonitor;
 import javamoprt.map.hashentry.MOPHashEntry;
 
 class StopWatch {
@@ -500,9 +502,9 @@ public class Test {
 //		System.out.println("== size of ReferenceIdentityMap ==");
 //		System.out.println(sizeof(new ReferenceIdentityMap(AbstractReferenceMap.WEAK, AbstractReferenceMap.WEAK, 4096, 0.75f, true)) + "bytes");
 
-		System.out.println(sizeof(new MOPHashEntry(null, 0, null)));
-		
-		
+		System.out.println(sizeof(new MOPMapOfMap(0)));
+		System.out.println(sizeof(new MOPMapOfMonitor(0)));
+		System.out.println(sizeof(new MOPHashEntry(null, null)));
 
 		System.exit(0);
 	}

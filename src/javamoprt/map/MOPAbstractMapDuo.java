@@ -89,7 +89,7 @@ public abstract class MOPAbstractMapDuo extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], keyref);
 			newentry.value1 = value;
 			data[putIndex] = newentry;
 			addedMappings++;
@@ -120,7 +120,7 @@ public abstract class MOPAbstractMapDuo extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], keyref);
 			newentry.value1 = value;
 			data[index] = newentry;
 			addedMappings++;
@@ -168,7 +168,7 @@ public abstract class MOPAbstractMapDuo extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], keyref);
 			newentry.value2 = value;
 			data[putIndex] = newentry;
 			addedMappings++;
@@ -199,7 +199,7 @@ public abstract class MOPAbstractMapDuo extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], keyref);
 			newentry.value2 = value;
 			data[index] = newentry;
 			addedMappings++;
@@ -256,7 +256,7 @@ public abstract class MOPAbstractMapDuo extends MOPAbstractMap {
 				oldEntries[i] = null;
 				do {
 					MOPHashDualEntry next = entry.next;
-					int index = hashIndex(entry.hashCode, newCapacity);
+					int index = hashIndex(entry.key.hash, newCapacity);
 					entry.next = newEntries[index];
 					newEntries[index] = entry;
 					entry = next;

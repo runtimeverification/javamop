@@ -83,7 +83,7 @@ public class MOPBasicRefMapOfAll extends MOPMapOfAll implements MOPRefMap {
 				Thread.yield();
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -99,7 +99,7 @@ public class MOPBasicRefMapOfAll extends MOPMapOfAll implements MOPRefMap {
 				}
 			}
 		} else {
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -213,7 +213,7 @@ public class MOPBasicRefMapOfAll extends MOPMapOfAll implements MOPRefMap {
 				Thread.yield();
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -229,7 +229,7 @@ public class MOPBasicRefMapOfAll extends MOPMapOfAll implements MOPRefMap {
 				}
 			}
 		} else {
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 

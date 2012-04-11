@@ -97,7 +97,9 @@ public abstract class IndexingTree {
 	public abstract String getRefTreeType();
 
 	public abstract String toString();
-	
+
+	public abstract String reset();
+
 	////////////////////////
 	/*
 	public abstract String retrieveTree();

@@ -430,4 +430,26 @@ public class PartialParamIndexingTree extends IndexingTree {
 		return ret;
 	}
 
+	public String reset() {
+		String ret = "";
+
+		if(isGeneral){
+			if (queryParam.size() == 2) {
+				ret += firstKey.getType() + "." + name + " = null;\n";
+			} else {
+				ret += firstKey.getType() + "." + name + " = null;\n";
+			}
+		} else {
+			if (queryParam.size() == 2) {
+				ret += firstKey.getType() + "." + name + " = null;\n";
+			} else {
+				ret += firstKey.getType() + "." + name + " = null;\n";
+			}
+		}
+
+		if (cache != null)
+			ret += cache.reset();
+
+		return ret;
+	}
 }

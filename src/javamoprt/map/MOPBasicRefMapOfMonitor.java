@@ -82,7 +82,7 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 				Thread.yield();
 			}
 
-			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref);
+			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -98,7 +98,7 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 				}
 			}
 		} else {
-			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref);
+			MOPHashEntry newentry = new MOPHashEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -212,7 +212,7 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 				Thread.yield();
 			}
 
-			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], hashCode, keyref);
+			MOPHashEntry newentry = new MOPHashEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -228,7 +228,7 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 				}
 			}
 		} else {
-			MOPHashEntry newentry = new MOPHashEntry(data[index], hashCode, keyref);
+			MOPHashEntry newentry = new MOPHashEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -324,6 +324,8 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
 
+				MOPMonitor monitor = (MOPMonitor) entry.value;
+
 				if (entry.key.get() == null) {
 					if (previous == null) {
 						data[cleancursor] = entry.next;
@@ -331,14 +333,16 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 						previous.next = entry.next;
 					}
 
-					MOPMonitor monitor = (MOPMonitor) entry.value;
-
 					if (monitor != null && !monitor.MOP_terminated)
 						monitor.endObject(idnum);
 
 					entry.next = null;
 					this.deletedMappings++;
 				} else {
+					if (monitor != null && monitor.MOP_terminated){
+						entry.value = null;
+					}
+					
 					previous = entry;
 				}
 				entry = next;
@@ -355,6 +359,8 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 			while (entry != null) {
 				MOPHashEntry next = entry.next;
 
+				MOPMonitor monitor = (MOPMonitor) entry.value;
+				
 				if (entry.key.get() == null) {
 					if (previous == null) {
 						data[i] = entry.next;
@@ -362,14 +368,16 @@ public class MOPBasicRefMapOfMonitor extends MOPMapOfMonitor implements MOPRefMa
 						previous.next = entry.next;
 					}
 
-					MOPMonitor monitor = (MOPMonitor) entry.value;
-
 					if (monitor != null && !monitor.MOP_terminated)
 						monitor.endObject(idnum);
 
 					entry.next = null;
 					this.deletedMappings++;
 				} else {
+					if (monitor != null && monitor.MOP_terminated){
+						entry.value = null;
+					}
+					
 					previous = entry;
 				}
 				entry = next;

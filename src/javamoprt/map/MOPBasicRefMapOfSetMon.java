@@ -83,7 +83,7 @@ public class MOPBasicRefMapOfSetMon extends MOPMapOfSetMon implements MOPRefMap 
 				Thread.yield();
 			}
 
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -99,7 +99,7 @@ public class MOPBasicRefMapOfSetMon extends MOPMapOfSetMon implements MOPRefMap 
 				}
 			}
 		} else {
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 
@@ -213,7 +213,7 @@ public class MOPBasicRefMapOfSetMon extends MOPMapOfSetMon implements MOPRefMap 
 				Thread.yield();
 			}
 
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[putIndex], keyref);
 			data[putIndex] = newentry;
 			addedMappings++;
 
@@ -229,7 +229,7 @@ public class MOPBasicRefMapOfSetMon extends MOPMapOfSetMon implements MOPRefMap 
 				}
 			}
 		} else {
-			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], hashCode, keyref);
+			MOPHashDualEntry newentry = new MOPHashDualEntry(data[index], keyref);
 			data[index] = newentry;
 			addedMappings++;
 

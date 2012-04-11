@@ -30,6 +30,15 @@ public class MOPStat implements MOPObject{
 	static public long point4 = 0;
 	static public long point5 = 0;
 	static public long point6 = 0;
+	static public long point7 = 0;
+	static public long point8 = 0;
+	static public long point9 = 0;
+	static public long point10 = 0;
+	static public long point11 = 0;
+	static public long point12 = 0;
+	static public long point13 = 0;
+	static public long point14 = 0;
+	static public long point15 = 0;
 
 	
 	static public HashSet<String> locations = new HashSet<String>();

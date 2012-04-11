@@ -113,7 +113,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], keyref);
 			newentry.map = map;
 			data[putIndex] = newentry;
 			addedMappings++;
@@ -144,7 +144,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], keyref);
 			newentry.map = map;
 			data[index] = newentry;
 			addedMappings++;
@@ -193,7 +193,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], keyref);
 			newentry.set = set;
 			data[putIndex] = newentry;
 			addedMappings++;
@@ -224,7 +224,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], keyref);
 			newentry.set = set;
 			data[index] = newentry;
 			addedMappings++;
@@ -271,7 +271,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[putIndex], keyref);
 			newentry.node = node;
 			data[putIndex] = newentry;
 			addedMappings++;
@@ -301,7 +301,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				entry = entry.next;
 			}
 
-			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], hashCode, keyref);
+			MOPHashAllEntry newentry = new MOPHashAllEntry(data[index], keyref);
 			newentry.node = node;
 			data[index] = newentry;
 			addedMappings++;
@@ -497,7 +497,7 @@ public class MOPMapOfAll extends MOPAbstractMap {
 				oldEntries[i] = null;
 				do {
 					MOPHashAllEntry next = entry.next;
-					int index = hashIndex(entry.hashCode, newCapacity);
+					int index = hashIndex(entry.key.hash, newCapacity);
 					entry.next = newEntries[index];
 					newEntries[index] = entry;
 					entry = next;

@@ -220,4 +220,49 @@ public class IndexingCache {
 		return ret;
 	}
 
+	public String reset() {
+		String ret = "";
+
+		if (perthread) {
+			for (MOPParameter p : param) {
+				MOPVariable key = keys.get(p.getName());
+
+				ret += key + " = new ThreadLocal() {\n";
+				ret += "protected " + getKeyType(p) + " initialValue(){\n";
+				ret += "return " + getTreeType(p) + ".NULRef;\n";
+				ret += "}\n";
+				ret += "};\n";
+			}
+			
+			if (hasSet) {
+				ret += set + " = new ThreadLocal() {\n";
+				ret += "protected " + setType + " initialValue(){\n";
+				ret += "return null;\n";
+				ret += "}\n";
+				ret += "};\n";
+			}
+
+			if (hasNode) {
+				ret += node + " = new ThreadLocal() {\n";
+				ret += "protected " + nodeType + " initialValue(){\n";
+				ret += "return null;\n";
+				ret += "}\n";
+				ret += "};\n";
+			}
+		} else {
+			for (MOPParameter p : param) {
+				MOPVariable key = keys.get(p.getName());
+				ret += key + " = " + getTreeType(p) + ".NULRef;\n";
+			}
+			if (hasSet) {
+				ret += set + " = null;\n";
+			}
+			if (hasNode) {
+				ret += node + " = null;\n";
+			}
+		}
+
+		return ret;
+	}
+
 }

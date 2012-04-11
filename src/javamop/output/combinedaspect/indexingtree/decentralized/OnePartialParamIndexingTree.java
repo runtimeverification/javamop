@@ -153,4 +153,18 @@ public class OnePartialParamIndexingTree extends IndexingTree {
 
 		return ret;
 	}
+
+	public String reset() {
+		String ret = "";
+
+		ret += firstKey.getType() + "." + name + " = null;\n";
+		if (oneParamNode != null) {
+			ret += firstKey.getType() + "." + oneParamNode + " = null;\n";
+		}
+
+		if (cache != null)
+			ret += cache.reset();
+
+		return ret;
+	}
 }

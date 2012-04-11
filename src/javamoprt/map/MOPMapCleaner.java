@@ -545,7 +545,7 @@ public class MOPMapCleaner extends Thread {
 						oldEntries[i] = null;
 						do {
 							MOPHashEntry next = entry.next;
-							int index = map.hashIndex(entry.hashCode, newCapacity);
+							int index = map.hashIndex(entry.key.hash, newCapacity);
 							entry.next = newEntries[index];
 							newEntries[index] = entry;
 							entry = next;
@@ -584,7 +584,7 @@ public class MOPMapCleaner extends Thread {
 						oldEntries[i] = null;
 						do {
 							MOPHashDualEntry next = entry.next;
-							int index = map.hashIndex(entry.hashCode, newCapacity);
+							int index = map.hashIndex(entry.key.hash, newCapacity);
 							entry.next = newEntries[index];
 							newEntries[index] = entry;
 							entry = next;
@@ -623,7 +623,7 @@ public class MOPMapCleaner extends Thread {
 						oldEntries[i] = null;
 						do {
 							MOPHashRefEntry next = entry.next;
-							int index = map.hashIndex(entry.hashCode, newCapacity);
+							int index = map.hashIndex(entry.key.hash, newCapacity);
 							entry.next = newEntries[index];
 							newEntries[index] = entry;
 							entry = next;
