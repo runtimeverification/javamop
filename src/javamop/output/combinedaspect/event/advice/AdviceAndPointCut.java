@@ -182,6 +182,8 @@ public class AdviceAndPointCut {
 						
 				AdviceBody advice = advices.get(event);
 
+				ret += this.statManager.incEvent(advice.mopSpec, event);
+				
 				if(specsForChecking.contains(advice.mopSpec)){
 					if(advices.size() > 1){
 						ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";

@@ -140,10 +140,14 @@ public class CombinedAspect {
 	public String toString() {
 		String ret = "";
 
+		ret += this.statManager.statClass();
+		
 		ret += "public aspect " + this.name + " implements javamoprt.MOPObject {\n";
 
 		ret += "javamoprt.map.MOPMapManager " + mapManager + ";\n";
 
+		ret += this.statManager.fieldDecl2();
+		
 		// constructor
 		ret += "public " + this.name + "(){\n";
 
@@ -151,6 +155,8 @@ public class CombinedAspect {
 		
 		ret += mapManager + " = " + "new javamoprt.map.MOPMapManager();\n";
 		ret += mapManager + ".start();\n";
+
+		ret += this.statManager.constructor();
 		
 		//ret += constructor();
 		//ret += initCache();

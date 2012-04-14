@@ -7,6 +7,7 @@ import java.util.HashSet;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
+import javamop.output.combinedaspect.MOPStatManager;
 import javamop.output.combinedaspect.indexingtree.IndexingCache;
 import javamop.output.combinedaspect.indexingtree.IndexingTree;
 import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
@@ -18,6 +19,8 @@ import javamop.parser.ast.mopspec.MOPParameterPair;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public class GeneralAdviceBody extends AdviceBody {
+	public MOPStatManager statManager;
+	
 	public IndexingTree indexingTree;
 	public IndexingCache cache = null;
 
@@ -57,6 +60,8 @@ public class GeneralAdviceBody extends AdviceBody {
 		this.paramPairsForCopy = indexingDecl.getCopyParamForEvent(event);
 		
 		this.doDisable = doDisable();
+		
+		this.statManager = combinedAspect.statManager;
 	}
 
 	public boolean doDisable(){
@@ -261,6 +266,8 @@ public class GeneralAdviceBody extends AdviceBody {
 
 					ret += "if (" + timeCheck + ") {\n";
 					{
+						ret += statManager.incMonitor(mopSpec);
+
 						ret += lastMonitor + " = " + "(" + monitorClass.getOutermostName() + ")" + origMonitor + ".clone();\n";
 
 						for (MOPParameter p : toParams) {
@@ -358,6 +365,8 @@ public class GeneralAdviceBody extends AdviceBody {
 
 		ret += "if (" + timeCheck + ") {\n";
 		{
+			ret += statManager.incMonitor(mopSpec);
+			
 			ret += mainMonitor + " = " + "(" + monitorClass.getOutermostName() + ")" + origMonitor + ".clone();\n";
 
 			for (MOPParameter p : toParams) {
@@ -569,6 +578,8 @@ public class GeneralAdviceBody extends AdviceBody {
 			return ret;
 
 		MOPVariable mainMonitor = localVars.get("mainMonitor");
+
+		ret += statManager.incMonitor(mopSpec);
 
 		ret += mainMonitor + " = new " + monitorClass.getOutermostName() + "();\n";
 		if (monitorInfo != null)
