@@ -7,6 +7,7 @@ import java.util.HashSet;
 import javamoprt.map.MOPMapOfMap;
 import javamoprt.map.MOPMapOfMonitor;
 import javamoprt.map.hashentry.MOPHashEntry;
+import javamoprt.ref.MOPWeakReference;
 
 class StopWatch {
 	protected long runTime;
@@ -505,6 +506,8 @@ public class Test {
 		System.out.println(sizeof(new MOPMapOfMap(0)));
 		System.out.println(sizeof(new MOPMapOfMonitor(0)));
 		System.out.println(sizeof(new MOPHashEntry(null, null)));
+
+		System.out.println(sizeof(new MOPWeakReference(null)));
 
 		System.exit(0);
 	}

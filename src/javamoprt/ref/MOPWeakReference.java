@@ -8,10 +8,6 @@ import javamoprt.MOPObject;
 public class MOPWeakReference extends WeakReference<Object> implements MOPObject {
 	public int hash = 0;
 	
-//	protected long addedMaps = 0;
-
-//	protected long addedSpecs = 0;
-	
 	public MOPWeakReference(Object r) {
 		super(r);
 		this.hash = System.identityHashCode(r);

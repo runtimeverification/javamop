@@ -108,7 +108,7 @@ public class MOPMapOfSet extends MOPAbstractMapSolo {
 
 					entry.next = null;
 					this.deletedMappings++;
-				} else if (set != lastValue1 && set.size() == 0) {
+				} else if (set != lastValue1 && !set.alive()) {
 					if (previous == null) {
 						data[i] = entry.next;
 					} else {
