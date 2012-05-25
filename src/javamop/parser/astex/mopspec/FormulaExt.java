@@ -11,7 +11,7 @@ public class FormulaExt extends PropertyExt {
 		super(line, column, type, propertyName);
 		this.formula = formula;
 	}
-	
+
 	public String getFormula() { return formula; }
 	
     @Override

@@ -196,8 +196,9 @@ public class JavaMOPExtender {
 		for (PropertyAndHandlersExt pnh : context.spec.getPropertiesAndHandlers()) {
 			PropertyExt prop = pnh.getProperty();
 			if (prop != null) {
-				if (propNames.contains(prop.getName()))
+				if (propNames.contains(prop.getName())){
 					throw new MOPException("Duplicated Property Name");
+				}
 
 				propNames.add(prop.getName());
 				ret.put(prop, new HashMap<String, HandlerExt>());

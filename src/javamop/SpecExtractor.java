@@ -57,6 +57,7 @@ public class SpecExtractor {
 			MOPSpecFileExt mopSpecFileExt = JavaMOPParser.parse(new ByteArrayInputStream(input.getBytes()));
 			mopSpecFile = JavaMOPExtender.translateMopSpecFile(mopSpecFileExt);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new MOPException("Error when parsing a specification file:\n" + e.getMessage());
 		}
 

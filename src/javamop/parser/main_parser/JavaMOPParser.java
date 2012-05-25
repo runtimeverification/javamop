@@ -277,6 +277,8 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
         int column = -1;
         List<ExtendedSpec> extendedSpecList= null;
         boolean isPublic = false;
+
+        int propId = 1;
     switch (jj_nt.kind) {
     case PUBLIC:
       jj_consume_token(PUBLIC);
@@ -359,8 +361,8 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
         jj_la1[9] = jj_gen;
         break label_4;
       }
-      prop = PropertyAndHandlers();
-                                       props.add(prop);
+      prop = PropertyAndHandlers(propId++);
+                                               props.add(prop);
     }
     jj_consume_token(RBRACE);
          {if (true) return new JavaMOPSpecExt(line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
@@ -1077,7 +1079,7 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public PropertyAndHandlersExt PropertyAndHandlers() throws ParseException {
+  final public PropertyAndHandlersExt PropertyAndHandlers(int propId) throws ParseException {
         PropertyExt prop = null;
         BlockStmt handler = null;
         String id;
@@ -1093,7 +1095,7 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     case GET:
     case SET:
     case IDENTIFIER:
-      prop = Property();
+      prop = Property(propId);
       break;
     default:
       jj_la1[52] = jj_gen;
@@ -1207,7 +1209,7 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
 /**
  * We may want to support combined properties later, now only a single formula allowed
  */
-  final public PropertyExt Property() throws ParseException {
+  final public PropertyExt Property(int propId) throws ParseException {
         String logicId;
         int line, column;
         String f;
@@ -1266,7 +1268,7 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
           jj_consume_token(-1);
           throw new ParseException();
         }
-                                    line = token.beginLine; column = token.beginColumn; logicId = token.image; propertyName = "defaultProp";
+                                    line = token.beginLine; column = token.beginColumn; logicId = token.image; propertyName = "defaultProp" + propId;
         jj_consume_token(COLON);
         break;
       default:
@@ -5937,12 +5939,6 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     finally { jj_save(45, xla); }
   }
 
-  private boolean jj_3R_275() {
-    if (jj_scan_token(SC_AND)) return true;
-    if (jj_3R_237()) return true;
-    return false;
-  }
-
   private boolean jj_3R_270() {
     if (jj_3R_295()) return true;
     Token xsp;
@@ -6917,11 +6913,6 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_62()) return true;
-    return false;
-  }
-
   private boolean jj_3R_281() {
     if (jj_3R_299()) return true;
     return false;
@@ -6929,6 +6920,11 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
 
   private boolean jj_3R_280() {
     if (jj_3R_115()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_62()) return true;
     return false;
   }
 
@@ -9147,6 +9143,12 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_380()) jj_scanpos = xsp;
     if (jj_scan_token(SEMICOLON)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_275() {
+    if (jj_scan_token(SC_AND)) return true;
+    if (jj_3R_237()) return true;
     return false;
   }
 

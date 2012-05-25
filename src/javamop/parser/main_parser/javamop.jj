@@ -1254,6 +1254,8 @@ JavaMOPSpecExt JavaMOPSpec():
 	int column = -1;
 	List<ExtendedSpec> extendedSpecList= null;
 	boolean isPublic = false;
+
+	int propId = 1;
 }
 {
 	["public" { isPublic = true; }]
@@ -1267,7 +1269,7 @@ JavaMOPSpecExt JavaMOPSpec():
 	"{"
 	 declarations = ClassOrInterfaceBody(false)
 	(event = Event() { events.add(event); } )+
-	(prop = PropertyAndHandlers() {props.add(prop);})*
+	(prop = PropertyAndHandlers(propId++) {props.add(prop);})*
 	"}"
 	{return new JavaMOPSpecExt(line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
 }
@@ -1466,7 +1468,7 @@ BaseTypePattern TypePattern():
 	{ return new BaseTypePattern(line, column, id); }
 }
 
-PropertyAndHandlersExt PropertyAndHandlers():
+PropertyAndHandlersExt PropertyAndHandlers(int propId):
 {
 	PropertyExt prop = null;
 	BlockStmt handler = null;
@@ -1479,9 +1481,10 @@ PropertyAndHandlersExt PropertyAndHandlers():
 	String specReference = null;
 	int handlerLine;
 	int handlerColumn;
+	
 }
 {
-  [prop = Property()]
+  [prop = Property(propId)]
   (LOOKAHEAD(2)
     "@"
     (<IDENTIFIER> | "get" | "set") {id = token.image; line = token.beginLine; column = token.beginColumn; propertyReference = null; specReference = null;}
@@ -1509,7 +1512,7 @@ PropertyAndHandlersExt PropertyAndHandlers():
  * We may want to support combined properties later, now only a single formula allowed
  */
 
-PropertyExt Property():
+PropertyExt Property(int propId):
 {
 	String logicId;
 	int line, column;
@@ -1522,7 +1525,7 @@ PropertyExt Property():
   (
     (<IDENTIFIER> | "get" | "set")    {logicId = token.image;}
     (<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; propertyName = token.image; } ":")
-| ( (<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; logicId = token.image; propertyName = "defaultProp";} ":"))
+| ( (<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; logicId = token.image; propertyName = "defaultProp" + propId;} ":"))
 	{f = getFormula();}
 	{ return new FormulaExt(line, column, logicId, f, propertyName); }
 }
