@@ -9,6 +9,7 @@
         <property name="scala.home" value="${env.SCALA_HOME}" />
         <property name="scala-compiler.jar" value="${scala.home}/lib/scala-compiler.jar" />
         <property name="scala-library.jar" value="${scala.home}/lib/scala-library.jar" />
+
         <path id="scala.classpath">
                 <pathelement location="${scala-compiler.jar}" />
                 <pathelement location="${scala-library.jar}" />
@@ -47,7 +48,7 @@
                 <javac srcdir="${src}" destdir="${build}" debug="off" optimize="on">
                         <exclude name="**/PTLTLPlugin.java" />
                 </javac>
-    <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" force="changed">
+    <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" deprecation="yes" force="changed">
                         <include name="**/*.scala" />
     </scalac> 
                 <!-- ugly hack -->

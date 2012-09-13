@@ -67,11 +67,11 @@ package logicrepository.plugins.ptltl {
             case And(args) if args.isIn(False) => False
             case And(args) if args.areAll(True) => True
             case And(args) =>
-              canonicalize(And(args.map(_.simplify).removeDuplicates))
+              canonicalize(And(args.map(_.simplify).distinct))
 
             case Or(args) if args.isIn(True) => True
             case Or(args) if args.areAll(False) => False
-            case Or(args) => canonicalize(Or(args.map(_.simplify).removeDuplicates))
+            case Or(args) => canonicalize(Or(args.map(_.simplify).distinct))
             
             case Not(True) => False
             case Not(False) => True
@@ -128,8 +128,8 @@ package logicrepository.plugins.ptltl {
 
     def trim(form: Formula) : Formula =
       form match {
-        case And(xs) => And(xs.remove(True.==))
-        case Or(xs)  => Or(xs.remove(False.==))
+        case And(xs) => And(xs.filterNot(True.==))
+        case Or(xs)  => Or(xs.filterNot(False.==))
         case _ => form
       }
 

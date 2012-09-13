@@ -26,7 +26,7 @@ package logicrepository.plugins.ptltl {
   }
 
   case class Output(override val expression: Formula)
-       extends Assignment(MAX_INT, expression, Neither)
+       extends Assignment(Int.MaxValue, expression, Neither)
 
 
   // Must only contain types provided by booleanformula and the above Reference type
@@ -66,8 +66,8 @@ package logicrepository.plugins.ptltl {
 
 
   class ParallelAssignmentBitVector(in: List[Assignment], es: List[Event]) {
-    var contents: List[Assignment] = in.sort((a,b) => a.index < b.index).dropRight(1)
-    var output: Assignment = in.sort((a,b) => a.index < b.index).last
+    var contents: List[Assignment] = in.sortWith((a,b) => a.index < b.index).dropRight(1)
+    var output: Assignment = in.sortWith((a,b) => a.index < b.index).last
 
     val as: List[Assignment] = in
   
@@ -133,7 +133,7 @@ package logicrepository.plugins.ptltl {
     // ToDo: come up with a simple case, and submit a bug
     def bvlRemoveDups(ls: List[BitVector]) : List[BitVector] =
       ls match {
-        case (bv :: bvs) => bv :: bvlRemoveDups(bvs.remove( x => bv == x ))
+        case (bv :: bvs) => bv :: bvlRemoveDups(bvs.filterNot( x => bv == x ))
         case List() => List()
       }
 

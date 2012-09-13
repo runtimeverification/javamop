@@ -20,8 +20,8 @@ package logicrepository.plugins.ptltl {
   }
 
   sealed abstract class TemporalOp extends BooleanFormula {
-    var depth: Int = MAX_INT
-    var temporality: Int = MAX_INT
+    var depth: Int = Int.MaxValue
+    var temporality: Int = Int.MaxValue
 
     def setDepth(i: Int) : TemporalOp = {
       this.depth = i
@@ -98,7 +98,7 @@ package logicrepository.plugins.ptltl {
         case Reference(i) => List()
 
         case _ => throw new RuntimeException("extractEvents called before simplify")
-      }).removeDuplicates
+      }).distinct
 
 
     def tagDepths(form: Formula, d: Int) : Formula = {
@@ -135,7 +135,7 @@ package logicrepository.plugins.ptltl {
     // Sort the temporals, and tag them with their temporality
     // Mutates each element of the list
     def tagTemporalities(temps: List[TemporalOp]) : List[TemporalOp] =
-      for ( (t, i) <- temps.sort( (a, b) => a.depth > b.depth ).zipWithIndex )
+      for ( (t, i) <- temps.sortWith( (a, b) => a.depth > b.depth ).zipWithIndex )
       yield t.setTemporality(i)
 
     def toRefs(form: Formula) : Formula = {
@@ -361,7 +361,7 @@ package logicrepository.plugins.ptltl {
 
 // print("\n\n")
 // print(extractEvents(form1).mkString(", "))
-// print("\n" + List(0,1,2,3,4,5,6,7).set(2,MAX_INT).toString)
+// print("\n" + List(0,1,2,3,4,5,6,7).set(2,Int.MaxValue).toString)
 
 // var pbv1 = formulaToAssnBV(form5).toParallelBitVector
 // pbv1.events = Event("default") :: pbv1.as.flatMap( x => extractEvents(x.expression) )
@@ -418,10 +418,10 @@ package logicrepository.plugins.ptltl {
 // print("\n\nRemoving Dups:")
 // print("\ntesting == ... ")
 // print((readEvent(Event("C"),bv1) == readEvent(Event("C"),bv1)).toString)
-// print("\ntesting removeDuplicates ... ")
+// print("\ntesting distinct ... ")
 // print((List( readEvent(Event("C"),bv1)
-//            , readEvent(Event("C"),bv1)).removeDuplicates.length == 1).toString)
-// print("\ntesting my removeDuplicates ... ")
+//            , readEvent(Event("C"),bv1)).distinct.length == 1).toString)
+// print("\ntesting my distinct ... ")
 // print((bvlRemoveDups(
 //   List( readEvent(Event("C"),bv1), readEvent(Event("C"),bv1))).length == 1).toString)
 // print("\ntesting isPresent ... ")
