@@ -356,6 +356,23 @@ public class EventDefinition extends Node {
 		return false;
 	}
 
+	private Boolean cachedHas__DEFAULT_MESSAGE = null;
+
+	public boolean has__DEFAULT_MESSAGE() {
+		if (cachedHas__DEFAULT_MESSAGE != null)
+			return cachedHas__DEFAULT_MESSAGE.booleanValue();
+
+		if(this.getAction() != null){
+			String eventAction = this.getAction().toString();
+			if (eventAction.indexOf("__DEFAULT_MESSAGE") != -1){
+				cachedHas__DEFAULT_MESSAGE = new Boolean(true);
+				return true;
+			}
+		}
+		cachedHas__DEFAULT_MESSAGE = new Boolean(false);
+		return false;
+	}
+
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {

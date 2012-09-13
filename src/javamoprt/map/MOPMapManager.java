@@ -1,6 +1,6 @@
 package javamoprt.map;
 
-import java.lang.management.ManagementFactory;
+//import java.lang.management.ManagementFactory;
 
 import javamoprt.MOPObject;
 
@@ -24,7 +24,7 @@ public class MOPMapManager extends Thread implements MOPObject {
 		this.setDaemon(true);
 
 		numCPU = Runtime.getRuntime().availableProcessors();
-		loadSupported = ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage() >= 0;
+		loadSupported = false; //ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage() >= 0;
 		multicore = MOPCleanable.multicore;
 		
 		int numCleaners = numCPU - 1;

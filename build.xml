@@ -15,9 +15,9 @@
 		<pathelement location="build" />
 	</path>
 
-	<taskdef resource="scala/tools/ant/antlib.xml">
+  <!--	<taskdef resource="scala/tools/ant/antlib.xml">
 		<classpath refid="scala.classpath" />
-	</taskdef>
+  </taskdef> -->
 
 	<!-- redefined these if you change the directory names -->
 	<property name="javamop" value="javamop" />
@@ -47,13 +47,13 @@
 		<javac srcdir="${src}" destdir="${build}" debug="off" optimize="on">
 			<exclude name="**/PTLTLPlugin.java" />
 		</javac>
-    <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" force="changed">
+    <!--    <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" force="changed">
 			<include name="**/*.scala" />
-    </scalac> 
+    </scalac> -->
 		<!-- ugly hack -->
-		<javac srcdir="${src}" destdir="${build}" debug="off" optimize="on">
+    <!--<javac srcdir="${src}" destdir="${build}" debug="off" optimize="on">
 			<include name="**/PTLTLPlugin.java" />
-		</javac>
+    </javac>-->
 
 		<!-- copy the schemas and property files to the build dir -->
 		<copy todir="${build}">
@@ -78,7 +78,7 @@
 		<jar destfile="${plugins}/ERE.jar" basedir="${build}" includes="${lr}/plugins/ere/**" />
 		<jar destfile="${plugins}/FSM.jar" basedir="${build}" includes="${lr}/plugins/fsm/**" />
 		<jar destfile="${plugins}/LTL.jar" basedir="${build}" includes="${lr}/plugins/ltl/**" />
-		<jar destfile="${plugins}/PTLTL.jar" basedir="${build}" includes="${lr}/plugins/ptltl/**" />
+    <!-- <jar destfile="${plugins}/PTLTL.jar" basedir="${build}" includes="${lr}/plugins/ptltl/**" /> -->
 		<jar destfile="${plugins}/PTCARET.jar" basedir="${build}" includes="${lr}/plugins/ptcaret/**" />
 		<jar destfile="${plugins}/PDA.jar" basedir="${build}" includes="${lr}/plugins/pda/**" />
 		<jar destfile="${plugins}/SRS.jar" basedir="${build}" includes="${lr}/plugins/srs/**" />
