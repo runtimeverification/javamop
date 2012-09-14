@@ -48,9 +48,9 @@
                 <javac srcdir="${src}" destdir="${build}" debug="off" optimize="on" includeantruntime="false">
                         <exclude name="**/PTLTLPlugin.java" />
                 </javac>
-                <!--<scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" deprecation="yes" force="false">
+                <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" deprecation="yes" force="false">
                         <include name="**/*.scala" />
-    </scalac> -->
+                </scalac> 
                 <!-- ugly hack -->
                 <javac srcdir="${src}" destdir="${build}" debug="off" optimize="on" includeantruntime="false">
                         <include name="**/PTLTLPlugin.java" />
