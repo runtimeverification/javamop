@@ -20,6 +20,7 @@ public class MonitorSet {
 	ArrayList<EventDefinition> events;
 	List<PropertyAndHandlers> properties;
 	boolean has__LOC;
+	boolean has__DEFAULT_MESSAGE;
 	boolean has__STATICSIG;
 	boolean hasThisJoinPoint;
 	boolean existSkip = false;
@@ -39,6 +40,7 @@ public class MonitorSet {
 		this.properties = mopSpec.getPropertiesAndHandlers();
 
 		this.has__LOC = mopSpec.has__LOC();
+		this.has__DEFAULT_MESSAGE = mopSpec.has__DEFAULT_MESSAGE();
 		this.has__STATICSIG = mopSpec.has__STATICSIG();
 		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
 
@@ -70,7 +72,7 @@ public class MonitorSet {
 
 		ret += "if(" + monitorSetVar + " != null) {\n";
 
-		if (has__LOC) {
+		if (has__LOC || has__DEFAULT_MESSAGE) {
 			if (loc != null)
 				ret += monitorSetVar + "." + this.loc + " = " + loc + ";\n";
 			else
@@ -122,7 +124,7 @@ public class MonitorSet {
 		ret += "protected " + monitorName + "[] elementData;\n";
 //		ret += "public int size;\n";
 
-		if (has__LOC)
+		if (has__LOC || has__DEFAULT_MESSAGE)
 			ret += "String " + loc + " = null;\n";
 		if (this.has__STATICSIG)
 			ret += "org.aspectj.lang.Signature " + staticsig + ";\n";

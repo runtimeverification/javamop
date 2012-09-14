@@ -6,6 +6,7 @@ import java.util.List;
 
 import javamop.MOPException;
 import javamop.MOPNameSpace;
+import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
@@ -21,15 +22,17 @@ public class JavaMOPSpecExt extends ExtNode {
 	String name;
 	MOPParameters parameters;
 	String inMethod;
+  PackageDeclaration packageDeclaration;
 	List<BodyDeclaration> declarations;
 	List<EventDefinitionExt> events = null;
 	List<PropertyAndHandlersExt> properties = null;
 	List<String> eventNames = null;
 	List<ExtendedSpec> extendedSpecs = null;
 
-	public JavaMOPSpecExt(int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
+	public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
 			List<BodyDeclaration> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
 		super(line, column);
+    this.packageDeclaration = packageDeclaration;
 		this.modifiers = modifiers;
 		this.name = name;
 		this.parameters = new MOPParameters(parameters);
@@ -112,6 +115,10 @@ public class JavaMOPSpecExt extends ExtNode {
 	public String getName() {
 		return name;
 	}
+
+  public PackageDeclaration getPackage() {
+    return packageDeclaration;
+  }
 
 	public MOPParameters getParameters() {
 		return parameters;

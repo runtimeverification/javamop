@@ -12,6 +12,7 @@ import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
+import javamop.parser.ast.PackageDeclaration;
 
 ///TODO:  All this has__ methods are carbon copies with the names changed.
 // This should really be refactored.
@@ -19,6 +20,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 	int modifiers;
 	String name;
+  PackageDeclaration packageDeclaration;
 	MOPParameters parameters;
 	String inMethod;
 	List<BodyDeclaration> declarations;
@@ -29,9 +31,10 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 	MOPParameters commonParamInEvents;
 	MOPParameters varsToSave;
 
-	public JavaMOPSpec(int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
+	public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
 			List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
 		super(line, column);
+    this.packageDeclaration = packageDeclaration;
 		this.modifiers = modifiers;
 		this.name = name;
 		this.parameters = new MOPParameters(parameters);
@@ -144,6 +147,10 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 	public String getName() {
 		return name;
 	}
+
+  public PackageDeclaration getPackage() {
+    return packageDeclaration;
+  }
 
 	public MOPParameters getParameters() {
 		return parameters;

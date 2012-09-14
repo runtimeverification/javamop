@@ -59,6 +59,9 @@ public class JavaLibMonitor extends BaseMonitor {
 			String eventActionStr = event.getAction().toString();
 
 			eventActionStr = eventActionStr.replaceAll("__RESET", "this.reset()");
+ 			eventActionStr = eventActionStr.replaceAll("__DEFAULT_MESSAGE", defaultMessage);
+      //__DEFAULT_MESSAGE may contain __LOC, make sure to sub in __DEFAULT_MESSAGE first
+      // -P
 			eventActionStr = eventActionStr.replaceAll("__LOC", "this." + loc);
 			eventActionStr = eventActionStr.replaceAll("__STATICSIG", "this." + staticsig);
 			eventActionStr = eventActionStr.replaceAll("__SKIP", skipAroundAdvice + " = true");

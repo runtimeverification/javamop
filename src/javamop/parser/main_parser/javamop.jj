@@ -1233,12 +1233,12 @@ MOPSpecFileExt MOPSpecFile():
 {
 	[ LOOKAHEAD(PackageDeclaration()) packageName = PackageDeclaration() {line = packageName.getBeginLine(); column = packageName.getBeginColumn();}]
 	( im = ImportDeclaration() { if(line==-1){line = im.getBeginLine(); column = im.getBeginColumn();} imports.add(im); } )* 
-	(spec = JavaMOPSpec() {if(line==-1){line = spec.getBeginLine(); column = spec.getBeginColumn();} specList.add(spec);})+
+	(spec = JavaMOPSpec(packageName) {if(line==-1){line = spec.getBeginLine(); column = spec.getBeginColumn();} specList.add(spec);})+
 	(<EOF> | "\u001A" /** ctrl+z char **/)
 	{return new MOPSpecFileExt(line, column, packageName, imports, specList);}
 }
 
-JavaMOPSpecExt JavaMOPSpec():
+JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 {  
 	int modifiers;
 	String name;
@@ -1271,7 +1271,7 @@ JavaMOPSpecExt JavaMOPSpec():
 	(event = Event() { events.add(event); } )+
 	(prop = PropertyAndHandlers(propId++) {props.add(prop);})*
 	"}"
-	{return new JavaMOPSpecExt(line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
+	{return new JavaMOPSpecExt(packageName, line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
 }
 
 int SpecModifier():

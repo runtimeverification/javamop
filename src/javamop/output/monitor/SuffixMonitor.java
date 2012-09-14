@@ -166,7 +166,7 @@ public class SuffixMonitor extends Monitor {
 		if (!isDefined)
 			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig);
 
-		if (has__LOC) {
+		if (has__LOC || has__DEFAULT_MESSAGE) {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
@@ -227,7 +227,7 @@ public class SuffixMonitor extends Monitor {
 			
 			ret += "Vector<" + innerMonitor.getOutermostName() + "> " + monitorList + " = new Vector<" + innerMonitor.getOutermostName() + ">();\n";
 
-			if (this.has__LOC)
+			if (this.has__LOC || this.has__DEFAULT_MESSAGE)
 				ret += "String " + loc + ";\n";
 			if (this.has__STATICSIG)
 				ret += "org.aspectj.lang.Signature " + staticsig + ";\n";

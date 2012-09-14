@@ -226,8 +226,8 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     }
     label_2:
     while (true) {
-      spec = JavaMOPSpec();
-                               if(line==-1){line = spec.getBeginLine(); column = spec.getBeginColumn();} specList.add(spec);
+      spec = JavaMOPSpec(packageName);
+                                          if(line==-1){line = spec.getBeginLine(); column = spec.getBeginColumn();} specList.add(spec);
       switch (jj_nt.kind) {
       case PUBLIC:
       case UNSYNC:
@@ -262,7 +262,7 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JavaMOPSpecExt JavaMOPSpec() throws ParseException {
+  final public JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName) throws ParseException {
         int modifiers;
         String name;
         List<MOPParameter> parameters = null;
@@ -365,7 +365,7 @@ public final class JavaMOPParser implements JavaMOPParserConstants {
                                                props.add(prop);
     }
     jj_consume_token(RBRACE);
-         {if (true) return new JavaMOPSpecExt(line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
+         {if (true) return new JavaMOPSpecExt(packageName, line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
     throw new Error("Missing return statement in function");
   }
 

@@ -6,6 +6,7 @@ import java.util.Set;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
+import javamop.output.Util;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -21,10 +22,17 @@ public abstract class Monitor {
 	boolean isOutermost;
 
 	boolean has__LOC;
+	boolean has__DEFAULT_MESSAGE;
 	boolean has__STATICSIG;
 	boolean has__SKIP;
 	boolean handlersHave__SKIP;
 	boolean hasThisJoinPoint;
+
+  String defaultMessage =  "\"Specification ";
+
+  public String getDefaultMessage() {
+    return defaultMessage;
+  }
 
 	OptimizedCoenableSet coenableSet;
 
@@ -43,6 +51,7 @@ public abstract class Monitor {
 		this.isOutermost = isOutermost;
 
 		this.has__LOC = mopSpec.has__LOC();
+		this.has__DEFAULT_MESSAGE = mopSpec.has__DEFAULT_MESSAGE();
 		this.has__STATICSIG = mopSpec.has__STATICSIG();
 		this.has__SKIP = mopSpec.has__SKIP();
 		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
@@ -59,6 +68,10 @@ public abstract class Monitor {
 		this.coenableSet = coenableSet;
 		
 		this.stat = new MOPStatistics(name, mopSpec);
+
+    this.defaultMessage += name + " has been violated on line \" + " 
+                   + "__LOC" +" + \". Documentation for this property can be found at " 
+                   + Util.packageAndNameToUrl(mopSpec.getPackage(), name) + "\""; 
 		
 		for (MOPParameter p : mopSpec.getParameters()) {
 			mopRefs.put(p.getName(), new MOPVariable("MOPRef_" + p.getName()));

@@ -107,7 +107,7 @@ public class JavaMOPExtender {
 
 		JavaMOPSpec ret;
 		try {
-			ret = new JavaMOPSpec(spec.getBeginLine(), spec.getBeginColumn(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
+			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getBeginLine(), spec.getBeginColumn(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
 					spec.getInMethod(), declarations, events, props);
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());

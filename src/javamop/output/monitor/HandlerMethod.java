@@ -42,6 +42,9 @@ public class HandlerMethod {
 			}
 
 			handlerBody = handlerBody.replaceAll("__RESET", "this.reset()");
+      handlerBody = handlerBody.replaceAll("__DEFAULT_MESSAGE", monitor.getDefaultMessage());
+      //__DEFAULT_MESSAGE may contain __LOC, make sure to sub in __DEFAULT_MESSAGE first
+      // -P
 			handlerBody = handlerBody.replaceAll("__LOC", "this." + loc);
 			handlerBody = handlerBody.replaceAll("__STATICSIG", "this." + staticsig);
 			handlerBody = handlerBody.replaceAll("__SKIP", skipAroundAdvice + " = true");
