@@ -10,6 +10,7 @@ public class Util {
   }
 
   public static String packageToUrlFragment(PackageDeclaration packageDeclaration){
+    if(packageDeclaration == null) return "";
     return packageDeclaration.toString().replaceAll("[.]","/").replaceAll("(package\\s*)|;|\\s*","");
   }
 }
