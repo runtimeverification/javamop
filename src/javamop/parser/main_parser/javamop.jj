@@ -328,8 +328,10 @@ TOKEN :
 |	<UNSYNC: "unsynchronized">
 |	<DECENT: "decentralized">
 |	<FULLBIND: "full-binding">
-|  <PERTHREAD: "perthread">
-|  <SUFFIX: "suffix">
+|       <AVOID: "avoid">
+|       <ENFORCE: "enforce">
+|       <PERTHREAD: "perthread">
+|       <SUFFIX: "suffix">
 |	<CONNECTED: "connected">
 |	<BEFORE: "before">
 |	<AFTER: "after">
@@ -1289,6 +1291,10 @@ int SpecModifier():
 	"suffix" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.SUFFIX, token); }
 	|
 	"full-binding" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.FULLBINDING, token); }
+        |
+	"avoid" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.AVOID, token); }
+	|
+        "enforce" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.ENFORCE, token); }
 	|
 	"connected" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.CONNECTED, token); }
 	)* 
