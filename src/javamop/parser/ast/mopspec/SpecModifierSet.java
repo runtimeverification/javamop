@@ -15,9 +15,9 @@ public class SpecModifierSet {
 
 	public static final int CONNECTED = 0x0020;
 
-        public static final int AVOID = 0x0040;
+    public static final int AVOID = 0x0040;
 
-        public static final int ENFORCE = 0x0080;
+    public static final int ENFORCE = 0x0080;
 
 	/**
 	 * A set of accessors that indicate whether the specified modifier is in the
@@ -47,12 +47,12 @@ public class SpecModifierSet {
 		return (modifiers & CONNECTED) != 0;
 	}
         
-        public static boolean isAvoid(int modifiers) {
-	        return (modifiers & AVOID) != 0;
-        }
+    public static boolean isAvoid(int modifiers) {
+	    return (modifiers & AVOID) != 0;
+    }
 
-        public static boolean isEnforce(int modifiers) {
-	        return (modifiers & ENFORCE) != 0;
-        }
+    public static boolean isEnforce(int modifiers) {
+	    return (modifiers & ENFORCE) != 0;
+    }
 
 }

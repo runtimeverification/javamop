@@ -218,6 +218,9 @@ public class BaseMonitor extends Monitor {
 
 		ret += "public final void " + propMonitor.eventMethods.get(uniqueId) + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
 
+		// insert code in the beginning of event method
+		ret += this.eventMethodPrefix();
+		
 		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
 
@@ -287,11 +290,34 @@ public class BaseMonitor extends Monitor {
 			ret += eventAction;
 		}
 
+		ret += this.eventMethodSuffix();
+		
 		ret += "}\n";
 
 		return ret;
 	}
 
+	/***
+	 * 
+	 * Code to be inserted before the execution of a event. Used to enforce/avoid properties.
+	 * 
+	 * @return code used to control the execution of an event.
+	 */
+	public String eventMethodPrefix() {
+		return "";
+	}
+
+	
+	/***
+	 * 
+	 * Code to be inserted after the execution of a event. Used to notify all the other waiting threads.
+	 * 
+	 * @return code used to notify all the other waiting threads.
+	 */
+	public String eventMethodSuffix() {
+		return "";
+	}
+	
 	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");

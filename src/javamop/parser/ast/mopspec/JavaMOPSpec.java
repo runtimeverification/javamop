@@ -249,6 +249,26 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 	public boolean isFullBinding() {
 		return SpecModifierSet.isFullBinding(this.getModifiers());
 	}
+	
+	/***
+	 * 
+	 * Whether it is a enforce property or not.
+	 * 
+	 * @return True if this property is supposed to be enforced.
+	 */
+	public boolean isEnforce() {
+		return SpecModifierSet.isEnforce(this.getModifiers());
+	}
+	
+	/***
+	 * 
+	 * Whether it is a avoid property or not.
+	 * 
+	 * @return True if this property is supposed to be avoided.
+	 */
+	public boolean isAvoid() {
+		return SpecModifierSet.isAvoid(this.getModifiers());
+	}
 
 	public boolean isConnected() {
 		return SpecModifierSet.isConnected(this.getModifiers());

@@ -43,11 +43,18 @@ public class SuffixMonitor extends Monitor {
 				monitorTermination = new MonitorTermination(name, mopSpec, mopSpec.getEvents(), coenableSet);
 			}
 			
-			if (mopSpec.getPropertiesAndHandlers().size() == 0)
-				innerMonitor = new RawMonitor(name, mopSpec, coenableSet, false);
-			else		
-				innerMonitor = new BaseMonitor(name, mopSpec, coenableSet, false);
-
+			if (mopSpec.isEnforce())
+			{
+				// TODO Do we need raw monitor for enforcing properties?
+				innerMonitor = new EnforceMonitor(name, mopSpec, coenableSet, false);
+			}
+			else
+			{
+				if (mopSpec.getPropertiesAndHandlers().size() == 0)
+					innerMonitor = new RawMonitor(name, mopSpec, coenableSet, false);
+				else		
+					innerMonitor = new BaseMonitor(name, mopSpec, coenableSet, false);
+			}
 			events = mopSpec.getEvents();
 			
 			for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
@@ -68,10 +75,18 @@ public class SuffixMonitor extends Monitor {
 				}
 			}
 		} else {
-			if (mopSpec.getPropertiesAndHandlers().size() == 0)
-				innerMonitor = new RawMonitor(name, mopSpec, coenableSet, isOutermost);
-			else		
-				innerMonitor = new BaseMonitor(name, mopSpec, coenableSet, isOutermost);
+			if (mopSpec.isEnforce())
+			{
+				// TODO Do we need raw monitor for enforcing properties?
+				innerMonitor = new EnforceMonitor(name, mopSpec, coenableSet, isOutermost);
+			}
+			else
+			{
+				if (mopSpec.getPropertiesAndHandlers().size() == 0)
+					innerMonitor = new RawMonitor(name, mopSpec, coenableSet, isOutermost);
+				else		
+					innerMonitor = new BaseMonitor(name, mopSpec, coenableSet, isOutermost);
+			}
 		}
 
 		if (this.isDefined && mopSpec.isGeneral()){
