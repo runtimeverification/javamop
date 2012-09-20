@@ -294,11 +294,19 @@ public class PartialParamIndexingTree extends IndexingTree {
 
 		ret += tempMap + " = " + retrieveTree() + ";\n";
 
-		for (int i = 0; i < queryParam.size(); i++) {
-			MOPParameter p = queryParam.get(i);
-			MOPVariable tempRef = localVars.getTempRef(p);
+		MOPParameter p = queryParam.get(0);
+		MOPVariable tempRef = localVars.getTempRef(p);
 
-			if (i != 0) {
+    if(queryParam.size() == 1){
+			ret += obj + " = " + tempMap + ".getSet(" + tempRef + ");\n";
+    }
+    else {
+			ret += obj + " = " + tempMap + ".getMap(" + tempRef + ");\n";
+    }
+		
+    for (int i = 1; i < queryParam.size(); i++) {
+
+			//if (i != 0) {
 
 				ret += "if (" + obj + " == null) {\n";
 
@@ -318,14 +326,17 @@ public class PartialParamIndexingTree extends IndexingTree {
 				ret += "}\n";
 
 				ret += tempMap + " = (javamoprt.map.MOPAbstractMap)" + obj + ";\n";
-			}
+			//}
+
+		  p = queryParam.get(i);
+		  tempRef = localVars.getTempRef(p);
 
 			if(i != queryParam.size() - 1)
 				ret += obj + " = " + tempMap + ".getMap(" + tempRef + ");\n";
 			else
 				ret += obj + " = " + tempMap + ".getSet(" + tempRef + ");\n";
-		}
 
+		}
 		ret += monitors + " = ";
 		ret += "(" + monitorSet.getName() + ")" + obj + ";\n";
 		ret += "if (" + monitors + " == null) {\n";
@@ -334,6 +345,7 @@ public class PartialParamIndexingTree extends IndexingTree {
 		ret += "}\n";
 
 		ret += monitors + ".add(" + monitor + ");\n";
+
 		
 //		if(cache != null){
 //			ret += cache.setCacheKeys(localVars);

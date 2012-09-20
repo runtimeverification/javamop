@@ -321,11 +321,19 @@ public class PartialParamIndexingTree extends IndexingTree {
 
 		ret += tempMap + " = " + retrieveTree() + ";\n";
 		
-		for (int i = 1; i < queryParam.size(); i++) {
-			MOPParameter p = queryParam.get(i);
-			MOPVariable tempRef = localVars.getTempRef(p);
+	  MOPParameter p = queryParam.get(1);
+    MOPVariable tempRef = localVars.getTempRef(p);
 
-			if (i != 1) {
+    if(queryParam.size() == 2){
+			ret += obj + " = " + tempMap + ".getSet(" + tempRef + ");\n";
+    }
+    else {
+			ret += obj + " = " + tempMap + ".getMap(" + tempRef + ");\n";
+    }
+		
+    for (int i = 2; i < queryParam.size(); i++) {
+
+		//	if (i != 1) {
 				ret += "if (" + obj + " == null) {\n";
 
 				ret += createNewMap(i) + ";\n";
@@ -334,8 +342,11 @@ public class PartialParamIndexingTree extends IndexingTree {
 				ret += "}\n";
 
 				ret += tempMap + " = (javamoprt.map.MOPAbstractMap)" + obj + ";\n";
-			}
+		//	}
 
+      p = queryParam.get(i);
+		  tempRef = localVars.getTempRef(p);
+ 
 			if(i != queryParam.size() - 1)
 				ret += obj + " = " + tempMap + ".getMap(" + tempRef + ");\n";
 			else
