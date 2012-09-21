@@ -63,9 +63,17 @@ public class BaseMonitor extends Monitor {
 
 	public BaseMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost);
-
+		this.initialize(name, mopSpec, coenableSet, isOutermost, "");
+	}
+	
+	public BaseMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost, String monitorNameSuffix) throws MOPException {
+		super(name, mopSpec, coenableSet, isOutermost);
+		this.initialize(name, mopSpec, coenableSet, isOutermost, monitorNameSuffix);
+	}
+	
+	public void initialize(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost, String monitorNameSuffix) {
 		this.isDefined = true;
-		this.monitorName = new MOPVariable(mopSpec.getName() + "Monitor");
+		this.monitorName = new MOPVariable(mopSpec.getName() + monitorNameSuffix + "Monitor");
 		this.systemAspectName = name + "SystemAspect";
 		this.events = mopSpec.getEvents();
 		this.props = mopSpec.getPropertiesAndHandlers();
@@ -219,7 +227,7 @@ public class BaseMonitor extends Monitor {
 		ret += "public final void " + propMonitor.eventMethods.get(uniqueId) + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
 
 		// insert code in the beginning of event method
-		ret += this.eventMethodPrefix();
+		ret += this.eventMethodPrefix(prop);
 		
 		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
@@ -290,7 +298,7 @@ public class BaseMonitor extends Monitor {
 			ret += eventAction;
 		}
 
-		ret += this.eventMethodSuffix();
+		ret += this.eventMethodSuffix(prop);
 		
 		ret += "}\n";
 
@@ -301,9 +309,10 @@ public class BaseMonitor extends Monitor {
 	 * 
 	 * Code to be inserted before the execution of a event. Used to enforce/avoid properties.
 	 * 
+	 * @param prop property associated
 	 * @return code used to control the execution of an event.
 	 */
-	public String eventMethodPrefix() {
+	public String eventMethodPrefix(PropertyAndHandlers prop) {
 		return "";
 	}
 
@@ -312,9 +321,10 @@ public class BaseMonitor extends Monitor {
 	 * 
 	 * Code to be inserted after the execution of a event. Used to notify all the other waiting threads.
 	 * 
+	 * @param prop property associated
 	 * @return code used to notify all the other waiting threads.
 	 */
-	public String eventMethodSuffix() {
+	public String eventMethodSuffix(PropertyAndHandlers prop) {
 		return "";
 	}
 	
@@ -587,6 +597,9 @@ public class BaseMonitor extends Monitor {
 			}
 		}
 
+		// Other methods for subclasses
+		ret += this.printExtraMethods();
+		
 		// endObject and some declarations
 		if (isOutermost) {
 			ret += monitorTermination;
@@ -598,5 +611,15 @@ public class BaseMonitor extends Monitor {
 		ret += "}\n";
 
 		return ret;
+	}
+
+	/***
+	 * 
+	 * Extra methods could be defined in subclasses.
+	 * 
+	 * @return
+	 */
+	public String printExtraMethods() {
+		return "";
 	}
 }

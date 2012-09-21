@@ -1,6 +1,5 @@
 package javamoprt;
 
-import java.util.HashSet;
 
 /***
  * 
@@ -10,44 +9,9 @@ import java.util.HashSet;
  */
 public class MOPThreadScheduler {
 
-	/***
-	 * 
-	 * The lock object used to coordinate execution
-	 * 
-	 */
-	static final Object lock = new Object();
-	
-	/***
-	 * 
-	 * Schedule thread to execute based on current state, next transition and the whole fsm.
-	 * 
-	 * @param currentState current state in the fsm.
-	 * @param nextTransition next transition to be executed.
-	 * @param fsm the whole fsm used to schedule thread. 
-	 */
-	public static void enforceFSMExecution(int currentState, int nextTransition, HashSet<int []> fsm) {
-		
-		// TODO insert semantics to decide whether to pause current thread or not.
-		boolean result = false;
-		synchronized (lock) {
-			while (result) {
-				try {
-					lock.wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+	public static void suspendThread(String monitorName) {
 	}
 	
-	/***
-	 * 
-	 * Wake up other threads to check their conditions again.
-	 * 
-	 */
-	public static void notifyExecution() {
-		synchronized (lock) {
-			lock.notifyAll();
-		}
+	public static void notifyExecution(String monitorName) {
 	}
 }
