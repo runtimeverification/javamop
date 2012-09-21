@@ -22,7 +22,6 @@ public abstract class Monitor {
 	boolean isOutermost;
 
 	boolean has__LOC;
-	boolean has__DEFAULT_MESSAGE;
 	boolean has__STATICSIG;
 	boolean has__SKIP;
 	boolean handlersHave__SKIP;
@@ -51,7 +50,6 @@ public abstract class Monitor {
 		this.isOutermost = isOutermost;
 
 		this.has__LOC = mopSpec.has__LOC();
-		this.has__DEFAULT_MESSAGE = mopSpec.has__DEFAULT_MESSAGE();
 		this.has__STATICSIG = mopSpec.has__STATICSIG();
 		this.has__SKIP = mopSpec.has__SKIP();
 		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();

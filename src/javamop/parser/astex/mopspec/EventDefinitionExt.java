@@ -55,7 +55,6 @@ public class EventDefinitionExt extends ExtNode {
 	MOPParameters parametersWithoutThreadVar = null;
 	private Boolean cachedHas__SKIP = null;
 	private Boolean cachedHas__LOC = null;
-	private Boolean cachedHas__DEFAULT_MESSAGE = null;
 
 	public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
 			List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent)
@@ -300,27 +299,14 @@ public class EventDefinitionExt extends ExtNode {
 
 		if (this.getAction() != null) {
 			String eventAction = this.getAction().toString();
-			if (eventAction.indexOf("__LOC") != -1) {
+			if (eventAction.indexOf("__LOC") != -1
+          || 
+          eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
 				cachedHas__LOC = new Boolean(true);
 				return true;
 			}
 		}
 		cachedHas__LOC = new Boolean(false);
-		return false;
-	}
-
-	public boolean has__DEFAULT_MESSAGE() {
-		if (cachedHas__DEFAULT_MESSAGE != null)
-			return cachedHas__DEFAULT_MESSAGE.booleanValue();
-
-		if (this.getAction() != null) {
-			String eventAction = this.getAction().toString();
-			if (eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
-				cachedHas__DEFAULT_MESSAGE = new Boolean(true);
-				return true;
-			}
-		}
-		cachedHas__DEFAULT_MESSAGE = new Boolean(false);
 		return false;
 	}
 

@@ -235,43 +235,24 @@ public class JavaMOPSpecExt extends ExtNode {
 
 		for (EventDefinitionExt event : this.events) {
 			String eventAction = event.getAction().toString();
-			if (eventAction.indexOf("__LOC") != -1) {
+			if (eventAction.indexOf("__LOC") != -1
+          || 
+          eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
 				cachedHas__LOC = new Boolean(true);
 				return true;
 			}
 		}
 		for (PropertyAndHandlersExt prop : this.properties) {
 			for (BlockStmt handler : prop.getHandlers().values()) {
-				if (handler.toString().indexOf("__LOC") != -1) {
+				if (handler.toString().indexOf("__LOC") != -1 
+          || 
+          handler.toString().indexOf("__DEFAULT_MESSAGE") != -1) {
 					cachedHas__LOC = new Boolean(true);
 					return true;
 				}
 			}
 		}
 		cachedHas__LOC = new Boolean(false);
-		return false;
-	}
-
-	public boolean has__DEFAULT_MESSAGE() {
-		if (cachedHas__DEFAULT_MESSAGE != null)
-			return cachedHas__DEFAULT_MESSAGE.booleanValue();
-
-		for (EventDefinitionExt event : this.events) {
-			String eventAction = event.getAction().toString();
-			if (eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
-				cachedHas__DEFAULT_MESSAGE = new Boolean(true);
-				return true;
-			}
-		}
-		for (PropertyAndHandlersExt prop : this.properties) {
-			for (BlockStmt handler : prop.getHandlers().values()) {
-				if (handler.toString().indexOf("__DEFAULT_MESSAGE") != -1) {
-					cachedHas__DEFAULT_MESSAGE = new Boolean(true);
-					return true;
-				}
-			}
-		}
-		cachedHas__DEFAULT_MESSAGE = new Boolean(false);
 		return false;
 	}
 

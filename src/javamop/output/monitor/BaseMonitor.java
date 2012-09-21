@@ -332,7 +332,7 @@ public class BaseMonitor extends Monitor {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
-		if (has__LOC || has__DEFAULT_MESSAGE) {
+		if (has__LOC) {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
@@ -434,7 +434,7 @@ public class BaseMonitor extends Monitor {
 
 		// monitor variables
 		ret += monitorDeclaration + "\n";
-		if (this.has__LOC || this.has__DEFAULT_MESSAGE)
+		if (this.has__LOC)
 			ret += "String " + loc + ";\n";
 		if (this.has__STATICSIG)
 			ret += "org.aspectj.lang.Signature " + staticsig + ";\n";
