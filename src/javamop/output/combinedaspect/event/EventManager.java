@@ -39,6 +39,9 @@ public class EventManager {
 		this.endProgramEvent = new EndProgram(name);
 
 		for (JavaMOPSpec spec : specs) {
+			if (spec.isEnforce()) {
+				endThreadEvents.add(new ThreadDeadlockMonitor(spec, combinedAspect));
+			}
 			for (EventDefinition event : spec.getEvents()) {
 				// normal event
 				if (!event.isEndObject() && !event.isEndProgram() && !event.isEndThread() && !event.isStartThread()) {

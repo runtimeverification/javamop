@@ -54,6 +54,10 @@ public class EndThread {
 		this.eventBody = new GeneralAdviceBody(mopSpec, event, combinedAspect);
 	}
 
+	public EndThread() {
+		
+	}
+	
 	public String printDataStructures() {
 		String ret = "";
 
@@ -73,8 +77,9 @@ public class EndThread {
 		ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
 		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
 		ret += " && " + commonPointcut + "() {\n";
-		
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += runnableMap + ".put(t, r);\n";
+		ret += "}\n";
 		ret += "}\n";
 
 		return ret;
@@ -91,8 +96,9 @@ public class EndThread {
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
-
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += threadSet + ".remove(Thread.currentThread());\n";
+		ret += "}\n";
 		ret += eventBody;
 		ret += "}\n";
 
@@ -112,8 +118,9 @@ public class EndThread {
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
-
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += threadSet + ".remove(Thread.currentThread());\n";
+		ret += "}\n";
 		ret += eventBody;
 		ret += "}\n";
 
@@ -127,6 +134,7 @@ public class EndThread {
 
 		ret += "before (): " + "(execution(void *.main(..)) )";
 		ret += " && " + commonPointcut + "() {\n";
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += "if(" + mainThread + " == null){\n";
 		ret += mainThread + " = Thread.currentThread();\n";
 		ret += threadSet + ".add(Thread.currentThread());\n";
@@ -135,10 +143,12 @@ public class EndThread {
 		ret += mainCounter + "++;\n";
 		ret += "}\n";
 		ret += "}\n";
+		ret += "}\n";
 		ret += "\n";
 
 		ret += "after (): " + "(execution(void *.main(..)) )";
 		ret += " && " + commonPointcut + "() {\n";
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += "if(" + mainThread + " == Thread.currentThread()){\n";
 		ret += mainCounter + "--;\n";
 		ret += "if(" + mainCounter + " <= 0){\n";
@@ -146,8 +156,9 @@ public class EndThread {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 		ret += threadSet + ".remove(Thread.currentThread());\n";
+		
 		ret += eventBody;
-
+		ret += "}\n";
 		ret += "}\n";
 		ret += "}\n";
 		ret += "}\n";
@@ -172,7 +183,7 @@ public class EndThread {
 	public String printAdviceBodyAtEndProgram(){
 		String ret = "";
 		MOPVariable t = new MOPVariable("t");
-
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0){
 			ret += "for(Thread " + event.getThreadVar() + " : " + threadSet + ") {\n";
 			ret += threadSet + ".remove(" + event.getThreadVar() + ");\n";
@@ -182,7 +193,7 @@ public class EndThread {
 		}
 		
 		ret += eventBody;
-		
+		ret += "}\n";
 		ret += "}\n";
 		
 		return ret;

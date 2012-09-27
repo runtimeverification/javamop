@@ -54,7 +54,6 @@ public class StartThread {
 
 		ret += "static HashMap<Thread, Runnable> " + runnableMap + " = new HashMap<Thread, Runnable>();\n";
 		ret += "static Thread " + mainThread + " = null;\n";
-
 		return ret;
 	}
 
@@ -66,8 +65,9 @@ public class StartThread {
 		ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
 		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
 		ret += " && " + commonPointcut + "() {\n";
-
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += runnableMap + ".put(t, r);\n";
+		ret += "}\n";
 		ret += "}\n";
 
 		return ret;
@@ -79,7 +79,7 @@ public class StartThread {
 
 		ret += "before (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
 		ret += " && " + commonPointcut + "() {\n";
-
+		
 		ret += "if(Thread.currentThread() == " + threadVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
@@ -99,12 +99,12 @@ public class StartThread {
 
 		ret += "before (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
 		ret += " && " + commonPointcut + "() {\n";
-
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += "if(" + runnableMap + ".get(Thread.currentThread()) == " + runnableVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
-
+		ret += "}\n";
 		ret += eventBody;
 		ret += "}\n";
 
