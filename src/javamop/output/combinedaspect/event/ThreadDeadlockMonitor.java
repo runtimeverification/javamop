@@ -12,8 +12,11 @@ import javamop.output.combinedaspect.CombinedAspect;
 public class ThreadDeadlockMonitor extends EndThread{
 	
 	private final static String eventName = "ThreadMonitor";
+	private MOPVariable monitorName;
 	
 	public ThreadDeadlockMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
+		this.monitorClass = combinedAspect.monitors.get(mopSpec);
+		this.monitorName = monitorClass.getOutermostName();
 		this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadToRunnable");
 		this.mainThread = new MOPVariable(mopSpec.getName() + "_" + eventName + "_MainThread");
 		this.threadSet = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadSet");
@@ -38,6 +41,7 @@ public class ThreadDeadlockMonitor extends EndThread{
 	
 	@Override
 	public String printAdviceForMainEnd() {
+		System.out.println("monitor name :  " + monitorName);
 		String ret = "";
 
 		ret += "before (): " + "(execution(void *.main(..)) )";
@@ -49,7 +53,7 @@ public class ThreadDeadlockMonitor extends EndThread{
 		ret += "}\n";
 		
 		ret += "javamoprt.MOPDeadlockDetector.startDeadlockDetectionThread(" + this.threadSet 
-				+ ", " + this.mainThread + ", " + this.globalLock.getName() + ");\n";
+				+ ", " + this.mainThread + ", " + this.globalLock.getName() + ", new " + this.monitorName + "." + this.monitorName + "DeadlockCallback()" +");\n";
 		//Start deadlock detection thread here
 		
 		ret += "}\n";

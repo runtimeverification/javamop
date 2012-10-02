@@ -101,15 +101,18 @@ public class BaseMonitor extends Monitor {
 
 			HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
 			for (String category : prop.getHandlers().keySet()) {
+				if (category.equals("deadlock"))
+					continue;
 				MOPVariable categoryVar = new MOPVariable("Prop_" + prop.getPropertyId() + "_Category_" + category);
 				propMonitor.categoryVars.put(category, categoryVar);
 
 				BlockStmt handlerBody = handlerBodies.get(category);
 
-				if (handlerBody.toString().length() != 0)
+				if (handlerBody.toString().length() != 0) {
 					propMonitor.handlerMethods.put(category, new HandlerMethod(prop, category, specParam, mopSpec.getCommonParamInEvents(), varsToSave, handlerBody, categoryVar, this));
-			}
 			
+				}
+			}
 			for(EventDefinition event : events){
 				MOPVariable eventMethod = new MOPVariable("Prop_" + prop.getPropertyId() + "_event_" + event.getUniqueId());
 				
@@ -196,6 +199,8 @@ public class BaseMonitor extends Monitor {
 		MOPJavaCode eventAction = null;
 
 		for (String handlerName : prop.getHandlers().keySet()) {
+			if (handlerName.equals("deadlock"))
+				continue;
 			String conditionStr = prop.getLogicProperty(handlerName + " condition");
 			if (conditionStr.contains(":{")) {
 				HashMap<String, String> conditions = new HashMap<String, String>();
@@ -372,6 +377,8 @@ public class BaseMonitor extends Monitor {
 			}
 
 			for (String category : propMonitor.handlerMethods.keySet()) {
+				if (category.equals("deadlock"))
+					continue;
 				HandlerMethod handlerMethod = propMonitor.handlerMethods.get(category);
 
 				ret += "if(" + monitorVar + "." + propMonitor.categoryVars.get(category) + ") {\n";
@@ -597,8 +604,8 @@ public class BaseMonitor extends Monitor {
 			}
 		}
 
-		// Other methods for subclasses
-		ret += this.printExtraMethods();
+		// Other declarations/methods for subclasses
+		ret += this.printExtraDeclMethods();
 		
 		// endObject and some declarations
 		if (isOutermost) {
@@ -619,7 +626,7 @@ public class BaseMonitor extends Monitor {
 	 * 
 	 * @return
 	 */
-	public String printExtraMethods() {
+	public String printExtraDeclMethods() {
 		return "";
 	}
 }

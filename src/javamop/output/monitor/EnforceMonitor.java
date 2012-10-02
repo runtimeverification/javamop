@@ -1,10 +1,13 @@
 package javamop.output.monitor;
 
+import java.util.HashMap;
+
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.parser.ast.stmt.BlockStmt;
 
 /***
  * 
@@ -13,11 +16,24 @@ import javamop.parser.ast.mopspec.PropertyAndHandlers;
  */
 public class EnforceMonitor extends BaseMonitor {
 
+	/**
+	 * Deadlock handler code for enforcement monitor
+	 * */
+	private BlockStmt deadlockHandler = null;
+	
+	
 	public EnforceMonitor(String name, JavaMOPSpec mopSpec,
 			OptimizedCoenableSet coenableSet, boolean isOutermost)
 			throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost, "Enforcement");
-		
+		for (PropertyAndHandlers prop : props) {
+			HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
+			BlockStmt handlerBody = handlerBodies.get("deadlock");
+			if (handlerBody != null) {
+				this.deadlockHandler = handlerBody;
+				break;
+			}
+		}
 	}
 	
 	/***
@@ -65,8 +81,23 @@ public class EnforceMonitor extends BaseMonitor {
 	}
 	
 	@Override
-	public String printExtraMethods() {
+	public String printExtraDeclMethods() {
 		String ret = "";
+		
+		// Callback class declaration
+
+		ret += "static public class " + this.monitorName
+				+ "DeadlockCallback implements javamoprt.MOPCallBack { \n";
+		ret += "public void apply() {\n";
+		if (this.deadlockHandler != null) {
+			ret += this.deadlockHandler;
+		}
+		ret += "\n";
+		ret += "}\n";
+		ret += "}\n\n";
+		
+		// shouldExecute method
+
 		ret += "public final boolean shouldExecute() { \n";
 		ret += "return true;\n";
 		ret += "}\n\n";

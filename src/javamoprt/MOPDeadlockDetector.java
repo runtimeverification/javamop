@@ -9,6 +9,8 @@ import java.util.HashSet;
  * 
  * */
 public class MOPDeadlockDetector {
+	
+	private static MOPCallBack callback;
 
 	/**
 	 * 
@@ -22,14 +24,15 @@ public class MOPDeadlockDetector {
 	 *            Lock object used when accessing the set of all running threads
 	 * 
 	 * */
-	public static void startDeadlockDetectionThread(HashSet<Thread> allThreads, Thread mainThread, Object lock) {
+	public static void startDeadlockDetectionThread(HashSet<Thread> allThreads, Thread mainThread, Object lock, MOPCallBack monitorCallback) {
+		MOPDeadlockDetector.callback = monitorCallback;
 		Thread deadlockDetectionThread = new Thread(new DeadlockDetector(allThreads, mainThread, lock));
 		deadlockDetectionThread.start();
+		
 	}
 
 	static class DeadlockDetector implements Runnable {
 
-		private static final String DEADLOCK_DETECTED_MSG = "Deadlock detected!";
 		private HashSet<Thread> allThreads = new HashSet<Thread>();
 		private Thread mainThread;
 		private Object lock;
@@ -52,7 +55,6 @@ public class MOPDeadlockDetector {
 				boolean deadlock = true;
 				synchronized (lock) {
 					for (Thread t : this.allThreads) {
-						System.out.println(t.getName() + "  " + t.getState());
 						if (t.getState() != State.WAITING && t.getState() != State.BLOCKED) {
 							deadlock = false;
 							break;
@@ -60,7 +62,7 @@ public class MOPDeadlockDetector {
 					}
 				}
 				if (deadlock && this.allThreads.size() != 0) {
-					System.err.println(DEADLOCK_DETECTED_MSG);
+					MOPDeadlockDetector.callback.apply();
 					break;
 				}
 
