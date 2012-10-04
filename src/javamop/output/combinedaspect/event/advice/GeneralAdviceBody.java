@@ -7,6 +7,7 @@ import java.util.HashSet;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
+import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatManager;
 import javamop.output.combinedaspect.indexingtree.IndexingCache;
 import javamop.output.combinedaspect.indexingtree.IndexingTree;
@@ -38,6 +39,8 @@ public class GeneralAdviceBody extends AdviceBody {
 	LocalVariables localVars;
 	
 	boolean doDisable = false;
+	
+	GlobalLock lock;
 
 	// assumes: mopSpec.getParameters().size() != 0
 	public GeneralAdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
@@ -62,6 +65,7 @@ public class GeneralAdviceBody extends AdviceBody {
 		this.doDisable = doDisable();
 		
 		this.statManager = combinedAspect.statManager;
+		lock = combinedAspect.lockManager.getLock();
 	}
 
 	public boolean doDisable(){
@@ -786,13 +790,13 @@ public class GeneralAdviceBody extends AdviceBody {
 		} else if (event.isStartEvent() && isFullParam) {
 			MOPVariable mainMonitor = localVars.get("mainMonitor");
 			
-			ret += monitorClass.Monitoring(mainMonitor, event, null, null);
+			ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock);
 		} else {
 			MOPVariable mainMonitor = localVars.get("mainMonitor");
 
 			ret += "if (" + mainMonitor + " != null " + ") {\n";
 			{
-				ret += monitorClass.Monitoring(mainMonitor, event, null, null);
+				ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock);
 			}
 			ret += "}\n";
 		}

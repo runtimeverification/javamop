@@ -10,6 +10,7 @@ import javamop.output.MOPJavaCode;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
+import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -142,7 +143,7 @@ public class RawMonitor extends Monitor{
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l) {
 		String ret = "";
 
 		if (has__LOC) {

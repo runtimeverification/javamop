@@ -174,7 +174,9 @@ public class EndThread {
 		ret += "(";
 		ret += "call(void Thread+.start()) && target(t))";
 		ret += " && " + commonPointcut + "() {\n";
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
 		ret += threadSet + ".add(t);\n";
+		ret += "}\n";
 		ret += "}\n";
 		
 		return ret;

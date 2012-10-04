@@ -280,7 +280,7 @@ public class MonitorSet {
 			ret += "elementData[" + numAlive + "] = " + monitor + ";\n";
 			ret += numAlive + "++;\n";
 			ret += "\n";
-			ret += this.monitor.Monitoring(monitor, event, loc, staticsig);
+			ret += this.monitor.Monitoring(monitor, event, loc, staticsig, null);
 			ret += "}\n";
 			ret += "}\n";
 

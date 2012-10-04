@@ -41,7 +41,6 @@ public class ThreadDeadlockMonitor extends EndThread{
 	
 	@Override
 	public String printAdviceForMainEnd() {
-		System.out.println("monitor name :  " + monitorName);
 		String ret = "";
 
 		ret += "before (): " + "(execution(void *.main(..)) )";

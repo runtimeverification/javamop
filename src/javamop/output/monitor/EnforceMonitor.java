@@ -5,13 +5,16 @@ import java.util.HashMap;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
+import javamop.output.combinedaspect.GlobalLock;
+import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.BlockStmt;
 
 /***
  * 
- * Wrapper monitor class for enforcing properties.
+ * Wrapper monitor class for enforcing properties
  *
  */
 public class EnforceMonitor extends BaseMonitor {
@@ -36,56 +39,16 @@ public class EnforceMonitor extends BaseMonitor {
 		}
 	}
 	
-	/***
+	/**
 	 * 
-	 * Code to be inserted before the execution of a event. Used to enforce/avoid properties.
+	 * Print callback class declaration
 	 * 
-	 * @param prop property associated
-	 * @return code used to control the execution of an event.
-	 */
-	@Override
-	public String eventMethodPrefix(PropertyAndHandlers prop) {
-		String ret = "";
-
-		// Wait statement
-		ret += "synchronized(this) { \n";
-		ret += "try {\n";
-		ret += "while (!this.shouldExecute()) {\n";
-		ret += "this.wait();\n";
-		ret += "}\n";
-		ret += "} catch (InterruptedException e) {\n";
-		ret += "e.printStackTrace();\n";
-		ret += "}\n";
-		ret += "}\n\n";
-		
-		return ret;
-	}
-	
-	/***
-	 * 
-	 * Code to be inserted after the execution of a event. Used to notify all the other waiting threads.
-	 * 
-	 * @param prop property associated
-	 * @return code used to control the execution of an event.
-	 */
-	@Override
-	public String eventMethodSuffix(PropertyAndHandlers prop) {
-		String ret = "";
-		
-		// notifyAll statement
-		ret += "synchronized(this) { \n";
-		ret += "this.notifyAll();\n";
-		ret += "}\n";
-		
-		return ret;
-	}
-	
+	 * */
 	@Override
 	public String printExtraDeclMethods() {
 		String ret = "";
 		
 		// Callback class declaration
-
 		ret += "static public class " + this.monitorName
 				+ "DeadlockCallback implements javamoprt.MOPCallBack { \n";
 		ret += "public void apply() {\n";
@@ -95,12 +58,52 @@ public class EnforceMonitor extends BaseMonitor {
 		ret += "\n";
 		ret += "}\n";
 		ret += "}\n\n";
-		
-		// shouldExecute method
-
-		ret += "public final boolean shouldExecute() { \n";
-		ret += "return true;\n";
-		ret += "}\n\n";
 		return ret;
+	}
+	
+	/**
+	 * 
+	 * notify all the other waiting threads after an event was executed
+	 * 
+	 * */
+	@Override
+	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+		String ret = "";
+		if (l != null)
+			ret += l.getName() + ".notifyAll();\n";
+		return ret;
+	}
+
+	/**
+	 * 
+	 * Clone the main monitor, and check whether executing current event on the cloned monitor will incur failure or not
+	 * 
+	 * */
+	@Override
+	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+		
+		String ret = "";
+		PropMonitor propMonitor = propMonitors.get(prop);
+		String uniqueId = event.getUniqueId();
+		String methodName = propMonitor.eventMethods.get(uniqueId).toString();
+		
+		ret += "try {\n";
+		ret += "do {\n";
+		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
+		ret += this.monitorName + " " + clonedMonitor + " = (" + this.monitorName +")" + monitor + ".clone();\n";
+		MOPVariable failCategory = propMonitor.categoryVars.get("fail");
+		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
+		ret += "if (" + clonedMonitor + "." + failCategory + ") {\n";
+		if (l != null)
+			ret += l.getName() + ".wait();\n";
+		ret += "}\n";
+		ret += "else {\n";
+		ret += "break;\n";	
+		ret += "}\n";
+		ret += "} while (true);\n";
+		ret += "} catch (Exception e) {\n";
+		ret += "e.printStackTrace();\n";
+		ret += "}\n";
+		return  ret;
 	}
 }

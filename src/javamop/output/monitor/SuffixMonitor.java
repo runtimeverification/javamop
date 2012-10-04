@@ -9,6 +9,7 @@ import java.util.Set;
 import javamop.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
+import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -155,7 +156,7 @@ public class SuffixMonitor extends Monitor {
 		ret += "while (" + it + ".hasNext()){\n";
 		ret += innerMonitor.getOutermostName() + " " + monitor + " = (" + innerMonitor.getOutermostName() + ")" + it + ".next();\n";
 
-		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig);
+		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig, null);
 
 		ret += "if(" + monitorSet + ".contains(" + monitor + ")";
 		for (MOPVariable categoryVar : categoryVars) {
@@ -174,12 +175,12 @@ public class SuffixMonitor extends Monitor {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig);
+			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig, l);
 
 		if (has__LOC) {
 			if(loc != null)

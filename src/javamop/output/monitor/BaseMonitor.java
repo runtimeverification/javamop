@@ -13,6 +13,7 @@ import javamop.output.MOPJavaCodeNoNewLine;
 import javamop.output.MOPVariable;
 import javamop.output.OptimizedCoenableSet;
 import javamop.output.UserJavaCode;
+import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -183,7 +184,7 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
-	public String printEventMethod(PropertyAndHandlers prop, EventDefinition event) {
+	public String printEventMethod(PropertyAndHandlers prop, EventDefinition event, String methodNamePrefix) {
 		String ret = "";
 
 		PropMonitor propMonitor = propMonitors.get(prop);
@@ -229,11 +230,8 @@ public class BaseMonitor extends Monitor {
 			}
 		}
 
-		ret += "public final void " + propMonitor.eventMethods.get(uniqueId) + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
+		ret += "public final void " + methodNamePrefix + propMonitor.eventMethods.get(uniqueId) + "(" + event.getMOPParameters().parameterDeclString() + ") {\n";
 
-		// insert code in the beginning of event method
-		ret += this.eventMethodPrefix(prop);
-		
 		if (!condition.isEmpty()) {
 			ret += "if (!(" + condition + ")) {\n";
 
@@ -273,7 +271,7 @@ public class BaseMonitor extends Monitor {
 		ret += stackManage + "\n";
 
 		ret += eventMonitoringCode;
-
+		
 		ret += monitoringBody;
 
 		String categoryCode = "";
@@ -303,37 +301,17 @@ public class BaseMonitor extends Monitor {
 			ret += eventAction;
 		}
 
-		ret += this.eventMethodSuffix(prop);
-		
 		ret += "}\n";
 
 		return ret;
 	}
-
-	/***
-	 * 
-	 * Code to be inserted before the execution of a event. Used to enforce/avoid properties.
-	 * 
-	 * @param prop property associated
-	 * @return code used to control the execution of an event.
-	 */
-	public String eventMethodPrefix(PropertyAndHandlers prop) {
-		return "";
-	}
-
 	
-	/***
-	 * 
-	 * Code to be inserted after the execution of a event. Used to notify all the other waiting threads.
-	 * 
-	 * @param prop property associated
-	 * @return code used to notify all the other waiting threads.
-	 */
-	public String eventMethodSuffix(PropertyAndHandlers prop) {
-		return "";
+	
+	public String printEventMethod(PropertyAndHandlers prop, EventDefinition event) {
+		return this.printEventMethod(prop, event, "");
 	}
 	
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
@@ -362,10 +340,12 @@ public class BaseMonitor extends Monitor {
 		for(PropertyAndHandlers prop : props){
 			PropMonitor propMonitor = propMonitors.get(prop);
 			
+			ret += this.beforeEventMethod(monitorVar, prop, event, l);
 			ret += monitorVar + "." + propMonitor.eventMethods.get(event.getUniqueId()) + "(";
 			ret += event.getMOPParameters().parameterString();
 			ret += ");\n";
-
+			ret += this.afterEventMethod(monitorVar, prop, event, l);
+			
 			if (event.getCondition() != null && event.getCondition().length() != 0) {
 				ret += "if(" + monitorVar + "." + conditionFail + "){\n";
 				ret += monitorVar + "." + conditionFail + " = false;\n";
@@ -404,6 +384,14 @@ public class BaseMonitor extends Monitor {
 		}
 
 		return ret;
+	}
+
+	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+		return "";
+	}
+
+	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+		return  "";
 	}
 
 	public MonitorInfo getMonitorInfo(){
