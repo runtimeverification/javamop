@@ -48,6 +48,15 @@ public class SuffixMonitor extends Monitor {
 			{
 				// TODO Do we need raw monitor for enforcing properties?
 				innerMonitor = new EnforceMonitor(name, mopSpec, coenableSet, false);
+				for (PropertyAndHandlers p : mopSpec.getPropertiesAndHandlers()) {
+					int totalHandlers = p.getHandlers().size();
+					if (p.getHandlers().containsKey("deadlock"))
+						totalHandlers--;
+					// We only allow one handler (except deadlock handler) when enforcing a property
+					if (totalHandlers > 1)
+						throw new MOPException("Only one handler (except deadlock handler) is allowed when enforcing a property");
+				}
+
 			}
 			else
 			{
@@ -80,6 +89,14 @@ public class SuffixMonitor extends Monitor {
 			{
 				// TODO Do we need raw monitor for enforcing properties?
 				innerMonitor = new EnforceMonitor(name, mopSpec, coenableSet, isOutermost);
+				for (PropertyAndHandlers p : mopSpec.getPropertiesAndHandlers()) {
+					int totalHandlers = p.getHandlers().size();
+					if (p.getHandlers().containsKey("deadlock"))
+						totalHandlers--;
+					// We only allow one handler (except deadlock handler) when enforcing a property
+					if (totalHandlers > 1)
+						throw new MOPException("Only one handler (except deadlock handler) is allowed when enforcing a property");
+				}
 			}
 			else
 			{

@@ -138,8 +138,7 @@ public class JavaFSM extends LogicPluginShell {
 			result.put(state.toLowerCase() + " condition", "$state$ == " + StateNum.get(state));
 		}
 		result.put("fail condition", "$state$ == " + countState + "\n");
-		//DEADLOCK CONDITION
-		result.put("deadlock condition", "");
+		result.put("nonfail condition", "$state$ != " + countState + "\n");
 		if(fsmInput.getAliases() != null){
 			for(FSMAlias a : fsmInput.getAliases()){
 				String stateName = a.getGroupName();

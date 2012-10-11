@@ -91,9 +91,10 @@ public class EnforceMonitor extends BaseMonitor {
 		ret += "do {\n";
 		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
 		ret += this.monitorName + " " + clonedMonitor + " = (" + this.monitorName +")" + monitor + ".clone();\n";
-		MOPVariable failCategory = propMonitor.categoryVars.get("fail");
+		
+		MOPVariable enforceCategory = (MOPVariable)propMonitor.categoryVars.values().toArray()[0];
 		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
-		ret += "if (" + clonedMonitor + "." + failCategory + ") {\n";
+		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
 		if (l != null)
 			ret += l.getName() + ".wait();\n";
 		ret += "}\n";

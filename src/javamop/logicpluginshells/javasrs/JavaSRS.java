@@ -88,6 +88,7 @@ public class JavaSRS extends LogicPluginShell {
     result.put("initialization", "$l$ = new MOPIntSpliceList();\n");
   	result.put("monitoring body", "");
     result.put("fail condition", "out == 0\n");
+    result.put("nonfail condition", "out != 0\n");
     result.put("succeed condition", "out == 1\n");
 		return result;
 	}

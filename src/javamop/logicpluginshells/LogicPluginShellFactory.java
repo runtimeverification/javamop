@@ -144,8 +144,12 @@ public class LogicPluginShellFactory {
 
 	static public LogicPluginShellResult process(LogicRepositoryType logicOutput, String events) throws MOPException {
 		LogicPluginShell logicShellPlugin = findLogicShellPlugin("javamop.logicpluginshells", logicOutput.getProperty().getLogic());
-		if (logicShellPlugin != null)
-			return logicShellPlugin.process(logicOutput, events);
+		if (logicShellPlugin != null) {
+			LogicPluginShellResult result = logicShellPlugin.process(logicOutput, events);
+			//Support deadlock detection since deadlock is not a state.
+			result.properties.put("deadlock condition", "");
+			return result;
+		}
 		else
 			return null;
 	}
