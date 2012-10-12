@@ -10,7 +10,6 @@ public class ThreadPointCut extends PointCut {
 
 	public ThreadPointCut(int line, int column, String id){
 		super(line, column, "thread");
-		
 		this.id = id;
 	}
 	

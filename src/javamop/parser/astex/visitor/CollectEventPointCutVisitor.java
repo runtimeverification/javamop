@@ -19,6 +19,7 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.StartThreadPointCut;
 import javamop.parser.ast.aspectj.TargetPointCut;
 import javamop.parser.ast.aspectj.ThisPointCut;
+import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
 import javamop.parser.astex.aspectj.EventPointCut;
@@ -103,7 +104,12 @@ public class CollectEventPointCutVisitor implements PointcutVisitor<List<EventPo
 	public List<EventPointCut> visit(ThreadPointCut p, Object arg) {
 		return null;
 	}
-
+	
+	@Override
+	public List<EventPointCut> visit(ThreadNamePointCut p, Object arg) {
+		return null;
+	}
+	
 	@Override
 	public List<EventPointCut> visit(EndProgramPointCut p, Object arg) {
 		return null;

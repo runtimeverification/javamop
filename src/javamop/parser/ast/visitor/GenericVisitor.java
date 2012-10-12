@@ -79,6 +79,8 @@ public interface GenericVisitor<R, A> {
 	public R visit(WithinPointCut p, A arg);
 
 	public R visit(ThreadPointCut p, A arg);
+	
+	public R visit(ThreadNamePointCut p, A arg);
 
 	public R visit(EndProgramPointCut p, A arg);
 

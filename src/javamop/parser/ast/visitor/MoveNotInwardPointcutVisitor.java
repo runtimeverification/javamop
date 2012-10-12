@@ -18,6 +18,7 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.StartThreadPointCut;
 import javamop.parser.ast.aspectj.TargetPointCut;
 import javamop.parser.ast.aspectj.ThisPointCut;
+import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
 
@@ -106,6 +107,10 @@ public class MoveNotInwardPointcutVisitor implements PointcutVisitor<PointCut, O
 	}
 
 	public PointCut visit(ThreadPointCut p, Object arg) {
+		return p;
+	}
+	
+	public PointCut visit(ThreadNamePointCut p, Object arg) {
 		return p;
 	}
 

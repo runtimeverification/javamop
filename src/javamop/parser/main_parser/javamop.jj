@@ -344,6 +344,7 @@ TOKEN :
 |	<WITHIN: "within">
 |	<ARGS: "args">
 |	<THREAD: "thread">
+|	<THREADNAME: "threadName">
 |	<CONDITION: "condition">
 |	<CFLOW: "cflow">
 |	<CFLOWBELOW: "cflowbelow">

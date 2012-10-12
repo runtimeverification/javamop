@@ -9,7 +9,7 @@ import javamop.parser.ast.type.*;
 import javamop.parser.ast.mopspec.*;
 import javamop.parser.ast.aspectj.*;;
 
-public class RemoveEndProgramVisitor implements GenericVisitor<PointCut, Integer>{
+public class RemoveThreadNameVisitor implements GenericVisitor<PointCut, Integer>{
 
 	public PointCut visit(Node n, Integer arg){
 		return null;
@@ -69,7 +69,7 @@ public class RemoveEndProgramVisitor implements GenericVisitor<PointCut, Integer
 			
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
 			for(PointCut p2 : p.getPointcuts()){
-				if(andType && p2 instanceof EndProgramPointCut){
+				if(andType && p2 instanceof ThreadNamePointCut){
 					if(alreadySeen)
 						return null;
 					alreadySeen = true;
@@ -120,6 +120,7 @@ public class RemoveEndProgramVisitor implements GenericVisitor<PointCut, Integer
 	}
 
 	public PointCut visit(IDPointCut p, Integer arg){
+		System.out.println("remove id pointcu");
 		return p;
 	}
 
@@ -132,16 +133,11 @@ public class RemoveEndProgramVisitor implements GenericVisitor<PointCut, Integer
 	}
 	
 	public PointCut visit(ThreadNamePointCut p, Integer arg){
-		return p;
+		return null;
 	}
 
 	public PointCut visit(EndProgramPointCut p, Integer arg){
-		if(arg == 0){
-			return null;
-		} else {
-			List<PointCut> pointcuts = new ArrayList<PointCut>();
-			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-		}
+		return p;
 	}
 
 	public PointCut visit(EndThreadPointCut p, Integer arg){
@@ -151,7 +147,7 @@ public class RemoveEndProgramVisitor implements GenericVisitor<PointCut, Integer
 	public PointCut visit(EndObjectPointCut p, Integer arg){
 		return p;
 	}
-	
+
 	public PointCut visit(StartThreadPointCut p, Integer arg){
 		return p;
 	}

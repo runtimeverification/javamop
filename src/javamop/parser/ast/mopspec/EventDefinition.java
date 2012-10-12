@@ -89,7 +89,7 @@ public class EventDefinition extends Node {
 			throw new javamop.parser.main_parser.ParseException("The following error encountered when parsing the pointcut in the event definition: "
 					+ e.getMessage());
 		}
-
+		
 		// thread pointcut
 		threadVar = originalPointCut.accept(new ThreadVarVisitor(), null);
 		if (threadVar == null)
@@ -100,6 +100,9 @@ public class EventDefinition extends Node {
 			resultPointCut = originalPointCut;
 		if (resultPointCut == null)
 			throw new javamop.parser.main_parser.ParseException("thread() pointcut should appear at the root level in a conjuction form");
+		
+		// thread name pointcut
+		resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor(), new Integer(1));
 		
 		// condition pointcut
 		condition = resultPointCut.accept(new ConditionVisitor(), null);

@@ -217,6 +217,18 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		} else
 			return p;
 	}
+	
+	public PointCut visit(ThreadNamePointCut p, Integer arg) {
+		if (p.getType().equals(this.targetType)) {
+			if (arg == 0) {
+				return null;
+			} else {
+				List<PointCut> pointcuts = new ArrayList<PointCut>();
+				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
+			}
+		} else
+			return p;
+	}
 
 	public PointCut visit(EndProgramPointCut p, Integer arg) {
 		if (p.getType().equals(this.targetType)) {

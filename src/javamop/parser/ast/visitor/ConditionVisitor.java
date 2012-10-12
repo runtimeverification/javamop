@@ -116,6 +116,10 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 	public String visit(ThreadPointCut p, Object arg) {
 		return "";
 	}
+	
+	public String visit(ThreadNamePointCut p, Object arg) {
+		return "";
+	}
 
 	public String visit(EndProgramPointCut p, Object arg) {
 		return "";

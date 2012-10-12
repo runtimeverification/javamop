@@ -151,6 +151,8 @@ public interface VoidVisitor<A> {
     public void visit(WithinPointCut p, A arg);
 
     public void visit(ThreadPointCut p, A arg);
+    
+    public void visit(ThreadNamePointCut p, A arg);
 
     public void visit(EndProgramPointCut p, A arg);
 

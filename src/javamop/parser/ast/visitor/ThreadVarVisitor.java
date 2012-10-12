@@ -117,6 +117,10 @@ public class ThreadVarVisitor implements GenericVisitor<String, Object>{
 		return ret;
 	}
 
+	public String visit(ThreadNamePointCut p, Object arg){
+		return "";
+	}
+	
 	public String visit(EndProgramPointCut p, Object arg){
 		return "";
 	}

@@ -420,6 +420,10 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	public void visit(ThreadPointCut p, Object arg) {
 		printer.print("thread(" + p.getId() + ")");
 	}
+	
+	public void visit(ThreadNamePointCut p, Object arg) {
+		printer.print("threadName(" + p.getId() + ")");
+	}
 
 	public void visit(EndProgramPointCut p, Object arg) {
 		printer.print("endProgram()");

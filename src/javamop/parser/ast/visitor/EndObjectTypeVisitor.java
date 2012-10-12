@@ -109,6 +109,10 @@ public class EndObjectTypeVisitor implements GenericVisitor<TypePattern, Object>
 	public TypePattern visit(ThreadPointCut p, Object arg) {
 		return null;
 	}
+	
+	public TypePattern visit(ThreadNamePointCut p, Object arg) {
+		return null;
+	}
 
 	public TypePattern visit(EndProgramPointCut p, Object arg) {
 		return null;
