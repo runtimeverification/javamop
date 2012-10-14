@@ -35,6 +35,7 @@ public class EventDefinition extends Node {
 
 	String condition;
 	String threadVar;
+	String threadNameVar;
 	TypePattern endObjectType;
 	String endObjectId;
 	boolean endProgram = false;
@@ -102,7 +103,14 @@ public class EventDefinition extends Node {
 			throw new javamop.parser.main_parser.ParseException("thread() pointcut should appear at the root level in a conjuction form");
 		
 		// thread name pointcut
-		resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor(), new Integer(1));
+		threadNameVar = resultPointCut.accept(new ThreadNameVarVisitor(), null);
+		if (threadNameVar == null)
+			throw new javamop.parser.main_parser.ParseException("There are more than one threadName() pointcut.");
+		if (threadNameVar.length() != 0) {
+			resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor(), new Integer(1));
+		} 
+		if (resultPointCut == null)
+			throw new javamop.parser.main_parser.ParseException("threadName() pointcut should appear at the root level in a conjuction form");
 		
 		// condition pointcut
 		condition = resultPointCut.accept(new ConditionVisitor(), null);
@@ -281,6 +289,10 @@ public class EventDefinition extends Node {
 
 	public String getThreadVar() {
 		return threadVar;
+	}
+	
+	public String getThreadNameVar() {
+		return threadNameVar;
 	}
 
 	public String getCondition() {

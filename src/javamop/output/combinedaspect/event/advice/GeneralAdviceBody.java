@@ -804,9 +804,26 @@ public class GeneralAdviceBody extends AdviceBody {
 		return ret;
 	}
 
+	/**
+	 * 
+	 * Generate code to match thread name pointcut
+	 * 
+	 * */
+	public String checkThreadName() {
+		if (this.event.getThreadNameVar() == null 
+				|| this.event.getThreadNameVar().length() == 0)
+			return "";
+		String ret = "";
+		ret += "if (!Thread.currentThread().getName().equals(\"" 
+		+ this.event.getThreadNameVar() + "\")) {\n";
+		ret += "return;\n";
+		ret += "}\n";		
+		return ret;
+	}
+	
 	public String toString() {
 		String ret = "";
-
+		ret += checkThreadName();
 		localVars.init();
 
 		if (indexingTree.hasCache()) {
