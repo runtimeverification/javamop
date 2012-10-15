@@ -120,7 +120,6 @@ public class RemoveThreadNameVisitor implements GenericVisitor<PointCut, Integer
 	}
 
 	public PointCut visit(IDPointCut p, Integer arg){
-		System.out.println("remove id pointcu");
 		return p;
 	}
 
@@ -135,7 +134,11 @@ public class RemoveThreadNameVisitor implements GenericVisitor<PointCut, Integer
 	public PointCut visit(ThreadNamePointCut p, Integer arg){
 		return null;
 	}
-
+	
+	public PointCut visit(ThreadBlockedPointCut p, Integer arg){
+		return p;
+	}
+	
 	public PointCut visit(EndProgramPointCut p, Integer arg){
 		return p;
 	}

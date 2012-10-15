@@ -94,7 +94,12 @@ public class EnforceMonitor extends BaseMonitor {
 		
 		MOPVariable enforceCategory = (MOPVariable)propMonitor.categoryVars.values().toArray()[0];
 		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
-		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
+		ret += "if (!" + clonedMonitor + "." + enforceCategory;
+		String blockedThread = event.getThreadBlockedVar();
+//		if (blockedThread != null && blockedThread.length() != 0) {
+//			ret += " || !checkBlockedThread(\"" + blockedThread + "\")";
+//		}
+		ret += ") {\n";
 		if (l != null)
 			ret += l.getName() + ".wait();\n";
 		ret += "}\n";

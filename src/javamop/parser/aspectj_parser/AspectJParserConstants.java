@@ -153,151 +153,153 @@ public interface AspectJParserConstants {
   /** RegularExpression Id. */
   int THREADNAME = 75;
   /** RegularExpression Id. */
-  int CONDITION = 76;
+  int THREADBLOCKED = 76;
   /** RegularExpression Id. */
-  int CFLOW = 77;
+  int CONDITION = 77;
   /** RegularExpression Id. */
-  int CFLOWBELOW = 78;
+  int CFLOW = 78;
   /** RegularExpression Id. */
-  int RETURNING = 79;
+  int CFLOWBELOW = 79;
   /** RegularExpression Id. */
-  int THROWING = 80;
+  int RETURNING = 80;
   /** RegularExpression Id. */
-  int ENDPROGRAM = 81;
+  int THROWING = 81;
   /** RegularExpression Id. */
-  int ENDTHREAD = 82;
+  int ENDPROGRAM = 82;
   /** RegularExpression Id. */
-  int ENDOBJECT = 83;
+  int ENDTHREAD = 83;
   /** RegularExpression Id. */
-  int STARTTHREAD = 84;
+  int ENDOBJECT = 84;
   /** RegularExpression Id. */
-  int HANDLER = 85;
+  int STARTTHREAD = 85;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 86;
+  int HANDLER = 86;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 87;
+  int LONG_LITERAL = 87;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 88;
+  int INTEGER_LITERAL = 88;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 89;
+  int DECIMAL_LITERAL = 89;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 90;
+  int HEX_LITERAL = 90;
   /** RegularExpression Id. */
-  int FLOATING_POINT_LITERAL = 91;
+  int OCTAL_LITERAL = 91;
   /** RegularExpression Id. */
-  int DECIMAL_FLOATING_POINT_LITERAL = 92;
+  int FLOATING_POINT_LITERAL = 92;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 93;
+  int DECIMAL_FLOATING_POINT_LITERAL = 93;
   /** RegularExpression Id. */
-  int HEXADECIMAL_FLOATING_POINT_LITERAL = 94;
+  int DECIMAL_EXPONENT = 94;
   /** RegularExpression Id. */
-  int HEXADECIMAL_EXPONENT = 95;
+  int HEXADECIMAL_FLOATING_POINT_LITERAL = 95;
   /** RegularExpression Id. */
-  int CHARACTER_LITERAL = 96;
+  int HEXADECIMAL_EXPONENT = 96;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 97;
+  int CHARACTER_LITERAL = 97;
   /** RegularExpression Id. */
-  int IDPATTERN = 98;
+  int STRING_LITERAL = 98;
   /** RegularExpression Id. */
-  int LETTER = 99;
+  int IDPATTERN = 99;
   /** RegularExpression Id. */
-  int PART_LETTER = 100;
+  int LETTER = 100;
   /** RegularExpression Id. */
-  int LPAREN = 101;
+  int PART_LETTER = 101;
   /** RegularExpression Id. */
-  int RPAREN = 102;
+  int LPAREN = 102;
   /** RegularExpression Id. */
-  int LBRACE = 103;
+  int RPAREN = 103;
   /** RegularExpression Id. */
-  int RBRACE = 104;
+  int LBRACE = 104;
   /** RegularExpression Id. */
-  int LBRACKET = 105;
+  int RBRACE = 105;
   /** RegularExpression Id. */
-  int RBRACKET = 106;
+  int LBRACKET = 106;
   /** RegularExpression Id. */
-  int SEMICOLON = 107;
+  int RBRACKET = 107;
   /** RegularExpression Id. */
-  int COMMA = 108;
+  int SEMICOLON = 108;
   /** RegularExpression Id. */
-  int AT = 109;
+  int COMMA = 109;
   /** RegularExpression Id. */
-  int ASSIGN = 110;
+  int AT = 110;
   /** RegularExpression Id. */
-  int LT = 111;
+  int ASSIGN = 111;
   /** RegularExpression Id. */
-  int BANG = 112;
+  int LT = 112;
   /** RegularExpression Id. */
-  int TILDE = 113;
+  int BANG = 113;
   /** RegularExpression Id. */
-  int HOOK = 114;
+  int TILDE = 114;
   /** RegularExpression Id. */
-  int COLON = 115;
+  int HOOK = 115;
   /** RegularExpression Id. */
-  int EQ = 116;
+  int COLON = 116;
   /** RegularExpression Id. */
-  int LE = 117;
+  int EQ = 117;
   /** RegularExpression Id. */
-  int GE = 118;
+  int LE = 118;
   /** RegularExpression Id. */
-  int NE = 119;
+  int GE = 119;
   /** RegularExpression Id. */
-  int SC_OR = 120;
+  int NE = 120;
   /** RegularExpression Id. */
-  int SC_AND = 121;
+  int SC_OR = 121;
   /** RegularExpression Id. */
-  int INCR = 122;
+  int SC_AND = 122;
   /** RegularExpression Id. */
-  int DECR = 123;
+  int INCR = 123;
   /** RegularExpression Id. */
-  int PLUS = 124;
+  int DECR = 124;
   /** RegularExpression Id. */
-  int MINUS = 125;
+  int PLUS = 125;
   /** RegularExpression Id. */
-  int SLASH = 126;
+  int MINUS = 126;
   /** RegularExpression Id. */
-  int BIT_AND = 127;
+  int SLASH = 127;
   /** RegularExpression Id. */
-  int BIT_OR = 128;
+  int BIT_AND = 128;
   /** RegularExpression Id. */
-  int XOR = 129;
+  int BIT_OR = 129;
   /** RegularExpression Id. */
-  int REM = 130;
+  int XOR = 130;
   /** RegularExpression Id. */
-  int LSHIFT = 131;
+  int REM = 131;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 132;
+  int LSHIFT = 132;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 133;
+  int PLUSASSIGN = 133;
   /** RegularExpression Id. */
-  int STARASSIGN = 134;
+  int MINUSASSIGN = 134;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 135;
+  int STARASSIGN = 135;
   /** RegularExpression Id. */
-  int ANDASSIGN = 136;
+  int SLASHASSIGN = 136;
   /** RegularExpression Id. */
-  int ORASSIGN = 137;
+  int ANDASSIGN = 137;
   /** RegularExpression Id. */
-  int XORASSIGN = 138;
+  int ORASSIGN = 138;
   /** RegularExpression Id. */
-  int REMASSIGN = 139;
+  int XORASSIGN = 139;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 140;
+  int REMASSIGN = 140;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 141;
+  int LSHIFTASSIGN = 141;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 142;
+  int RSIGNEDSHIFTASSIGN = 142;
   /** RegularExpression Id. */
-  int ELLIPSIS = 143;
+  int RUNSIGNEDSHIFTASSIGN = 143;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 144;
+  int ELLIPSIS = 144;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 145;
+  int RUNSIGNEDSHIFT = 145;
   /** RegularExpression Id. */
-  int GT = 146;
+  int RSIGNEDSHIFT = 146;
   /** RegularExpression Id. */
-  int DOTDOT = 147;
+  int GT = 147;
   /** RegularExpression Id. */
-  int DOT = 148;
+  int DOTDOT = 148;
+  /** RegularExpression Id. */
+  int DOT = 149;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -380,6 +382,7 @@ public interface AspectJParserConstants {
     "\"args\"",
     "\"thread\"",
     "\"threadName\"",
+    "\"threadBlocked\"",
     "\"condition\"",
     "\"cflow\"",
     "\"cflowbelow\"",

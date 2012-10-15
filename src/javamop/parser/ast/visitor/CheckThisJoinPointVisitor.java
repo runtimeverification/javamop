@@ -133,6 +133,11 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	public Boolean visit(ThreadNamePointCut p, Object arg) {
 		return Boolean.FALSE;
 	}
+	
+	@Override
+	public Boolean visit(ThreadBlockedPointCut p, Object arg) {
+		return Boolean.FALSE;
+	}
 
 	public Boolean visit(EndProgramPointCut p, Object arg) {
 		return Boolean.FALSE;

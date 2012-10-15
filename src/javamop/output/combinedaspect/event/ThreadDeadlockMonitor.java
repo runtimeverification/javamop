@@ -109,9 +109,33 @@ public class ThreadDeadlockMonitor extends EndThread{
 		return ret;
 	}
 	
+	/**
+	 * 
+	 * Print a helper method used to check whether a thread is blocked or not.
+	 * 
+	 * */
+	public String printCheckBlockedThread() {
+		String ret = "";
+		
+        ret += "static boolean checkBlockedThread(String name) {\n";
+        ret += "for (Thread t : " + threadSet + ") {\n";
+        ret += "if (t.getName().equals(name)) {\n";
+        ret += "if (t.getState() == Thread.State.BLOCKED || t.getState() == Thread.State.WAITING) {\n";
+        ret += "return true;\n";
+        ret += "}\n";
+        ret += "}\n";
+        ret += "}\n";
+        ret += "return false;\n";
+        ret += "}\n";
+        
+		return ret;
+	}
+	
 	public String printAdvices() {
 		String ret = "";
 		ret += printDataStructures();
+		ret += "\n";
+		ret += printCheckBlockedThread();
 		ret += "\n";
 		ret += printAdviceForThreadWithRunnable();
 		ret += "\n";

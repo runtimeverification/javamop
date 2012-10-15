@@ -132,6 +132,10 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return null;
 	}
 
+	public MOPParameters visit(ThreadBlockedPointCut p, MOPParameters arg) {
+		return null;
+	}
+	
 	public MOPParameters visit(EndProgramPointCut p, MOPParameters arg) {
 		return null;
 	}

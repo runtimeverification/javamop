@@ -844,7 +844,7 @@ public class GeneralAdviceBody extends AdviceBody {
 		}
 
 		ret += cacheResultWrap(handleCacheMiss);
-
+		
 		ret += monitoring();
 
 		ret = localVars.varDecl() + ret;

@@ -116,6 +116,10 @@ public class StartThreadVisitor implements GenericVisitor<String, Object>{
 		return "";
 	}
 	
+	public String visit(ThreadBlockedPointCut p, Object arg){
+		return "";
+	}
+	
 	public String visit(EndProgramPointCut p, Object arg){
 		return "";
 	}

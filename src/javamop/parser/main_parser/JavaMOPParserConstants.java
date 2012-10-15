@@ -167,151 +167,153 @@ public interface JavaMOPParserConstants {
   /** RegularExpression Id. */
   int THREADNAME = 86;
   /** RegularExpression Id. */
-  int CONDITION = 87;
+  int THREADBLOCKED = 87;
   /** RegularExpression Id. */
-  int CFLOW = 88;
+  int CONDITION = 88;
   /** RegularExpression Id. */
-  int CFLOWBELOW = 89;
+  int CFLOW = 89;
   /** RegularExpression Id. */
-  int RETURNING = 90;
+  int CFLOWBELOW = 90;
   /** RegularExpression Id. */
-  int THROWING = 91;
+  int RETURNING = 91;
   /** RegularExpression Id. */
-  int ENDPROGRAM = 92;
+  int THROWING = 92;
   /** RegularExpression Id. */
-  int ENDTHREAD = 93;
+  int ENDPROGRAM = 93;
   /** RegularExpression Id. */
-  int ENDOBJECT = 94;
+  int ENDTHREAD = 94;
   /** RegularExpression Id. */
-  int EXTEND = 95;
+  int ENDOBJECT = 95;
   /** RegularExpression Id. */
-  int INCLUDES = 96;
+  int EXTEND = 96;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 97;
+  int INCLUDES = 97;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 98;
+  int LONG_LITERAL = 98;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 99;
+  int INTEGER_LITERAL = 99;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 100;
+  int DECIMAL_LITERAL = 100;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 101;
+  int HEX_LITERAL = 101;
   /** RegularExpression Id. */
-  int FLOATING_POINT_LITERAL = 102;
+  int OCTAL_LITERAL = 102;
   /** RegularExpression Id. */
-  int DECIMAL_FLOATING_POINT_LITERAL = 103;
+  int FLOATING_POINT_LITERAL = 103;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 104;
+  int DECIMAL_FLOATING_POINT_LITERAL = 104;
   /** RegularExpression Id. */
-  int HEXADECIMAL_FLOATING_POINT_LITERAL = 105;
+  int DECIMAL_EXPONENT = 105;
   /** RegularExpression Id. */
-  int HEXADECIMAL_EXPONENT = 106;
+  int HEXADECIMAL_FLOATING_POINT_LITERAL = 106;
   /** RegularExpression Id. */
-  int CHARACTER_LITERAL = 107;
+  int HEXADECIMAL_EXPONENT = 107;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 108;
+  int CHARACTER_LITERAL = 108;
   /** RegularExpression Id. */
-  int IDENTIFIER = 109;
+  int STRING_LITERAL = 109;
   /** RegularExpression Id. */
-  int LETTER = 110;
+  int IDENTIFIER = 110;
   /** RegularExpression Id. */
-  int PART_LETTER = 111;
+  int LETTER = 111;
   /** RegularExpression Id. */
-  int LPAREN = 112;
+  int PART_LETTER = 112;
   /** RegularExpression Id. */
-  int RPAREN = 113;
+  int LPAREN = 113;
   /** RegularExpression Id. */
-  int LBRACE = 114;
+  int RPAREN = 114;
   /** RegularExpression Id. */
-  int RBRACE = 115;
+  int LBRACE = 115;
   /** RegularExpression Id. */
-  int LBRACKET = 116;
+  int RBRACE = 116;
   /** RegularExpression Id. */
-  int RBRACKET = 117;
+  int LBRACKET = 117;
   /** RegularExpression Id. */
-  int SEMICOLON = 118;
+  int RBRACKET = 118;
   /** RegularExpression Id. */
-  int COMMA = 119;
+  int SEMICOLON = 119;
   /** RegularExpression Id. */
-  int AT = 120;
+  int COMMA = 120;
   /** RegularExpression Id. */
-  int DOT = 121;
+  int AT = 121;
   /** RegularExpression Id. */
-  int ASSIGN = 122;
+  int DOT = 122;
   /** RegularExpression Id. */
-  int LT = 123;
+  int ASSIGN = 123;
   /** RegularExpression Id. */
-  int BANG = 124;
+  int LT = 124;
   /** RegularExpression Id. */
-  int TILDE = 125;
+  int BANG = 125;
   /** RegularExpression Id. */
-  int HOOK = 126;
+  int TILDE = 126;
   /** RegularExpression Id. */
-  int COLON = 127;
+  int HOOK = 127;
   /** RegularExpression Id. */
-  int EQ = 128;
+  int COLON = 128;
   /** RegularExpression Id. */
-  int LE = 129;
+  int EQ = 129;
   /** RegularExpression Id. */
-  int GE = 130;
+  int LE = 130;
   /** RegularExpression Id. */
-  int NE = 131;
+  int GE = 131;
   /** RegularExpression Id. */
-  int SC_OR = 132;
+  int NE = 132;
   /** RegularExpression Id. */
-  int SC_AND = 133;
+  int SC_OR = 133;
   /** RegularExpression Id. */
-  int INCR = 134;
+  int SC_AND = 134;
   /** RegularExpression Id. */
-  int DECR = 135;
+  int INCR = 135;
   /** RegularExpression Id. */
-  int PLUS = 136;
+  int DECR = 136;
   /** RegularExpression Id. */
-  int MINUS = 137;
+  int PLUS = 137;
   /** RegularExpression Id. */
-  int STAR = 138;
+  int MINUS = 138;
   /** RegularExpression Id. */
-  int SLASH = 139;
+  int STAR = 139;
   /** RegularExpression Id. */
-  int BIT_AND = 140;
+  int SLASH = 140;
   /** RegularExpression Id. */
-  int BIT_OR = 141;
+  int BIT_AND = 141;
   /** RegularExpression Id. */
-  int XOR = 142;
+  int BIT_OR = 142;
   /** RegularExpression Id. */
-  int REM = 143;
+  int XOR = 143;
   /** RegularExpression Id. */
-  int LSHIFT = 144;
+  int REM = 144;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 145;
+  int LSHIFT = 145;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 146;
+  int PLUSASSIGN = 146;
   /** RegularExpression Id. */
-  int STARASSIGN = 147;
+  int MINUSASSIGN = 147;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 148;
+  int STARASSIGN = 148;
   /** RegularExpression Id. */
-  int ANDASSIGN = 149;
+  int SLASHASSIGN = 149;
   /** RegularExpression Id. */
-  int ORASSIGN = 150;
+  int ANDASSIGN = 150;
   /** RegularExpression Id. */
-  int XORASSIGN = 151;
+  int ORASSIGN = 151;
   /** RegularExpression Id. */
-  int REMASSIGN = 152;
+  int XORASSIGN = 152;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 153;
+  int REMASSIGN = 153;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 154;
+  int LSHIFTASSIGN = 154;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 155;
+  int RSIGNEDSHIFTASSIGN = 155;
   /** RegularExpression Id. */
-  int ELLIPSIS = 156;
+  int RUNSIGNEDSHIFTASSIGN = 156;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 157;
+  int ELLIPSIS = 157;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 158;
+  int RUNSIGNEDSHIFT = 158;
   /** RegularExpression Id. */
-  int GT = 159;
+  int RSIGNEDSHIFT = 159;
+  /** RegularExpression Id. */
+  int GT = 160;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -409,6 +411,7 @@ public interface JavaMOPParserConstants {
     "\"args\"",
     "\"thread\"",
     "\"threadName\"",
+    "\"threadBlocked\"",
     "\"condition\"",
     "\"cflow\"",
     "\"cflowbelow\"",

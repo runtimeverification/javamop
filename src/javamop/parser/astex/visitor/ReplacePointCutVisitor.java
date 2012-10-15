@@ -20,6 +20,7 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.StartThreadPointCut;
 import javamop.parser.ast.aspectj.TargetPointCut;
 import javamop.parser.ast.aspectj.ThisPointCut;
+import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
 import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
@@ -126,6 +127,11 @@ public class ReplacePointCutVisitor implements PointcutVisitor<PointCut, HashMap
 	
 	@Override
 	public PointCut visit(ThreadNamePointCut p, HashMap<PointCut, PointCut> arg) {
+		return p;
+	}
+	
+	@Override
+	public PointCut visit(ThreadBlockedPointCut p, HashMap<PointCut, PointCut> arg) {
 		return p;
 	}
 	

@@ -11,10 +11,10 @@ import javamop.parser.ast.aspectj.*;;
 
 /**
  * 
- * Thread name visitor for threadName() pointcut.
+ * Thread name visitor for threadBlocked() pointcut.
  * 
  * */
-public class ThreadNameVarVisitor implements GenericVisitor<String, Object>{
+public class ThreadBlockedVarVisitor implements GenericVisitor<String, Object>{
 
 	public String visit(Node n, Object arg){
 		return null;
@@ -120,16 +120,15 @@ public class ThreadNameVarVisitor implements GenericVisitor<String, Object>{
 	}
 
 	public String visit(ThreadNamePointCut p, Object arg){
+		return "";
+	}
+	
+	public String visit(ThreadBlockedPointCut p, Object arg){
 		String ret = p.getId();
 		
 		if(ret == null || ret.length() == 0)
 			return null;
 		return ret;
-	}
-	
-	public String visit(ThreadBlockedPointCut p, Object arg){
-		return "";
-
 	}
 	
 	public String visit(EndProgramPointCut p, Object arg){

@@ -135,6 +135,10 @@ public class RemoveConditionVisitor implements GenericVisitor<PointCut, Integer>
 		return p;
 	}
 	
+	public PointCut visit(ThreadBlockedPointCut p, Integer arg){
+		return p;
+	}
+	
 	public PointCut visit(EndProgramPointCut p, Integer arg){
 		return p;
 	}

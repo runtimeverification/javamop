@@ -104,6 +104,10 @@ public class CollectUserVarVisitor implements GenericVisitor<List<String>, Objec
 	public List<String> visit(ThreadNamePointCut p, Object arg) {
 		return null;
 	}
+	
+	public List<String> visit(ThreadBlockedPointCut p, Object arg) {
+		return null;
+	}
 
 	public List<String> visit(EndProgramPointCut p, Object arg) {
 		return null;

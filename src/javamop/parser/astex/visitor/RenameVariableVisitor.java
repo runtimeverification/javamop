@@ -31,6 +31,7 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.StartThreadPointCut;
 import javamop.parser.ast.aspectj.TargetPointCut;
 import javamop.parser.ast.aspectj.ThisPointCut;
+import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
 import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.TypePattern;
@@ -289,8 +290,12 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	
 	@Override
 	public Node visit(ThreadNamePointCut p, HashMap<String, MOPParameter> arg) {
-		return new ThreadNamePointCut(p.getBeginLine(), p.getBeginColumn(), p.getId());
-
+		return p;
+	}
+	
+	@Override
+	public Node visit(ThreadBlockedPointCut p, HashMap<String, MOPParameter> arg) {
+		return p;
 	}
 
 	@Override

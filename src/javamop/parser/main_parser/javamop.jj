@@ -345,6 +345,7 @@ TOKEN :
 |	<ARGS: "args">
 |	<THREAD: "thread">
 |	<THREADNAME: "threadName">
+|	<THREADBLOCKED: "threadBlocked">
 |	<CONDITION: "condition">
 |	<CFLOW: "cflow">
 |	<CFLOWBELOW: "cflowbelow">

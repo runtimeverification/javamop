@@ -55,15 +55,7 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 	}
 
 	public PointCut visit(ArgsPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(CombinedPointCut p, Integer arg) {
@@ -107,63 +99,23 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 	}
 
 	public PointCut visit(ConditionPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(FieldPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(MethodPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(TargetPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(ThisPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(CFlowPointCut p, Integer arg) {
@@ -171,102 +123,51 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 	}
 
 	public PointCut visit(IFPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(IDPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(WithinPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(ThreadPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 	
 	public PointCut visit(ThreadNamePointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
+	}
+	
+	public PointCut visit(ThreadBlockedPointCut p, Integer arg) {
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(EndProgramPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(EndThreadPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(EndObjectPointCut p, Integer arg) {
-		if (p.getType().equals(this.targetType)) {
-			if (arg == 0) {
-				return null;
-			} else {
-				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-			}
-		} else
-			return p;
+		return removePointCut(p, arg);
 	}
 
 	public PointCut visit(StartThreadPointCut p, Integer arg) {
+		return removePointCut(p, arg);
+	}
+
+	/**
+	 * 
+	 * Helper method to remove pointcut with a specific type.
+	 * 
+	 * */
+	private PointCut removePointCut(PointCut p, Integer arg) {
 		if (p.getType().equals(this.targetType)) {
 			if (arg == 0) {
 				return null;

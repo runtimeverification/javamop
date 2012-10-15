@@ -134,6 +134,10 @@ public class RemoveEndProgramVisitor implements GenericVisitor<PointCut, Integer
 	public PointCut visit(ThreadNamePointCut p, Integer arg){
 		return p;
 	}
+	
+	public PointCut visit(ThreadBlockedPointCut p, Integer arg){
+		return p;
+	}
 
 	public PointCut visit(EndProgramPointCut p, Integer arg){
 		if(arg == 0){

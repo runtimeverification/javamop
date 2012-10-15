@@ -36,6 +36,7 @@ public class EventDefinition extends Node {
 	String condition;
 	String threadVar;
 	String threadNameVar;
+	String threadBlockedVar;
 	TypePattern endObjectType;
 	String endObjectId;
 	boolean endProgram = false;
@@ -112,6 +113,18 @@ public class EventDefinition extends Node {
 		if (resultPointCut == null)
 			throw new javamop.parser.main_parser.ParseException("threadName() pointcut should appear at the root level in a conjuction form");
 		
+		// thread blocked pointcut
+		threadBlockedVar = resultPointCut.accept(new ThreadBlockedVarVisitor(), null);
+		if (threadBlockedVar == null) {
+			// TODO We should support multiple thread blocked pointcut in future!
+			throw new javamop.parser.main_parser.ParseException("There are more than one threadName() pointcut.");
+		} 
+		if (threadBlockedVar.length() != 0) {
+			resultPointCut = resultPointCut.accept(new RemoveThreadBlockedVisitor(), new Integer(1));
+		}
+		if (resultPointCut == null)
+			throw new javamop.parser.main_parser.ParseException("threadBlocked() pointcut should appear at the root level in a conjuction form");
+
 		// condition pointcut
 		condition = resultPointCut.accept(new ConditionVisitor(), null);
 		if (condition == null)
@@ -293,6 +306,10 @@ public class EventDefinition extends Node {
 	
 	public String getThreadNameVar() {
 		return threadNameVar;
+	}
+	
+	public String getThreadBlockedVar() {
+		return threadBlockedVar;
 	}
 
 	public String getCondition() {

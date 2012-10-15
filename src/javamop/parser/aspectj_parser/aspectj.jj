@@ -213,6 +213,7 @@ TOKEN :
 | < ARGS : "args" >
 | < THREAD : "thread" >
 | < THREADNAME: "threadName" >
+| < THREADBLOCKED: "threadBlocked" >
 | < CONDITION : "condition" >
 | < CFLOW : "cflow" >
 | < CFLOWBELOW : "cflowbelow" >
@@ -1094,6 +1095,7 @@ PositionString AnyIDPatternWithoutDot() :
   | < ARGS >
   | < THREAD >
   | < THREADNAME >
+  | < THREADBLOCKED >
   | < CONDITION >
   | < CFLOW >
   | < CFLOWBELOW >
@@ -1202,6 +1204,7 @@ PointCut BasePointCut() :
   | ret = WithinPointCut()
   | ret = ThreadPointCut()
   | ret = ThreadNamePointCut()
+  | ret = ThreadBlockedPointCut()
   | ret = IFPointCut()
   | ret = ConditionPointCut()
   | ret = CFlowPointCut()
@@ -1471,6 +1474,23 @@ PointCut ThreadNamePointCut() :
   "(" id = AnyIdPattern() ")"
   {
     return new ThreadNamePointCut(line, column, id.str);
+  }
+}
+
+PointCut ThreadBlockedPointCut() :
+{
+  int line, column;
+  PositionString id;
+}
+{
+  "threadBlocked"
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+  }
+  "(" id = AnyIdPattern() ")"
+  {
+    return new ThreadBlockedPointCut(line, column, id.str);
   }
 }
 
@@ -2064,6 +2084,7 @@ PositionString AnyIdPattern() :
   | < ARGS >
   | < THREAD >
   | < THREADNAME >
+  | < THREADBLOCKED >
   | < CONDITION >
   | < CFLOW >
   | < CFLOWBELOW >
@@ -2108,6 +2129,7 @@ PositionString AnyIdPattern() :
     | < ARGS >
     | < THREAD >
     | < THREADNAME >
+    | < THREADBLOCKED >
     | < CONDITION >
     | < CFLOW >
     | < CFLOWBELOW >
