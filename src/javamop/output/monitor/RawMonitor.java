@@ -143,7 +143,7 @@ public class RawMonitor extends Monitor{
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName) {
 		String ret = "";
 
 		if (has__LOC) {

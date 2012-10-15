@@ -30,6 +30,7 @@ public class SuffixMonitor extends Monitor {
 	ArrayList<String> categories;
 	MOPVariable monitorList = new MOPVariable("monitorList");
 	boolean existSkip = false;
+	String aspectName;
 	
 	public SuffixMonitor(String name, JavaMOPSpec mopSpec, OptimizedCoenableSet coenableSet, boolean isOutermost) throws MOPException {
 		super(name, mopSpec, coenableSet, isOutermost);
@@ -120,6 +121,14 @@ public class SuffixMonitor extends Monitor {
 		if(monitorTermination != null)
 			monitorTermination.setRefTrees(refTrees);
 	}
+	
+	public void setAspectName(String name) {
+		this.aspectName = name;
+	}
+	
+	public String getAspectName() {
+		return this.aspectName;
+	}
 
 	public MOPVariable getOutermostName() {
 		if (isDefined)
@@ -173,7 +182,7 @@ public class SuffixMonitor extends Monitor {
 		ret += "while (" + it + ".hasNext()){\n";
 		ret += innerMonitor.getOutermostName() + " " + monitor + " = (" + innerMonitor.getOutermostName() + ")" + it + ".next();\n";
 
-		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig, null);
+		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig, null, this.aspectName);
 
 		ret += "if(" + monitorSet + ".contains(" + monitor + ")";
 		for (MOPVariable categoryVar : categoryVars) {
@@ -192,12 +201,12 @@ public class SuffixMonitor extends Monitor {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig, l);
+			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig, l, aspectName);
 
 		if (has__LOC) {
 			if(loc != null)

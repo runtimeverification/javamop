@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javamop.output.MOPVariable;
+import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.output.monitor.SuffixMonitor;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -30,6 +31,8 @@ public class MonitorSet {
 	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 
 	MOPStatistics stat;
+	
+	GlobalLock monitorLock;
 
 	public MonitorSet(String name, JavaMOPSpec mopSpec, SuffixMonitor monitor) {
 		this.monitorName = monitor.getOutermostName();
@@ -63,7 +66,9 @@ public class MonitorSet {
 		return setName;
 	}
 
-	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig) {
+	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock) {
+		this.monitorLock = lock;
+		System.out.println(lock.getName());
 		String ret = "";
 
 		boolean isAround = event.getPos().equals("around");
@@ -280,7 +285,7 @@ public class MonitorSet {
 			ret += "elementData[" + numAlive + "] = " + monitor + ";\n";
 			ret += numAlive + "++;\n";
 			ret += "\n";
-			ret += this.monitor.Monitoring(monitor, event, loc, staticsig, null);
+			ret += this.monitor.Monitoring(monitor, event, loc, staticsig, this.monitorLock, this.monitor.getAspectName());
 			ret += "}\n";
 			ret += "}\n";
 
@@ -292,7 +297,7 @@ public class MonitorSet {
 		}
 
 		ret += "}\n";
-
+		
 		return ret;
 	}
 

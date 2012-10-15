@@ -90,7 +90,7 @@ public abstract class Monitor {
 
 	public abstract Set<MOPVariable> getCategoryVars();
 
-	public abstract String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l);
+	public abstract String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName);
 
 	public abstract MonitorInfo getMonitorInfo();
 	

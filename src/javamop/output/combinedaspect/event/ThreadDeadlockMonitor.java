@@ -49,6 +49,7 @@ public class ThreadDeadlockMonitor extends EndThread{
 		ret += "if(" + mainThread + " == null){\n";
 		ret += mainThread + " = Thread.currentThread();\n";
 		ret += threadSet + ".add(Thread.currentThread());\n";
+		ret += globalLock.getName() + ".notifyAll();\n";
 		ret += "}\n";
 		
 		ret += "javamoprt.MOPDeadlockDetector.startDeadlockDetectionThread(" + this.threadSet 
@@ -114,10 +115,10 @@ public class ThreadDeadlockMonitor extends EndThread{
 	 * Print a helper method used to check whether a thread is blocked or not.
 	 * 
 	 * */
-	public String printCheckBlockedThread() {
+	public String printContainsBlockedThread() {
 		String ret = "";
 		
-        ret += "static boolean checkBlockedThread(String name) {\n";
+        ret += "static boolean containsBlockedThread(String name) {\n";
         ret += "for (Thread t : " + threadSet + ") {\n";
         ret += "if (t.getName().equals(name)) {\n";
         ret += "if (t.getState() == Thread.State.BLOCKED || t.getState() == Thread.State.WAITING) {\n";
@@ -131,11 +132,49 @@ public class ThreadDeadlockMonitor extends EndThread{
 		return ret;
 	}
 	
+	/**
+	 * 
+	 * Print a helper method used to check whether a thread is contained in the threadSet.
+	 * 
+	 * */
+	public String printContainsThread() {
+		String ret = "";
+		
+        ret += "static boolean containsThread(String name) {\n";
+        ret += "for (Thread t : " + threadSet + ") {\n";
+        ret += "if (t.getName().equals(name)) {\n";
+        ret += "return true;\n";
+        ret += "}\n";
+        ret += "}\n";
+        ret += "return false;\n";
+        ret += "}\n";
+        
+		return ret;
+	}
+	
+	public String printAdviceForNewThread() {
+		String ret = "";
+		
+		ret += "after (Thread t): ";
+		ret += "(";
+		ret += "call(void Thread+.start()) && target(t))";
+		ret += " && " + commonPointcut + "() {\n";
+		ret += "synchronized (" + globalLock.getName() + ") {\n";
+		ret += threadSet + ".add(t);\n";
+		ret += globalLock.getName() + ".notifyAll();\n";
+		ret += "}\n";
+		ret += "}\n";
+		
+		return ret;
+	}
+	
 	public String printAdvices() {
 		String ret = "";
 		ret += printDataStructures();
 		ret += "\n";
-		ret += printCheckBlockedThread();
+		ret += printContainsBlockedThread();
+		ret += "\n";
+		ret += printContainsThread();
 		ret += "\n";
 		ret += printAdviceForThreadWithRunnable();
 		ret += "\n";

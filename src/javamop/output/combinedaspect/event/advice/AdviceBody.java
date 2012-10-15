@@ -30,13 +30,16 @@ public abstract class AdviceBody {
 	MOPParameters eventParams;
 
 	public boolean isFullParam;
+	CombinedAspect aspect;
 	
 	public AdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
 		this.mopSpec = mopSpec;
+		this.aspect = combinedAspect;
 		this.event = event;
 		this.eventParams = event.getMOPParametersOnSpec();
 		this.monitorSet = combinedAspect.monitorSets.get(mopSpec);
 		this.monitorClass = combinedAspect.monitors.get(mopSpec);
+		this.monitorClass.setAspectName(combinedAspect.getAspectName());
 		this.monitorName = monitorClass.getOutermostName();
 		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
 		this.indexingTrees = indexingDecl.getIndexingTrees();

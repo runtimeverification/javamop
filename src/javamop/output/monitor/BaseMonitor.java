@@ -311,7 +311,7 @@ public class BaseMonitor extends Monitor {
 		return this.printEventMethod(prop, event, "");
 	}
 	
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
@@ -340,11 +340,11 @@ public class BaseMonitor extends Monitor {
 		for(PropertyAndHandlers prop : props){
 			PropMonitor propMonitor = propMonitors.get(prop);
 			
-			ret += this.beforeEventMethod(monitorVar, prop, event, l);
+			ret += this.beforeEventMethod(monitorVar, prop, event, l, aspectName);
 			ret += monitorVar + "." + propMonitor.eventMethods.get(event.getUniqueId()) + "(";
 			ret += event.getMOPParameters().parameterString();
 			ret += ");\n";
-			ret += this.afterEventMethod(monitorVar, prop, event, l);
+			ret += this.afterEventMethod(monitorVar, prop, event, l, aspectName);
 			
 			if (event.getCondition() != null && event.getCondition().length() != 0) {
 				ret += "if(" + monitorVar + "." + conditionFail + "){\n";
@@ -386,11 +386,11 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
-	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName) {
 		return "";
 	}
 
-	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName) {
 		return  "";
 	}
 

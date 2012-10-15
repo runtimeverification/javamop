@@ -67,10 +67,12 @@ public class EnforceMonitor extends BaseMonitor {
 	 * 
 	 * */
 	@Override
-	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, 
+			EventDefinition event, GlobalLock l, String aspectName) {
 		String ret = "";
-		if (l != null)
+		if (l != null) {
 			ret += l.getName() + ".notifyAll();\n";
+		}
 		return ret;
 	}
 
@@ -80,13 +82,13 @@ public class EnforceMonitor extends BaseMonitor {
 	 * 
 	 * */
 	@Override
-	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l) {
+	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, 
+			EventDefinition event, GlobalLock l, String aspectName) {
 		
 		String ret = "";
 		PropMonitor propMonitor = propMonitors.get(prop);
 		String uniqueId = event.getUniqueId();
 		String methodName = propMonitor.eventMethods.get(uniqueId).toString();
-		
 		ret += "try {\n";
 		ret += "do {\n";
 		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
@@ -95,10 +97,12 @@ public class EnforceMonitor extends BaseMonitor {
 		MOPVariable enforceCategory = (MOPVariable)propMonitor.categoryVars.values().toArray()[0];
 		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
 		ret += "if (!" + clonedMonitor + "." + enforceCategory;
+		
 		String blockedThread = event.getThreadBlockedVar();
 //		if (blockedThread != null && blockedThread.length() != 0) {
-//			ret += " || !checkBlockedThread(\"" + blockedThread + "\")";
+//			ret += " || !" + aspectName + ".checkBlockedThread(\"" + blockedThread + "\")";
 //		}
+		
 		ret += ") {\n";
 		if (l != null)
 			ret += l.getName() + ".wait();\n";
@@ -106,7 +110,19 @@ public class EnforceMonitor extends BaseMonitor {
 		ret += "else {\n";
 		ret += "break;\n";	
 		ret += "}\n";
-		ret += "} while (true);\n";
+		ret += "} while (true);\n\n";
+		
+		if (blockedThread != null && blockedThread.length() != 0) {
+			ret += "while (!" + aspectName + ".containsBlockedThread(\"" + blockedThread + "\")) {\n";
+			ret += "if (!" + aspectName + ".containsThread(\"" + blockedThread + "\")) {\n";
+			if (l != null)
+				ret += l.getName() + ".wait();\n";
+			ret += "}\n";
+			if (l != null)
+				ret += l.getName() + ".wait(50);\n";
+			ret += "}\n";
+		}
+		
 		ret += "} catch (Exception e) {\n";
 		ret += "e.printStackTrace();\n";
 		ret += "}\n";

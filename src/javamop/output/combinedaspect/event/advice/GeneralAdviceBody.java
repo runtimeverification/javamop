@@ -41,6 +41,8 @@ public class GeneralAdviceBody extends AdviceBody {
 	boolean doDisable = false;
 	
 	GlobalLock lock;
+	
+	String aspectName;
 
 	// assumes: mopSpec.getParameters().size() != 0
 	public GeneralAdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
@@ -65,7 +67,9 @@ public class GeneralAdviceBody extends AdviceBody {
 		this.doDisable = doDisable();
 		
 		this.statManager = combinedAspect.statManager;
+		this.aspectName = combinedAspect.getAspectName();
 		lock = combinedAspect.lockManager.getLock();
+		lock = new GlobalLock(new MOPVariable(this.aspectName + "." + lock.getName()));
 	}
 
 	public boolean doDisable(){
@@ -786,17 +790,17 @@ public class GeneralAdviceBody extends AdviceBody {
 		if (indexingTree.containsSet()) {
 			MOPVariable mainSet = localVars.get("mainSet");
 
-			ret += monitorSet.Monitoring(mainSet, event, null, null);
+			ret += monitorSet.Monitoring(mainSet, event, null, null, this.lock);
 		} else if (event.isStartEvent() && isFullParam) {
 			MOPVariable mainMonitor = localVars.get("mainMonitor");
 			
-			ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock);
+			ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock, this.aspectName);
 		} else {
 			MOPVariable mainMonitor = localVars.get("mainMonitor");
 
 			ret += "if (" + mainMonitor + " != null " + ") {\n";
 			{
-				ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock);
+				ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock, this.aspectName);
 			}
 			ret += "}\n";
 		}
