@@ -46,7 +46,7 @@ public class MOPDeadlockDetector {
 
 		@Override
 		public void run() {
-			while (mainThread.getState() != State.TERMINATED) {
+			while (!this.allThreadsTerminated()) {
 				try {
 					Thread.sleep(30);
 				} catch (InterruptedException e) {
@@ -67,6 +67,14 @@ public class MOPDeadlockDetector {
 				}
 
 			}
+		}
+		
+		private boolean allThreadsTerminated() {
+			for (Thread t : allThreads) {
+				if (t.getState() != State.TERMINATED)
+					return false;
+			}
+			return true;
 		}
 
 	}
