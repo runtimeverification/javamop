@@ -62,11 +62,12 @@ public class ThreadBlockedVarVisitor implements GenericVisitor<String, Object>{
 		for(PointCut p2 : p.getPointcuts()){
 			String temp = p2.accept(this, arg);
 			if(temp != null){
-				if(temp.length() != 0 && threadVar.length() != 0)
-					return null;
-
-				if(temp.length() != 0)
-					threadVar = temp;
+				if(temp.length() != 0) {
+					if (threadVar.equals(""))
+						threadVar = temp;
+					else 
+						threadVar += "@" + temp;
+				}
 			} else
 				return null;
 		}

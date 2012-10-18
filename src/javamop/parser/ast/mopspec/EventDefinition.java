@@ -36,7 +36,7 @@ public class EventDefinition extends Node {
 	String condition;
 	String threadVar;
 	String threadNameVar;
-	String threadBlockedVar;
+	ArrayList<String> threadBlockedVars;
 	TypePattern endObjectType;
 	String endObjectId;
 	boolean endProgram = false;
@@ -114,17 +114,22 @@ public class EventDefinition extends Node {
 			throw new javamop.parser.main_parser.ParseException("threadName() pointcut should appear at the root level in a conjuction form");
 		
 		// thread blocked pointcut
-		threadBlockedVar = resultPointCut.accept(new ThreadBlockedVarVisitor(), null);
-		if (threadBlockedVar == null) {
-			// TODO We should support multiple thread blocked pointcut in future!
-			throw new javamop.parser.main_parser.ParseException("There are more than one threadName() pointcut.");
+		String blockedThreads = resultPointCut.accept(new ThreadBlockedVarVisitor(), null);
+		if (blockedThreads == null) {
+			throw new javamop.parser.main_parser.ParseException("threadBlocked() should have one parameter.");
 		} 
-		if (threadBlockedVar.length() != 0) {
+		if (blockedThreads.length() != 0) {
 			resultPointCut = resultPointCut.accept(new RemoveThreadBlockedVisitor(), new Integer(1));
+			threadBlockedVars = new ArrayList<String>();
+			String vars[] = blockedThreads.split("@");
+			for (String var : vars) {
+				threadBlockedVars.add(var);
+			}
 		}
 		if (resultPointCut == null)
 			throw new javamop.parser.main_parser.ParseException("threadBlocked() pointcut should appear at the root level in a conjuction form");
 
+		
 		// condition pointcut
 		condition = resultPointCut.accept(new ConditionVisitor(), null);
 		if (condition == null)
@@ -308,8 +313,8 @@ public class EventDefinition extends Node {
 		return threadNameVar;
 	}
 	
-	public String getThreadBlockedVar() {
-		return threadBlockedVar;
+	public ArrayList<String> getThreadBlockedVar() {
+		return threadBlockedVars;
 	}
 
 	public String getCondition() {

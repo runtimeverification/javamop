@@ -1,5 +1,6 @@
 package javamop.output.monitor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javamop.MOPException;
@@ -98,10 +99,7 @@ public class EnforceMonitor extends BaseMonitor {
 		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
 		ret += "if (!" + clonedMonitor + "." + enforceCategory;
 		
-		String blockedThread = event.getThreadBlockedVar();
-//		if (blockedThread != null && blockedThread.length() != 0) {
-//			ret += " || !" + aspectName + ".checkBlockedThread(\"" + blockedThread + "\")";
-//		}
+		ArrayList<String> blockedThreads = event.getThreadBlockedVar();
 		
 		ret += ") {\n";
 		if (l != null)
@@ -112,15 +110,17 @@ public class EnforceMonitor extends BaseMonitor {
 		ret += "}\n";
 		ret += "} while (true);\n\n";
 		
-		if (blockedThread != null && blockedThread.length() != 0) {
-			ret += "while (!" + aspectName + ".containsBlockedThread(\"" + blockedThread + "\")) {\n";
-			ret += "if (!" + aspectName + ".containsThread(\"" + blockedThread + "\")) {\n";
-			if (l != null)
-				ret += l.getName() + ".wait();\n";
-			ret += "}\n";
-			if (l != null)
-				ret += l.getName() + ".wait(50);\n";
-			ret += "}\n";
+		if (blockedThreads != null) {
+			for (String var : blockedThreads) {
+				ret += "while (!" + aspectName + ".containsBlockedThread(\"" + var + "\")) {\n";
+				ret += "if (!" + aspectName + ".containsThread(\"" + var + "\")) {\n";
+				if (l != null)
+					ret += l.getName() + ".wait();\n";
+				ret += "}\n";
+				if (l != null)
+					ret += l.getName() + ".wait(50);\n";
+				ret += "}\n";
+			}
 		}
 		
 		ret += "} catch (Exception e) {\n";

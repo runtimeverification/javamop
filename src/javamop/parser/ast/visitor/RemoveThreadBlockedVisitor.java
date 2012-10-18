@@ -65,14 +65,10 @@ public class RemoveThreadBlockedVisitor implements GenericVisitor<PointCut, Inte
 			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), pointcuts);
 		} else {
 			boolean andType = (p.getType().compareTo("&&") == 0);
-			boolean alreadySeen = false;
 			
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
 			for(PointCut p2 : p.getPointcuts()){
 				if(andType && p2 instanceof ThreadBlockedPointCut){
-					if(alreadySeen)
-						return null;
-					alreadySeen = true;
 					continue;
 				}
 				
