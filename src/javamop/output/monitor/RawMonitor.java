@@ -22,7 +22,7 @@ public class RawMonitor extends Monitor{
 	MOPVariable wrapper = new MOPVariable("wrapper");
 	MOPVariable reset = new MOPVariable("reset");
 	MOPVariable lastevent = new MOPVariable("MOP_lastevent");
-	MOPVariable skipAroundAdvice = new MOPVariable("skipAroundAdvice");
+	MOPVariable skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
 	MOPVariable thisJoinPoint = new MOPVariable("thisJoinPoint");
 	
 	JavaMOPSpec mopSpec;
