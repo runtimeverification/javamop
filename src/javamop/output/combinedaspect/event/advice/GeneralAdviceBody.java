@@ -68,8 +68,7 @@ public class GeneralAdviceBody extends AdviceBody {
 		
 		this.statManager = combinedAspect.statManager;
 		this.aspectName = combinedAspect.getAspectName();
-		lock = combinedAspect.lockManager.getLock();
-		lock = new GlobalLock(new MOPVariable(this.aspectName + "." + lock.getName()));
+		lock = new GlobalLock(new MOPVariable(this.aspectName + "." + combinedAspect.lockManager.getLock().getName()));
 	}
 
 	public boolean doDisable(){

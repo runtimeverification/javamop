@@ -55,6 +55,11 @@ public class AspectJCode {
 
 		//aspect = new Aspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
 		aspect = new CombinedAspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
+
+		// Set monitor lock for each monitor set
+		for (MonitorSet monitorSet : monitorSets.values()) {
+			monitorSet.setMonitorLock(aspect.getAspectName() + "." + aspect.lockManager.getLock().getName());
+		}
 		
 		HashMap<String, RefTree> refTrees = aspect.indexingTreeManager.refTrees;
 		

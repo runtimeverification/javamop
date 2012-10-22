@@ -65,10 +65,13 @@ public class MonitorSet {
 	public MOPVariable getName() {
 		return setName;
 	}
+	
+	public void setMonitorLock(String lockName) {
+		this.monitorLock = new GlobalLock(new MOPVariable(lockName));
+	}
 
 	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock) {
 		this.monitorLock = lock;
-		System.out.println(lock.getName());
 		String ret = "";
 
 		boolean isAround = event.getPos().equals("around");
