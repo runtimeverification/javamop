@@ -48,7 +48,7 @@ public class MOPDeadlockDetector {
 		public void run() {
 			while (!this.allThreadsTerminated()) {
 				try {
-					Thread.sleep(30);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

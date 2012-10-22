@@ -40,7 +40,7 @@ public class EventManager {
 
 		for (JavaMOPSpec spec : specs) {
 			if (spec.isEnforce()) {
-				endThreadEvents.add(new ThreadDeadlockMonitor(spec, combinedAspect));
+				endThreadEvents.add(new ThreadStatusMonitor(spec, combinedAspect));
 			}
 			for (EventDefinition event : spec.getEvents()) {
 				// normal event

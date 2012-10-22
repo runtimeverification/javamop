@@ -817,8 +817,8 @@ public class GeneralAdviceBody extends AdviceBody {
 				|| this.event.getThreadNameVar().length() == 0)
 			return "";
 		String ret = "";
-		ret += "if (!Thread.currentThread().getName().equals(\"" 
-		+ this.event.getThreadNameVar() + "\")) {\n";
+		ret += "if (!Thread.currentThread().getName().equals(" 
+		+ this.event.getThreadNameVar() + ")) {\n";
 		ret += "return;\n";
 		ret += "}\n";		
 		return ret;

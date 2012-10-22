@@ -1471,7 +1471,7 @@ PointCut ThreadNamePointCut() :
     line = token.beginLine;
     column = token.beginColumn;
   }
-  "(" id = AnyIdPattern() ")"
+  "(" id = QuotesAndAnyIdPattern() ")"
   {
     return new ThreadNamePointCut(line, column, id.str);
   }
@@ -1488,7 +1488,7 @@ PointCut ThreadBlockedPointCut() :
     line = token.beginLine;
     column = token.beginColumn;
   }
-  "(" id = AnyIdPattern() ")"
+  "(" id = QuotesAndAnyIdPattern() ")"
   {
     return new ThreadBlockedPointCut(line, column, id.str);
   }
@@ -2057,6 +2057,33 @@ TypePattern BaseTypePattern() :
     return t;
   }
 }
+
+PositionString QuotesAndAnyIdPattern() :
+{
+  PositionString id;
+  String text;
+  int line, column;
+}
+{
+  (
+    ( <STRING_LITERAL>
+    {
+	text = token.image;
+    }
+    )
+    | ( id = AnyIdPattern()
+    {
+        text = id.str;
+    }
+    )
+  )
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    return new PositionString(line, column, text);
+  }
+}
+
 
 PositionString AnyIdPattern() :
 {

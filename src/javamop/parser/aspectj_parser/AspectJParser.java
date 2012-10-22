@@ -612,7 +612,7 @@ public class AspectJParser implements AspectJParserConstants {
     line = token.beginLine;
     column = token.beginColumn;
     jj_consume_token(LPAREN);
-    id = AnyIdPattern();
+    id = QuotesAndAnyIdPattern();
     jj_consume_token(RPAREN);
     {if (true) return new ThreadNamePointCut(line, column, id.str);}
     throw new Error("Missing return statement in function");
@@ -625,7 +625,7 @@ public class AspectJParser implements AspectJParserConstants {
     line = token.beginLine;
     column = token.beginColumn;
     jj_consume_token(LPAREN);
-    id = AnyIdPattern();
+    id = QuotesAndAnyIdPattern();
     jj_consume_token(RPAREN);
     {if (true) return new ThreadBlockedPointCut(line, column, id.str);}
     throw new Error("Missing return statement in function");
@@ -1263,6 +1263,58 @@ public class AspectJParser implements AspectJParserConstants {
     throw new Error("Missing return statement in function");
   }
 
+  final public PositionString QuotesAndAnyIdPattern() throws ParseException {
+  PositionString id;
+  String text;
+  int line, column;
+    switch (jj_nt.kind) {
+    case STRING_LITERAL:
+      jj_consume_token(STRING_LITERAL);
+        text = token.image;
+      break;
+    case EVENT:
+    case CREATION:
+    case UNSYNC:
+    case DECENT:
+    case PERTHREAD:
+    case SUFFIX:
+    case BEFORE:
+    case AFTER:
+    case AROUND:
+    case CALL:
+    case EXEC:
+    case GET:
+    case SET:
+    case TARGET:
+    case WITHIN:
+    case ARGS:
+    case THREAD:
+    case THREADNAME:
+    case THREADBLOCKED:
+    case CONDITION:
+    case CFLOW:
+    case CFLOWBELOW:
+    case RETURNING:
+    case THROWING:
+    case ENDPROGRAM:
+    case ENDTHREAD:
+    case ENDOBJECT:
+    case STARTTHREAD:
+    case IDPATTERN:
+      id = AnyIdPattern();
+        text = id.str;
+      break;
+    default:
+      jj_la1[26] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    line = token.beginLine;
+    column = token.beginColumn;
+    {if (true) return new PositionString(line, column, text);}
+    throw new Error("Missing return statement in function");
+  }
+
   final public PositionString AnyIdPattern() throws ParseException {
   String id;
   int line, column;
@@ -1355,7 +1407,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(STARTTHREAD);
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[27] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1377,7 +1429,7 @@ public class AspectJParser implements AspectJParserConstants {
         jj_consume_token(DOTDOT);
         break;
       default:
-        jj_la1[27] = jj_gen;
+        jj_la1[28] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1471,7 +1523,7 @@ public class AspectJParser implements AspectJParserConstants {
         jj_consume_token(STARTTHREAD);
         break;
       default:
-        jj_la1[28] = jj_gen;
+        jj_la1[29] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1503,7 +1555,7 @@ public class AspectJParser implements AspectJParserConstants {
         jj_consume_token(DOTDOT);
         break;
       default:
-        jj_la1[29] = jj_gen;
+        jj_la1[30] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1530,7 +1582,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[31] = jj_gen;
         break label_11;
       }
       jj_consume_token(SC_OR);
@@ -1558,7 +1610,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[31] = jj_gen;
+        jj_la1[32] = jj_gen;
         break label_12;
       }
       jj_consume_token(SC_AND);
@@ -1580,7 +1632,7 @@ public class AspectJParser implements AspectJParserConstants {
       column = token.beginColumn;
       break;
     default:
-      jj_la1[32] = jj_gen;
+      jj_la1[33] = jj_gen;
       ;
     }
     t = BaseTypePattern2();
@@ -1612,7 +1664,7 @@ public class AspectJParser implements AspectJParserConstants {
         id.str += "+";
         break;
       default:
-        jj_la1[33] = jj_gen;
+        jj_la1[34] = jj_gen;
         ;
       }
       label_13:
@@ -1622,7 +1674,7 @@ public class AspectJParser implements AspectJParserConstants {
           ;
           break;
         default:
-          jj_la1[34] = jj_gen;
+          jj_la1[35] = jj_gen;
           break label_13;
         }
         jj_consume_token(LBRACKET);
@@ -1633,7 +1685,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[35] = jj_gen;
+      jj_la1[36] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1664,7 +1716,7 @@ public class AspectJParser implements AspectJParserConstants {
         jj_consume_token(DOTDOT);
         break;
       default:
-        jj_la1[36] = jj_gen;
+        jj_la1[37] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1691,7 +1743,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(DOTDOT);
       break;
     default:
-      jj_la1[37] = jj_gen;
+      jj_la1[38] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1713,7 +1765,7 @@ public class AspectJParser implements AspectJParserConstants {
         jj_consume_token(DOTDOT);
         break;
       default:
-        jj_la1[38] = jj_gen;
+        jj_la1[39] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1791,7 +1843,7 @@ public class AspectJParser implements AspectJParserConstants {
           ret = AnnotationTypeDeclaration(modifier);
           break;
         default:
-          jj_la1[39] = jj_gen;
+          jj_la1[40] = jj_gen;
           if (jj_2_13(2147483647)) {
             ret = ConstructorDeclaration(modifier);
           } else if (jj_2_14(2147483647)) {
@@ -1812,7 +1864,7 @@ public class AspectJParser implements AspectJParserConstants {
               ret = MethodDeclaration(modifier);
               break;
             default:
-              jj_la1[40] = jj_gen;
+              jj_la1[41] = jj_gen;
               jj_consume_token(-1);
               throw new ParseException();
             }
@@ -1824,7 +1876,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new EmptyMemberDeclaration(token.beginLine, token.beginColumn);
         break;
       default:
-        jj_la1[41] = jj_gen;
+        jj_la1[42] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1848,7 +1900,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[42] = jj_gen;
+        jj_la1[43] = jj_gen;
         break label_17;
       }
       jj_consume_token(COMMA);
@@ -1870,7 +1922,7 @@ public class AspectJParser implements AspectJParserConstants {
       init = VariableInitializer();
       break;
     default:
-      jj_la1[43] = jj_gen;
+      jj_la1[44] = jj_gen;
       ;
     }
     {if (true) return new VariableDeclarator(id.getBeginLine(), id.getBeginColumn(), id, init);}
@@ -1893,7 +1945,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[44] = jj_gen;
+        jj_la1[45] = jj_gen;
         break label_18;
       }
       jj_consume_token(LBRACKET);
@@ -1941,7 +1993,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = Expression();
       break;
     default:
-      jj_la1[45] = jj_gen;
+      jj_la1[46] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2002,7 +2054,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[46] = jj_gen;
+      jj_la1[47] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -2010,7 +2062,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(COMMA);
       break;
     default:
-      jj_la1[47] = jj_gen;
+      jj_la1[48] = jj_gen;
       ;
     }
     jj_consume_token(RBRACE);
@@ -2035,7 +2087,7 @@ public class AspectJParser implements AspectJParserConstants {
       column = ((TypeParameter) typeParameters.get(0)).getBeginColumn();
       break;
     default:
-      jj_la1[48] = jj_gen;
+      jj_la1[49] = jj_gen;
       ;
     }
     type = ResultType();
@@ -2054,7 +2106,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[49] = jj_gen;
+        jj_la1[50] = jj_gen;
         break label_20;
       }
       jj_consume_token(LBRACKET);
@@ -2067,7 +2119,7 @@ public class AspectJParser implements AspectJParserConstants {
       throws_ = NameList();
       break;
     default:
-      jj_la1[50] = jj_gen;
+      jj_la1[51] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -2078,7 +2130,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(SEMICOLON);
       break;
     default:
-      jj_la1[51] = jj_gen;
+      jj_la1[52] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2122,7 +2174,7 @@ public class AspectJParser implements AspectJParserConstants {
           ;
           break;
         default:
-          jj_la1[52] = jj_gen;
+          jj_la1[53] = jj_gen;
           break label_21;
         }
         jj_consume_token(COMMA);
@@ -2131,7 +2183,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[53] = jj_gen;
+      jj_la1[54] = jj_gen;
       ;
     }
     jj_consume_token(RPAREN);
@@ -2152,7 +2204,7 @@ public class AspectJParser implements AspectJParserConstants {
       isVarArg = true;
       break;
     default:
-      jj_la1[54] = jj_gen;
+      jj_la1[55] = jj_gen;
       ;
     }
     id = VariableDeclaratorId();
@@ -2180,7 +2232,7 @@ public class AspectJParser implements AspectJParserConstants {
       column = ((TypeParameter) typeParameters.get(0)).getBeginColumn();
       break;
     default:
-      jj_la1[55] = jj_gen;
+      jj_la1[56] = jj_gen;
       ;
     }
     jj_consume_token(IDPATTERN);
@@ -2197,7 +2249,7 @@ public class AspectJParser implements AspectJParserConstants {
       throws_ = NameList();
       break;
     default:
-      jj_la1[56] = jj_gen;
+      jj_la1[57] = jj_gen;
       ;
     }
     jj_consume_token(LBRACE);
@@ -2239,7 +2291,7 @@ public class AspectJParser implements AspectJParserConstants {
         column = ((Type) typeArgs.get(0)).getBeginColumn();
         break;
       default:
-        jj_la1[57] = jj_gen;
+        jj_la1[58] = jj_gen;
         ;
       }
       jj_consume_token(THIS);
@@ -2294,7 +2346,7 @@ public class AspectJParser implements AspectJParserConstants {
         }
           break;
         default:
-          jj_la1[58] = jj_gen;
+          jj_la1[59] = jj_gen;
           ;
         }
         jj_consume_token(SUPER);
@@ -2307,7 +2359,7 @@ public class AspectJParser implements AspectJParserConstants {
         jj_consume_token(SEMICOLON);
         break;
       default:
-        jj_la1[59] = jj_gen;
+        jj_la1[60] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -2376,7 +2428,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[60] = jj_gen;
+        jj_la1[61] = jj_gen;
         break label_22;
       }
       stmt = BlockStatement();
@@ -2397,7 +2449,7 @@ public class AspectJParser implements AspectJParserConstants {
       column = token.beginColumn;
       break;
     default:
-      jj_la1[61] = jj_gen;
+      jj_la1[62] = jj_gen;
       ;
     }
     block = Block();
@@ -2434,7 +2486,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new VoidType(token.beginLine, token.beginColumn);
         break;
       default:
-        jj_la1[62] = jj_gen;
+        jj_la1[63] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -2483,7 +2535,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[63] = jj_gen;
+      jj_la1[64] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2541,7 +2593,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[64] = jj_gen;
+        jj_la1[65] = jj_gen;
         break label_26;
       }
       jj_consume_token(COMMA);
@@ -2571,7 +2623,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = Wildcard();
       break;
     default:
-      jj_la1[65] = jj_gen;
+      jj_la1[66] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2600,13 +2652,13 @@ public class AspectJParser implements AspectJParserConstants {
         sup = ReferenceType();
         break;
       default:
-        jj_la1[66] = jj_gen;
+        jj_la1[67] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[67] = jj_gen;
+      jj_la1[68] = jj_gen;
       ;
     }
     {if (true) return new WildcardType(line, column, ext, sup);}
@@ -2649,7 +2701,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Double);
       break;
     default:
-      jj_la1[68] = jj_gen;
+      jj_la1[69] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2695,7 +2747,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[69] = jj_gen;
+        jj_la1[70] = jj_gen;
         break label_28;
       }
       jj_consume_token(COMMA);
@@ -2777,7 +2829,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = AssignExpr.Operator.or;
       break;
     default:
-      jj_la1[70] = jj_gen;
+      jj_la1[71] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -2799,7 +2851,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new ConditionalExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, left, right);
       break;
     default:
-      jj_la1[71] = jj_gen;
+      jj_la1[72] = jj_gen;
       ;
     }
     {if (true) return ret;}
@@ -2817,7 +2869,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[72] = jj_gen;
+        jj_la1[73] = jj_gen;
         break label_29;
       }
       jj_consume_token(SC_OR);
@@ -2839,7 +2891,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[73] = jj_gen;
+        jj_la1[74] = jj_gen;
         break label_30;
       }
       jj_consume_token(SC_AND);
@@ -2861,7 +2913,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[74] = jj_gen;
+        jj_la1[75] = jj_gen;
         break label_31;
       }
       jj_consume_token(BIT_OR);
@@ -2883,7 +2935,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[75] = jj_gen;
+        jj_la1[76] = jj_gen;
         break label_32;
       }
       jj_consume_token(XOR);
@@ -2905,7 +2957,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[76] = jj_gen;
+        jj_la1[77] = jj_gen;
         break label_33;
       }
       jj_consume_token(BIT_AND);
@@ -2929,7 +2981,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[77] = jj_gen;
+        jj_la1[78] = jj_gen;
         break label_34;
       }
       switch (jj_nt.kind) {
@@ -2942,7 +2994,7 @@ public class AspectJParser implements AspectJParserConstants {
         op = BinaryExpr.Operator.notEquals;
         break;
       default:
-        jj_la1[78] = jj_gen;
+        jj_la1[79] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -2964,7 +3016,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new InstanceOfExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, type);
       break;
     default:
-      jj_la1[79] = jj_gen;
+      jj_la1[80] = jj_gen;
       ;
     }
     {if (true) return ret;}
@@ -2986,7 +3038,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[80] = jj_gen;
+        jj_la1[81] = jj_gen;
         break label_35;
       }
       switch (jj_nt.kind) {
@@ -3007,7 +3059,7 @@ public class AspectJParser implements AspectJParserConstants {
         op = BinaryExpr.Operator.greaterEquals;
         break;
       default:
-        jj_la1[81] = jj_gen;
+        jj_la1[82] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3036,7 +3088,7 @@ public class AspectJParser implements AspectJParserConstants {
         op = BinaryExpr.Operator.lShift;
         break;
       default:
-        jj_la1[82] = jj_gen;
+        jj_la1[83] = jj_gen;
         if (jj_2_29(1)) {
           RSIGNEDSHIFT();
         op = BinaryExpr.Operator.rSignedShift;
@@ -3068,7 +3120,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[83] = jj_gen;
+        jj_la1[84] = jj_gen;
         break label_37;
       }
       switch (jj_nt.kind) {
@@ -3081,7 +3133,7 @@ public class AspectJParser implements AspectJParserConstants {
         op = BinaryExpr.Operator.minus;
         break;
       default:
-        jj_la1[84] = jj_gen;
+        jj_la1[85] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3106,7 +3158,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[85] = jj_gen;
+        jj_la1[86] = jj_gen;
         break label_38;
       }
       switch (jj_nt.kind) {
@@ -3123,7 +3175,7 @@ public class AspectJParser implements AspectJParserConstants {
         op = BinaryExpr.Operator.remainder;
         break;
       default:
-        jj_la1[86] = jj_gen;
+        jj_la1[87] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3156,7 +3208,7 @@ public class AspectJParser implements AspectJParserConstants {
         column = token.beginColumn;
         break;
       default:
-        jj_la1[87] = jj_gen;
+        jj_la1[88] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3214,7 +3266,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = UnaryExpressionNotPlusMinus();
       break;
     default:
-      jj_la1[88] = jj_gen;
+      jj_la1[89] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3270,7 +3322,7 @@ public class AspectJParser implements AspectJParserConstants {
         column = token.beginColumn;
         break;
       default:
-        jj_la1[89] = jj_gen;
+        jj_la1[90] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3278,7 +3330,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new UnaryExpr(line, column, ret, op);
       break;
     default:
-      jj_la1[90] = jj_gen;
+      jj_la1[91] = jj_gen;
       if (jj_2_31(2147483647)) {
         ret = CastExpression();
       } else {
@@ -3308,7 +3360,7 @@ public class AspectJParser implements AspectJParserConstants {
           ret = PostfixExpression();
           break;
         default:
-          jj_la1[91] = jj_gen;
+          jj_la1[92] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3336,7 +3388,7 @@ public class AspectJParser implements AspectJParserConstants {
         UnaryExpression();
         break;
       default:
-        jj_la1[92] = jj_gen;
+        jj_la1[93] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3364,7 +3416,7 @@ public class AspectJParser implements AspectJParserConstants {
         column = token.beginColumn;
         break;
       default:
-        jj_la1[93] = jj_gen;
+        jj_la1[94] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3461,7 +3513,7 @@ public class AspectJParser implements AspectJParserConstants {
         column = ((Type) typeArgs.get(0)).getBeginColumn();
         break;
       default:
-        jj_la1[94] = jj_gen;
+        jj_la1[95] = jj_gen;
         ;
       }
       jj_consume_token(IDPATTERN);
@@ -3477,7 +3529,7 @@ public class AspectJParser implements AspectJParserConstants {
         hasArgs = true;
         break;
       default:
-        jj_la1[95] = jj_gen;
+        jj_la1[96] = jj_gen;
         ;
       }
       ret = hasArgs ? new MethodCallExpr(line, column, ret, typeArgs, name, args) : new FieldAccessExpr(line, column, ret, null, name);
@@ -3494,7 +3546,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = AllocationExpression(null);
       break;
     default:
-      jj_la1[97] = jj_gen;
+      jj_la1[98] = jj_gen;
       if (jj_2_36(2147483647)) {
         type = ResultType();
         jj_consume_token(DOT);
@@ -3513,13 +3565,13 @@ public class AspectJParser implements AspectJParserConstants {
         hasArgs = true;
             break;
           default:
-            jj_la1[96] = jj_gen;
+            jj_la1[97] = jj_gen;
             ;
           }
       ret = hasArgs ? new MethodCallExpr(line, column, null, null, name, args) : new NameExpr(line, column, name);
           break;
         default:
-          jj_la1[98] = jj_gen;
+          jj_la1[99] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -3541,7 +3593,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new SuperExpr(token.beginLine, token.beginColumn, scope);
         break;
       default:
-        jj_la1[99] = jj_gen;
+        jj_la1[100] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3570,7 +3622,7 @@ public class AspectJParser implements AspectJParserConstants {
         ret = AllocationExpression(scope);
         break;
       default:
-        jj_la1[102] = jj_gen;
+        jj_la1[103] = jj_gen;
         if (jj_2_38(2147483647)) {
           switch (jj_nt.kind) {
           case LT:
@@ -3579,7 +3631,7 @@ public class AspectJParser implements AspectJParserConstants {
           column = ((Type) typeArgs.get(0)).getBeginColumn();
             break;
           default:
-            jj_la1[100] = jj_gen;
+            jj_la1[101] = jj_gen;
             ;
           }
           nameStr = AnyIDPatternWithoutDot();
@@ -3595,7 +3647,7 @@ public class AspectJParser implements AspectJParserConstants {
           hasArgs = true;
             break;
           default:
-            jj_la1[101] = jj_gen;
+            jj_la1[102] = jj_gen;
             ;
           }
         ret = hasArgs ? new MethodCallExpr(line, column, scope, typeArgs, name, args) : new FieldAccessExpr(line, column, scope, typeArgs, name);
@@ -3615,7 +3667,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new ArrayAccessExpr(line, column, scope, ret);
         break;
       default:
-        jj_la1[103] = jj_gen;
+        jj_la1[104] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3655,7 +3707,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = NullLiteral();
       break;
     default:
-      jj_la1[104] = jj_gen;
+      jj_la1[105] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3675,7 +3727,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new BooleanLiteralExpr(token.beginLine, token.beginColumn, Boolean.FALSE);
       break;
     default:
-      jj_la1[105] = jj_gen;
+      jj_la1[106] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3724,7 +3776,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = ArgumentList();
       break;
     default:
-      jj_la1[106] = jj_gen;
+      jj_la1[107] = jj_gen;
       ;
     }
     jj_consume_token(RPAREN);
@@ -3744,7 +3796,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[107] = jj_gen;
+        jj_la1[108] = jj_gen;
         break label_41;
       }
       jj_consume_token(COMMA);
@@ -3794,7 +3846,7 @@ public class AspectJParser implements AspectJParserConstants {
         typeArgs = TypeArguments();
         break;
       default:
-        jj_la1[108] = jj_gen;
+        jj_la1[109] = jj_gen;
         ;
       }
       type = ClassOrInterfaceType();
@@ -3822,13 +3874,13 @@ public class AspectJParser implements AspectJParserConstants {
         ret = new ObjectCreationExpr(line, column, scope, (ClassOrInterfaceType) type, typeArgs, args, anonymousBody);
         break;
       default:
-        jj_la1[109] = jj_gen;
+        jj_la1[110] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[110] = jj_gen;
+      jj_la1[111] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -3884,7 +3936,7 @@ public class AspectJParser implements AspectJParserConstants {
             ;
             break;
           default:
-            jj_la1[111] = jj_gen;
+            jj_la1[112] = jj_gen;
             break label_44;
           }
         }
@@ -3893,7 +3945,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret [ 1 ] = expr;
         break;
       default:
-        jj_la1[112] = jj_gen;
+        jj_la1[113] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -3980,7 +4032,7 @@ public class AspectJParser implements AspectJParserConstants {
         ret = TryStatement();
         break;
       default:
-        jj_la1[113] = jj_gen;
+        jj_la1[114] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4004,7 +4056,7 @@ public class AspectJParser implements AspectJParserConstants {
       msg = Expression();
       break;
     default:
-      jj_la1[114] = jj_gen;
+      jj_la1[115] = jj_gen;
       ;
     }
     jj_consume_token(SEMICOLON);
@@ -4103,7 +4155,7 @@ public class AspectJParser implements AspectJParserConstants {
         ret = Statement();
         break;
       default:
-        jj_la1[115] = jj_gen;
+        jj_la1[116] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4128,7 +4180,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[116] = jj_gen;
+        jj_la1[117] = jj_gen;
         break label_45;
       }
       jj_consume_token(COMMA);
@@ -4220,18 +4272,18 @@ public class AspectJParser implements AspectJParserConstants {
         expr = new AssignExpr(expr.getBeginLine(), expr.getBeginColumn(), expr, value, op);
           break;
         default:
-          jj_la1[117] = jj_gen;
+          jj_la1[118] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
         break;
       default:
-        jj_la1[118] = jj_gen;
+        jj_la1[119] = jj_gen;
         ;
       }
       break;
     default:
-      jj_la1[119] = jj_gen;
+      jj_la1[120] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -4261,7 +4313,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[120] = jj_gen;
+        jj_la1[121] = jj_gen;
         break label_46;
       }
       entry = SwitchEntry();
@@ -4290,7 +4342,7 @@ public class AspectJParser implements AspectJParserConstants {
       column = token.beginColumn;
       break;
     default:
-      jj_la1[121] = jj_gen;
+      jj_la1[122] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -4319,7 +4371,7 @@ public class AspectJParser implements AspectJParserConstants {
       elseStmt = Statement();
       break;
     default:
-      jj_la1[122] = jj_gen;
+      jj_la1[123] = jj_gen;
       ;
     }
     {if (true) return new IfStmt(line, column, condition, thenStmt, elseStmt);}
@@ -4464,7 +4516,7 @@ public class AspectJParser implements AspectJParserConstants {
           init = ForInit();
           break;
         default:
-          jj_la1[123] = jj_gen;
+          jj_la1[124] = jj_gen;
           ;
         }
         jj_consume_token(SEMICOLON);
@@ -4500,7 +4552,7 @@ public class AspectJParser implements AspectJParserConstants {
           expr = Expression();
           break;
         default:
-          jj_la1[124] = jj_gen;
+          jj_la1[125] = jj_gen;
           ;
         }
         jj_consume_token(SEMICOLON);
@@ -4536,12 +4588,12 @@ public class AspectJParser implements AspectJParserConstants {
           update = ForUpdate();
           break;
         default:
-          jj_la1[125] = jj_gen;
+          jj_la1[126] = jj_gen;
           ;
         }
         break;
       default:
-        jj_la1[126] = jj_gen;
+        jj_la1[127] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4596,7 +4648,7 @@ public class AspectJParser implements AspectJParserConstants {
         ret = ExpressionList();
         break;
       default:
-        jj_la1[127] = jj_gen;
+        jj_la1[128] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4617,7 +4669,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[128] = jj_gen;
+        jj_la1[129] = jj_gen;
         break label_47;
       }
       jj_consume_token(COMMA);
@@ -4648,7 +4700,7 @@ public class AspectJParser implements AspectJParserConstants {
       id = token.image;
       break;
     default:
-      jj_la1[129] = jj_gen;
+      jj_la1[130] = jj_gen;
       ;
     }
     jj_consume_token(SEMICOLON);
@@ -4669,7 +4721,7 @@ public class AspectJParser implements AspectJParserConstants {
       id = token.image;
       break;
     default:
-      jj_la1[130] = jj_gen;
+      jj_la1[131] = jj_gen;
       ;
     }
     jj_consume_token(SEMICOLON);
@@ -4716,7 +4768,7 @@ public class AspectJParser implements AspectJParserConstants {
       expr = Expression();
       break;
     default:
-      jj_la1[131] = jj_gen;
+      jj_la1[132] = jj_gen;
       ;
     }
     jj_consume_token(SEMICOLON);
@@ -4784,7 +4836,7 @@ public class AspectJParser implements AspectJParserConstants {
           ;
           break;
         default:
-          jj_la1[132] = jj_gen;
+          jj_la1[133] = jj_gen;
           break label_48;
         }
       }
@@ -4794,7 +4846,7 @@ public class AspectJParser implements AspectJParserConstants {
         finallyBlock = Block();
         break;
       default:
-        jj_la1[133] = jj_gen;
+        jj_la1[134] = jj_gen;
         ;
       }
       break;
@@ -4803,7 +4855,7 @@ public class AspectJParser implements AspectJParserConstants {
       finallyBlock = Block();
       break;
     default:
-      jj_la1[134] = jj_gen;
+      jj_la1[135] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -4850,7 +4902,7 @@ public class AspectJParser implements AspectJParserConstants {
         ret = MarkerAnnotation();
         break;
       default:
-        jj_la1[135] = jj_gen;
+        jj_la1[136] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -4874,7 +4926,7 @@ public class AspectJParser implements AspectJParserConstants {
       pairs = MemberValuePairs();
       break;
     default:
-      jj_la1[136] = jj_gen;
+      jj_la1[137] = jj_gen;
       ;
     }
     jj_consume_token(RPAREN);
@@ -4922,7 +4974,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[137] = jj_gen;
+        jj_la1[138] = jj_gen;
         break label_49;
       }
       jj_consume_token(COMMA);
@@ -4988,7 +5040,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = ConditionalExpression();
       break;
     default:
-      jj_la1[138] = jj_gen;
+      jj_la1[139] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -5050,7 +5102,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[139] = jj_gen;
+      jj_la1[140] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -5058,7 +5110,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(COMMA);
       break;
     default:
-      jj_la1[140] = jj_gen;
+      jj_la1[141] = jj_gen;
       ;
     }
     jj_consume_token(RBRACE);
@@ -5119,7 +5171,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[141] = jj_gen;
+        jj_la1[142] = jj_gen;
         break label_51;
       }
       member = AnnotationBodyDeclaration();
@@ -5176,7 +5228,7 @@ public class AspectJParser implements AspectJParserConstants {
           ret = FieldDeclaration(modifier);
           break;
         default:
-          jj_la1[142] = jj_gen;
+          jj_la1[143] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -5187,7 +5239,7 @@ public class AspectJParser implements AspectJParserConstants {
       ret = new EmptyTypeDeclaration(token.beginLine, token.beginColumn);
       break;
     default:
-      jj_la1[143] = jj_gen;
+      jj_la1[144] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -5209,7 +5261,7 @@ public class AspectJParser implements AspectJParserConstants {
       defaultVal = DefaultValue();
       break;
     default:
-      jj_la1[144] = jj_gen;
+      jj_la1[145] = jj_gen;
       ;
     }
     jj_consume_token(SEMICOLON);
@@ -5363,7 +5415,7 @@ public class AspectJParser implements AspectJParserConstants {
         annotations = add(annotations, ann);
         break;
       default:
-        jj_la1[145] = jj_gen;
+        jj_la1[146] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -5390,7 +5442,7 @@ public class AspectJParser implements AspectJParserConstants {
       isInterface = true;
       break;
     default:
-      jj_la1[146] = jj_gen;
+      jj_la1[147] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -5403,7 +5455,7 @@ public class AspectJParser implements AspectJParserConstants {
       typePar = TypeParameters();
       break;
     default:
-      jj_la1[147] = jj_gen;
+      jj_la1[148] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -5411,7 +5463,7 @@ public class AspectJParser implements AspectJParserConstants {
       extList = ExtendsList(isInterface);
       break;
     default:
-      jj_la1[148] = jj_gen;
+      jj_la1[149] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -5419,7 +5471,7 @@ public class AspectJParser implements AspectJParserConstants {
       impList = ImplementsList(isInterface);
       break;
     default:
-      jj_la1[149] = jj_gen;
+      jj_la1[150] = jj_gen;
       ;
     }
     jj_consume_token(LBRACE);
@@ -5448,7 +5500,7 @@ public class AspectJParser implements AspectJParserConstants {
       impList = ImplementsList(false);
       break;
     default:
-      jj_la1[150] = jj_gen;
+      jj_la1[151] = jj_gen;
       ;
     }
     jj_consume_token(LBRACE);
@@ -5471,7 +5523,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[151] = jj_gen;
+      jj_la1[152] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -5479,7 +5531,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(COMMA);
       break;
     default:
-      jj_la1[152] = jj_gen;
+      jj_la1[153] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -5519,7 +5571,7 @@ public class AspectJParser implements AspectJParserConstants {
           ;
           break;
         default:
-          jj_la1[153] = jj_gen;
+          jj_la1[154] = jj_gen;
           break label_54;
         }
         member = ClassOrInterfaceBodyDeclaration(false);
@@ -5527,7 +5579,7 @@ public class AspectJParser implements AspectJParserConstants {
       }
       break;
     default:
-      jj_la1[154] = jj_gen;
+      jj_la1[155] = jj_gen;
       ;
     }
     jj_consume_token(RBRACE);
@@ -5548,7 +5600,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[155] = jj_gen;
+        jj_la1[156] = jj_gen;
         break label_55;
       }
       jj_consume_token(COMMA);
@@ -5574,7 +5626,7 @@ public class AspectJParser implements AspectJParserConstants {
       typeBound = TypeBound();
       break;
     default:
-      jj_la1[156] = jj_gen;
+      jj_la1[157] = jj_gen;
       ;
     }
     {if (true) return new TypeParameter(line, column, name, typeBound);}
@@ -5595,7 +5647,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[157] = jj_gen;
+        jj_la1[158] = jj_gen;
         break label_56;
       }
       jj_consume_token(COMMA);
@@ -5621,7 +5673,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[158] = jj_gen;
+        jj_la1[159] = jj_gen;
         break label_57;
       }
       jj_consume_token(BIT_AND);
@@ -5647,7 +5699,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[159] = jj_gen;
+        jj_la1[160] = jj_gen;
         break label_58;
       }
       ann = Annotation();
@@ -5662,7 +5714,7 @@ public class AspectJParser implements AspectJParserConstants {
       args = Arguments();
       break;
     default:
-      jj_la1[160] = jj_gen;
+      jj_la1[161] = jj_gen;
       ;
     }
     switch (jj_nt.kind) {
@@ -5672,7 +5724,7 @@ public class AspectJParser implements AspectJParserConstants {
       jj_consume_token(RBRACE);
       break;
     default:
-      jj_la1[161] = jj_gen;
+      jj_la1[162] = jj_gen;
       ;
     }
     {if (true) return new EnumConstantDeclaration(line, column, annotations, name, args, classBody);}
@@ -5692,7 +5744,7 @@ public class AspectJParser implements AspectJParserConstants {
         ;
         break;
       default:
-        jj_la1[162] = jj_gen;
+        jj_la1[163] = jj_gen;
         break label_59;
       }
       jj_consume_token(COMMA);
@@ -6080,99 +6132,6 @@ public class AspectJParser implements AspectJParserConstants {
     try { return !jj_3_54(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(53, xla); }
-  }
-
-  private boolean jj_3R_88() {
-    if (jj_3R_155()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_27()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_259() {
-    if (jj_scan_token(INTEGER_LITERAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_231() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_259()) {
-    jj_scanpos = xsp;
-    if (jj_3R_260()) {
-    jj_scanpos = xsp;
-    if (jj_3R_261()) {
-    jj_scanpos = xsp;
-    if (jj_3R_262()) {
-    jj_scanpos = xsp;
-    if (jj_3R_263()) {
-    jj_scanpos = xsp;
-    if (jj_3R_264()) {
-    jj_scanpos = xsp;
-    if (jj_3R_265()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_157() {
-    return false;
-  }
-
-  private boolean jj_3R_90() {
-    jj_lookingAhead = true;
-    jj_semLA = getToken(1).kind == GT && ((Token.GTToken) getToken(1)).realKind == RSIGNEDSHIFT;
-    jj_lookingAhead = false;
-    if (!jj_semLA || jj_3R_156()) return true;
-    if (jj_scan_token(GT)) return true;
-    if (jj_scan_token(GT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_301() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_300() {
-    if (jj_scan_token(PLUS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_91() {
-    jj_lookingAhead = true;
-    jj_semLA = getToken(1).kind == GT && ((Token.GTToken) getToken(1)).realKind == RUNSIGNEDSHIFT;
-    jj_lookingAhead = false;
-    if (!jj_semLA || jj_3R_157()) return true;
-    if (jj_scan_token(GT)) return true;
-    if (jj_scan_token(GT)) return true;
-    if (jj_scan_token(GT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_161() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_3R_88()) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_280() {
-    if (jj_3R_299()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_300()) jj_scanpos = xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_301()) { jj_scanpos = xsp; break; }
-    }
-    return false;
   }
 
   private boolean jj_3R_399() {
@@ -7117,12 +7076,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_278() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
   private boolean jj_3R_85() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7135,11 +7088,6 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_93() {
     if (jj_scan_token(INCR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_277() {
-    if (jj_scan_token(PLUS)) return true;
     return false;
   }
 
@@ -7161,18 +7109,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_249() {
-    if (jj_3R_276()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_277()) jj_scanpos = xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_278()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3R_312() {
     if (jj_3R_294()) return true;
     Token xsp;
@@ -7188,11 +7124,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_248() {
-    if (jj_scan_token(VOID)) return true;
-    return false;
-  }
-
   private boolean jj_3R_131() {
     if (jj_scan_token(VOID)) return true;
     return false;
@@ -7205,12 +7136,6 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3_20() {
     if (jj_3R_85()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_275() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
@@ -7280,13 +7205,9 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_247() {
-    if (jj_3R_184()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_275()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_278() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
@@ -7302,15 +7223,25 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_277() {
+    if (jj_scan_token(PLUS)) return true;
+    return false;
+  }
+
   private boolean jj_3R_297() {
     if (jj_3R_312()) return true;
     return false;
   }
 
-  private boolean jj_3R_246() {
-    if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_61()) return true;
-    if (jj_scan_token(RPAREN)) return true;
+  private boolean jj_3R_249() {
+    if (jj_3R_276()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_277()) jj_scanpos = xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_278()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -7319,19 +7250,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_211() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_246()) {
-    jj_scanpos = xsp;
-    if (jj_3R_247()) {
-    jj_scanpos = xsp;
-    if (jj_3R_248()) {
-    jj_scanpos = xsp;
-    if (jj_3R_249()) return true;
-    }
-    }
-    }
+  private boolean jj_3R_248() {
+    if (jj_scan_token(VOID)) return true;
     return false;
   }
 
@@ -7356,6 +7276,12 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_132() {
     if (jj_scan_token(STATIC)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_275() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
@@ -7393,6 +7319,16 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_247() {
+    if (jj_3R_184()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_275()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   private boolean jj_3R_418() {
     if (jj_scan_token(ELSE)) return true;
     if (jj_3R_302()) return true;
@@ -7418,16 +7354,26 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_210() {
-    if (jj_scan_token(BANG)) return true;
+  private boolean jj_3R_246() {
+    if (jj_scan_token(LPAREN)) return true;
+    if (jj_3R_61()) return true;
+    if (jj_scan_token(RPAREN)) return true;
     return false;
   }
 
-  private boolean jj_3R_171() {
+  private boolean jj_3R_211() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_210()) jj_scanpos = xsp;
-    if (jj_3R_211()) return true;
+    if (jj_3R_246()) {
+    jj_scanpos = xsp;
+    if (jj_3R_247()) {
+    jj_scanpos = xsp;
+    if (jj_3R_248()) {
+    jj_scanpos = xsp;
+    if (jj_3R_249()) return true;
+    }
+    }
+    }
     return false;
   }
 
@@ -7477,12 +7423,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_172() {
-    if (jj_scan_token(SC_AND)) return true;
-    if (jj_3R_171()) return true;
-    return false;
-  }
-
   private boolean jj_3R_272() {
     if (jj_scan_token(DECR)) return true;
     if (jj_3R_294()) return true;
@@ -7506,18 +7446,21 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_123() {
-    if (jj_3R_171()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_172()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_210() {
+    if (jj_scan_token(BANG)) return true;
     return false;
   }
 
   private boolean jj_3R_438() {
     if (jj_scan_token(_DEFAULT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_171() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_210()) jj_scanpos = xsp;
+    if (jj_3R_211()) return true;
     return false;
   }
 
@@ -7567,12 +7510,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_124() {
-    if (jj_scan_token(SC_OR)) return true;
-    if (jj_3R_123()) return true;
-    return false;
-  }
-
   private boolean jj_3R_137() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7585,18 +7522,14 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_252() {
-    if (jj_scan_token(INTERFACE)) return true;
+  private boolean jj_3R_172() {
+    if (jj_scan_token(SC_AND)) return true;
+    if (jj_3R_171()) return true;
     return false;
   }
 
-  private boolean jj_3R_61() {
-    if (jj_3R_123()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_124()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_252() {
+    if (jj_scan_token(INTERFACE)) return true;
     return false;
   }
 
@@ -7632,6 +7565,16 @@ public class AspectJParser implements AspectJParserConstants {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_3R_103()) return true;
     if (jj_scan_token(RBRACE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_123() {
+    if (jj_3R_171()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_172()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -7700,8 +7643,24 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_124() {
+    if (jj_scan_token(SC_OR)) return true;
+    if (jj_3R_123()) return true;
+    return false;
+  }
+
   private boolean jj_3R_121() {
     if (jj_3R_169()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_61() {
+    if (jj_3R_123()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_124()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -7874,11 +7833,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_75() {
-    if (jj_scan_token(STRICTFP)) return true;
-    return false;
-  }
-
   private boolean jj_3R_400() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7914,11 +7868,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_74() {
-    if (jj_scan_token(VOLATILE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_106() {
     if (jj_3R_105()) return true;
     if (jj_3R_78()) return true;
@@ -7936,11 +7885,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_73() {
-    if (jj_scan_token(TRANSIENT)) return true;
-    return false;
-  }
-
   private boolean jj_3_46() {
     if (jj_3R_106()) return true;
     return false;
@@ -7953,6 +7897,135 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_405() {
     if (jj_scan_token(ELLIPSIS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_284() {
+    if (jj_3R_302()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_401() {
+    if (jj_scan_token(PLUS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_75() {
+    if (jj_scan_token(STRICTFP)) return true;
+    return false;
+  }
+
+  private boolean jj_3_45() {
+    if (jj_3R_105()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(13)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(34)) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_114() {
+    if (jj_scan_token(FINAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_397() {
+    if (jj_3R_105()) return true;
+    if (jj_3R_78()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_405()) jj_scanpos = xsp;
+    if (jj_3R_204()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_391() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_401()) {
+    jj_scanpos = xsp;
+    if (jj_3R_402()) return true;
+    }
+    if (jj_3R_366()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_283() {
+    if (jj_3R_106()) return true;
+    if (jj_scan_token(SEMICOLON)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_362() {
+    if (jj_3R_366()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_391()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_74() {
+    if (jj_scan_token(VOLATILE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_282() {
+    if (jj_3R_105()) return true;
+    if (jj_3R_214()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_113() {
+    if (jj_scan_token(PRIVATE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_257() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_282()) {
+    jj_scanpos = xsp;
+    if (jj_3R_283()) {
+    jj_scanpos = xsp;
+    if (jj_3R_284()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_378() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_398() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_397()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_73() {
+    if (jj_scan_token(TRANSIENT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_112() {
+    if (jj_scan_token(PROTECTED)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_389() {
+    if (jj_3R_397()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_398()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -8047,142 +8120,13 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_284() {
-    if (jj_3R_302()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_401() {
-    if (jj_scan_token(PLUS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_72() {
-    if (jj_scan_token(NATIVE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_45() {
-    if (jj_3R_105()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(13)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(34)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_114() {
-    if (jj_scan_token(FINAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_397() {
-    if (jj_3R_105()) return true;
-    if (jj_3R_78()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_405()) jj_scanpos = xsp;
-    if (jj_3R_204()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_391() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_401()) {
-    jj_scanpos = xsp;
-    if (jj_3R_402()) return true;
-    }
-    if (jj_3R_366()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_283() {
-    if (jj_3R_106()) return true;
-    if (jj_scan_token(SEMICOLON)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_362() {
-    if (jj_3R_366()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_391()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_71() {
-    if (jj_scan_token(SYNCHRONIZED)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_282() {
-    if (jj_3R_105()) return true;
-    if (jj_3R_214()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_113() {
-    if (jj_scan_token(PRIVATE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_257() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_282()) {
-    jj_scanpos = xsp;
-    if (jj_3R_283()) {
-    jj_scanpos = xsp;
-    if (jj_3R_284()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_378() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_398() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_397()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_70() {
-    if (jj_scan_token(ABSTRACT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_112() {
-    if (jj_scan_token(PROTECTED)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_389() {
-    if (jj_3R_397()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_398()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3_30() {
     if (jj_3R_91()) return true;
     return false;
   }
 
-  private boolean jj_3R_69() {
-    if (jj_scan_token(FINAL)) return true;
+  private boolean jj_3R_72() {
+    if (jj_scan_token(NATIVE)) return true;
     return false;
   }
 
@@ -8210,8 +8154,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_68() {
-    if (jj_scan_token(PRIVATE)) return true;
+  private boolean jj_3R_71() {
+    if (jj_scan_token(SYNCHRONIZED)) return true;
     return false;
   }
 
@@ -8262,8 +8206,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_67() {
-    if (jj_scan_token(PROTECTED)) return true;
+  private boolean jj_3R_70() {
+    if (jj_scan_token(ABSTRACT)) return true;
     return false;
   }
 
@@ -8322,8 +8266,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_66() {
-    if (jj_scan_token(STATIC)) return true;
+  private boolean jj_3R_69() {
+    if (jj_scan_token(FINAL)) return true;
     return false;
   }
 
@@ -8344,8 +8288,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_65() {
-    if (jj_scan_token(PUBLIC)) return true;
+  private boolean jj_3R_68() {
+    if (jj_scan_token(PRIVATE)) return true;
     return false;
   }
 
@@ -8396,6 +8340,11 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_67() {
+    if (jj_scan_token(PROTECTED)) return true;
+    return false;
+  }
+
   private boolean jj_3R_367() {
     Token xsp;
     xsp = jj_scanpos;
@@ -8410,11 +8359,6 @@ public class AspectJParser implements AspectJParserConstants {
     }
     }
     if (jj_3R_360()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_64() {
-    if (jj_scan_token(BANG)) return true;
     return false;
   }
 
@@ -8440,45 +8384,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3_7() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_64()) jj_scanpos = xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_65()) {
-    jj_scanpos = xsp;
-    if (jj_3R_66()) {
-    jj_scanpos = xsp;
-    if (jj_3R_67()) {
-    jj_scanpos = xsp;
-    if (jj_3R_68()) {
-    jj_scanpos = xsp;
-    if (jj_3R_69()) {
-    jj_scanpos = xsp;
-    if (jj_3R_70()) {
-    jj_scanpos = xsp;
-    if (jj_3R_71()) {
-    jj_scanpos = xsp;
-    if (jj_3R_72()) {
-    jj_scanpos = xsp;
-    if (jj_3R_73()) {
-    jj_scanpos = xsp;
-    if (jj_3R_74()) {
-    jj_scanpos = xsp;
-    if (jj_3R_75()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
   private boolean jj_3R_336() {
     if (jj_scan_token(ASSERT)) return true;
     if (jj_3R_88()) return true;
@@ -8489,13 +8394,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_60() {
-    Token xsp;
-    if (jj_3_7()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_7()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_66() {
+    if (jj_scan_token(STATIC)) return true;
     return false;
   }
 
@@ -8503,6 +8403,11 @@ public class AspectJParser implements AspectJParserConstants {
     if (jj_3R_78()) return true;
     if (jj_scan_token(IDPATTERN)) return true;
     if (jj_scan_token(LPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65() {
+    if (jj_scan_token(PUBLIC)) return true;
     return false;
   }
 
@@ -8606,6 +8511,11 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_64() {
+    if (jj_scan_token(BANG)) return true;
+    return false;
+  }
+
   private boolean jj_3R_403() {
     Token xsp;
     xsp = jj_scanpos;
@@ -8672,6 +8582,45 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_64()) jj_scanpos = xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_65()) {
+    jj_scanpos = xsp;
+    if (jj_3R_66()) {
+    jj_scanpos = xsp;
+    if (jj_3R_67()) {
+    jj_scanpos = xsp;
+    if (jj_3R_68()) {
+    jj_scanpos = xsp;
+    if (jj_3R_69()) {
+    jj_scanpos = xsp;
+    if (jj_3R_70()) {
+    jj_scanpos = xsp;
+    if (jj_3R_71()) {
+    jj_scanpos = xsp;
+    if (jj_3R_72()) {
+    jj_scanpos = xsp;
+    if (jj_3R_73()) {
+    jj_scanpos = xsp;
+    if (jj_3R_74()) {
+    jj_scanpos = xsp;
+    if (jj_3R_75()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
   private boolean jj_3R_318() {
     if (jj_3R_133()) return true;
     return false;
@@ -8682,23 +8631,18 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3_5() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_62()) {
-    jj_scanpos = xsp;
-    if (jj_3R_63()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_62() {
-    if (jj_3R_125()) return true;
-    return false;
-  }
-
   private boolean jj_3_44() {
     if (jj_3R_104()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    Token xsp;
+    if (jj_3_7()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_7()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -8764,11 +8708,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_63() {
-    if (jj_3R_126()) return true;
-    return false;
-  }
-
   private boolean jj_3R_135() {
     if (jj_3R_88()) return true;
     return false;
@@ -8787,12 +8726,6 @@ public class AspectJParser implements AspectJParserConstants {
     if (jj_3R_365()) return true;
     }
     if (jj_3R_350()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(NEW)) return true;
     return false;
   }
 
@@ -8838,11 +8771,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_61()) return true;
-    return false;
-  }
-
   private boolean jj_3R_332() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
@@ -8860,6 +8788,21 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3_5() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_62()) {
+    jj_scanpos = xsp;
+    if (jj_3R_63()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_62() {
+    if (jj_3R_125()) return true;
+    return false;
+  }
+
   private boolean jj_3R_242() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
@@ -8869,11 +8812,6 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3R_358() {
     if (jj_scan_token(BIT_AND)) return true;
     if (jj_3R_333()) return true;
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_60()) return true;
     return false;
   }
 
@@ -8903,11 +8841,22 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_63() {
+    if (jj_3R_126()) return true;
+    return false;
+  }
+
   private boolean jj_3R_216() {
     if (jj_scan_token(AT)) return true;
     if (jj_scan_token(INTERFACE)) return true;
     if (jj_scan_token(IDPATTERN)) return true;
     if (jj_3R_374()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(NEW)) return true;
     return false;
   }
 
@@ -8956,6 +8905,11 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3_4() {
+    if (jj_3R_61()) return true;
+    return false;
+  }
+
   private boolean jj_3R_293() {
     if (jj_3R_308()) return true;
     Token xsp;
@@ -8966,15 +8920,14 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_61()) return true;
-    if (jj_scan_token(DOT)) return true;
-    return false;
-  }
-
   private boolean jj_3_51() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_109()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_60()) return true;
     return false;
   }
 
@@ -9010,11 +8963,6 @@ public class AspectJParser implements AspectJParserConstants {
     if (jj_scan_token(LBRACE)) return true;
     if (jj_3R_103()) return true;
     if (jj_scan_token(RBRACE)) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_60()) return true;
     return false;
   }
 
@@ -9056,6 +9004,12 @@ public class AspectJParser implements AspectJParserConstants {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_40()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_61()) return true;
+    if (jj_scan_token(DOT)) return true;
     return false;
   }
 
@@ -9186,6 +9140,11 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_177() {
     if (jj_3R_215()) return true;
+    return false;
+  }
+
+  private boolean jj_3_1() {
+    if (jj_3R_60()) return true;
     return false;
   }
 
@@ -9673,6 +9632,99 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_88() {
+    if (jj_3R_155()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_27()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_259() {
+    if (jj_scan_token(INTEGER_LITERAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_231() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_259()) {
+    jj_scanpos = xsp;
+    if (jj_3R_260()) {
+    jj_scanpos = xsp;
+    if (jj_3R_261()) {
+    jj_scanpos = xsp;
+    if (jj_3R_262()) {
+    jj_scanpos = xsp;
+    if (jj_3R_263()) {
+    jj_scanpos = xsp;
+    if (jj_3R_264()) {
+    jj_scanpos = xsp;
+    if (jj_3R_265()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_157() {
+    return false;
+  }
+
+  private boolean jj_3R_90() {
+    jj_lookingAhead = true;
+    jj_semLA = getToken(1).kind == GT && ((Token.GTToken) getToken(1)).realKind == RSIGNEDSHIFT;
+    jj_lookingAhead = false;
+    if (!jj_semLA || jj_3R_156()) return true;
+    if (jj_scan_token(GT)) return true;
+    if (jj_scan_token(GT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_301() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_300() {
+    if (jj_scan_token(PLUS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_91() {
+    jj_lookingAhead = true;
+    jj_semLA = getToken(1).kind == GT && ((Token.GTToken) getToken(1)).realKind == RUNSIGNEDSHIFT;
+    jj_lookingAhead = false;
+    if (!jj_semLA || jj_3R_157()) return true;
+    if (jj_scan_token(GT)) return true;
+    if (jj_scan_token(GT)) return true;
+    if (jj_scan_token(GT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_161() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_3R_88()) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_280() {
+    if (jj_3R_299()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_300()) jj_scanpos = xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_301()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
   /** Generated Token Manager. */
   public AspectJParserTokenManager token_source;
   JavaCharStream jj_input_stream;
@@ -9686,7 +9738,7 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[163];
+  final private int[] jj_la1 = new int[164];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -9700,19 +9752,19 @@ public class AspectJParser implements AspectJParserConstants {
       jj_la1_init_4();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x0,0x20000000,0x20000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800020,0x2041280,0x0,0x2041280,0x0,0x0,0x0,0x0,0x0,0x0,0x2041280,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x102000,0x2041280,0x29432a0,0x0,0x0,0x0,0x12441280,0x12441280,0x0,0x0,0x0,0x0,0x0,0x0,0x28412a0,0x0,0x0,0x0,0x0,0x0,0x12441280,0x36c6b3e0,0x0,0x2041280,0x2041280,0x0,0x2041280,0x200000,0x200000,0x2041280,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x12441280,0x0,0x0,0x12441280,0x0,0x0,0x0,0x0,0x0,0x10400000,0x0,0x0,0x0,0x0,0x10000000,0x0,0x400000,0x400000,0x12441280,0x0,0x0,0x0,0x2041280,0x0,0x0,0x364693c0,0x0,0x364693c0,0x0,0x0,0x0,0x12441280,0x10400,0x10400,0x80000,0x12c412a0,0x12441280,0x12441280,0x12c412a0,0x12441280,0x0,0x0,0x0,0x12441280,0x800,0x1000000,0x1000800,0x0,0x0,0x0,0x12441280,0x12441280,0x0,0x29432a0,0x2143280,0x2143280,0x10000,0x800020,0x2000,0x0,0x200000,0x40000000,0x40000000,0x0,0x0,0x29432a0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0x0,0x20000000,0x20000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x800020,0x2041280,0x0,0x2041280,0x0,0x0,0x0,0x0,0x0,0x0,0x2041280,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x102000,0x2041280,0x29432a0,0x0,0x0,0x0,0x12441280,0x12441280,0x0,0x0,0x0,0x0,0x0,0x0,0x28412a0,0x0,0x0,0x0,0x0,0x0,0x12441280,0x36c6b3e0,0x0,0x2041280,0x2041280,0x0,0x2041280,0x200000,0x200000,0x2041280,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x12441280,0x0,0x0,0x12441280,0x0,0x0,0x0,0x0,0x0,0x10400000,0x0,0x0,0x0,0x0,0x10000000,0x0,0x400000,0x400000,0x12441280,0x0,0x0,0x0,0x2041280,0x0,0x0,0x364693c0,0x0,0x364693c0,0x0,0x0,0x0,0x12441280,0x10400,0x10400,0x80000,0x12c412a0,0x12441280,0x12441280,0x12c412a0,0x12441280,0x0,0x0,0x0,0x12441280,0x800,0x1000000,0x1000800,0x0,0x0,0x0,0x12441280,0x12441280,0x0,0x29432a0,0x2143280,0x2143280,0x10000,0x800020,0x2000,0x0,0x200000,0x40000000,0x40000000,0x0,0x0,0x29432a0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0xfc000000,0x0,0x0,0x4020000,0x4020000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xfc000000,0x80000,0x0,0x1113390,0x80080a,0x0,0x80080a,0x0,0x0,0x0,0x0,0x0,0x0,0x80080a,0xfc000000,0x0,0xfc000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x80080a,0x1913b9e,0x0,0x0,0x0,0xa2482a,0xa2482a,0x0,0x0,0x0,0x80000,0x0,0x0,0x1913b9a,0x0,0x0,0x80000,0x0,0x0,0xa2482a,0x3f7ffbe,0x1000,0x80080a,0x80a,0x0,0x80a,0x4000,0x4000,0x80a,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xa2482a,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x0,0x0,0x224020,0x0,0x0,0x0,0x0,0x20000,0x0,0x200020,0x200000,0xa2482a,0x0,0x0,0x0,0x80a,0x0,0x0,0x2e7cc2a,0x0,0x2e7cc2a,0x0,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x1b37bba,0xa2482a,0xa2482a,0x1b37bba,0xa2482a,0x0,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x0,0x0,0x0,0xa2482a,0xa2482a,0x0,0x1913b9e,0x80080e,0x80080e,0x0,0x1113390,0x4,0x0,0x0,0x0,0x0,0x0,0x0,0x1913b9e,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0xfc000000,0x0,0x0,0x4020000,0x4020000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xfc000000,0x80000,0x0,0x1113390,0x80080a,0x0,0x80080a,0x0,0x0,0x0,0x0,0x0,0x0,0x80080a,0xfc000000,0xfc000000,0x0,0xfc000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x80080a,0x1913b9e,0x0,0x0,0x0,0xa2482a,0xa2482a,0x0,0x0,0x0,0x80000,0x0,0x0,0x1913b9a,0x0,0x0,0x80000,0x0,0x0,0xa2482a,0x3f7ffbe,0x1000,0x80080a,0x80a,0x0,0x80a,0x4000,0x4000,0x80a,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xa2482a,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x0,0x0,0x224020,0x0,0x0,0x0,0x0,0x20000,0x0,0x200020,0x200000,0xa2482a,0x0,0x0,0x0,0x80a,0x0,0x0,0x2e7cc2a,0x0,0x2e7cc2a,0x0,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x1b37bba,0xa2482a,0xa2482a,0x1b37bba,0xa2482a,0x0,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x0,0x0,0x0,0xa2482a,0xa2482a,0x0,0x1913b9e,0x80080e,0x80080e,0x0,0x1113390,0x4,0x0,0x0,0x0,0x0,0x0,0x0,0x1913b9e,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x3fffff,0x0,0x0,0x7cfff8,0x7cfff8,0x0,0x0,0x0,0x0,0x18,0x60,0xc000,0x3fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3fffff,0x0,0x3fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x11800000,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x11800000,0x11800000,0x11800000,0x11800000,0x11800000,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x3fffff,0x0,0x0,0x7cfff8,0x7cfff8,0x0,0x0,0x0,0x0,0x18,0x60,0xc000,0x3fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3fffff,0x3fffff,0x0,0x3fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x11800000,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x11800000,0x11800000,0x11800000,0x11800000,0x11800000,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x8,0x2000000,0x4000000,0x20048,0x48,0x4000,0x0,0x2000,0x8,0x0,0x0,0x0,0x20048,0x0,0x20000,0x0,0x20048,0x2000,0x20048,0x2000000,0x4000000,0x20000,0x400,0x20000000,0x400,0x48,0x8,0x0,0x8,0x0,0x2000000,0x4000000,0x20000,0x20000000,0x400,0x48,0x0,0x0,0x0,0x4000,0x10008,0x15008,0x2000,0x8000,0x400,0x7806014e,0x7806014e,0x2000,0x10000,0x400,0x0,0x1100,0x2000,0x4008,0x0,0x10000,0x0,0x10000,0x10000,0x1004e,0x1800514e,0x0,0x0,0x8,0x2000,0x80008,0x0,0x0,0x0,0x2000,0x8000,0x80000,0x2000000,0x4000000,0x0,0x0,0x0,0x1200000,0x1200000,0x0,0xc10000,0xc10000,0x0,0x60000000,0x60000000,0x80000000,0x80000000,0x60000000,0x7806004e,0x60000,0x60000,0x4e,0x40,0x18000000,0x10000,0x40,0x40,0x46,0x8,0x0,0x10000,0x40,0x0,0x400,0x6,0x0,0x7806004e,0x2000,0x10000,0x440,0x10008,0x400,0x400,0x1800114e,0x100000,0x1800114e,0x2000,0x18008000,0x18008000,0x1800004e,0x0,0x0,0x0,0x7806404e,0x7806004e,0x7806004e,0x7806504e,0x7806004e,0x2000,0x8,0x8,0x7806004e,0x0,0x0,0x0,0x4000,0x8,0x2000,0x7806414e,0x7806414e,0x2000,0x5008,0x4008,0x5008,0x0,0x4000,0x0,0x10000,0x0,0x0,0x0,0x4008,0x2000,0x15108,0x1000,0x2000,0x0,0x2000,0x0,0x4000,0x40,0x100,0x2000,};
+      jj_la1_3 = new int[] {0x8,0x2000000,0x4000000,0x20048,0x48,0x4000,0x0,0x2000,0x8,0x0,0x0,0x0,0x20048,0x0,0x20000,0x0,0x20048,0x2000,0x20048,0x2000000,0x4000000,0x20000,0x400,0x20000000,0x400,0x48,0xc,0x8,0x0,0x8,0x0,0x2000000,0x4000000,0x20000,0x20000000,0x400,0x48,0x0,0x0,0x0,0x4000,0x10008,0x15008,0x2000,0x8000,0x400,0x7806014e,0x7806014e,0x2000,0x10000,0x400,0x0,0x1100,0x2000,0x4008,0x0,0x10000,0x0,0x10000,0x10000,0x1004e,0x1800514e,0x0,0x0,0x8,0x2000,0x80008,0x0,0x0,0x0,0x2000,0x8000,0x80000,0x2000000,0x4000000,0x0,0x0,0x0,0x1200000,0x1200000,0x0,0xc10000,0xc10000,0x0,0x60000000,0x60000000,0x80000000,0x80000000,0x60000000,0x7806004e,0x60000,0x60000,0x4e,0x40,0x18000000,0x10000,0x40,0x40,0x46,0x8,0x0,0x10000,0x40,0x0,0x400,0x6,0x0,0x7806004e,0x2000,0x10000,0x440,0x10008,0x400,0x400,0x1800114e,0x100000,0x1800114e,0x2000,0x18008000,0x18008000,0x1800004e,0x0,0x0,0x0,0x7806404e,0x7806004e,0x7806004e,0x7806504e,0x7806004e,0x2000,0x8,0x8,0x7806004e,0x0,0x0,0x0,0x4000,0x8,0x2000,0x7806414e,0x7806414e,0x2000,0x5008,0x4008,0x5008,0x0,0x4000,0x0,0x10000,0x0,0x0,0x0,0x4008,0x2000,0x15108,0x1000,0x2000,0x0,0x2000,0x0,0x4000,0x40,0x100,0x2000,};
    }
    private static void jj_la1_init_4() {
-      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x200000,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300000,0x0,0x300000,0x0,0x0,0x0,0x0,0x0,0x0,0x300000,0x300000,0x300000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffe0,0x0,0x0,0x0,0x2,0x4,0x1,0x0,0x0,0x0,0x80000,0x80000,0x10,0x0,0x0,0x400008,0x400008,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffe0,0xffe0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,};
+      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x200000,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300000,0x0,0x300000,0x0,0x0,0x0,0x0,0x0,0x0,0x300000,0x300000,0x300000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffe0,0x0,0x0,0x0,0x2,0x4,0x1,0x0,0x0,0x0,0x80000,0x80000,0x10,0x0,0x0,0x400008,0x400008,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffe0,0xffe0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[54];
   private boolean jj_rescan = false;
@@ -9729,7 +9781,7 @@ public class AspectJParser implements AspectJParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 163; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 164; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -9744,7 +9796,7 @@ public class AspectJParser implements AspectJParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 163; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 164; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -9755,7 +9807,7 @@ public class AspectJParser implements AspectJParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 163; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 164; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -9766,7 +9818,7 @@ public class AspectJParser implements AspectJParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 163; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 164; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -9776,7 +9828,7 @@ public class AspectJParser implements AspectJParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 163; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 164; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -9786,7 +9838,7 @@ public class AspectJParser implements AspectJParserConstants {
     token = new Token();
     token.next = jj_nt = token_source.getNextToken();
     jj_gen = 0;
-    for (int i = 0; i < 163; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 164; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -9895,7 +9947,7 @@ public class AspectJParser implements AspectJParserConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 163; i++) {
+    for (int i = 0; i < 164; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

@@ -34,6 +34,7 @@ public class EnforceMonitor extends BaseMonitor {
 			HashMap<String, BlockStmt> handlerBodies = prop.getHandlers();
 			BlockStmt handlerBody = handlerBodies.get("deadlock");
 			if (handlerBody != null) {
+				//For now we assume there's only one deadlock handler.
 				this.deadlockHandler = handlerBody;
 				break;
 			}
@@ -125,8 +126,8 @@ public class EnforceMonitor extends BaseMonitor {
 		}
 		if (blockedThreads != null) {
 			for (String var : blockedThreads) {
-				ret += "while (!" + aspectName + ".containsBlockedThread(\"" + var + "\")) {\n";
-				ret += "if (!" + aspectName + ".containsThread(\"" + var + "\")) {\n";
+				ret += "while (!" + aspectName + ".containsBlockedThread(" + var + ")) {\n";
+				ret += "if (!" + aspectName + ".containsThread(" + var + ")) {\n";
 				if (l != null)
 					ret += l.getName() + ".wait();\n";
 				ret += "}\n";

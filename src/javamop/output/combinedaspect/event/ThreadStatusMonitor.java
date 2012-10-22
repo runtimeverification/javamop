@@ -1,7 +1,12 @@
 package javamop.output.combinedaspect.event;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.parser.ast.stmt.BlockStmt;
 import javamop.output.combinedaspect.CombinedAspect;
 
 /**
@@ -9,18 +14,26 @@ import javamop.output.combinedaspect.CombinedAspect;
  * This class is used to generate code to maintain a set of current active threads, similar to EndThread event.
  * 
  * */
-public class ThreadDeadlockMonitor extends EndThread{
+public class ThreadStatusMonitor extends EndThread{
 	
 	private final static String eventName = "ThreadMonitor";
 	private MOPVariable monitorName;
 	
-	public ThreadDeadlockMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
+	private boolean hasDeadlockHandler = false;
+	
+	public ThreadStatusMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
 		this.monitorClass = combinedAspect.monitors.get(mopSpec);
 		this.monitorName = monitorClass.getOutermostName();
 		this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadToRunnable");
 		this.mainThread = new MOPVariable(mopSpec.getName() + "_" + eventName + "_MainThread");
 		this.threadSet = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadSet");
 		this.globalLock = combinedAspect.lockManager.getLock();
+		
+		List<PropertyAndHandlers> props = mopSpec.getPropertiesAndHandlers();
+		for (PropertyAndHandlers p : props) {
+			if (p.getHandlers().containsKey("deadlock"))
+				this.hasDeadlockHandler = true;
+		}
 	}
 	
 	@Override
@@ -52,9 +65,11 @@ public class ThreadDeadlockMonitor extends EndThread{
 		ret += globalLock.getName() + ".notifyAll();\n";
 		ret += "}\n";
 		
-		ret += "javamoprt.MOPDeadlockDetector.startDeadlockDetectionThread(" + this.threadSet 
-				+ ", " + this.mainThread + ", " + this.globalLock.getName() + ", new " + this.monitorName + "." + this.monitorName + "DeadlockCallback()" +");\n";
 		//Start deadlock detection thread here
+		if (this.hasDeadlockHandler) {
+			ret += "javamoprt.MOPDeadlockDetector.startDeadlockDetectionThread(" + this.threadSet 
+				+ ", " + this.mainThread + ", " + this.globalLock.getName() + ", new " + this.monitorName + "." + this.monitorName + "DeadlockCallback()" +");\n";
+		}
 		
 		ret += "}\n";
 		ret += "}\n";
@@ -66,7 +81,6 @@ public class ThreadDeadlockMonitor extends EndThread{
 				
 		ret += threadSet + ".remove(Thread.currentThread());\n";
 		
-		// Stop deadlock detection thread here
 		ret += "}\n";		
 		ret += "}\n";
 		
