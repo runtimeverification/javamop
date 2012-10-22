@@ -85,14 +85,17 @@ public class EnforceMonitor extends BaseMonitor {
 	 * */
 	@Override
 	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, 
-			EventDefinition event, GlobalLock l, String aspectName) {
+			EventDefinition event, GlobalLock l, String aspectName, boolean inMonitorSet) {
 		
 		String ret = "";
 		PropMonitor propMonitor = propMonitors.get(prop);
 		String uniqueId = event.getUniqueId();
 		String methodName = propMonitor.eventMethods.get(uniqueId).toString();
 		ret += "try {\n";
-		ret += "boolean cloned_monitor_condition_fail = false;\n";
+		
+		ret += this.checkThreadName(event, monitor, inMonitorSet);
+		ArrayList<String> blockedThreads = event.getThreadBlockedVar();
+		
 		ret += "do {\n";
 		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
 		ret += this.monitorName + " " + clonedMonitor + " = (" + this.monitorName +")" + monitor + ".clone();\n";
@@ -100,18 +103,18 @@ public class EnforceMonitor extends BaseMonitor {
 		MOPVariable enforceCategory = (MOPVariable)propMonitor.categoryVars.values().toArray()[0];
 		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
 		
-		//Check if the condition fails, if it does, then return directly.
+		// Check if the condition fails, if it does, then return directly.
 		if (event.getCondition() != null && event.getCondition().length() != 0) {
 			ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
-			ret += "cloned_monitor_condition_fail = true;\n";
+			if (inMonitorSet)
+				ret += "continue;\n";
+			else {
+				ret += "return;\n";
+			}
 			ret += "}\n";
 		}
-		
-		ret += "if (!" + clonedMonitor + "." + enforceCategory;
-		
-		ArrayList<String> blockedThreads = event.getThreadBlockedVar();
-		
-		ret += ") {\n";
+
+		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
 		if (l != null)
 			ret += l.getName() + ".wait();\n";
 		ret += "}\n";
@@ -121,11 +124,12 @@ public class EnforceMonitor extends BaseMonitor {
 		ret += "} while (true);\n\n";
 		
 		// If there is blocking event point cut, wait for the thread to be blocked
-		if (event.getCondition() != null && event.getCondition().length() != 0) {
-			ret += "if (!cloned_monitor_condition_fail){\n";
-		}
+
 		if (blockedThreads != null) {
 			for (String var : blockedThreads) {
+				
+				if (!(var.startsWith("\"") && var.endsWith("\"")))
+					var = monitor + "." + var;
 				ret += "while (!" + aspectName + ".containsBlockedThread(" + var + ")) {\n";
 				ret += "if (!" + aspectName + ".containsThread(" + var + ")) {\n";
 				if (l != null)
@@ -136,14 +140,11 @@ public class EnforceMonitor extends BaseMonitor {
 				ret += "}\n";
 			}
 		}
-		if (event.getCondition() != null && event.getCondition().length() != 0) {
-			ret += "}\n";
-		}
-		
-		
+
 		ret += "} catch (Exception e) {\n";
 		ret += "e.printStackTrace();\n";
 		ret += "}\n";
 		return  ret;
 	}
+	
 }

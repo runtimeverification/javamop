@@ -311,7 +311,7 @@ public class BaseMonitor extends Monitor {
 		return this.printEventMethod(prop, event, "");
 	}
 	
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName, boolean inMonitorSet) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
@@ -340,7 +340,7 @@ public class BaseMonitor extends Monitor {
 		for(PropertyAndHandlers prop : props){
 			PropMonitor propMonitor = propMonitors.get(prop);
 			
-			ret += this.beforeEventMethod(monitorVar, prop, event, l, aspectName);
+			ret += this.beforeEventMethod(monitorVar, prop, event, l, aspectName, inMonitorSet);
 			ret += monitorVar + "." + propMonitor.eventMethods.get(event.getUniqueId()) + "(";
 			ret += event.getMOPParameters().parameterString();
 			ret += ");\n";
@@ -386,12 +386,35 @@ public class BaseMonitor extends Monitor {
 		return ret;
 	}
 
+	/**
+	 * 
+	 * Generate code to match thread name pointcut
+	 * 
+	 * */
+	public String checkThreadName(EventDefinition event, MOPVariable monitor, boolean inMonitorSet) {
+		String var = event.getThreadNameVar();
+		if (var == null || var.length() == 0)
+			return "";
+		String ret = "";
+		if (!(var.startsWith("\"") && var.endsWith("\"")))
+			var = monitor + "." + var;
+		ret += "if (!Thread.currentThread().getName().equals(" + var + ")) {\n";
+		if (inMonitorSet) {
+			ret += "continue;\n";
+		}
+		else {
+			ret += "return;\n";
+		}
+		ret += "}\n";		
+		return ret;
+	}
+	
 	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName) {
 		return "";
 	}
 
-	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName) {
-		return  "";
+	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName, boolean inMonitorSet) {
+		return  this.checkThreadName(event, monitor, inMonitorSet);
 	}
 
 	public MonitorInfo getMonitorInfo(){
