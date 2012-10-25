@@ -91,10 +91,15 @@ public class EnforceMonitor extends BaseMonitor {
 		PropMonitor propMonitor = propMonitors.get(prop);
 		String uniqueId = event.getUniqueId();
 		String methodName = propMonitor.eventMethods.get(uniqueId).toString();
-		ret += "try {\n";
-		
-		ret += this.checkThreadName(event, monitor, inMonitorSet);
 		ArrayList<String> blockedThreads = event.getThreadBlockedVar();
+		ret += "try {\n";
+		if (blockedThreads != null) {
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
+				ret += "boolean cloned_monitor_condition_fail = false;\n";
+			}
+		}
+		ret += this.checkThreadName(event, monitor, inMonitorSet);
+		
 		
 		ret += "do {\n";
 		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
@@ -103,16 +108,26 @@ public class EnforceMonitor extends BaseMonitor {
 		MOPVariable enforceCategory = (MOPVariable)propMonitor.categoryVars.values().toArray()[0];
 		ret += clonedMonitor + "." + methodName + "(" + event.getMOPParameters().parameterInvokeString() + ");\n";
 		
+		
 		// Check if the condition fails, if it does, then return directly.
-		if (event.getCondition() != null && event.getCondition().length() != 0) {
-			ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
-			if (inMonitorSet)
-				ret += "continue;\n";
-			else {
-				ret += "return;\n";
+		if (blockedThreads != null) {
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
+				ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
+				ret += "cloned_monitor_condition_fail = true;\n";
+				ret += "}\n";
 			}
-			ret += "}\n";
 		}
+
+//		// Check if the condition fails, if it does, then return directly.
+//		if (event.getCondition() != null && event.getCondition().length() != 0) {
+//			ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
+//			if (inMonitorSet)
+//				ret += "continue;\n";
+//			else {
+//				ret += "return;\n";
+//			}
+//			ret += "}\n";
+//		}
 
 		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
 		if (l != null)
@@ -126,6 +141,11 @@ public class EnforceMonitor extends BaseMonitor {
 		// If there is blocking event point cut, wait for the thread to be blocked
 
 		if (blockedThreads != null) {
+			
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
+				ret += "if (!cloned_monitor_condition_fail){\n";
+			}
+
 			for (String var : blockedThreads) {
 				
 				if (!(var.startsWith("\"") && var.endsWith("\"")))
@@ -137,6 +157,10 @@ public class EnforceMonitor extends BaseMonitor {
 				ret += "}\n";
 				if (l != null)
 					ret += l.getName() + ".wait(50);\n";
+				ret += "}\n";
+			}
+			
+			if (event.getCondition() != null && event.getCondition().length() != 0) {
 				ret += "}\n";
 			}
 		}
