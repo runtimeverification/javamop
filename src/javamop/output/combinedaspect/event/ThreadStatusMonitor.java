@@ -58,11 +58,13 @@ public class ThreadStatusMonitor extends EndThread{
 
 		ret += "before (): " + "(execution(void *.main(..)) )";
 		ret += " && " + commonPointcut + "() {\n";
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
+		ret += "}\n";
 		ret += "if(" + mainThread + " == null){\n";
 		ret += mainThread + " = Thread.currentThread();\n";
 		ret += threadSet + ".add(Thread.currentThread());\n";
-		ret += globalLock.getName() + ".notifyAll();\n";
+		ret += globalLock.getName() + "_cond.signalAll();\n";
 		ret += "}\n";
 		
 		//Start deadlock detection thread here
@@ -71,17 +73,19 @@ public class ThreadStatusMonitor extends EndThread{
 				+ ", " + this.mainThread + ", " + this.globalLock.getName() + ", new " + this.monitorName + "." + this.monitorName + "DeadlockCallback()" +");\n";
 		}
 		
-		ret += "}\n";
+		ret += globalLock.getName() + ".unlock();\n";
 		ret += "}\n";
 		ret += "\n";
 
 		ret += "after (): " + "(execution(void *.main(..)) )";
 		ret += " && " + commonPointcut + "() {\n";
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
+		ret += "}\n";
 				
 		ret += threadSet + ".remove(Thread.currentThread());\n";
 		
-		ret += "}\n";		
+		ret += globalLock.getName() + ".unlock();\n";		
 		ret += "}\n";
 		
 		ret += "\n";
@@ -97,9 +101,11 @@ public class ThreadStatusMonitor extends EndThread{
 		ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
 		ret += " && " + commonPointcut + "() {\n";
 
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
-		ret += threadSet + ".remove(Thread.currentThread());\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
 		ret += "}\n";
+		ret += threadSet + ".remove(Thread.currentThread());\n";
+		ret += globalLock.getName() + ".unlock();\n";
 
 
 		ret += "}\n";
@@ -115,9 +121,11 @@ public class ThreadStatusMonitor extends EndThread{
 		ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
 		ret += " && " + commonPointcut + "() {\n";
 
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
-		ret += threadSet + ".remove(Thread.currentThread());\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
 		ret += "}\n";
+		ret += threadSet + ".remove(Thread.currentThread());\n";
+		ret += globalLock.getName() + ".unlock();\n";
 
 		ret += "}\n";
 
@@ -173,10 +181,12 @@ public class ThreadStatusMonitor extends EndThread{
 		ret += "(";
 		ret += "call(void Thread+.start()) && target(t))";
 		ret += " && " + commonPointcut + "() {\n";
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
-		ret += threadSet + ".add(t);\n";
-		ret += globalLock.getName() + ".notifyAll();\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
 		ret += "}\n";
+		ret += threadSet + ".add(t);\n";
+		ret += globalLock.getName() + "_cond.signalAll();\n";
+		ret += globalLock.getName() + ".unlock();\n";
 		ret += "}\n";
 		
 		return ret;

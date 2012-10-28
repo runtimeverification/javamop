@@ -16,7 +16,8 @@ public class GlobalLock {
 	public String toString() {
 		String ret = "";
 
-		ret += "static Object " + lock + " = new Object();\n";
+		ret += "static ReentrantLock " + lock + " = new ReentrantLock();\n";
+		ret += "static Condition " + lock + "_cond = " + lock + ".newCondition();\n";
 
 		return ret;
 	}

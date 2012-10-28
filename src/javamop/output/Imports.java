@@ -7,7 +7,7 @@ import javamop.parser.ast.MOPSpecFile;
 
 public class Imports {
 	ArrayList<String> imports;
-	String[] required = { "java.util.*", "javamoprt.*", "java.lang.ref.*", "org.aspectj.lang.*" };
+	String[] required = {"java.util.concurrent.*", "java.util.concurrent.locks.*", "java.util.*", "javamoprt.*", "java.lang.ref.*", "org.aspectj.lang.*" };
 
 	public Imports(MOPSpecFile mopSpecFile) {
 		imports = new ArrayList<String>();

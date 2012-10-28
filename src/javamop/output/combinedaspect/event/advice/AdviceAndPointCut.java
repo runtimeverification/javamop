@@ -167,9 +167,11 @@ public class AdviceAndPointCut {
 				ret += activatorsManager.getActivator(spec) + " = true;\n";
 			}			
 			
-			if (isSync)
-				ret += "synchronized(" + globalLock.getName() + ") {\n";
-	
+			if (isSync) {
+				ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+				ret += "Thread.yield();\n";
+				ret += "}\n";
+			}
 			
 			Iterator<EventDefinition> iter;
 			if(this.pos.equals("before"))
@@ -220,8 +222,9 @@ public class AdviceAndPointCut {
 				}
 			}
 			
-			if (isSync)
-				ret += "}\n";
+			if (isSync) {
+				ret += globalLock.getName() + ".unlock();\n";
+			}
 
 		}
 		

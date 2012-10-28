@@ -70,10 +70,10 @@ public class EnforceMonitor extends BaseMonitor {
 	 * */
 	@Override
 	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, 
-			EventDefinition event, GlobalLock l, String aspectName) {
+			EventDefinition event, GlobalLock lock, String aspectName) {
 		String ret = "";
-		if (l != null) {
-			ret += l.getName() + ".notifyAll();\n";
+		if (lock != null) {
+			ret += lock.getName() + "_cond.signalAll();\n";
 		}
 		return ret;
 	}
@@ -85,7 +85,7 @@ public class EnforceMonitor extends BaseMonitor {
 	 * */
 	@Override
 	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, 
-			EventDefinition event, GlobalLock l, String aspectName, boolean inMonitorSet) {
+			EventDefinition event, GlobalLock lock, String aspectName, boolean inMonitorSet) {
 		
 		String ret = "";
 		PropMonitor propMonitor = propMonitors.get(prop);
@@ -130,8 +130,8 @@ public class EnforceMonitor extends BaseMonitor {
 //		}
 
 		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
-		if (l != null)
-			ret += l.getName() + ".wait();\n";
+		if (lock != null)
+			ret += lock.getName() + "_cond.await();\n";
 		ret += "}\n";
 		ret += "else {\n";
 		ret += "break;\n";	
@@ -152,11 +152,11 @@ public class EnforceMonitor extends BaseMonitor {
 					var = monitor + "." + var;
 				ret += "while (!" + aspectName + ".containsBlockedThread(" + var + ")) {\n";
 				ret += "if (!" + aspectName + ".containsThread(" + var + ")) {\n";
-				if (l != null)
-					ret += l.getName() + ".wait();\n";
+				if (lock != null)
+					ret += lock.getName() + "_cond.await();\n";
 				ret += "}\n";
-				if (l != null)
-					ret += l.getName() + ".wait(50);\n";
+				if (lock != null)
+					ret += lock.getName() + "_cond.await(50L, TimeUnit.MILLISECONDS);\n";
 				ret += "}\n";
 			}
 			

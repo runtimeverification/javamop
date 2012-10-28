@@ -65,9 +65,11 @@ public class StartThread {
 		ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
 		ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
 		ret += " && " + commonPointcut + "() {\n";
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
-		ret += runnableMap + ".put(t, r);\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
 		ret += "}\n";
+		ret += runnableMap + ".put(t, r);\n";
+		ret += globalLock.getName() + ".unlock();\n";
 		ret += "}\n";
 
 		return ret;
@@ -99,14 +101,16 @@ public class StartThread {
 
 		ret += "before (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
 		ret += " && " + commonPointcut + "() {\n";
-		ret += "synchronized (" + globalLock.getName() + ") {\n";
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
+		ret += "}\n";
 		ret += "if(" + runnableMap + ".get(Thread.currentThread()) == " + runnableVar + ") {\n";
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 		ret += "}\n";
 		ret += eventBody;
-		ret += "}\n";
+		ret += globalLock.getName() + ".unlock();\n";
 
 		ret += "}\n";
 

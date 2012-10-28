@@ -311,7 +311,7 @@ public class BaseMonitor extends Monitor {
 		return this.printEventMethod(prop, event, "");
 	}
 	
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName, boolean inMonitorSet) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock, String aspectName, boolean inMonitorSet) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
@@ -340,11 +340,11 @@ public class BaseMonitor extends Monitor {
 		for(PropertyAndHandlers prop : props){
 			PropMonitor propMonitor = propMonitors.get(prop);
 			
-			ret += this.beforeEventMethod(monitorVar, prop, event, l, aspectName, inMonitorSet);
+			ret += this.beforeEventMethod(monitorVar, prop, event, lock, aspectName, inMonitorSet);
 			ret += monitorVar + "." + propMonitor.eventMethods.get(event.getUniqueId()) + "(";
 			ret += event.getMOPParameters().parameterString();
 			ret += ");\n";
-			ret += this.afterEventMethod(monitorVar, prop, event, l, aspectName);
+			ret += this.afterEventMethod(monitorVar, prop, event, lock, aspectName);
 			
 			if (event.getCondition() != null && event.getCondition().length() != 0) {
 				ret += "if(" + monitorVar + "." + conditionFail + "){\n";
@@ -414,7 +414,7 @@ public class BaseMonitor extends Monitor {
 	}
 
 	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName, boolean inMonitorSet) {
-		return  this.checkThreadName(event, monitor, inMonitorSet);
+		return this.checkThreadName(event, monitor, inMonitorSet);
 	}
 
 	public MonitorInfo getMonitorInfo(){
