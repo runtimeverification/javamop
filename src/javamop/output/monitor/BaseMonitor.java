@@ -385,36 +385,13 @@ public class BaseMonitor extends Monitor {
 
 		return ret;
 	}
-
-	/**
-	 * 
-	 * Generate code to match thread name pointcut
-	 * 
-	 * */
-	public String checkThreadName(EventDefinition event, MOPVariable monitor, boolean inMonitorSet) {
-		String var = event.getThreadNameVar();
-		if (var == null || var.length() == 0)
-			return "";
-		String ret = "";
-		if (!(var.startsWith("\"") && var.endsWith("\"")))
-			var = monitor + "." + var;
-		ret += "if (!Thread.currentThread().getName().equals(" + var + ")) {\n";
-		if (inMonitorSet) {
-			ret += "continue;\n";
-		}
-		else {
-			ret += "return;\n";
-		}
-		ret += "}\n";		
-		return ret;
-	}
 	
 	public String afterEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName) {
 		return "";
 	}
 
 	public String beforeEventMethod(MOPVariable monitor, PropertyAndHandlers prop, EventDefinition event, GlobalLock l, String aspectName, boolean inMonitorSet) {
-		return this.checkThreadName(event, monitor, inMonitorSet);
+		return "";
 	}
 
 	public MonitorInfo getMonitorInfo(){

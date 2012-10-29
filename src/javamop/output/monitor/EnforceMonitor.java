@@ -98,8 +98,6 @@ public class EnforceMonitor extends BaseMonitor {
 				ret += "boolean cloned_monitor_condition_fail = false;\n";
 			}
 		}
-		ret += this.checkThreadName(event, monitor, inMonitorSet);
-		
 		
 		ret += "do {\n";
 		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
@@ -114,6 +112,7 @@ public class EnforceMonitor extends BaseMonitor {
 			if (event.getCondition() != null && event.getCondition().length() != 0) {
 				ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
 				ret += "cloned_monitor_condition_fail = true;\n";
+				ret += "break;\n";
 				ret += "}\n";
 			}
 		}

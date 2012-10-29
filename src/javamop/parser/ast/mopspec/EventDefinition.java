@@ -137,6 +137,15 @@ public class EventDefinition extends Node {
 		if (condition.length() != 0) {
 			resultPointCut = resultPointCut.accept(new RemoveConditionVisitor(), new Integer(1));
 		}
+		// syntax de-sugar threadName pointcut into condition constraint
+		if (threadNameVar != null && threadNameVar.length() != 0) {
+			if (condition.length() != 0) {
+				condition = ("Thread.currentThread().getName().equals(" + threadNameVar + ") && (" 
+						+ condition + ")");
+			} else {
+				condition = "Thread.currentThread().getName().equals(" + threadNameVar + ")";
+			}
+		}
 		if (resultPointCut == null)
 			throw new javamop.parser.main_parser.ParseException("condition() pointcut should appear at the root level in a conjuction form");
 
@@ -307,10 +316,6 @@ public class EventDefinition extends Node {
 
 	public String getThreadVar() {
 		return threadVar;
-	}
-	
-	public String getThreadNameVar() {
-		return threadNameVar;
 	}
 	
 	public ArrayList<String> getThreadBlockedVar() {
