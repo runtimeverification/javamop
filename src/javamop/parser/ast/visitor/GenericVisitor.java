@@ -61,6 +61,8 @@ public interface GenericVisitor<R, A> {
 	public R visit(NotPointCut p, A arg);
 
 	public R visit(ConditionPointCut p, A arg);
+	
+	//public R visit(CountCondPointCut p, A arg);
 
 	public R visit(FieldPointCut p, A arg);
 

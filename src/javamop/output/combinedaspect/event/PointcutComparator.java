@@ -18,6 +18,7 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.StartThreadPointCut;
 import javamop.parser.ast.aspectj.TargetPointCut;
 import javamop.parser.ast.aspectj.ThisPointCut;
+import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
 import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
@@ -107,7 +108,11 @@ public class PointcutComparator {
 	}
 
 	public boolean compare(ThreadNamePointCut p1, ThreadNamePointCut p2){
-		return p1.toString().equals(p2.toString());
+		return true;
+	}
+	
+	public boolean compare(ThreadBlockedPointCut p1, ThreadBlockedPointCut p2){
+		return true;
 	}
 
 	public boolean compare(ThreadPointCut p1, ThreadPointCut p2){

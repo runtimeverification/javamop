@@ -157,149 +157,151 @@ public interface AspectJParserConstants {
   /** RegularExpression Id. */
   int CONDITION = 77;
   /** RegularExpression Id. */
-  int CFLOW = 78;
+  int COUNTCOND = 78;
   /** RegularExpression Id. */
-  int CFLOWBELOW = 79;
+  int CFLOW = 79;
   /** RegularExpression Id. */
-  int RETURNING = 80;
+  int CFLOWBELOW = 80;
   /** RegularExpression Id. */
-  int THROWING = 81;
+  int RETURNING = 81;
   /** RegularExpression Id. */
-  int ENDPROGRAM = 82;
+  int THROWING = 82;
   /** RegularExpression Id. */
-  int ENDTHREAD = 83;
+  int ENDPROGRAM = 83;
   /** RegularExpression Id. */
-  int ENDOBJECT = 84;
+  int ENDTHREAD = 84;
   /** RegularExpression Id. */
-  int STARTTHREAD = 85;
+  int ENDOBJECT = 85;
   /** RegularExpression Id. */
-  int HANDLER = 86;
+  int STARTTHREAD = 86;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 87;
+  int HANDLER = 87;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 88;
+  int LONG_LITERAL = 88;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 89;
+  int INTEGER_LITERAL = 89;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 90;
+  int DECIMAL_LITERAL = 90;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 91;
+  int HEX_LITERAL = 91;
   /** RegularExpression Id. */
-  int FLOATING_POINT_LITERAL = 92;
+  int OCTAL_LITERAL = 92;
   /** RegularExpression Id. */
-  int DECIMAL_FLOATING_POINT_LITERAL = 93;
+  int FLOATING_POINT_LITERAL = 93;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 94;
+  int DECIMAL_FLOATING_POINT_LITERAL = 94;
   /** RegularExpression Id. */
-  int HEXADECIMAL_FLOATING_POINT_LITERAL = 95;
+  int DECIMAL_EXPONENT = 95;
   /** RegularExpression Id. */
-  int HEXADECIMAL_EXPONENT = 96;
+  int HEXADECIMAL_FLOATING_POINT_LITERAL = 96;
   /** RegularExpression Id. */
-  int CHARACTER_LITERAL = 97;
+  int HEXADECIMAL_EXPONENT = 97;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 98;
+  int CHARACTER_LITERAL = 98;
   /** RegularExpression Id. */
-  int IDPATTERN = 99;
+  int STRING_LITERAL = 99;
   /** RegularExpression Id. */
-  int LETTER = 100;
+  int IDPATTERN = 100;
   /** RegularExpression Id. */
-  int PART_LETTER = 101;
+  int LETTER = 101;
   /** RegularExpression Id. */
-  int LPAREN = 102;
+  int PART_LETTER = 102;
   /** RegularExpression Id. */
-  int RPAREN = 103;
+  int LPAREN = 103;
   /** RegularExpression Id. */
-  int LBRACE = 104;
+  int RPAREN = 104;
   /** RegularExpression Id. */
-  int RBRACE = 105;
+  int LBRACE = 105;
   /** RegularExpression Id. */
-  int LBRACKET = 106;
+  int RBRACE = 106;
   /** RegularExpression Id. */
-  int RBRACKET = 107;
+  int LBRACKET = 107;
   /** RegularExpression Id. */
-  int SEMICOLON = 108;
+  int RBRACKET = 108;
   /** RegularExpression Id. */
-  int COMMA = 109;
+  int SEMICOLON = 109;
   /** RegularExpression Id. */
-  int AT = 110;
+  int COMMA = 110;
   /** RegularExpression Id. */
-  int ASSIGN = 111;
+  int AT = 111;
   /** RegularExpression Id. */
-  int LT = 112;
+  int ASSIGN = 112;
   /** RegularExpression Id. */
-  int BANG = 113;
+  int LT = 113;
   /** RegularExpression Id. */
-  int TILDE = 114;
+  int BANG = 114;
   /** RegularExpression Id. */
-  int HOOK = 115;
+  int TILDE = 115;
   /** RegularExpression Id. */
-  int COLON = 116;
+  int HOOK = 116;
   /** RegularExpression Id. */
-  int EQ = 117;
+  int COLON = 117;
   /** RegularExpression Id. */
-  int LE = 118;
+  int EQ = 118;
   /** RegularExpression Id. */
-  int GE = 119;
+  int LE = 119;
   /** RegularExpression Id. */
-  int NE = 120;
+  int GE = 120;
   /** RegularExpression Id. */
-  int SC_OR = 121;
+  int NE = 121;
   /** RegularExpression Id. */
-  int SC_AND = 122;
+  int SC_OR = 122;
   /** RegularExpression Id. */
-  int INCR = 123;
+  int SC_AND = 123;
   /** RegularExpression Id. */
-  int DECR = 124;
+  int INCR = 124;
   /** RegularExpression Id. */
-  int PLUS = 125;
+  int DECR = 125;
   /** RegularExpression Id. */
-  int MINUS = 126;
+  int PLUS = 126;
   /** RegularExpression Id. */
-  int SLASH = 127;
+  int MINUS = 127;
   /** RegularExpression Id. */
-  int BIT_AND = 128;
+  int SLASH = 128;
   /** RegularExpression Id. */
-  int BIT_OR = 129;
+  int BIT_AND = 129;
   /** RegularExpression Id. */
-  int XOR = 130;
+  int BIT_OR = 130;
   /** RegularExpression Id. */
-  int REM = 131;
+  int XOR = 131;
   /** RegularExpression Id. */
-  int LSHIFT = 132;
+  int REM = 132;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 133;
+  int LSHIFT = 133;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 134;
+  int PLUSASSIGN = 134;
   /** RegularExpression Id. */
-  int STARASSIGN = 135;
+  int MINUSASSIGN = 135;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 136;
+  int STARASSIGN = 136;
   /** RegularExpression Id. */
-  int ANDASSIGN = 137;
+  int SLASHASSIGN = 137;
   /** RegularExpression Id. */
-  int ORASSIGN = 138;
+  int ANDASSIGN = 138;
   /** RegularExpression Id. */
-  int XORASSIGN = 139;
+  int ORASSIGN = 139;
   /** RegularExpression Id. */
-  int REMASSIGN = 140;
+  int XORASSIGN = 140;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 141;
+  int REMASSIGN = 141;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 142;
+  int LSHIFTASSIGN = 142;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 143;
+  int RSIGNEDSHIFTASSIGN = 143;
   /** RegularExpression Id. */
-  int ELLIPSIS = 144;
+  int RUNSIGNEDSHIFTASSIGN = 144;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 145;
+  int ELLIPSIS = 145;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 146;
+  int RUNSIGNEDSHIFT = 146;
   /** RegularExpression Id. */
-  int GT = 147;
+  int RSIGNEDSHIFT = 147;
   /** RegularExpression Id. */
-  int DOTDOT = 148;
+  int GT = 148;
   /** RegularExpression Id. */
-  int DOT = 149;
+  int DOTDOT = 149;
+  /** RegularExpression Id. */
+  int DOT = 150;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -384,6 +386,7 @@ public interface AspectJParserConstants {
     "\"threadName\"",
     "\"threadBlocked\"",
     "\"condition\"",
+    "\"countCond\"",
     "\"cflow\"",
     "\"cflowbelow\"",
     "\"returning\"",

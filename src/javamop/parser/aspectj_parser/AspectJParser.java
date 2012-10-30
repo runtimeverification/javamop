@@ -172,6 +172,9 @@ public class AspectJParser implements AspectJParserConstants {
     case CONDITION:
       jj_consume_token(CONDITION);
       break;
+    case COUNTCOND:
+      jj_consume_token(COUNTCOND);
+      break;
     case CFLOW:
       jj_consume_token(CFLOW);
       break;
@@ -280,6 +283,7 @@ public class AspectJParser implements AspectJParserConstants {
     case THREADNAME:
     case THREADBLOCKED:
     case CONDITION:
+    case COUNTCOND:
     case CFLOW:
     case CFLOWBELOW:
     case ENDPROGRAM:
@@ -344,6 +348,9 @@ public class AspectJParser implements AspectJParserConstants {
       break;
     case CONDITION:
       ret = ConditionPointCut();
+      break;
+    case COUNTCOND:
+      ret = CountCondPointCut();
       break;
     case CFLOW:
     case CFLOWBELOW:
@@ -694,6 +701,21 @@ public class AspectJParser implements AspectJParserConstants {
     throw new Error("Missing return statement in function");
   }
 
+  final public PointCut CountCondPointCut() throws ParseException {
+  String type;
+  int line, column;
+  Expression expr;
+    jj_consume_token(COUNTCOND);
+    line = token.beginLine;
+    column = token.beginColumn;
+    type = token.image;
+    jj_consume_token(LPAREN);
+    expr = Expression();
+    jj_consume_token(RPAREN);
+    {if (true) return new CountCondPointCut(line, column, type, expr);}
+    throw new Error("Missing return statement in function");
+  }
+
   final public PointCut CFlowPointCut() throws ParseException {
   PointCut p;
   int line, column;
@@ -833,6 +855,7 @@ public class AspectJParser implements AspectJParserConstants {
       case THREADNAME:
       case THREADBLOCKED:
       case CONDITION:
+      case COUNTCOND:
       case CFLOW:
       case CFLOWBELOW:
       case RETURNING:
@@ -1292,6 +1315,7 @@ public class AspectJParser implements AspectJParserConstants {
     case THREADNAME:
     case THREADBLOCKED:
     case CONDITION:
+    case COUNTCOND:
     case CFLOW:
     case CFLOWBELOW:
     case RETURNING:
@@ -1381,6 +1405,9 @@ public class AspectJParser implements AspectJParserConstants {
       break;
     case CONDITION:
       jj_consume_token(CONDITION);
+      break;
+    case COUNTCOND:
+      jj_consume_token(COUNTCOND);
       break;
     case CFLOW:
       jj_consume_token(CFLOW);
@@ -1497,6 +1524,9 @@ public class AspectJParser implements AspectJParserConstants {
         break;
       case CONDITION:
         jj_consume_token(CONDITION);
+        break;
+      case COUNTCOND:
+        jj_consume_token(COUNTCOND);
         break;
       case CFLOW:
         jj_consume_token(CFLOW);
@@ -3154,7 +3184,7 @@ public class AspectJParser implements AspectJParserConstants {
       switch (jj_nt.kind) {
       case SLASH:
       case REM:
-      case 150:
+      case 151:
         ;
         break;
       default:
@@ -3162,8 +3192,8 @@ public class AspectJParser implements AspectJParserConstants {
         break label_38;
       }
       switch (jj_nt.kind) {
-      case 150:
-        jj_consume_token(150);
+      case 151:
+        jj_consume_token(151);
         op = BinaryExpr.Operator.times;
         break;
       case SLASH:
@@ -6134,116 +6164,6 @@ public class AspectJParser implements AspectJParserConstants {
     finally { jj_save(53, xla); }
   }
 
-  private boolean jj_3R_399() {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_107()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_241() {
-    if (jj_3R_188()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_433() {
-    if (jj_scan_token(FINALLY)) return true;
-    if (jj_3R_133()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_279() {
-    if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_61()) return true;
-    if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_425() {
-    if (jj_scan_token(FINALLY)) return true;
-    if (jj_3R_133()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_251() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_279()) {
-    jj_scanpos = xsp;
-    if (jj_3R_280()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_390() {
-    if (jj_3R_107()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_399()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_98() {
-    if (jj_3R_86()) return true;
-    return false;
-  }
-
-  private boolean jj_3_38() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_98()) jj_scanpos = xsp;
-    if (jj_3R_99()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_432() {
-    if (jj_scan_token(CATCH)) return true;
-    if (jj_scan_token(LPAREN)) return true;
-    if (jj_3R_397()) return true;
-    if (jj_scan_token(RPAREN)) return true;
-    if (jj_3R_133()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_424() {
-    Token xsp;
-    if (jj_3R_432()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_432()) { jj_scanpos = xsp; break; }
-    }
-    xsp = jj_scanpos;
-    if (jj_3R_433()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_163() {
-    if (jj_3R_86()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_102() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_163()) jj_scanpos = xsp;
-    if (jj_3R_99()) return true;
-    xsp = jj_scanpos;
-    if (jj_3R_241()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_26() {
-    if (jj_scan_token(DOT)) return true;
-    if (jj_scan_token(IDPATTERN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_101() {
-    if (jj_3R_162()) return true;
-    return false;
-  }
-
   private boolean jj_3R_349() {
     if (jj_scan_token(TRY)) return true;
     if (jj_3R_133()) return true;
@@ -6529,9 +6449,9 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3_9() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     if (jj_scan_token(IDPATTERN)) return true;
     return false;
@@ -6770,12 +6690,12 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3_8() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     xsp = jj_scanpos;
-    if (jj_scan_token(99)) {
+    if (jj_scan_token(100)) {
     jj_scanpos = xsp;
     if (jj_scan_token(58)) {
     jj_scanpos = xsp;
@@ -6831,7 +6751,10 @@ public class AspectJParser implements AspectJParserConstants {
     jj_scanpos = xsp;
     if (jj_scan_token(84)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(85)) return true;
+    if (jj_scan_token(85)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(86)) return true;
+    }
     }
     }
     }
@@ -7233,6 +7156,11 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_296() {
+    if (jj_3R_311()) return true;
+    return false;
+  }
+
   private boolean jj_3R_249() {
     if (jj_3R_276()) return true;
     Token xsp;
@@ -7242,16 +7170,6 @@ public class AspectJParser implements AspectJParserConstants {
       xsp = jj_scanpos;
       if (jj_3R_278()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_296() {
-    if (jj_3R_311()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_248() {
-    if (jj_scan_token(VOID)) return true;
     return false;
   }
 
@@ -7269,6 +7187,11 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_248() {
+    if (jj_scan_token(VOID)) return true;
+    return false;
+  }
+
   private boolean jj_3R_310() {
     if (jj_scan_token(BANG)) return true;
     return false;
@@ -7276,12 +7199,6 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_132() {
     if (jj_scan_token(STATIC)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_275() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
@@ -7303,6 +7220,12 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_275() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
   private boolean jj_3R_309() {
     if (jj_scan_token(TILDE)) return true;
     return false;
@@ -7319,6 +7242,12 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_418() {
+    if (jj_scan_token(ELSE)) return true;
+    if (jj_3R_302()) return true;
+    return false;
+  }
+
   private boolean jj_3R_247() {
     if (jj_3R_184()) return true;
     Token xsp;
@@ -7326,12 +7255,6 @@ public class AspectJParser implements AspectJParserConstants {
       xsp = jj_scanpos;
       if (jj_3R_275()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_418() {
-    if (jj_scan_token(ELSE)) return true;
-    if (jj_3R_302()) return true;
     return false;
   }
 
@@ -7361,22 +7284,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_211() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_246()) {
-    jj_scanpos = xsp;
-    if (jj_3R_247()) {
-    jj_scanpos = xsp;
-    if (jj_3R_248()) {
-    jj_scanpos = xsp;
-    if (jj_3R_249()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
   private boolean jj_3R_229() {
     if (jj_3R_257()) return true;
     return false;
@@ -7396,6 +7303,22 @@ public class AspectJParser implements AspectJParserConstants {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_418()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_211() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_246()) {
+    jj_scanpos = xsp;
+    if (jj_3R_247()) {
+    jj_scanpos = xsp;
+    if (jj_3R_248()) {
+    jj_scanpos = xsp;
+    if (jj_3R_249()) return true;
+    }
+    }
+    }
     return false;
   }
 
@@ -7439,15 +7362,10 @@ public class AspectJParser implements AspectJParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_372()) jj_scanpos = xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(109)) jj_scanpos = xsp;
+    if (jj_scan_token(110)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_3R_373()) jj_scanpos = xsp;
     if (jj_scan_token(RBRACE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_210() {
-    if (jj_scan_token(BANG)) return true;
     return false;
   }
 
@@ -7456,17 +7374,22 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_171() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_210()) jj_scanpos = xsp;
-    if (jj_3R_211()) return true;
+  private boolean jj_3R_210() {
+    if (jj_scan_token(BANG)) return true;
     return false;
   }
 
   private boolean jj_3_18() {
     if (jj_3R_83()) return true;
     if (jj_scan_token(DOT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_171() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_210()) jj_scanpos = xsp;
+    if (jj_3R_211()) return true;
     return false;
   }
 
@@ -7568,16 +7491,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_123() {
-    if (jj_3R_171()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_172()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   private boolean jj_3_19() {
     Token xsp;
     xsp = jj_scanpos;
@@ -7594,6 +7507,16 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_417() {
     if (jj_3R_428()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_123() {
+    if (jj_3R_171()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_172()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -7654,6 +7577,12 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_436() {
+    if (jj_3R_87()) return true;
+    if (jj_3R_88()) return true;
+    return false;
+  }
+
   private boolean jj_3R_61() {
     if (jj_3R_123()) return true;
     Token xsp;
@@ -7661,12 +7590,6 @@ public class AspectJParser implements AspectJParserConstants {
       xsp = jj_scanpos;
       if (jj_3R_124()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_436() {
-    if (jj_3R_87()) return true;
-    if (jj_3R_88()) return true;
     return false;
   }
 
@@ -7813,7 +7736,7 @@ public class AspectJParser implements AspectJParserConstants {
   }
 
   private boolean jj_3R_406() {
-    if (jj_scan_token(150)) return true;
+    if (jj_scan_token(151)) return true;
     return false;
   }
 
@@ -7910,11 +7833,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_75() {
-    if (jj_scan_token(STRICTFP)) return true;
-    return false;
-  }
-
   private boolean jj_3_45() {
     if (jj_3R_105()) return true;
     Token xsp;
@@ -7938,6 +7856,11 @@ public class AspectJParser implements AspectJParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_405()) jj_scanpos = xsp;
     if (jj_3R_204()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_75() {
+    if (jj_scan_token(STRICTFP)) return true;
     return false;
   }
 
@@ -7968,14 +7891,14 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_74() {
-    if (jj_scan_token(VOLATILE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_282() {
     if (jj_3R_105()) return true;
     if (jj_3R_214()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_74() {
+    if (jj_scan_token(VOLATILE)) return true;
     return false;
   }
 
@@ -8029,10 +7952,101 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3_30() {
+    if (jj_3R_91()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_254() {
+    if (jj_scan_token(LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_389()) jj_scanpos = xsp;
+    if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_72() {
+    if (jj_scan_token(NATIVE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_29() {
+    if (jj_3R_90()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_89() {
+    if (jj_scan_token(LSHIFT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_111() {
+    if (jj_scan_token(STATIC)) return true;
+    return false;
+  }
+
+  private boolean jj_3_28() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_89()) {
+    jj_scanpos = xsp;
+    if (jj_3_29()) {
+    jj_scanpos = xsp;
+    if (jj_3_30()) return true;
+    }
+    }
+    if (jj_3R_362()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_71() {
+    if (jj_scan_token(SYNCHRONIZED)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_379() {
+    if (jj_scan_token(THROWS)) return true;
+    if (jj_3R_390()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_133() {
+    if (jj_scan_token(LBRACE)) return true;
+    if (jj_3R_185()) return true;
+    if (jj_scan_token(RBRACE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_380() {
+    if (jj_3R_133()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_360() {
+    if (jj_3R_362()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_28()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_110() {
+    if (jj_scan_token(PUBLIC)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_70() {
+    if (jj_scan_token(ABSTRACT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_99() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(99)) {
+    if (jj_scan_token(100)) {
     jj_scanpos = xsp;
     if (jj_scan_token(58)) {
     jj_scanpos = xsp;
@@ -8088,126 +8102,38 @@ public class AspectJParser implements AspectJParserConstants {
     jj_scanpos = xsp;
     if (jj_scan_token(84)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(85)) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_30() {
-    if (jj_3R_91()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_72() {
-    if (jj_scan_token(NATIVE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_254() {
-    if (jj_scan_token(LPAREN)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_389()) jj_scanpos = xsp;
-    if (jj_scan_token(RPAREN)) return true;
-    return false;
-  }
-
-  private boolean jj_3_29() {
-    if (jj_3R_90()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_89() {
-    if (jj_scan_token(LSHIFT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_111() {
-    if (jj_scan_token(STATIC)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_71() {
-    if (jj_scan_token(SYNCHRONIZED)) return true;
-    return false;
-  }
-
-  private boolean jj_3_28() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_89()) {
+    if (jj_scan_token(85)) {
     jj_scanpos = xsp;
-    if (jj_3_29()) {
-    jj_scanpos = xsp;
-    if (jj_3_30()) return true;
+    if (jj_scan_token(86)) return true;
     }
     }
-    if (jj_3R_362()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_379() {
-    if (jj_scan_token(THROWS)) return true;
-    if (jj_3R_390()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_133() {
-    if (jj_scan_token(LBRACE)) return true;
-    if (jj_3R_185()) return true;
-    if (jj_scan_token(RBRACE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_380() {
-    if (jj_3R_133()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_360() {
-    if (jj_3R_362()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_28()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3R_110() {
-    if (jj_scan_token(PUBLIC)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_70() {
-    if (jj_scan_token(ABSTRACT)) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
     return false;
   }
 
@@ -8288,11 +8214,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_68() {
-    if (jj_scan_token(PRIVATE)) return true;
-    return false;
-  }
-
   private boolean jj_3R_426() {
     if (jj_scan_token(_DEFAULT)) return true;
     if (jj_3R_109()) return true;
@@ -8306,6 +8227,11 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_415() {
     if (jj_3R_426()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_68() {
+    if (jj_scan_token(PRIVATE)) return true;
     return false;
   }
 
@@ -8330,18 +8256,13 @@ public class AspectJParser implements AspectJParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_380()) {
     jj_scanpos = xsp;
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(109)) return true;
     }
     return false;
   }
 
   private boolean jj_3R_381() {
     if (jj_scan_token(LT)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_67() {
-    if (jj_scan_token(PROTECTED)) return true;
     return false;
   }
 
@@ -8359,6 +8280,11 @@ public class AspectJParser implements AspectJParserConstants {
     }
     }
     if (jj_3R_360()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_67() {
+    if (jj_scan_token(PROTECTED)) return true;
     return false;
   }
 
@@ -8406,11 +8332,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_65() {
-    if (jj_scan_token(PUBLIC)) return true;
-    return false;
-  }
-
   private boolean jj_3_16() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_81()) return true;
@@ -8420,6 +8341,11 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3R_363() {
     if (jj_scan_token(INSTANCEOF)) return true;
     if (jj_3R_78()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65() {
+    if (jj_scan_token(PUBLIC)) return true;
     return false;
   }
 
@@ -8511,11 +8437,6 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_64() {
-    if (jj_scan_token(BANG)) return true;
-    return false;
-  }
-
   private boolean jj_3R_403() {
     Token xsp;
     xsp = jj_scanpos;
@@ -8545,6 +8466,11 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_64() {
+    if (jj_scan_token(BANG)) return true;
+    return false;
+  }
+
   private boolean jj_3R_321() {
     if (jj_3R_339()) return true;
     return false;
@@ -8561,7 +8487,7 @@ public class AspectJParser implements AspectJParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_315()) jj_scanpos = xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(109)) jj_scanpos = xsp;
+    if (jj_scan_token(110)) jj_scanpos = xsp;
     if (jj_scan_token(RBRACE)) return true;
     return false;
   }
@@ -8579,6 +8505,16 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_319() {
     if (jj_3R_337()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_318() {
+    if (jj_3R_133()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_317() {
+    if (jj_3R_336()) return true;
     return false;
   }
 
@@ -8621,28 +8557,8 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_318() {
-    if (jj_3R_133()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_317() {
-    if (jj_3R_336()) return true;
-    return false;
-  }
-
   private boolean jj_3_44() {
     if (jj_3R_104()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_60() {
-    Token xsp;
-    if (jj_3_7()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_7()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 
@@ -8699,6 +8615,16 @@ public class AspectJParser implements AspectJParserConstants {
     }
     }
     }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    Token xsp;
+    if (jj_3_7()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_7()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
@@ -8788,6 +8714,12 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_242() {
+    if (jj_scan_token(LBRACKET)) return true;
+    if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
   private boolean jj_3_5() {
     Token xsp;
     xsp = jj_scanpos;
@@ -8800,12 +8732,6 @@ public class AspectJParser implements AspectJParserConstants {
 
   private boolean jj_3R_62() {
     if (jj_3R_125()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_242() {
-    if (jj_scan_token(LBRACKET)) return true;
-    if (jj_scan_token(RBRACKET)) return true;
     return false;
   }
 
@@ -8841,16 +8767,16 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3R_63() {
-    if (jj_3R_126()) return true;
-    return false;
-  }
-
   private boolean jj_3R_216() {
     if (jj_scan_token(AT)) return true;
     if (jj_scan_token(INTERFACE)) return true;
     if (jj_scan_token(IDPATTERN)) return true;
     if (jj_3R_374()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_63() {
+    if (jj_3R_126()) return true;
     return false;
   }
 
@@ -8926,14 +8852,14 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_60()) return true;
-    return false;
-  }
-
   private boolean jj_3R_79() {
     if (jj_scan_token(LBRACKET)) return true;
     if (jj_scan_token(RBRACKET)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_60()) return true;
     return false;
   }
 
@@ -8994,7 +8920,7 @@ public class AspectJParser implements AspectJParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_359()) jj_scanpos = xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(109)) jj_scanpos = xsp;
+    if (jj_scan_token(110)) jj_scanpos = xsp;
     if (jj_scan_token(RBRACE)) return true;
     return false;
   }
@@ -9004,12 +8930,6 @@ public class AspectJParser implements AspectJParserConstants {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_40()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    if (jj_3R_61()) return true;
-    if (jj_scan_token(DOT)) return true;
     return false;
   }
 
@@ -9027,13 +8947,19 @@ public class AspectJParser implements AspectJParserConstants {
       if (jj_3R_79()) { jj_scanpos = xsp; break; }
     }
     xsp = jj_scanpos;
-    if (jj_scan_token(109)) {
+    if (jj_scan_token(110)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(111)) {
+    if (jj_scan_token(112)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(108)) return true;
+    if (jj_scan_token(109)) return true;
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_61()) return true;
+    if (jj_scan_token(DOT)) return true;
     return false;
   }
 
@@ -9143,13 +9069,13 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
-  private boolean jj_3_1() {
-    if (jj_3R_60()) return true;
+  private boolean jj_3R_176() {
+    if (jj_3R_214()) return true;
     return false;
   }
 
-  private boolean jj_3R_176() {
-    if (jj_3R_214()) return true;
+  private boolean jj_3_1() {
+    if (jj_3R_60()) return true;
     return false;
   }
 
@@ -9309,9 +9235,9 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3_11() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     if (jj_scan_token(IDPATTERN)) return true;
     if (jj_scan_token(DOT)) return true;
@@ -9349,9 +9275,9 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3R_175() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     if (jj_scan_token(IDPATTERN)) return true;
     return false;
@@ -9412,9 +9338,9 @@ public class AspectJParser implements AspectJParserConstants {
     if (jj_scan_token(IDPATTERN)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     if (jj_scan_token(IDPATTERN)) return true;
     while (true) {
@@ -9479,9 +9405,9 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3_10() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     if (jj_scan_token(IDPATTERN)) return true;
     if (jj_scan_token(DOT)) return true;
@@ -9553,7 +9479,7 @@ public class AspectJParser implements AspectJParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_108()) {
     jj_scanpos = xsp;
-    if (jj_scan_token(103)) return true;
+    if (jj_scan_token(104)) return true;
     }
     return false;
   }
@@ -9566,9 +9492,9 @@ public class AspectJParser implements AspectJParserConstants {
   private boolean jj_3R_316() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(149)) {
+    if (jj_scan_token(150)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(148)) return true;
+    if (jj_scan_token(149)) return true;
     }
     if (jj_scan_token(IDPATTERN)) return true;
     return false;
@@ -9725,6 +9651,116 @@ public class AspectJParser implements AspectJParserConstants {
     return false;
   }
 
+  private boolean jj_3R_399() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_107()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_241() {
+    if (jj_3R_188()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_433() {
+    if (jj_scan_token(FINALLY)) return true;
+    if (jj_3R_133()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_279() {
+    if (jj_scan_token(LPAREN)) return true;
+    if (jj_3R_61()) return true;
+    if (jj_scan_token(RPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_425() {
+    if (jj_scan_token(FINALLY)) return true;
+    if (jj_3R_133()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_251() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_279()) {
+    jj_scanpos = xsp;
+    if (jj_3R_280()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_390() {
+    if (jj_3R_107()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_399()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_98() {
+    if (jj_3R_86()) return true;
+    return false;
+  }
+
+  private boolean jj_3_38() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_98()) jj_scanpos = xsp;
+    if (jj_3R_99()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_432() {
+    if (jj_scan_token(CATCH)) return true;
+    if (jj_scan_token(LPAREN)) return true;
+    if (jj_3R_397()) return true;
+    if (jj_scan_token(RPAREN)) return true;
+    if (jj_3R_133()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_424() {
+    Token xsp;
+    if (jj_3R_432()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_432()) { jj_scanpos = xsp; break; }
+    }
+    xsp = jj_scanpos;
+    if (jj_3R_433()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_163() {
+    if (jj_3R_86()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_102() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_163()) jj_scanpos = xsp;
+    if (jj_3R_99()) return true;
+    xsp = jj_scanpos;
+    if (jj_3R_241()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3_26() {
+    if (jj_scan_token(DOT)) return true;
+    if (jj_scan_token(IDPATTERN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_101() {
+    if (jj_3R_162()) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public AspectJParserTokenManager token_source;
   JavaCharStream jj_input_stream;
@@ -9758,13 +9794,13 @@ public class AspectJParser implements AspectJParserConstants {
       jj_la1_1 = new int[] {0xfc000000,0x0,0x0,0x4020000,0x4020000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xfc000000,0x80000,0x0,0x1113390,0x80080a,0x0,0x80080a,0x0,0x0,0x0,0x0,0x0,0x0,0x80080a,0xfc000000,0xfc000000,0x0,0xfc000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4,0x80080a,0x1913b9e,0x0,0x0,0x0,0xa2482a,0xa2482a,0x0,0x0,0x0,0x80000,0x0,0x0,0x1913b9a,0x0,0x0,0x80000,0x0,0x0,0xa2482a,0x3f7ffbe,0x1000,0x80080a,0x80a,0x0,0x80a,0x4000,0x4000,0x80a,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xa2482a,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x0,0x0,0x224020,0x0,0x0,0x0,0x0,0x20000,0x0,0x200020,0x200000,0xa2482a,0x0,0x0,0x0,0x80a,0x0,0x0,0x2e7cc2a,0x0,0x2e7cc2a,0x0,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x1b37bba,0xa2482a,0xa2482a,0x1b37bba,0xa2482a,0x0,0x0,0x0,0xa2482a,0x0,0x0,0x0,0x0,0x0,0x0,0xa2482a,0xa2482a,0x0,0x1913b9e,0x80080e,0x80080e,0x0,0x1113390,0x4,0x0,0x0,0x0,0x0,0x0,0x0,0x1913b9e,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x3fffff,0x0,0x0,0x7cfff8,0x7cfff8,0x0,0x0,0x0,0x0,0x18,0x60,0xc000,0x3fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3fffff,0x3fffff,0x0,0x3fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x0,0x11800000,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x11800000,0x11800000,0x11800000,0x11800000,0x11800000,0x0,0x0,0x0,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x11800000,0x11800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x7fffff,0x0,0x0,0xf9fff8,0xf9fff8,0x0,0x0,0x0,0x0,0x18,0x60,0x18000,0x7fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7fffff,0x7fffff,0x0,0x7fffff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x23000000,0x23000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x23000000,0x23000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x23000000,0x0,0x0,0x23000000,0x0,0x0,0x0,0x0,0x0,0x23000000,0x0,0x0,0x0,0x0,0x0,0x0,0x23000000,0x0,0x23000000,0x0,0x0,0x0,0x0,0x0,0x0,0x23000000,0x0,0x23000000,0x0,0x0,0x0,0x23000000,0x0,0x0,0x0,0x23000000,0x23000000,0x23000000,0x23000000,0x23000000,0x0,0x0,0x0,0x23000000,0x0,0x0,0x0,0x0,0x0,0x0,0x23000000,0x23000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x8,0x2000000,0x4000000,0x20048,0x48,0x4000,0x0,0x2000,0x8,0x0,0x0,0x0,0x20048,0x0,0x20000,0x0,0x20048,0x2000,0x20048,0x2000000,0x4000000,0x20000,0x400,0x20000000,0x400,0x48,0xc,0x8,0x0,0x8,0x0,0x2000000,0x4000000,0x20000,0x20000000,0x400,0x48,0x0,0x0,0x0,0x4000,0x10008,0x15008,0x2000,0x8000,0x400,0x7806014e,0x7806014e,0x2000,0x10000,0x400,0x0,0x1100,0x2000,0x4008,0x0,0x10000,0x0,0x10000,0x10000,0x1004e,0x1800514e,0x0,0x0,0x8,0x2000,0x80008,0x0,0x0,0x0,0x2000,0x8000,0x80000,0x2000000,0x4000000,0x0,0x0,0x0,0x1200000,0x1200000,0x0,0xc10000,0xc10000,0x0,0x60000000,0x60000000,0x80000000,0x80000000,0x60000000,0x7806004e,0x60000,0x60000,0x4e,0x40,0x18000000,0x10000,0x40,0x40,0x46,0x8,0x0,0x10000,0x40,0x0,0x400,0x6,0x0,0x7806004e,0x2000,0x10000,0x440,0x10008,0x400,0x400,0x1800114e,0x100000,0x1800114e,0x2000,0x18008000,0x18008000,0x1800004e,0x0,0x0,0x0,0x7806404e,0x7806004e,0x7806004e,0x7806504e,0x7806004e,0x2000,0x8,0x8,0x7806004e,0x0,0x0,0x0,0x4000,0x8,0x2000,0x7806414e,0x7806414e,0x2000,0x5008,0x4008,0x5008,0x0,0x4000,0x0,0x10000,0x0,0x0,0x0,0x4008,0x2000,0x15108,0x1000,0x2000,0x0,0x2000,0x0,0x4000,0x40,0x100,0x2000,};
+      jj_la1_3 = new int[] {0x10,0x4000000,0x8000000,0x40090,0x90,0x8000,0x0,0x4000,0x10,0x0,0x0,0x0,0x40090,0x0,0x40000,0x0,0x40090,0x4000,0x40090,0x4000000,0x8000000,0x40000,0x800,0x40000000,0x800,0x90,0x18,0x10,0x0,0x10,0x0,0x4000000,0x8000000,0x40000,0x40000000,0x800,0x90,0x0,0x0,0x0,0x8000,0x20010,0x2a010,0x4000,0x10000,0x800,0xf00c029c,0xf00c029c,0x4000,0x20000,0x800,0x0,0x2200,0x4000,0x8010,0x0,0x20000,0x0,0x20000,0x20000,0x2009c,0x3000a29c,0x0,0x0,0x10,0x4000,0x100010,0x0,0x0,0x0,0x4000,0x10000,0x100000,0x4000000,0x8000000,0x0,0x0,0x0,0x2400000,0x2400000,0x0,0x1820000,0x1820000,0x0,0xc0000000,0xc0000000,0x0,0x0,0xc0000000,0xf00c009c,0xc0000,0xc0000,0x9c,0x80,0x30000000,0x20000,0x80,0x80,0x8c,0x10,0x0,0x20000,0x80,0x0,0x800,0xc,0x0,0xf00c009c,0x4000,0x20000,0x880,0x20010,0x800,0x800,0x3000229c,0x200000,0x3000229c,0x4000,0x30010000,0x30010000,0x3000009c,0x0,0x0,0x0,0xf00c809c,0xf00c009c,0xf00c009c,0xf00ca09c,0xf00c009c,0x4000,0x10,0x10,0xf00c009c,0x0,0x0,0x0,0x8000,0x10,0x4000,0xf00c829c,0xf00c829c,0x4000,0xa010,0x8010,0xa010,0x0,0x8000,0x0,0x20000,0x0,0x0,0x0,0x8010,0x4000,0x2a210,0x2000,0x4000,0x0,0x4000,0x0,0x8000,0x80,0x200,0x4000,};
    }
    private static void jj_la1_init_4() {
-      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x200000,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x100000,0x0,0x100000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300000,0x0,0x300000,0x0,0x0,0x0,0x0,0x0,0x0,0x300000,0x300000,0x300000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffe0,0x0,0x0,0x0,0x2,0x4,0x1,0x0,0x0,0x0,0x80000,0x80000,0x10,0x0,0x0,0x400008,0x400008,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xffe0,0xffe0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,};
+      jj_la1_4 = new int[] {0x0,0x0,0x0,0x0,0x0,0x400000,0x400000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x200000,0x0,0x200000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x600000,0x0,0x600000,0x0,0x0,0x0,0x0,0x0,0x0,0x600000,0x600000,0x600000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1ffc0,0x0,0x0,0x0,0x4,0x8,0x2,0x0,0x0,0x0,0x100000,0x100000,0x20,0x0,0x0,0x800011,0x800011,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x400000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1ffc0,0x1ffc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[54];
   private boolean jj_rescan = false;
@@ -9942,7 +9978,7 @@ public class AspectJParser implements AspectJParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[151];
+    boolean[] la1tokens = new boolean[152];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -9968,7 +10004,7 @@ public class AspectJParser implements AspectJParserConstants {
         }
       }
     }
-    for (int i = 0; i < 151; i++) {
+    for (int i = 0; i < 152; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -32,6 +32,7 @@ public class AdviceAndPointCut {
 
 	boolean hasThisJoinPoint;
 	public boolean isAround = false;
+	public boolean beCounted = false;
 	public String retType;
 	public String pos;
 	public MOPParameters retVal;
@@ -85,6 +86,9 @@ public class AdviceAndPointCut {
 		this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
+		if (event.getCountCond() != null && event.getCountCond().length() != 0) {
+			this.beCounted = true;
+		}
 		
 		this.pointcut = event.getPointCut();
 		
@@ -103,6 +107,10 @@ public class AdviceAndPointCut {
 		return pointcut;
 	}
 
+	public String getPointCutName() {
+		return pointcutName.getVarName();
+	}
+	
 	public boolean addEvent(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
 
 		// Parameter Conflict Check
@@ -130,6 +138,9 @@ public class AdviceAndPointCut {
 		this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
+		if (event.getCountCond() != null && event.getCountCond().length() != 0) {
+			this.beCounted = true;
+		}
 		if(event.isStartEvent())
 			specsForActivation.add(mopSpec);
 		else
@@ -148,6 +159,10 @@ public class AdviceAndPointCut {
 				iter = this.events.descendingIterator();
 			else
 				iter = this.events.iterator();
+			
+			if (this.beCounted) {
+				ret += "++" + this.pointcutName + "_count;\n";
+			}
 			
 			while(iter.hasNext()){
 				EventDefinition event = iter.next(); 
@@ -178,6 +193,10 @@ public class AdviceAndPointCut {
 				iter = this.events.descendingIterator();
 			else
 				iter = this.events.iterator();
+			
+			if (this.beCounted) {
+				ret += "++" + this.pointcutName + "_count;\n";
+			}
 			
 			while(iter.hasNext()){
 				EventDefinition event = iter.next(); 
@@ -210,9 +229,20 @@ public class AdviceAndPointCut {
 	
 					ret += "\n";
 				}
-	
+				
+				// add check count condition here
+				String countCond = event.getCountCond();
+				
+				if (countCond != null && countCond.length() != 0) {
+					countCond = countCond.replaceAll("count", this.pointcutName + "_count");
+					ret += "if (" + countCond + ") {\n";
+				}
 				ret += advice;
-
+				
+				if (countCond != null && countCond.length() != 0) {
+					ret += "}\n";
+				}
+				
 				if(specsForChecking.contains(advice.mopSpec)){
 					ret += "}\n";
 				} else {

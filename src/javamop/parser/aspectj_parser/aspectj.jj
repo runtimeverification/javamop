@@ -215,6 +215,7 @@ TOKEN :
 | < THREADNAME: "threadName" >
 | < THREADBLOCKED: "threadBlocked" >
 | < CONDITION : "condition" >
+| < COUNTCOND : "countCond" >
 | < CFLOW : "cflow" >
 | < CFLOWBELOW : "cflowbelow" >
 | < RETURNING : "returning" >
@@ -1097,6 +1098,7 @@ PositionString AnyIDPatternWithoutDot() :
   | < THREADNAME >
   | < THREADBLOCKED >
   | < CONDITION >
+  | < COUNTCOND >
   | < CFLOW >
   | < CFLOWBELOW >
   | < RETURNING >
@@ -1207,6 +1209,7 @@ PointCut BasePointCut() :
   | ret = ThreadBlockedPointCut()
   | ret = IFPointCut()
   | ret = ConditionPointCut()
+  | ret = CountCondPointCut()
   | ret = CFlowPointCut()
   | ret = IDPointCut()
   | "(" ret = PointCut() ")"
@@ -1576,6 +1579,25 @@ PointCut ConditionPointCut() :
   "(" expr = Expression() ")"
   {
     return new ConditionPointCut(line, column, type, expr);
+  }
+}
+
+PointCut CountCondPointCut() :
+{
+  String type;
+  int line, column;
+  Expression expr;
+}
+{
+  "countCond"
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    type = token.image;
+  }
+  "(" expr = Expression() ")"
+  {
+    return new CountCondPointCut(line, column, type, expr);
   }
 }
 
@@ -2113,6 +2135,7 @@ PositionString AnyIdPattern() :
   | < THREADNAME >
   | < THREADBLOCKED >
   | < CONDITION >
+  | < COUNTCOND >
   | < CFLOW >
   | < CFLOWBELOW >
   | < RETURNING >
@@ -2158,6 +2181,7 @@ PositionString AnyIdPattern() :
     | < THREADNAME >
     | < THREADBLOCKED >
     | < CONDITION >
+    | < COUNTCOND >
     | < CFLOW >
     | < CFLOWBELOW >
     | < RETURNING >

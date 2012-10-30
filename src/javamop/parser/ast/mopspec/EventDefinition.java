@@ -43,6 +43,7 @@ public class EventDefinition extends Node {
 	boolean endThread = false;
 	boolean startThread = false;
 	boolean endObject = false;
+	String countCond;
 
 	// things that should be defined afterward
 	int idnum; // will be defined in JavaMOPSpec
@@ -324,6 +325,10 @@ public class EventDefinition extends Node {
 
 	public String getCondition() {
 		return condition;
+	}
+	
+	public String getCountCond() {
+		return countCond;
 	}
 
 	public String getPurePointCutString() {

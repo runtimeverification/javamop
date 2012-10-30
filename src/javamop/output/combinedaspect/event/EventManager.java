@@ -144,6 +144,12 @@ public class EventManager {
 
 			ret += advice;
 			ret += "\n";
+			if (advice.beCounted) {
+				ret += "\n";
+				ret += "// Declaration of the count variable for above pointcut\n";
+				ret += "static int " + advice.getPointCutName() + "_count = 0;";
+				ret += "\n\n\n";
+			}
 		}
 
 		for (EndObject endObject : endObjectEvents) {
