@@ -29,23 +29,34 @@ public class AroundAdviceReturn {
 			ret += "}\n";
 		}else if(type instanceof PrimitiveType){
 			PrimitiveType pType = (PrimitiveType)type;
+			ret += "if(" + skipAroundAdvice + "){\n";
 			switch(pType.getType()){
-			// Do more cases!!!!
 			case Int:
-				ret += "if(" + skipAroundAdvice + "){\n";
+			case Byte:
+			case Short:
+			case Char:
 				ret += "return 0;\n";
-				ret += "} else {\n";
-				ret += "return proceed(" + parameters.parameterString() + ");\n";
-				ret += "}\n";
 				break;
+			case Long:
+				ret += "return 0L;\n";
+				break;
+			case Float:
+				ret += "return 0.0f;\n";
+				break;
+			case Double:
+				ret += "return 0.0d;\n";
+				break;
+			case Boolean:
+				ret += "return false;\n";
+				break;
+				
 			default:
-				ret += "if(" + skipAroundAdvice + "){\n";
 				ret += "return null;\n";
-				ret += "} else {\n";
-				ret += "return proceed(" + parameters.parameterString() + ");\n";
-				ret += "}\n";
 				break;
 			}
+			ret += "} else {\n";
+			ret += "return proceed(" + parameters.parameterString() + ");\n";
+			ret += "}\n";
 		} else {
 			ret += "if(" + skipAroundAdvice + "){\n";
 			ret += "return null;\n";

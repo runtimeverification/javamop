@@ -93,12 +93,10 @@ public class EnforceMonitor extends BaseMonitor {
 		String methodName = propMonitor.eventMethods.get(uniqueId).toString();
 		ArrayList<String> blockedThreads = event.getThreadBlockedVar();
 		ret += "try {\n";
-		if (blockedThreads != null) {
-			if (event.getCondition() != null && event.getCondition().length() != 0) {
-				ret += "boolean cloned_monitor_condition_fail = false;\n";
-			}
+		if (event.getCondition() != null && event.getCondition().length() != 0) {
+			ret += "boolean cloned_monitor_condition_fail = false;\n";
 		}
-		
+
 		ret += "do {\n";
 		MOPVariable clonedMonitor = new MOPVariable("clonedMonitor");
 		ret += this.monitorName + " " + clonedMonitor + " = (" + this.monitorName +")" + monitor + ".clone();\n";
@@ -108,25 +106,12 @@ public class EnforceMonitor extends BaseMonitor {
 		
 		
 		// Check if the condition fails, if it does, then return directly.
-		if (blockedThreads != null) {
-			if (event.getCondition() != null && event.getCondition().length() != 0) {
-				ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
-				ret += "cloned_monitor_condition_fail = true;\n";
-				ret += "break;\n";
-				ret += "}\n";
-			}
+		if (event.getCondition() != null && event.getCondition().length() != 0) {
+			ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
+			ret += "cloned_monitor_condition_fail = true;\n";
+			ret += "break;\n";
+			ret += "}\n";
 		}
-
-//		// Check if the condition fails, if it does, then return directly.
-//		if (event.getCondition() != null && event.getCondition().length() != 0) {
-//			ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
-//			if (inMonitorSet)
-//				ret += "continue;\n";
-//			else {
-//				ret += "return;\n";
-//			}
-//			ret += "}\n";
-//		}
 
 		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
 		if (lock != null)
