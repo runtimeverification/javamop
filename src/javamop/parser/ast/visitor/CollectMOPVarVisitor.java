@@ -91,6 +91,10 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 	public MOPParameters visit(ConditionPointCut p, MOPParameters arg) {
 		return null;
 	}
+	
+	public MOPParameters visit(CountCondPointCut p, MOPParameters arg) {
+		return null;
+	}
 
 	public MOPParameters visit(FieldPointCut p, MOPParameters arg) {
 		return null;

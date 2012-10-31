@@ -101,6 +101,10 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 	public PointCut visit(ConditionPointCut p, Integer arg) {
 		return removePointCut(p, arg);
 	}
+	
+	public PointCut visit(CountCondPointCut p, Integer arg) {
+		return removePointCut(p, arg);
+	}
 
 	public PointCut visit(FieldPointCut p, Integer arg) {
 		return removePointCut(p, arg);

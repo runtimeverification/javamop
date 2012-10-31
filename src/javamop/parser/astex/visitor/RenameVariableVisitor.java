@@ -16,6 +16,7 @@ import javamop.parser.ast.aspectj.CFlowPointCut;
 import javamop.parser.ast.aspectj.CombinedPointCut;
 import javamop.parser.ast.aspectj.CombinedTypePattern;
 import javamop.parser.ast.aspectj.ConditionPointCut;
+import javamop.parser.ast.aspectj.CountCondPointCut;
 import javamop.parser.ast.aspectj.EndObjectPointCut;
 import javamop.parser.ast.aspectj.EndProgramPointCut;
 import javamop.parser.ast.aspectj.EndThreadPointCut;
@@ -208,6 +209,16 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 			return p;
 		
 		return new ConditionPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), expr);
+	}
+	
+	@Override
+	public Node visit(CountCondPointCut p, HashMap<String, MOPParameter> arg) {
+		Expression expr = (Expression)p.getExpression().accept(this, arg);
+		
+		if(p.getExpression() == expr)
+			return p;
+		
+		return new CountCondPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), expr);
 	}
 
 	@Override

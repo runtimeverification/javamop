@@ -150,6 +150,17 @@ public class EventDefinition extends Node {
 		if (resultPointCut == null)
 			throw new javamop.parser.main_parser.ParseException("condition() pointcut should appear at the root level in a conjuction form");
 
+		
+		// Count condition pointcut
+		countCond = resultPointCut.accept(new CountCondVisitor(), null);
+		if (countCond == null)
+			throw new javamop.parser.main_parser.ParseException("There are more than one countCond() pointcut.");
+		if (countCond.length() != 0) {
+			resultPointCut = resultPointCut.accept(new RemoveCountCondVisitor(), new Integer(1));
+		}
+		if (resultPointCut == null)
+			throw new javamop.parser.main_parser.ParseException("countCond() pointcut should appear at the root level in a conjuction form");
+		
 		// endProgram pointcut
 		String checkEndProgram = resultPointCut.accept(new EndProgramVisitor(), null);
 		if (checkEndProgram == null)

@@ -134,6 +134,8 @@ public interface VoidVisitor<A> {
     
     public void visit(ConditionPointCut p, A arg);
     
+    public void visit(CountCondPointCut p, A arg);
+    
     public void visit(FieldPointCut p, A arg);
     
     public void visit(MethodPointCut p, A arg);

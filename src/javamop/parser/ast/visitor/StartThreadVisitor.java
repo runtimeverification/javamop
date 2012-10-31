@@ -75,6 +75,10 @@ public class StartThreadVisitor implements GenericVisitor<String, Object>{
 	public String visit(ConditionPointCut p, Object arg){
 		return "";
 	}
+	
+	public String visit(CountCondPointCut p, Object arg){
+		return "";
+	}
 
 	public String visit(FieldPointCut p, Object arg){
 		return "";

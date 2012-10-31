@@ -467,6 +467,13 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		// printer.print("/* moved to the event definition */");
 		printer.print(")");
 	}
+	
+	public void visit(CountCondPointCut p, Object arg) {
+		printer.print("countCond(");
+		p.getExpression().accept(this, arg);
+		// printer.print("/* moved to the event definition */");
+		printer.print(")");
+	}
 
 	public void visit(IDPointCut p, Object arg) {
 		printer.print(p.getId());

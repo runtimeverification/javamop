@@ -77,6 +77,10 @@ public class ThreadVarVisitor implements GenericVisitor<String, Object>{
 		return "";
 	}
 
+	public String visit(CountCondPointCut p, Object arg){
+		return "";
+	}
+	
 	public String visit(FieldPointCut p, Object arg){
 		return "";
 	}

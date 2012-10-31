@@ -92,6 +92,10 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	public Boolean visit(ConditionPointCut p, Object arg) {
 		return Boolean.FALSE;
 	}
+	
+	public Boolean visit(CountCondPointCut p, Object arg) {
+		return Boolean.FALSE;
+	}
 
 	public Boolean visit(FieldPointCut p, Object arg) {
 		return Boolean.FALSE;

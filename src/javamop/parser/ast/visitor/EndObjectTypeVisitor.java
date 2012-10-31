@@ -73,6 +73,10 @@ public class EndObjectTypeVisitor implements GenericVisitor<TypePattern, Object>
 	public TypePattern visit(ConditionPointCut p, Object arg) {
 		return null;
 	}
+	
+	public TypePattern visit(CountCondPointCut p, Object arg) {
+		return null;
+	}
 
 	public TypePattern visit(FieldPointCut p, Object arg) {
 		return null;

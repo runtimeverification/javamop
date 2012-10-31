@@ -9,7 +9,7 @@ import javamop.parser.ast.type.*;
 import javamop.parser.ast.mopspec.*;
 import javamop.parser.ast.aspectj.*;;
 
-public class RemoveEndObjectVisitor implements GenericVisitor<PointCut, Integer>{
+public class RemoveCountCondVisitor implements GenericVisitor<PointCut, Integer>{
 
 	public PointCut visit(Node n, Integer arg){
 		return null;
@@ -69,7 +69,7 @@ public class RemoveEndObjectVisitor implements GenericVisitor<PointCut, Integer>
 			
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
 			for(PointCut p2 : p.getPointcuts()){
-				if(andType && p2 instanceof EndObjectPointCut){
+				if(andType && p2 instanceof CountCondPointCut){
 					if(alreadySeen)
 						return null;
 					alreadySeen = true;
@@ -94,13 +94,13 @@ public class RemoveEndObjectVisitor implements GenericVisitor<PointCut, Integer>
 	public PointCut visit(ConditionPointCut p, Integer arg){
 		return p;
 	}
-	
-	public PointCut visit(CountCondPointCut p, Integer arg){
-		return p;
-	}
 
 	public PointCut visit(FieldPointCut p, Integer arg){
 		return p;
+	}
+	
+	public PointCut visit(CountCondPointCut p, Integer arg){
+		return null;
 	}
 
 	public PointCut visit(MethodPointCut p, Integer arg){
@@ -142,7 +142,7 @@ public class RemoveEndObjectVisitor implements GenericVisitor<PointCut, Integer>
 	public PointCut visit(ThreadBlockedPointCut p, Integer arg){
 		return p;
 	}
-
+	
 	public PointCut visit(EndProgramPointCut p, Integer arg){
 		return p;
 	}
@@ -150,20 +150,15 @@ public class RemoveEndObjectVisitor implements GenericVisitor<PointCut, Integer>
 	public PointCut visit(EndThreadPointCut p, Integer arg){
 		return p;
 	}
-	
-	public PointCut visit(EndObjectPointCut p, Integer arg){
-		if(arg == 0){
-			return null;
-		} else {
-			List<PointCut> pointcuts = new ArrayList<PointCut>();
-			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
-		}
-	}
 
+	public PointCut visit(EndObjectPointCut p, Integer arg){
+		return p;
+	}
+	
 	public PointCut visit(StartThreadPointCut p, Integer arg){
 		return p;
 	}
-
+	
 	public PointCut visit(FieldPattern p, Integer arg){
 		return null;
 	}

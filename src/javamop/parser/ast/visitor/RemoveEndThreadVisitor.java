@@ -94,6 +94,10 @@ public class RemoveEndThreadVisitor implements GenericVisitor<PointCut, Integer>
 	public PointCut visit(ConditionPointCut p, Integer arg){
 		return p;
 	}
+	
+	public PointCut visit(CountCondPointCut p, Integer arg){
+		return p;
+	}
 
 	public PointCut visit(FieldPointCut p, Integer arg){
 		return p;

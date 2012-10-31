@@ -10,7 +10,7 @@ import javamop.parser.ast.aspectj.*;
 
 ;
 
-public class ConditionVisitor implements GenericVisitor<String, Object> {
+public class CountCondVisitor implements GenericVisitor<String, Object> {
 
 	public String visit(Node n, Object arg) {
 		return null;
@@ -75,14 +75,14 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 	}
 
 	public String visit(ConditionPointCut p, Object arg) {
+		return "";
+	}
+	
+	public String visit(CountCondPointCut p, Object arg) {
 		String ret = p.getExpression().toString();
 		if (ret == null || ret.length() == 0)
 			return null;
 		return ret;
-	}
-	
-	public String visit(CountCondPointCut p, Object arg) {
-		return "";
 	}
 	
 	public String visit(FieldPointCut p, Object arg) {

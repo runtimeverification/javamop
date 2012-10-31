@@ -64,6 +64,10 @@ public class CollectUserVarVisitor implements GenericVisitor<List<String>, Objec
 	public List<String> visit(ConditionPointCut p, Object arg) {
 		return null;
 	}
+	
+	public List<String> visit(CountCondPointCut p, Object arg) {
+		return null;
+	}
 
 	public List<String> visit(FieldPointCut p, Object arg) {
 		return null;
