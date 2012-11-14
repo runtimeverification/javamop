@@ -182,7 +182,7 @@ public class SuffixMonitor extends Monitor {
 		ret += "while (" + it + ".hasNext()){\n";
 		ret += innerMonitor.getOutermostName() + " " + monitor + " = (" + innerMonitor.getOutermostName() + ")" + it + ".next();\n";
 
-		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig, null, this.aspectName, false);
+		ret += innerMonitor.Monitoring(monitor, event, loc, staticsig, null, this.aspectName, false, false);
 
 		ret += "if(" + monitorSet + ".contains(" + monitor + ")";
 		for (MOPVariable categoryVar : categoryVars) {
@@ -201,18 +201,21 @@ public class SuffixMonitor extends Monitor {
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName, boolean inMonitorSet) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName, boolean inMonitorSet, boolean isShutdownHook) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
 		if (!isDefined)
-			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig, l, aspectName, inMonitorSet);
+			return innerMonitor.Monitoring(monitorVar, event, loc, staticsig, l, aspectName, inMonitorSet, isShutdownHook);
 
 		if (has__LOC) {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
-				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+				if(isShutdownHook)
+					ret += monitorVar + "." + this.loc + " = " + "\"[End of Program]\"" + ";\n";
+				else
+					ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 		if (has__STATICSIG) {
 			if(staticsig != null)

@@ -786,23 +786,23 @@ public class GeneralAdviceBody extends AdviceBody {
 	}
 
 	// opt done
-	public String monitoring() {
+	public String monitoring(boolean isShutdownHook) {
 		String ret = "";
 
 		if (indexingTree.containsSet()) {
 			MOPVariable mainSet = localVars.get("mainSet");
 
-			ret += monitorSet.Monitoring(mainSet, event, null, null, this.lock);
+			ret += monitorSet.Monitoring(mainSet, event, null, null, this.lock, isShutdownHook);
 		} else if (event.isStartEvent() && isFullParam) {
 			MOPVariable mainMonitor = localVars.get("mainMonitor");
 			
-			ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock, this.aspectName, false);
+			ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock, this.aspectName, false, isShutdownHook);
 		} else {
 			MOPVariable mainMonitor = localVars.get("mainMonitor");
 
 			ret += "if (" + mainMonitor + " != null " + ") {\n";
 			{
-				ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock, this.aspectName, false);
+				ret += monitorClass.Monitoring(mainMonitor, event, null, null, this.lock, this.aspectName, false, isShutdownHook);
 			}
 			ret += "}\n";
 		}
@@ -834,10 +834,41 @@ public class GeneralAdviceBody extends AdviceBody {
 
 		ret += cacheResultWrap(handleCacheMiss);
 		
-		ret += monitoring();
+		ret += monitoring(false);
 
 		ret = localVars.varDecl() + ret;
 
 		return ret;
 	}
+	
+	public String toStringForShutdownHook() {
+		String ret = "";
+		localVars.init();
+
+		if (indexingTree.hasCache()) {
+			ret += cacheRetrieval();
+		} else {
+			ret += refRetrievalFromTree();
+			ret += "\n";
+		}
+
+		String handleCacheMiss;
+
+		try{
+			handleCacheMiss = handleCacheMiss();
+		} catch (MOPException e){
+			ret += "*** Error under GeneralAdviceBody ***\n";
+			ret += e.getMessage();
+			return ret;
+		}
+
+		ret += cacheResultWrap(handleCacheMiss);
+		
+		ret += monitoring(true);
+
+		ret = localVars.varDecl() + ret;
+
+		return ret;
+	}
+	
 }

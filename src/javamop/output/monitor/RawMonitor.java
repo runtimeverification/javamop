@@ -143,14 +143,17 @@ public class RawMonitor extends Monitor{
 		return ret;
 	}
 
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName, boolean inMonitorSet) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock l, String aspectName, boolean inMonitorSet, boolean isShutdownHook) {
 		String ret = "";
 
 		if (has__LOC) {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
-				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+				if(isShutdownHook)
+					ret += monitorVar + "." + this.loc + " = " + "\"[End of Program]\"" + ";\n";
+				else
+					ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 		
 		if (has__STATICSIG) {

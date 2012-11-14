@@ -62,7 +62,7 @@ public class EndProgram {
 				ret += "{\n";
 			}
 
-			ret += eventBody;
+			ret += eventBody.toStringForShutdownHook();
 
 			if (eventBodies.size() > 1) {
 				ret += "}\n";

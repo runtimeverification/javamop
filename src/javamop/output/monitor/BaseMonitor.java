@@ -311,7 +311,7 @@ public class BaseMonitor extends Monitor {
 		return this.printEventMethod(prop, event, "");
 	}
 	
-	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock, String aspectName, boolean inMonitorSet) {
+	public String Monitoring(MOPVariable monitorVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock, String aspectName, boolean inMonitorSet, boolean isShutdownHook) {
 		String ret = "";
 		boolean checkSkip = event.getPos().equals("around");
 
@@ -319,7 +319,10 @@ public class BaseMonitor extends Monitor {
 			if(loc != null)
 				ret += monitorVar + "." + this.loc + " = " + loc + ";\n";
 			else
-				ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+				if(isShutdownHook)
+					ret += monitorVar + "." + this.loc + " = " + "\"[End of Program]\"" + ";\n";
+				else
+					ret += monitorVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 
 		if (has__STATICSIG) {

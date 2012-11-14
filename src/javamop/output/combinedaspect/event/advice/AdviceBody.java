@@ -50,4 +50,6 @@ public abstract class AdviceBody {
 	}
 
 	public abstract String toString();
+	
+	public abstract String toStringForShutdownHook();
 }

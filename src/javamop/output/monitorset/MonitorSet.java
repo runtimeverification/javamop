@@ -70,7 +70,7 @@ public class MonitorSet {
 		this.monitorLock = new GlobalLock(new MOPVariable(lockName));
 	}
 
-	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock) {
+	public String Monitoring(MOPVariable monitorSetVar, EventDefinition event, MOPVariable loc, MOPVariable staticsig, GlobalLock lock, boolean isShutdownHook) {
 		this.monitorLock = lock;
 		String ret = "";
 
@@ -82,7 +82,10 @@ public class MonitorSet {
 			if (loc != null)
 				ret += monitorSetVar + "." + this.loc + " = " + loc + ";\n";
 			else
-				ret += monitorSetVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
+				if(isShutdownHook)
+					ret += monitorSetVar + "." + this.loc + " = " + "\"[End of Program]\"" + ";\n";
+				else
+					ret += monitorSetVar + "." + this.loc + " = " + "thisJoinPoint.getSourceLocation().toString()" + ";\n";
 		}
 		
 		if (has__STATICSIG) {
@@ -288,7 +291,7 @@ public class MonitorSet {
 			ret += "elementData[" + numAlive + "] = " + monitor + ";\n";
 			ret += numAlive + "++;\n";
 			ret += "\n";
-			ret += this.monitor.Monitoring(monitor, event, loc, staticsig, this.monitorLock, this.monitor.getAspectName(), true);
+			ret += this.monitor.Monitoring(monitor, event, loc, staticsig, this.monitorLock, this.monitor.getAspectName(), true, false);
 			ret += "}\n";
 			ret += "}\n";
 
