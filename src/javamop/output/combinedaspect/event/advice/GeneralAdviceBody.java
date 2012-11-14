@@ -73,8 +73,9 @@ public class GeneralAdviceBody extends AdviceBody {
 
 	public boolean doDisable(){
 		for (MOPParameter p : eventParams) {
-			if (parametersForDisable.contains(p))
+			if (parametersForDisable.contains(p)) {
 				return true;
+			}
 		}
 
 		return false;
@@ -90,14 +91,16 @@ public class GeneralAdviceBody extends AdviceBody {
 		if (!indexingTree.containsSet())
 			return true;
 
-		if (event.isStartEvent())
+		if (event.isStartEvent()) {
 			return true;
+		}
 
-		if (paramPairsForCopy != null && paramPairsForCopy.size() > 0)
+		if (paramPairsForCopy != null && paramPairsForCopy.size() > 0) {
 			return true;
-
-		if (doDisable)
+		}
+		if (doDisable && !this.mopSpec.isEnforce()) {
 			return true;
+		}
 		
 		return false;
 	}
