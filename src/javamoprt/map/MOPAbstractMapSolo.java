@@ -26,8 +26,9 @@ public abstract class MOPAbstractMapSolo extends MOPAbstractMap {
 		while (entry != null) {
 			if (key == entry.key) {
 				lastValue1 = entry.value;
-
-				return entry.value;
+				if (lastValue1 != null) {
+					return entry.value;
+				}
 			}
 			entry = entry.next;
 		}

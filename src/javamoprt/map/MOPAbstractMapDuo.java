@@ -27,8 +27,9 @@ public abstract class MOPAbstractMapDuo extends MOPAbstractMap {
 		while (entry != null) {
 			if (key == entry.key) {
 				lastValue1 = entry.value1;
-
-				return entry.value1;
+				if (lastValue1 != null) {
+					return entry.value1;
+				}
 			}
 			entry = entry.next;
 		}
