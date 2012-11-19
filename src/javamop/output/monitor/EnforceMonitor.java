@@ -108,16 +108,19 @@ public class EnforceMonitor extends BaseMonitor {
 		// Check if the condition fails, if it does, then return directly.
 		if (event.getCondition() != null && event.getCondition().length() != 0) {
 			ret += "if (" + clonedMonitor + "." + this.conditionFail + ") {\n";
+			ret += clonedMonitor + " = null;\n";
 			ret += "cloned_monitor_condition_fail = true;\n";
 			ret += "break;\n";
 			ret += "}\n";
 		}
 
 		ret += "if (!" + clonedMonitor + "." + enforceCategory + ") {\n";
+		ret += clonedMonitor + " = null;\n";
 		if (lock != null)
 			ret += lock.getName() + "_cond.await();\n";
 		ret += "}\n";
 		ret += "else {\n";
+		ret += clonedMonitor + " = null;\n";
 		ret += "break;\n";	
 		ret += "}\n";
 		ret += "} while (true);\n\n";

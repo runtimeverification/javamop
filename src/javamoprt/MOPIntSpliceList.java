@@ -60,9 +60,11 @@ public class MOPIntSpliceList {
 
   public MOPIntSpliceList(MOPIntSpliceList c){
     MOPSLIntIterator I = c.head();
-    do {
-      add(I.get());
-    } while(I.next());  
+    if (c.head != null) {
+    	do {
+    	  add(I.get());
+    	} while(I.next());  
+    }
   }
 
   public MOPIntSpliceList(int[] c){

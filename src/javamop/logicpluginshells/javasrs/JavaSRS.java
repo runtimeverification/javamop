@@ -84,6 +84,9 @@ public class JavaSRS extends LogicPluginShell {
     result.put("state declaration for set", "MOPIntSpliceList $l$;\n" 
               + pmaInput.toImplString()
               + rewriteStr);
+    
+	result.put("clone", "$ret$.$l$ = new MOPIntSpliceList(this.$l$);\n");
+	
     result.put("reset", "$l$ = new MOPIntSpliceList();\n");
     result.put("initialization", "$l$ = new MOPIntSpliceList();\n");
   	result.put("monitoring body", "");
