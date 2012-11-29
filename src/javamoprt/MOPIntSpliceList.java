@@ -53,8 +53,13 @@ public class MOPIntSpliceList {
   }
 
   public MOPIntSpliceList(Collection<Integer> c){
-    for(Integer e : c){
-      add(e);
+    if(c.isEmpty()) {
+      head = tail = null;
+    }
+    else {
+      for(Integer e : c){
+        add(e);
+      }
     }
   }
 
@@ -65,11 +70,19 @@ public class MOPIntSpliceList {
     	  add(I.get());
     	} while(I.next());  
     }
+    else {
+      head = tail = null;
+    }
   }
 
   public MOPIntSpliceList(int[] c){
-    for(int e : c){
-      add(e);
+    if(c.length == 0){
+      head = tail = null;
+    }
+    else{
+      for(int e : c){
+        add(e);
+      }
     }
   }
 
