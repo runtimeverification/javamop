@@ -141,13 +141,21 @@ public class ThreadStatusMonitor extends EndThread{
 		String ret = "";
 		
         ret += "static boolean containsBlockedThread(String name) {\n";
+        
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
+		ret += "}\n";
+		
         ret += "for (Thread t : " + threadSet + ") {\n";
         ret += "if (t.getName().equals(name)) {\n";
         ret += "if (t.getState() == Thread.State.BLOCKED || t.getState() == Thread.State.WAITING) {\n";
+		ret += globalLock.getName() + ".unlock();\n";
         ret += "return true;\n";
         ret += "}\n";
         ret += "}\n";
         ret += "}\n";
+        
+		ret += globalLock.getName() + ".unlock();\n";
         ret += "return false;\n";
         ret += "}\n";
         
@@ -163,11 +171,18 @@ public class ThreadStatusMonitor extends EndThread{
 		String ret = "";
 		
         ret += "static boolean containsThread(String name) {\n";
+        
+		ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
+		ret += "Thread.yield();\n";
+		ret += "}\n";
+		
         ret += "for (Thread t : " + threadSet + ") {\n";
         ret += "if (t.getName().equals(name)) {\n";
+        ret += globalLock.getName() + ".unlock();\n";
         ret += "return true;\n";
         ret += "}\n";
         ret += "}\n";
+        ret += globalLock.getName() + ".unlock();\n";
         ret += "return false;\n";
         ret += "}\n";
         
