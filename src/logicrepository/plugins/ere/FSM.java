@@ -58,6 +58,15 @@ public class FSM {
       p.print(number.get(state) + " ");
 	 }
 	 p.println("");
+	 
+	 // nonmatch alias for enforcement
+	 p.print("alias nonmatch = ");
+	 for(ERE state : contents.keySet()){
+		 if (!match.contains(state)) {
+			 p.print(number.get(state) + " ");
+		 }
+	 }
+	 p.println("");
   }
 
   private void printTransition(LinkedHashMap<Symbol, ERE> trans, PrintStream p){

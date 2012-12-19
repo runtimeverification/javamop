@@ -81,8 +81,10 @@ public class JavaCFG extends LogicPluginShell {
 		result.put("monitoring body", GLRGen.body());
 
 		result.put("match condition", "$cat$ == 0\n");
-		result.put("fail condition", "$cat$ == 2\n");
+		result.put("nonmatch condition", "$cat$ != 0\n");
 		
+		
+		result.put("fail condition", "$cat$ == 2\n");
 		result.put("nonfail condition", "$cat$ != 2\n");
 
 		result.put("clone", "$ret$.$stacks$ = new ArrayList<IntStack>();\n" 
