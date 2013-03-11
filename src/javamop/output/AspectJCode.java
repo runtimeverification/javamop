@@ -54,7 +54,6 @@ public class AspectJCode {
 		}
 
 		//aspect = new Aspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
-		System.out.println("ASPECT!!!!!!!!!!!!\n" + aspect.toString());
 		aspect = new CombinedAspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
 
 		// Set monitor lock for each monitor set
