@@ -49,6 +49,7 @@ public class Main {
 	public static boolean dacapo2 = false;
 	public static boolean silent = false;
 	public static boolean empty_advicebody = false;
+	public static boolean translate2RV = false;
 
 	public static boolean merge = false;
 	public static boolean inline = false;
@@ -101,7 +102,7 @@ public class Main {
 		MOPProcessor processor = new MOPProcessor(Main.aspectname == null ? Tool.getFileName(file.getAbsolutePath()) : Main.aspectname);
 
 		String aspect = processor.process(spec);
-		writeAspectFile(aspect, location);
+		writeFile(aspect, location, "MonitorAspect.aj");
 	}
 
 	/**
@@ -121,11 +122,15 @@ public class Main {
 		MOPProcessor processor = new MOPProcessor(Main.aspectname == null ? Tool.getFileName(file.getAbsolutePath()) : Main.aspectname);
 
 		String output = processor.process(spec);
-
+		
+		if (translate2RV) {
+			writeFile(processor.translate2RV(spec), location, "RV.mop");
+		}
+		
 		if (toJavaLib) {
-			writeJavaLibFile(output, location);
+			writeFile(output, location, "JavaLibMonitor.java");
 		} else {
-			writeAspectFile(output, location);
+			writeFile(output, location, "MonitorAspect.aj");
 		}
 	}
 	
@@ -199,35 +204,20 @@ public class Main {
 		}
 		System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
 	}
-
-	protected static void writeAspectFile(String aspectContent, String location) throws MOPException {
-		if (aspectContent == null || aspectContent.length() == 0)
+	
+	protected static void writeFile(String content, String location, String suffix) throws MOPException {
+		if (content == null || content.length() == 0)
 			return;
 
 		int i = location.lastIndexOf(File.separator);
 		try {
-			FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "MonitorAspect.aj");
-			f.write(aspectContent);
+			FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + suffix);
+			f.write(content);
 			f.close();
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
 		}
-		System.out.println(" " + Tool.getFileName(location) + "MonitorAspect.aj is generated");
-	}
-
-	protected static void writeJavaLibFile(String javaLibContent, String location) throws MOPException {
-		if (javaLibContent == null || javaLibContent.length() == 0)
-			return;
-
-		int i = location.lastIndexOf(File.separator);
-		try {
-			FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "JavaLibMonitor.java");
-			f.write(javaLibContent);
-			f.close();
-		} catch (Exception e) {
-			throw new MOPException(e.getMessage());
-		}
-		System.out.println(" " + Tool.getFileName(location) + "JavaLibMonitor.java is generated");
+		System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
 	}
 
 	// PM
@@ -407,6 +397,8 @@ public class Main {
 				Main.empty_advicebody = true;
 			} else if (args[i].compareTo("-scalable") == 0) {
 				Main.scalable = true;
+			} else if (args[i].compareTo("-translate2RV") == 0) {
+				Main.translate2RV = true;
 			} else {
 				if (files.length() != 0)
 					files += ";";

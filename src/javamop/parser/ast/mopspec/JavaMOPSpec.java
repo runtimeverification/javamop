@@ -12,7 +12,9 @@ import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
+import javamop.parser.astex.mopspec.EventDefinitionExt;
 import javamop.parser.ast.PackageDeclaration;
+import javamop.parser.main_parser.ParseException;
 
 ///TODO:  All this has__ methods are carbon copies with the names changed.
 // This should really be refactored.
@@ -91,6 +93,26 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 				}
 			}
 		}
+	}
+
+	/*
+	 * 
+	 * Generate RVMopSpec by JavaMOPSpec
+	 * 
+	 * */
+	public JavaMOPSpec getRVSpec() {
+		List<EventDefinition> rvevents = new ArrayList<EventDefinition>();
+		JavaMOPSpec rvmopspec = null;
+		try {
+			for (EventDefinition event : events) {
+				rvevents.add(new RVEventDefinition(event));
+			}
+			rvmopspec = new JavaMOPSpec(packageDeclaration, 0, 0, modifiers,
+					name, parameters.toList(), inMethod, declarations,
+					rvevents, properties);
+		} catch (Exception e) {
+		}
+		return rvmopspec;
 	}
 
 	public void setVarsInEvents() throws MOPException {

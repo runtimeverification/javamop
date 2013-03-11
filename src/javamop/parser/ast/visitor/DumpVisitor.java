@@ -356,6 +356,15 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 		printer.printLn();
 	}
+	
+	public void visit(RVEventDefinition e, Object arg) {
+		printer.print("event " + e.getId());
+		printSpecParameters(e.getParameters(), arg);
+		if (e.getAction() != null) {
+			e.getAction().accept(this, arg);
+		}
+		printer.printLn();
+	}
 
 	public void visit(PropertyAndHandlers p, Object arg) {
 		p.getProperty().accept(this, arg);

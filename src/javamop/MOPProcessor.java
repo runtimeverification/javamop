@@ -12,6 +12,7 @@ import javamop.logicpluginshells.LogicPluginShellFactory;
 import javamop.logicpluginshells.LogicPluginShellResult;
 import javamop.output.AspectJCode;
 import javamop.output.JavaLibCode;
+import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -50,16 +51,32 @@ public class MOPProcessor {
 				MOPNameSpace.addUserVariables(vars);
 		}
 	}
+	
+	public String translate2RV(MOPSpecFile mopSpecFile) throws MOPException {
+		String rvresult = "";
+		rvresult += mopSpecFile.getPakage().toString();
+		for (ImportDeclaration id : mopSpecFile.getImports()) {
+			rvresult += id.toString();
+		}
+		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
+			
+			if(Main.translate2RV) {
+				rvresult += mopSpec.getRVSpec().toString();
+			}
+		}
+		return rvresult;
+	}
 
 	public String process(MOPSpecFile mopSpecFile) throws MOPException {
 		String result;
-
+		
 		// register all user variables to MOPNameSpace to avoid conflicts
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs())
 			registerUserVar(mopSpec);
 
 		// Connect to Logic Repository
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
+			
 			for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
 				// connect to the logic repository and get the logic output
 				LogicRepositoryType logicOutput = LogicRepositoryConnector.process(mopSpec, prop);

@@ -118,6 +118,8 @@ public interface VoidVisitor<A> {
     
     public void visit(EventDefinition e, A arg);
     
+    public void visit(RVEventDefinition e, A arg);
+    
     public void visit(PropertyAndHandlers p, A arg);
     
     public void visit(Formula f, A arg);
