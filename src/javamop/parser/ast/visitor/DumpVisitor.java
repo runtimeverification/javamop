@@ -334,6 +334,9 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	public void visit(EventDefinition e, Object arg) {
+		if (e.isStartEvent()) {
+			printer.print("creation ");
+		}
 		printer.print("event " + e.getId() + " " + e.getPos());
 		printSpecParameters(e.getParameters(), arg);
 		if (e.hasReturning()) {
@@ -358,6 +361,9 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 	
 	public void visit(RVEventDefinition e, Object arg) {
+		if (e.isStartEvent()) {
+			printer.print("creation ");
+		}
 		printer.print("event " + e.getUniqueId());
 		printSpecParameters(e.getParameters(), arg);
 		if (e.getAction() != null) {
