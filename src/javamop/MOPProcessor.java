@@ -102,11 +102,15 @@ public class MOPProcessor {
 		}
 
 		// Generate output code
-		if (Main.toJavaLib)
-			result = (new JavaLibCode(name, mopSpecFile)).toString();
-		else
-			result = (new AspectJCode(name, mopSpecFile)).toString();
-
+		
+		if (Main.translate2RV) {
+			result = (new AspectJCode(name, mopSpecFile)).toRVString();
+		} else {
+			if (Main.toJavaLib)
+				result = (new JavaLibCode(name, mopSpecFile)).toString();
+			else
+				result = (new AspectJCode(name, mopSpecFile)).toString();
+		}
 
 		// Do indentation
 		result = Tool.changeIndentation(result, "", "\t");

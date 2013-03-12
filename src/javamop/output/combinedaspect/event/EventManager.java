@@ -132,7 +132,10 @@ public class EventManager {
 		ret += "pointcut " + commonPointcut + "() : ";
 		if(Main.dacapo){
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
-		} else {
+		} else if (Main.translate2RV) {
+			ret += "!within(rvmonitorrt.MOPObject+) && !adviceexecution();\n";
+		}
+		else {
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
 		}
 		
@@ -141,8 +144,12 @@ public class EventManager {
 			if(Main.empty_advicebody){
 				ret += "// " + numAdvice++ + "\n";
 			}
-
-			ret += advice;
+			
+			if (Main.translate2RV) {
+				ret += advice.toRVString();
+			} else {
+				ret += advice;
+			}
 			ret += "\n";
 			if (advice.beCounted) {
 				ret += "\n";

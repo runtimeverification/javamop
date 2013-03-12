@@ -196,4 +196,13 @@ public class CombinedAspect {
 
 		return ret;
 	}
+	
+	public String toRVString() {
+		String ret = "";
+		ret += this.statManager.statClass();
+		ret += "public aspect " + this.name + " implements rvmonitorrt.MOPObject {\n";
+		ret += this.eventManager.advices();
+		ret += "}\n";
+		return ret;
+	}
 }

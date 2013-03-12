@@ -29,7 +29,8 @@ public class AdviceAndPointCut {
 	MOPVariable pointcutName;
 	public PointCut pointcut;
 	MOPParameters parameters;
-
+	String specName;
+	
 	boolean hasThisJoinPoint;
 	public boolean isAround = false;
 	public boolean beCounted = false;
@@ -51,10 +52,11 @@ public class AdviceAndPointCut {
 
 	AroundAdviceLocalDecl aroundLocalDecl = null;
 	AroundAdviceReturn aroundAdviceReturn = null;
-
+	
 	public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
 		this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
 
+		this.specName = mopSpec.getName();
 		this.pointcutName = new MOPVariable(mopSpec.getName() + "_" + event.getUniqueId());
 		this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" + event.getUniqueId());
 		this.parameters = event.getParametersWithoutThreadVar();
@@ -325,6 +327,142 @@ public class AdviceAndPointCut {
 			ret += ");\n";
 		} else {
 			ret += adviceBody();
+		}
+
+		if (aroundAdviceReturn != null)
+			ret += aroundAdviceReturn;
+
+		ret += "}\n";
+
+		return ret;
+	}
+
+	public String toRVString() {
+		String ret = "";
+		String pointcutStr = pointcut.toString();
+
+		// Do we need to handle inline?
+		if(Main.inline && !isAround){
+			ret += "void " + inlineFuncName + "(" + inlineParameters.parameterDeclString();
+			if(hasThisJoinPoint){
+				if(inlineParameters.size() > 0) 
+					ret += ", ";
+				ret += "JoinPoint thisJoinPoint";
+			}
+			ret += ") {\n";
+
+			ret += adviceBody();
+			
+			ret += "}\n";
+		}
+		
+		
+		ret += "pointcut " + pointcutName;
+		ret += "(";
+		ret += parameters.parameterDeclString();
+		ret += ")";
+		ret += " : ";
+		if (pointcutStr != null && pointcutStr.length() != 0) {
+			ret += "(";
+			ret += pointcutStr;
+			ret += ")";
+			ret += " && ";
+		}
+		ret += commonPointcut + "();\n";
+
+		if (isAround)
+			ret += retType + " ";
+
+		ret += pos + " (" + parameters.parameterDeclString() + ") ";
+
+		if (retVal != null && retVal.size() > 0) {
+			ret += "returning (";
+			ret += retVal.parameterDeclString();
+			ret += ") ";
+		}
+
+		if (throwVal != null && throwVal.size() > 0) {
+			ret += "throwing (";
+			ret += throwVal.parameterDeclString();
+			ret += ") ";
+		}
+
+		ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
+
+		if (aroundLocalDecl != null)
+			ret += aroundLocalDecl;
+		
+		if(Main.inline && !isAround){
+			ret += inlineFuncName + "(" + inlineParameters.parameterString();
+			if(hasThisJoinPoint){
+				if(inlineParameters.size() > 0) 
+					ret += ", ";
+				ret += "thisJoinPoint";
+			}
+			ret += ");\n";
+		} else {
+			
+			// Call method here MOPNameRuntimeMonitor.nameEvent()
+			// If there's thread var, replace with t (currentThread),
+			// and also generate Thread t = currentThread before it
+			// If there's return/ throw pointcut, cat in the end 
+			
+			for (MOPParameter threadVar : threadVars) {
+				ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
+			}
+
+			Iterator<EventDefinition> iter;
+			if(this.pos.equals("before"))
+				iter = this.events.descendingIterator();
+			else
+				iter = this.events.iterator();
+			
+			while (iter.hasNext()) {
+				EventDefinition event = iter.next();
+
+				AdviceBody advice = advices.get(event);
+
+				if (advices.size() > 1) {
+					ret += "//" + advice.mopSpec.getName() + "_"
+							+ event.getUniqueId() + "\n";
+				}
+
+				String countCond = event.getCountCond();
+
+				if (countCond != null && countCond.length() != 0) {
+					countCond = countCond.replaceAll("count", this.pointcutName
+							+ "_count");
+					ret += "if (" + countCond + ") {\n";
+				}
+				
+				ret += specName + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+				
+				// Parameters
+				// Original (including threadVar)
+				ret += event.getParameters().parameterString();
+				
+				// Parameters in returning pointcut
+				if (event.getRetVal() != null && event.getRetVal().size() > 0) {
+					String retParameters = event.getRetVal().parameterString();
+					if (retParameters.length() > 0) {
+						ret += ", " + retParameters;
+					}
+				}
+				
+				// Parameters in throwing pointcut
+				if (event.getThrowVal() != null && event.getThrowVal().size() > 0) {
+					String throwParameters = event.getThrowVal().parameterString();
+					if (throwParameters.length() > 0) {
+						ret += ", " + throwParameters;
+					}
+				}
+				
+				ret += ");\n";
+
+				if (countCond != null && countCond.length() != 0) {
+					ret += "}\n";
+				}
+			}
 		}
 
 		if (aroundAdviceReturn != null)

@@ -3,6 +3,7 @@ package javamop.output;
 import java.util.HashMap;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
 import javamop.output.monitor.SuffixMonitor;
@@ -29,7 +30,7 @@ public class AspectJCode {
 		this.name = name;
 		packageDecl = new Package(mopSpecFile);
 		imports = new Imports(mopSpecFile);
-
+		
 		for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs()) {
 			EnableSet enableSet = new EnableSet(mopSpec.getEvents(), mopSpec.getParameters());
 			CoEnableSet coenableSet = new CoEnableSet(mopSpec.getEvents(), mopSpec.getParameters());
@@ -76,8 +77,9 @@ public class AspectJCode {
 
 		ret += packageDecl;
 		ret += imports;
+		
 		ret += "\n";
-
+		
 		for (MonitorSet monitorSet : this.monitorSets.values())
 			ret += monitorSet;
 		ret += "\n";
@@ -85,7 +87,6 @@ public class AspectJCode {
 		for (SuffixMonitor monitor : this.monitors.values())
 			ret += monitor;
 		ret += "\n";
-
 		
 		// The order of these two is really important.
 		if(systemAspect != null){
@@ -103,6 +104,41 @@ public class AspectJCode {
 		}
 		
 		ret += aspect;
+
+		if(systemAspect != null)
+			ret += "\n" + systemAspect;
+		
+		return ret;
+	}
+	
+	/*
+	 * 
+	 * Generate RV aspect
+	 * 
+	 * */
+	public String toRVString() {
+		String ret = "";
+		ret += packageDecl;
+		ret += imports.toString().replaceAll("javamoprt", "rvmonitorrt");
+		
+		ret += "\n";
+		
+		// The order of these two is really important.
+		if(systemAspect != null){
+			ret += "aspect " + name + "OrderAspect {\n";
+			ret += "declare precedence : ";
+			ret += systemAspect.getSystemAspectName() + ""; 
+			ret += ", ";
+			ret += systemAspect.getSystemAspectName() + "2";
+			ret += ", ";
+			ret += aspect.getAspectName();
+			ret += ";\n";
+			
+			ret += "}\n";
+			ret += "\n";
+		}
+		
+		ret += aspect.toRVString();
 
 		if(systemAspect != null)
 			ret += "\n" + systemAspect;
