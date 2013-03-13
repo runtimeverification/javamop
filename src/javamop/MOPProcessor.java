@@ -54,9 +54,13 @@ public class MOPProcessor {
 	
 	public String translate2RV(MOPSpecFile mopSpecFile) throws MOPException {
 		String rvresult = "";
-		rvresult += mopSpecFile.getPakage().toString();
-		for (ImportDeclaration id : mopSpecFile.getImports()) {
-			rvresult += id.toString();
+		if (mopSpecFile.getPakage() != null) {
+			rvresult += mopSpecFile.getPakage().toString();
+		}
+		if (mopSpecFile.getImports() != null) {
+			for (ImportDeclaration id : mopSpecFile.getImports()) {
+				rvresult += id.toString();
+			}
 		}
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
 			

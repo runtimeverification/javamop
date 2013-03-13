@@ -435,17 +435,28 @@ public class AdviceAndPointCut {
 					ret += "if (" + countCond + ") {\n";
 				}
 				
+//				if (event.getCondition() != null && event.getCondition().length() > 0) {
+//					ret +=  "if (!(" + event.getCondition() + ")) {\n";
+//					ret += "return;\n";
+//					ret += "}\n";
+//				}
 				ret += specName + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
 				
 				// Parameters
 				// Original (including threadVar)
-				ret += event.getParameters().parameterString();
+				String  original = event.getParameters().parameterString();
+				ret += original;
 				
 				// Parameters in returning pointcut
 				if (event.getRetVal() != null && event.getRetVal().size() > 0) {
 					String retParameters = event.getRetVal().parameterString();
 					if (retParameters.length() > 0) {
-						ret += ", " + retParameters;
+						if (original == null || original.length() == 0)
+						{
+							ret += retParameters;
+						} else {
+							ret += ", " + retParameters;
+						}
 					}
 				}
 				
@@ -453,7 +464,12 @@ public class AdviceAndPointCut {
 				if (event.getThrowVal() != null && event.getThrowVal().size() > 0) {
 					String throwParameters = event.getThrowVal().parameterString();
 					if (throwParameters.length() > 0) {
-						ret += ", " + throwParameters;
+						if (original == null || original.length() == 0)
+						{
+							ret += throwParameters;
+						} else {
+							ret += ", " + throwParameters;
+						}
 					}
 				}
 				

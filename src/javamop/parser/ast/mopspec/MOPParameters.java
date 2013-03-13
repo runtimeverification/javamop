@@ -220,7 +220,6 @@ public class MOPParameters implements Iterable<MOPParameter> {
 		}
 		if (ret.length() != 0)
 			ret = ret.substring(2);
-
 		return ret;
 	}
 
