@@ -68,6 +68,7 @@ public class MOPProcessor {
 				rvresult += mopSpec.getRVSpec().toString();
 			}
 		}
+		rvresult = Tool.changeIndentation(rvresult, "", "\t");
 		return rvresult;
 	}
 

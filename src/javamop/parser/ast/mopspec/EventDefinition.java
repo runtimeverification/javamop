@@ -32,6 +32,9 @@ public class EventDefinition extends Node {
 
 	// will be modified by JavaMOPSpec when creation events are not specified
 	boolean startEvent = false;
+	
+	// similar to startEvent, but won't be modified
+	boolean creationEvent = false;
 
 	String condition;
 	String threadVar;
@@ -68,6 +71,7 @@ public class EventDefinition extends Node {
 		if(pointCutStr != null) 
 			this.pointCut = parsePointCut(pointCutStr);
 		this.startEvent = startEvent;
+		this.creationEvent = startEvent;
 		this.mopParameters = new MOPParameters();
 		this.mopParameters.addAll(this.parameters);
 		this.mopParameters.addAll(this.retVal);
@@ -363,6 +367,11 @@ public class EventDefinition extends Node {
 	public boolean isStartEvent() {
 		return this.startEvent;
 	}
+	
+	public boolean isCreationEvent() {
+		return this.creationEvent;
+	}
+	
 
 	public boolean isEndProgram() {
 		return this.endProgram;

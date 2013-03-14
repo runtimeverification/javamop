@@ -334,9 +334,9 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	public void visit(EventDefinition e, Object arg) {
-//		if (e.isStartEvent()) {
-//			printer.print("creation ");
-//		}
+		if (e.isCreationEvent()) {
+			printer.print("creation ");
+		}
 		printer.print("event " + e.getId() + " " + e.getPos());
 		printSpecParameters(e.getParameters(), arg);
 		if (e.hasReturning()) {
@@ -361,15 +361,24 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 	
 	public void visit(RVEventDefinition e, Object arg) {
-//		if (e.isStartEvent()) {
-//			printer.print("creation ");
-//		}
+		if (e.isCreationEvent()) {
+			printer.print("creation ");
+		}
 		printer.print("event " + e.getUniqueId());
 		printSpecParameters(e.getParameters(), arg);
+		if (e.getCondition() != null && e.getCondition().length() > 0) {
+			printer.print("{\n");
+			printer.print("if ( ! (" + e.getCondition() + ") ) {\n");
+			printer.print("return;\n");
+			printer.print("}\n");
+		}
 		if (e.getAction() != null) {
 			e.getAction().accept(this, arg);
 		}
 		printer.printLn();
+		if (e.getCondition() != null && e.getCondition().length() > 0) {
+			printer.print("}\n");
+		}
 	}
 
 	public void visit(PropertyAndHandlers p, Object arg) {

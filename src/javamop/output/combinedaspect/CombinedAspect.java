@@ -201,7 +201,11 @@ public class CombinedAspect {
 		String ret = "";
 		ret += this.statManager.statClass();
 		ret += "public aspect " + this.name + " implements rvmonitorrt.MOPObject {\n";
+		
+		ret += this.lockManager.decl();
+		
 		ret += this.eventManager.advices();
+		
 		ret += "}\n";
 		return ret;
 	}

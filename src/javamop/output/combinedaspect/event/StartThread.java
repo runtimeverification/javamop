@@ -108,12 +108,12 @@ public class StartThread {
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
-		ret += "}\n";
+		
 		ret += eventBody;
+		ret += "}\n";
 		ret += globalLock.getName() + ".unlock();\n";
 
 		ret += "}\n";
-
 		return ret;
 	}
 
