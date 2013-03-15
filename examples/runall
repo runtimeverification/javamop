@@ -1,0 +1,26 @@
+./compile ./CFG/HasNext
+./compile ./CFG/SafeFile
+./compile ./CFG/SafeFileWriter
+
+./compile ERE/HasNext
+#SuffixHasNext, hasnext2, hashset, passwordlogic require to change mop/directoy name
+./compile ERE/SafeSyncCollection
+./compile ERE/SafeFileWriter
+./compile ERE/SafeSyncMap  #inspect why no warning
+./compile ERE/SafeEnum
+./compile ERE/UnsafeIterator
+./compile ERE/UnsafeMapIterator
+
+./compile FSM/HasNext
+./compile FSM/HasNext2
+
+./compile LTL/SafeEnum
+./compile LTL/HasNext
+./compile LTL/SafeFileWriter
+./compile LTL/SafeIterator
+./compile LTL/SafeMapIterator
+
+./compile MOPSyntax/Creation
+
+# Handle endProgram, endThread, endObject, startThread
+# Think about sth similar to handle countCond
