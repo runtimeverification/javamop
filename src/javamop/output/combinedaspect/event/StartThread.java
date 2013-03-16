@@ -3,6 +3,7 @@ package javamop.output.combinedaspect.event;
 import java.util.HashMap;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -87,7 +88,15 @@ public class StartThread {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 
 		ret += "}\n";
@@ -109,7 +118,15 @@ public class StartThread {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 		
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 		ret += globalLock.getName() + ".unlock();\n";
 
@@ -128,7 +145,15 @@ public class StartThread {
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 		ret += "}\n";
 		ret += "\n";

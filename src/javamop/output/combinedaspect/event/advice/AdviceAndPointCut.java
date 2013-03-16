@@ -435,11 +435,6 @@ public class AdviceAndPointCut {
 					ret += "if (" + countCond + ") {\n";
 				}
 				
-//				if (event.getCondition() != null && event.getCondition().length() > 0) {
-//					ret +=  "if (!(" + event.getCondition() + ")) {\n";
-//					ret += "return;\n";
-//					ret += "}\n";
-//				}
 				ret += specName + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
 				
 				// Parameters

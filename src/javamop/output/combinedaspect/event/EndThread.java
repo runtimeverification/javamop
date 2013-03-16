@@ -3,6 +3,7 @@ package javamop.output.combinedaspect.event;
 import java.util.HashMap;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -107,7 +108,15 @@ public class EndThread {
 
 		ret += globalLock.getName() + ".unlock();\n";
 		
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 
 		ret += "}\n";
@@ -131,7 +140,15 @@ public class EndThread {
 		ret += "}\n";
 		ret += threadSet + ".remove(Thread.currentThread());\n";
 		ret += globalLock.getName() + ".unlock();\n";
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 
 		ret += "}\n";
@@ -171,7 +188,15 @@ public class EndThread {
 		}
 		ret += threadSet + ".remove(Thread.currentThread());\n";
 		
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 		ret += "}\n";
 		ret += globalLock.getName() + ".unlock();\n";
@@ -212,7 +237,15 @@ public class EndThread {
 			ret += threadSet + ".remove(" + t + ");\n";
 		}
 		
-		ret += eventBody;
+		if(Main.translate2RV) {
+			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+				ret += event.getThreadVar();
+			}
+			ret += ");\n";
+		} else {
+			ret += eventBody;
+		}
 		ret += "}\n";
 		ret += globalLock.getName() + ".unlock();\n";
 		

@@ -3,6 +3,7 @@ package javamop.output.combinedaspect.event;
 import java.util.ArrayList;
 
 import javamop.MOPException;
+import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
@@ -62,7 +63,12 @@ public class EndProgram {
 				ret += "{\n";
 			}
 
-			ret += eventBody.toStringForShutdownHook();
+			if (Main.translate2RV) {
+				//ret += eventBody.mopSpec.getName() + "RVRuntimeMonitor." + eventBody.event.getUniqueId() + "Event(";
+				ret += ");\n";
+			} else {
+				ret += eventBody.toStringForShutdownHook();
+			}
 
 			if (eventBodies.size() > 1) {
 				ret += "}\n";
