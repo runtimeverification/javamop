@@ -202,6 +202,23 @@ public class CombinedAspect {
 		ret += this.statManager.statClass();
 		ret += "public aspect " + this.name + " implements rvmonitorrt.MOPObject {\n";
 		
+		// Constructor
+		ret += "public " + this.name + "(){\n";
+
+		ret += this.eventManager.printConstructor();
+		
+		//ret += mapManager + " = " + "new javamoprt.map.MOPMapManager();\n";
+		//ret += mapManager + ".start();\n";
+
+		//ret += this.statManager.constructor();
+		
+		//ret += constructor();
+		//ret += initCache();
+		
+		ret += "}\n";
+		ret += "\n";
+		
+		
 		ret += this.lockManager.decl();
 		
 		ret += this.eventManager.advices();

@@ -140,6 +140,7 @@ public class EventManager {
 		}
 		
 		int numAdvice = 1;
+		advices = this.adjustAdviceOrder();
 		for (AdviceAndPointCut advice : advices) {
 			if(Main.empty_advicebody){
 				ret += "// " + numAdvice++ + "\n";
@@ -177,6 +178,24 @@ public class EventManager {
 		ret += endProgramEvent.printHookThread();
 
 		return ret;
+	} 
+	
+	/* 
+	 * 
+	 * Adjust advice order in the aspect so the before advice 
+	 * comes before the after advices
+	 * 
+	 * **/
+	private ArrayList<AdviceAndPointCut> adjustAdviceOrder() {
+		ArrayList<AdviceAndPointCut> result = new ArrayList<AdviceAndPointCut>();
+		for (AdviceAndPointCut advice : this.advices) {
+			if (advice.pos.equals("before")) {
+				result.add(0, advice);
+			} else {
+				result.add(advice);
+			}
+		}
+		return result;
 	}
 
 }

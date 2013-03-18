@@ -13,6 +13,7 @@ import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameters;
+import javamoprt.mop;
 
 public abstract class AdviceBody {
 	JavaMOPSpec mopSpec;
@@ -23,6 +24,7 @@ public abstract class AdviceBody {
 	public HashMap<MOPParameters, IndexingTree> indexingTrees;
 	public IndexingDecl indexingDecl;
 	public HashMap<String, RefTree> refTrees;
+	public String specName;
 	
 	public MOPStatistics stat;
 	
@@ -34,6 +36,7 @@ public abstract class AdviceBody {
 	
 	public AdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
 		this.mopSpec = mopSpec;
+		this.specName = mopSpec.getName();
 		this.aspect = combinedAspect;
 		this.event = event;
 		this.eventParams = event.getMOPParametersOnSpec();
