@@ -223,6 +223,20 @@ public class CombinedAspect {
 		
 		ret += this.eventManager.advices();
 		
+		if(Main.dacapo2){
+			ret += "after () : (execution(* avrora.Main.main(..)) || call(* dacapo.Benchmark.run(..)) || call(* org.dacapo.harness.Benchmark.run(..))) {\n";
+
+			//ret += "System.err.println(\"reset \" + Thread.currentThread().getName());\n";
+			
+			ret += this.timestampManager.reset();
+
+			ret += this.activatorsManager.reset();
+
+			ret += this.indexingTreeManager.reset();
+			
+			ret += "}\n";
+		}
+		
 		ret += "}\n";
 		return ret;
 	}
