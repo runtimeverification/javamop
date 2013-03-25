@@ -171,6 +171,10 @@ public class Main {
 		MOPSpecFile combinedSpec = SpecCombiner.process(specs);
 		
 		MOPProcessor processor = new MOPProcessor(aspectName);
+		if (translate2RV) {
+			String location = outputDir == null ? specFiles.get(0).getAbsolutePath() : outputDir.getAbsolutePath() + File.separator + specFiles.get(0).getName();
+			writeFile(processor.translate2RV(combinedSpec), location, "RV.mop");
+		}
 		String output = processor.process(combinedSpec);
 		
 		writeCombinedAspectFile(output, aspectName);

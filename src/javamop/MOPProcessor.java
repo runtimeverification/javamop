@@ -63,7 +63,6 @@ public class MOPProcessor {
 			}
 		}
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-			
 			if(Main.translate2RV) {
 				rvresult += mopSpec.getRVSpec().toString();
 			}

@@ -372,6 +372,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print("return;\n");
 			printer.print("}\n");
 		}
+		
 		if (e.getAction() != null) {
 			e.getAction().accept(this, arg);
 		}
