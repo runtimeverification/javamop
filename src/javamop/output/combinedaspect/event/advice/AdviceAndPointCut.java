@@ -430,6 +430,7 @@ public class AdviceAndPointCut {
 				String countCond = event.getCountCond();
 
 				if (countCond != null && countCond.length() != 0) {
+					ret += "++" + this.pointcutName+ "_count;\n";
 					countCond = countCond.replaceAll("count", this.pointcutName
 							+ "_count");
 					ret += "if (" + countCond + ") {\n";
