@@ -364,7 +364,8 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		if (e.isCreationEvent()) {
 			printer.print("creation ");
 		}
-		printer.print("event " + e.getUniqueId());
+		//printer.print("event " + e.getUniqueId());
+		printer.print("event " + e.getId());
 		printSpecParameters(e.getParameters(), arg);
 		if (e.getCondition() != null && e.getCondition().length() > 0) {
 			printer.print("{\n");
