@@ -5,6 +5,7 @@
 
 package javamop;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javamop.logicclient.LogicRepositoryConnector;
@@ -19,8 +20,10 @@ import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.parser.ast.mopspec.RVEventDefinition;
 import javamop.parser.ast.visitor.CollectUserVarVisitor;
 import javamop.parser.logicrepositorysyntax.LogicRepositoryType;
+import javamop.parser.main_parser.ParseException;
 import javamop.util.Tool;
 import javamop.Main;
 
@@ -64,7 +67,19 @@ public class MOPProcessor {
 		}
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
 			if(Main.translate2RV) {
-				rvresult += mopSpec.getRVSpec().toString();
+
+				List<EventDefinition> rvevents = new ArrayList<EventDefinition>();
+				for (EventDefinition event : mopSpec.getEvents()) {
+					try {
+						rvevents.add(new RVEventDefinition(event));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				mopSpec.setEvents(rvevents);
+						
+				//rvresult += mopSpec.getRVSpec().toString();
+				rvresult += mopSpec.toString();
 			}
 		}
 		rvresult = Tool.changeIndentation(rvresult, "", "\t");
