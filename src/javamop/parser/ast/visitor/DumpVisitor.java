@@ -124,11 +124,29 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	protected void printSpecModifiers(int modifiers) {
-		if (SpecModifierSet.isUnSync(modifiers)) {
-			printer.print("unsynchronized ");
+		if (SpecModifierSet.isAvoid(modifiers)) {
+			printer.print("avoid ");
+		}
+		if (SpecModifierSet.isConnected(modifiers)) {
+			printer.print("connected ");
 		}
 		if (SpecModifierSet.isDecentralized(modifiers)) {
 			printer.print("decentralized ");
+		}
+		if (SpecModifierSet.isEnforce(modifiers)) {
+			printer.print("enforce ");
+		}
+		if (SpecModifierSet.isFullBinding(modifiers)) {
+			printer.print("full-binding ");
+		}
+		if (SpecModifierSet.isPerThread(modifiers)) {
+			printer.print("perthread ");
+		}
+		if (SpecModifierSet.isSuffix(modifiers)) {
+			printer.print("suffix ");
+		}
+		if (SpecModifierSet.isUnSync(modifiers)) {
+			printer.print("unsynchronized ");
 		}
 	}
 
