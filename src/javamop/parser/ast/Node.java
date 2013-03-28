@@ -23,6 +23,7 @@ package javamop.parser.ast;
 
 import javamop.parser.ast.visitor.DumpVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
+import javamop.parser.ast.visitor.RVDumpVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 
 /**
@@ -101,5 +102,13 @@ public abstract class Node {
         accept(visitor, null);
         return visitor.getSource();
     }
+    
+    public String toRVString() {
+        RVDumpVisitor visitor = new RVDumpVisitor();
+        accept(visitor, null);
+        return visitor.getSource();
+    }
+    
+    
 
 }

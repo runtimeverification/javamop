@@ -95,27 +95,6 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 		}
 	}
 
-	/*
-	 * 
-	 * Generate RVMopSpec by JavaMOPSpec
-	 * 
-	 * */
-	public JavaMOPSpec getRVSpec() {
-		List<EventDefinition> rvevents = new ArrayList<EventDefinition>();
-		JavaMOPSpec rvmopspec = null;
-		try {
-			for (EventDefinition event : events) {
-				rvevents.add(new RVEventDefinition(event));
-			}
-			rvmopspec = new JavaMOPSpec(packageDeclaration, 0, 0, modifiers,
-					name, parameters.toList(), inMethod, declarations,
-					rvevents, properties);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return rvmopspec;
-	}
-
 	public void setVarsInEvents() throws MOPException {
 		int numStartEvent = 0;
 		HashSet<String> duplicatedEventNames = new HashSet<String>();
@@ -209,10 +188,6 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
 
 	public List<EventDefinition> getEvents() {
 		return events;
-	}
-	
-	public void setEvents(List<EventDefinition> newEvents) {
-		this.events = newEvents;
 	}
 	
 	private String cachedEventStr = null;
