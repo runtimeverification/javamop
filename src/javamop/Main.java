@@ -124,7 +124,7 @@ public class Main {
 		String output = processor.process(spec);
 		
 		if (translate2RV) {
-			writeFile(processor.translate2RV(spec), location, "RV.mop");
+			writeFile(processor.translate2RV(spec), location, ".rvm");
 		}
 		
 		if (toJavaLib) {
