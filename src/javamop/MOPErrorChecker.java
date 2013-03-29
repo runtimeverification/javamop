@@ -60,6 +60,10 @@ public class MOPErrorChecker {
 	}
 	
 	public static void verifySameEventName(JavaMOPSpec mopSpec) throws MOPException {
+		// This check was necessary becuase previously multiple events with the same name
+		// but different parameters were banned. Now that such events are allowed, this
+		// code is not used.
+		/*
 		HashMap<String, MOPParameters> nameToParam = new HashMap<String, MOPParameters>();
 		
 		for(EventDefinition event : mopSpec.getEvents()){
@@ -70,6 +74,7 @@ public class MOPErrorChecker {
 				nameToParam.put(event.getId(), event.getMOPParametersOnSpec());
 			}
 		}
+		*/
 	}
 	
 	public static void verifyUniqueEndProgram(JavaMOPSpec mopSpec) throws MOPException {
