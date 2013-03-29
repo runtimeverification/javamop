@@ -176,7 +176,7 @@ public class Main {
 			String location = outputDir == null ? specFiles.get(0)
 					.getAbsolutePath() : outputDir.getAbsolutePath()
 					+ File.separator + aspectName + ".mop";
-			writeFile(processor.translate2RV(combinedSpec), location, "RV.mop");
+			writeFile(processor.translate2RV(combinedSpec), location, ".rvm");
 		}
 		String output = processor.process(combinedSpec);
 		writeCombinedAspectFile(output, aspectName);
