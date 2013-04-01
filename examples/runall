@@ -1,26 +1,26 @@
-./compile ./CFG/HasNext
-./compile ./CFG/SafeFile
-./compile ./CFG/SafeFileWriter
+./run ./CFG/HasNext
+./run ./CFG/SafeFile
+./run ./CFG/SafeFileWriter
 
-./compile ERE/HasNext
+./run ERE/HasNext
 #SuffixHasNext, hasnext2, hashset, passwordlogic require to change mop/directoy name
-./compile ERE/SafeSyncCollection
-./compile ERE/SafeFileWriter
-./compile ERE/SafeSyncMap  #inspect why no warning
-./compile ERE/SafeEnum
-./compile ERE/UnsafeIterator
-./compile ERE/UnsafeMapIterator
+./run ERE/SafeSyncCollection
+./run ERE/SafeFileWriter
+./run ERE/SafeSyncMap  #inspect why no warning
+./run ERE/SafeEnum
+./run ERE/UnsafeIterator
+./run ERE/UnsafeMapIterator
 
-./compile FSM/HasNext
-./compile FSM/HasNext2
+./run FSM/HasNext
+./run FSM/HasNext2
 
-./compile LTL/SafeEnum
-./compile LTL/HasNext
-./compile LTL/SafeFileWriter
-./compile LTL/SafeIterator
-./compile LTL/SafeMapIterator
+./run LTL/SafeEnum
+./run LTL/HasNext
+./run LTL/SafeFileWriter
+./run LTL/SafeIterator
+./run LTL/SafeMapIterator
 
-./compile MOPSyntax/Creation
+./run MOPSyntax/Creation
 
 # Handle endProgram, endThread, endObject, startThread
 # Think about sth similar to handle countCond
