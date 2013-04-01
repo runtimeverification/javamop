@@ -30,13 +30,16 @@ public class AJFileCombiner {
 		StringBuffer ajCode = new StringBuffer();
 		File javaFile = new File(args[0]);
 		File ajFile = new File(args[1]);
-		
+		String pack = null;
 		try {
 			Scanner scanner = new Scanner(ajFile);
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				if (line.trim().contains("import")) {
+				if (line.trim().startsWith("import")) {
 					ajImports.add(line);
+				}
+				else if (line.trim().startsWith("package")) {
+					pack = line;
 				}
 				else {
 					ajCode.append(line);
@@ -47,8 +50,11 @@ public class AJFileCombiner {
 			scanner = new Scanner(javaFile);
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				if (line.trim().contains("import")) {
+				if (line.trim().startsWith("import")) {
 					javaImports.add(line);
+				}
+				else if (line.trim().startsWith("package")) {
+					pack = line;
 				}
 				else {
 					if (line.contains("public class")) {
@@ -61,13 +67,16 @@ public class AJFileCombiner {
 			
 			List<String> combinedImports = combineList(javaImports, ajImports);
 			StringBuffer results = new StringBuffer();
+			if (pack != null) {
+				results.append(pack);
+				results.append("\n");
+			}
 			for (String s : combinedImports) {
 				results.append(s);
 				results.append("\n");
 			}
 			results.append(javaCode);
 			results.append(ajCode);
-			System.out.println(results.toString());
 			FileWriter fw = new FileWriter(ajFile);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(results.toString());

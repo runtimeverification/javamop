@@ -200,7 +200,7 @@ public class CombinedAspect {
 	public String toRVString() {
 		String ret = "";
 		ret += this.statManager.statClass();
-		ret += "public aspect " + this.name + " implements rvmonitorrt.MOPObject {\n";
+		ret += "public aspect " + this.name + " implements rvmonitorrt.RVMObject {\n";
 		
 		// Constructor
 		ret += "public " + this.name + "(){\n";

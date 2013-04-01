@@ -109,7 +109,7 @@ public class EndThread {
 		ret += globalLock.getName() + ".unlock();\n";
 		
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}
@@ -141,7 +141,7 @@ public class EndThread {
 		ret += threadSet + ".remove(Thread.currentThread());\n";
 		ret += globalLock.getName() + ".unlock();\n";
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}
@@ -189,7 +189,7 @@ public class EndThread {
 		ret += threadSet + ".remove(Thread.currentThread());\n";
 		
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}
@@ -238,7 +238,7 @@ public class EndThread {
 		}
 		
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RVRuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}

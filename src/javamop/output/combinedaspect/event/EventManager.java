@@ -133,7 +133,7 @@ public class EventManager {
 		if(Main.dacapo){
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
 		} else if (Main.translate2RV) {
-			ret += "!within(rvmonitorrt.MOPObject+) && !adviceexecution();\n";
+			ret += "!within(rvmonitorrt.RVMObject+) && !adviceexecution();\n";
 		}
 		else {
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";

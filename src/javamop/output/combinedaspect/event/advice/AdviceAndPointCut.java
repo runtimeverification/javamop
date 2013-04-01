@@ -436,7 +436,7 @@ public class AdviceAndPointCut {
 					ret += "if (" + countCond + ") {\n";
 				}
 				
-				ret += specName + "RVRuntimeMonitor." + event.getId() + "Event(";
+				ret += specName + "RuntimeMonitor." + event.getId() + "Event(";
 				
 				// Parameters
 				// Original (including threadVar)
