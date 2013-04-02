@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Get all parameters except -translate2RV
+parameters=$@
+rvpara=""
+rvmfiles=""
+javamop ${parameters} -translate2RV
+for var in ${parameters}
+do
+    #replace.mop with .rvm
+    extension="${var##*.}"
+    if [[ "$extension" == "mop" ]]
+    then
+        filename="${var%.*}"
+        rvpara=${rvpara}" "${filename}.rvm
+        rvmfiles=${rvmfiles}" "${filename}.rvm
+    else  
+        rvpara=${rvpara}" "${var}
+    fi
+done
+#echo ${rvpara}
+
+# rv-monitor to generate java files and combine with aj
+rv-monitor ${rvpara}| while read line;
+do
+    extension="${line##*.}"
+    #echo ${extension}
+    if [[ "$extension" = "java is generated" ]]
+    then
+        filename="${line%.*}"
+        ajname="${filename%RuntimeMonitor}"
+        #echo ${ajname}
+        java -cp ../build/ javamop.util.AJFileCombiner ${filename}.java ${ajname}MonitorAspect.aj
+        rm ${filename}.java
+    fi
+done
+
+# Remove generated rvm files.
+rm ${rvmfiles}
