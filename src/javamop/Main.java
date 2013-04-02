@@ -159,25 +159,20 @@ public class Main {
 				aspectName = "MultiSpec_" + suffixNumber;
 			}
 		}
-		
+		MOPProcessor processor = new MOPProcessor(aspectName);
 		MOPNameSpace.init();
 		ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
 		for(File file : specFiles){
 			String specStr = SpecExtractor.process(file);
 			MOPSpecFile spec =  SpecExtractor.parse(specStr);
-			
+			if (translate2RV) {
+				String location = outputDir == null ? file.getAbsolutePath() : outputDir.getAbsolutePath()
+						+ File.separator + file.getName();
+				writeFile(processor.translate2RV(spec), location, ".rvm");
+			}
 			specs.add(spec);
 		}
 		MOPSpecFile combinedSpec = SpecCombiner.process(specs);
-		
-		MOPProcessor processor = new MOPProcessor(aspectName);
-		
-		if (translate2RV) {
-			String location = outputDir == null ? specFiles.get(0)
-					.getAbsolutePath() : outputDir.getAbsolutePath()
-					+ File.separator + aspectName + ".mop";
-			writeFile(processor.translate2RV(combinedSpec), location, ".rvm");
-		}
 		String output = processor.process(combinedSpec);
 		writeCombinedAspectFile(output, aspectName);
 	}
