@@ -436,7 +436,12 @@ public class AdviceAndPointCut {
 					ret += "if (" + countCond + ") {\n";
 				}
 				
-				ret += specName + "RuntimeMonitor." + event.getId() + "Event(";
+				if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
+					ret += Main.aspectname + "RuntimeMonitor." + event.getId() + "Event(";
+				}
+				else {
+					ret += specName + "RuntimeMonitor." + event.getId() + "Event(";
+				}
 				
 				// Parameters
 				// Original (including threadVar)
