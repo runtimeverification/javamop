@@ -1,12 +1,11 @@
 package javamop.output.combinedaspect.event;
 
-import java.util.HashMap;
 import java.util.List;
 
+import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.BlockStmt;
 import javamop.output.combinedaspect.CombinedAspect;
 
 /**
@@ -207,24 +206,48 @@ public class ThreadStatusMonitor extends EndThread{
 		return ret;
 	}
 	
+	public String printMethodCallForNewThread() {
+		String ret = "";
+		
+		ret += "after (Thread t): ";
+		ret += "(";
+		ret += "call(void Thread+.start()) && target(t))";
+		ret += " && " + commonPointcut + "() {\n";
+		
+		if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
+			ret += Main.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
+		}
+		else {
+			ret += monitorName + "RuntimeMonitor.startDeadlockDetection();\n";
+		}
+		ret += "}\n";
+		return ret;
+	}
+	
 	public String printAdvices() {
 		String ret = "";
-		ret += printDataStructures();
-		ret += "\n";
-		ret += printContainsBlockedThread();
-		ret += "\n";
-		ret += printContainsThread();
-		ret += "\n";
-		ret += printAdviceForThreadWithRunnable();
-		ret += "\n";
-		ret += printAdviceForEndThread();
-		ret += "\n";
-		ret += printAdviceForEndRunnable();
-		ret += "\n";
-		ret += printAdviceForMainEnd();
-		ret += "\n";
-		ret += printAdviceForNewThread();
-
+		if (!Main.translate2RV) {
+			ret += printDataStructures();
+			ret += "\n";
+			ret += printContainsBlockedThread();
+			ret += "\n";
+			ret += printContainsThread();
+			ret += "\n";
+			ret += printAdviceForThreadWithRunnable();
+			ret += "\n";
+			ret += printAdviceForEndThread();
+			ret += "\n";
+			ret += printAdviceForEndRunnable();
+			ret += "\n";
+			ret += printAdviceForMainEnd();
+			ret += "\n";
+			ret += printAdviceForNewThread();
+			ret += "\n";
+		}
+		else {
+			ret += printMethodCallForNewThread();
+			ret += "\n";
+		}
 		return ret;
 	}
 	
