@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# The below incantation sets SRC_ROOT to be the canonicalized directory of this script
+SRC_ROOT=$(
+cd -P -- "$(dirname -- "$0")" &&
+printf '%s\n' "$(pwd -P)/$(basename -- "$0")"
+) || exit 1
+SRC_ROOT=`dirname "$SRC_ROOT"`
+
+# Move up into the actual source root directory
+SRC_ROOT="$SRC_ROOT/../"
+
 # Get all parameters except -translate2RV
 parameters=$@
 rvpara=""
@@ -30,7 +40,7 @@ do
         filename="${line%.*}"
         ajname="${filename%RuntimeMonitor}"
         #echo ${ajname}
-        java -cp ../build/ javamop.util.AJFileCombiner ${filename}.java ${ajname}MonitorAspect.aj
+        java -cp "$SRC_ROOT/build" javamop.util.AJFileCombiner ${filename}.java ${ajname}MonitorAspect.aj
         rm ${filename}.java
     fi
 done
