@@ -1,0 +1,17 @@
+#!/bin/bash
+
+dir=$1
+name=${dir##*/}
+sourcedir=${dir}/${name}_1
+cd ${sourcedir}
+cp ../${name}.mop ./
+rvmop ${name}.mop
+#java -cp /home/qingzhou/projects/rv-monitor/bin rvmonitor.Main ${name}.rvm
+#/home/qingzhou/projects/rv-monitor/bin/rv-monitor ${name}.rvm
+#java -cp /home/qingzhou/projects/javamop/build/ javamop.util.AJFileCombiner ${name}RuntimeMonitor.java ${name}MonitorAspect.aj
+#javac -cp /home/qingzhou/projects/rv-monitor/lib/rvmonitorrt.jar ${name}RVRuntimeMonitor.java -d .
+LIBJARS=; for j in `find /home/qingzhou/projects/rv-monitor/lib/ -name "*.jar"`; do LIBJARS=$LIBJARS:$j; done
+#echo $LIBJARS
+ajc -1.6 -cp "$CLASSPATH":${LIBJARS}:.:./mop/ -d . ${name}_1.java ${name}MonitorAspect.aj
+java -cp "${CLASSPATH}":/home/qingzhou/projects/rv-monitor/lib/rvmonitorrt.jar:"${LIBJARS}" ${name}_1
+cd -
