@@ -36,6 +36,9 @@ public class EventDefinitionExt extends ExtNode {
 
 	// will be modified by JavaMOPSpec when creation events are not specified
 	boolean startEvent = false;
+	
+	// similar to startEvent, but won't be modified
+	boolean creationEvent = false;
 
 	String condition;
 	String threadVar;
@@ -75,6 +78,7 @@ public class EventDefinitionExt extends ExtNode {
 			this.pointCut = parsePointCutAsRaw(pointCutStr);
 		
 		this.startEvent = startEvent;
+		this.creationEvent = startEvent;
 		this.mopParameters = new MOPParameters();
 		this.mopParameters.addAll(this.parameters);
 		this.mopParameters.addAll(this.retVal);
@@ -95,7 +99,8 @@ public class EventDefinitionExt extends ExtNode {
 		this.hasThrowing = e.getHasThrowing();
 		this.throwVal = e.getThrowVal();
 		this.pointCut = e.getPointCut();
-		this.startEvent = e.getStartEvent();
+		this.startEvent = e.isStartEvent();
+		this.creationEvent = e.isCreationEvent();
 		this.mopParameters = e.getMOPParameters();
 		this.condition = e.getCondition();
 		this.threadVar = e.getThreadVar();
@@ -265,6 +270,10 @@ public class EventDefinitionExt extends ExtNode {
 	public boolean isStartEvent() {
 		return this.startEvent;
 	}
+	
+	public boolean isCreationEvent() {
+		return this.creationEvent;
+	}
 
 	public boolean isEndProgram() {
 		return this.endProgram;
@@ -334,10 +343,6 @@ public class EventDefinitionExt extends ExtNode {
 
 	public PointCut getPointCut() {
 		return this.pointCut;
-	}
-
-	public boolean getStartEvent() {
-		return this.startEvent;
 	}
 
 	public String getEndObjectId() {

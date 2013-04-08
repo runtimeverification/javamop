@@ -55,7 +55,7 @@ public class EventDefinition extends Node {
 	MOPParameters mopParametersOnSpec; // will be defined in JavaMOPSpec
 
 	public EventDefinition(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
-			boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent)
+			boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent)
 			throws javamop.parser.main_parser.ParseException {
 		super(line, column);
 		this.id = id;
@@ -71,7 +71,7 @@ public class EventDefinition extends Node {
 		if(pointCutStr != null) 
 			this.pointCut = parsePointCut(pointCutStr);
 		this.startEvent = startEvent;
-		this.creationEvent = startEvent;
+		this.creationEvent = creationEvent;
 		this.mopParameters = new MOPParameters();
 		this.mopParameters.addAll(this.parameters);
 		this.mopParameters.addAll(this.retVal);
