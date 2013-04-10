@@ -21,6 +21,7 @@ public class ThreadStatusMonitor extends EndThread{
 	private boolean hasDeadlockHandler = false;
 	
 	public ThreadStatusMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
+		this.mopSpec = mopSpec;
 		this.monitorClass = combinedAspect.monitors.get(mopSpec);
 		this.monitorName = monitorClass.getOutermostName();
 		this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadToRunnable");
@@ -218,7 +219,21 @@ public class ThreadStatusMonitor extends EndThread{
 			ret += Main.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
 		}
 		else {
-			ret += monitorName + "RuntimeMonitor.startDeadlockDetection();\n";
+			ret += this.mopSpec.getName() + "RuntimeMonitor.startDeadlockDetection();\n";
+		}
+		ret += "}\n";
+		return ret;
+	}
+	
+	public String printMethodCallForMainStart() {
+		String ret = "";
+		ret += "before (): " + "(execution(void *.main(..)) )";
+		ret += " && " + commonPointcut + "() {\n";
+		if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
+			ret += Main.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
+		}
+		else {
+			ret += this.mopSpec.getName() + "RuntimeMonitor.startDeadlockDetection();\n";
 		}
 		ret += "}\n";
 		return ret;
@@ -245,6 +260,7 @@ public class ThreadStatusMonitor extends EndThread{
 			ret += "\n";
 		}
 		else {
+			ret += printMethodCallForMainStart();
 			ret += printMethodCallForNewThread();
 			ret += "\n";
 		}
