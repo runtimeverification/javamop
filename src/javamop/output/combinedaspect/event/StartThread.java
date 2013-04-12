@@ -89,7 +89,8 @@ public class StartThread {
 		}
 
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event);
+			ret += "(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}
@@ -119,7 +120,8 @@ public class StartThread {
 		}
 		
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event);
+			ret += "(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}
@@ -146,7 +148,8 @@ public class StartThread {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 		if(Main.translate2RV) {
-			ret += mopSpec.getName() + "RuntimeMonitor." + event.getUniqueId() + "Event(";
+			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event);
+			ret += "(";
 			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 				ret += event.getThreadVar();
 			}

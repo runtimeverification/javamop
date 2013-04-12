@@ -64,8 +64,8 @@ public class EndProgram {
 			}
 
 			if (Main.translate2RV) {
-				ret += eventBody.specName + "RuntimeMonitor." + eventBody.event.getUniqueId() + "Event(";
-				ret += ");\n";
+				ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event);
+				ret += "();\n";
 			} else {
 				ret += eventBody.toStringForShutdownHook();
 			}

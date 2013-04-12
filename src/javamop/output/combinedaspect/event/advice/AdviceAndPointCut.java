@@ -13,6 +13,7 @@ import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatManager;
 import javamop.output.combinedaspect.MOPStatistics;
+import javamop.output.combinedaspect.event.EventManager;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -435,13 +436,9 @@ public class AdviceAndPointCut {
 							+ "_count");
 					ret += "if (" + countCond + ") {\n";
 				}
-				
-				if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
-					ret += Main.aspectname + "RuntimeMonitor." + advice.mopSpec.getName() + "_" + event.getId() + "Event(";
-				}
-				else {
-					ret += specName + "RuntimeMonitor." + event.getId() + "Event(";
-				}
+
+				ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event);
+				ret += "(";
 				
 				// Parameters
 				// Original (including threadVar)

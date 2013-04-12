@@ -198,4 +198,30 @@ public class EventManager {
 		return result;
 	}
 
+	public static class EventMethodHelper {
+		public static String methodName(String enclosingspec, EventDefinition evt) {
+			boolean mangle = false;
+			if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0)
+				mangle = true;
+			
+			StringBuilder s = new StringBuilder();
+			if (mangle)
+				s.append(Main.aspectname);
+			else
+				s.append(enclosingspec);
+			s.append("RuntimeMonitor");
+			s.append('.');
+			if (mangle) {
+				s.append(enclosingspec);
+				s.append('_');
+			}
+			s.append(evt.getId());
+			s.append("Event");
+			return s.toString();
+		}
+
+		public static String methodName(JavaMOPSpec enclosing, EventDefinition evt) {
+			return methodName(enclosing.getName(), evt);
+		}
+	}
 }
