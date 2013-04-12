@@ -19,7 +19,14 @@ public class RVDumpVisitor extends DumpVisitor {
 			printer.print("creation ");
 		}
 		printer.print("event " + e.getId());
-		MOPParameters parameters = e.getParameters();
+		// linjus: I fixed this.
+		// The following is wrong. First of all, it is unnatural that a dump visitor has a side-effect.
+		// Second, modifying 'parameters' is fine when .rvm files are generated, because this is the first
+		// step. However, during the second pass, for creating .aj files, these added parameters will result
+		// in duplicated parameters.
+//		MOPParameters parameters = e.getParameters();
+		MOPParameters parameters = new MOPParameters(e.getParameters());
+		
 		if (e.hasReturning()) {
 			parameters.addAll(e.getRetVal().toList());
 		}
