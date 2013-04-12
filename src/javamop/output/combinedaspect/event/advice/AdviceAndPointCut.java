@@ -474,6 +474,17 @@ public class AdviceAndPointCut {
 					}
 				}
 				
+				// __STATICSIG should be passed as an argument because rv-monitor cannot infer
+				if (event.has__STATICSIG()) {
+					String staticsig = "thisJoinPoint";
+					if (original == null || original.length() == 0)
+					{
+						ret += staticsig;
+					} else {
+						ret += ", " + staticsig;
+					}
+				}
+				
 				ret += ");\n";
 
 				if (countCond != null && countCond.length() != 0) {

@@ -423,6 +423,24 @@ public class EventDefinition extends Node {
 		cachedHas__LOC = new Boolean(false);
 		return false;
 	}
+	
+	private Boolean cachedHas__STATICSIG = null;
+
+	public boolean has__STATICSIG() {
+		if (cachedHas__STATICSIG != null)
+			return cachedHas__STATICSIG.booleanValue();
+
+		if (this.getAction() != null) {
+			String eventAction = this.getAction().toString();
+			// Nice! (This was copied from the JavaMOPSpec class.)
+			if (eventAction.indexOf("__STATICSIG") != -1){
+				cachedHas__STATICSIG = new Boolean(true);
+				return true;
+			}
+		}
+		cachedHas__STATICSIG = new Boolean(false);
+		return false;
+	}
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
