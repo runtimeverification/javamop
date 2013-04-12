@@ -437,7 +437,7 @@ public class AdviceAndPointCut {
 				}
 				
 				if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
-					ret += Main.aspectname + "RuntimeMonitor." + event.getId() + "Event(";
+					ret += Main.aspectname + "RuntimeMonitor." + specName + "_" + event.getId() + "Event(";
 				}
 				else {
 					ret += specName + "RuntimeMonitor." + event.getId() + "Event(";
