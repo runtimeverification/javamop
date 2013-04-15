@@ -42,7 +42,7 @@ public class RVDumpVisitor extends DumpVisitor {
 		if (e.getCondition() != null && e.getCondition().length() > 0) {
 			printer.print("{\n");
 			printer.print("if ( ! (" + e.getCondition() + ") ) {\n");
-			printer.print("return;\n");
+			printer.print("return false;\n");
 			printer.print("}\n");
 		}
 		
