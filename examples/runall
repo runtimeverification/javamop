@@ -22,5 +22,4 @@
 
 ./run MOPSyntax/Creation
 ./run EndProgram/FileClose
-# Handle endProgram, endThread, endObject, startThread
 # Think about sth similar to handle countCond
