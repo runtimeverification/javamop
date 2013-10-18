@@ -119,7 +119,7 @@ public class AspectJCode {
 	public String toRVString() {
 		String ret = "";
 		ret += packageDecl;
-		ret += imports.toString().replaceAll("javamoprt", "rvmonitorrt");
+		ret += imports.toString().replaceAll("import javamoprt.*", "");
 		
 		ret += "\n";
 		

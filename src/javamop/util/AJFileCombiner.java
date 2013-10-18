@@ -57,8 +57,8 @@ public class AJFileCombiner {
 					pack = line;
 				}
 				else {
-					if (line.contains("public class")) {
-						line = line.replace("public class", "class");
+					if (line.contains("public final class")) {
+						line = line.replace("public final class", "class");
 					}
 					javaCode.append(line);
 					javaCode.append("\n");

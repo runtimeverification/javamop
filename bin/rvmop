@@ -12,25 +12,63 @@ SRC_ROOT="$SRC_ROOT/../"
 
 # Get all parameters except -translate2RV
 parameters=$@
+
+# Handle "-d" parameter
+seen=false
+dest=""
+for var in ${parameters}
+do 
+   if [[ "$var" == "-d" ]]
+   then
+      seen=true
+      continue
+   fi
+   if $seen;
+   then
+       dest=$var
+       break
+   fi      
+done
+
 rvpara=""
 rvmfiles=""
 javamop ${parameters} -translate2RV
+seen=false
 for var in ${parameters}
 do
     #replace.mop with .rvm
+    if [[ "$var" == "-d" ]]
+    then
+        seen=true
+        continue
+    fi
+    if $seen;
+    then
+        seen=false
+        continue
+    fi
     extension="${var##*.}"
     if [[ "$extension" == "mop" ]]
     then
-        filename="${var%.*}"
-        rvpara=${rvpara}" "${filename}.rvm
-        rvmfiles=${rvmfiles}" "${filename}.rvm
+        if [[ "$dest" != "" ]]
+        then
+            filename=`basename $var`
+            filename="${filename%.*}.rvm"
+        else
+            filename="${var%.*}.rvm"
+        fi
+        rvpara=${rvpara}" "${filename}
+        rvmfiles=${rvmfiles}" "${filename}
     else  
         rvpara=${rvpara}" "${var}
     fi
 done
-#echo ${rvpara}
 
 # rv-monitor to generate java files and combine with aj
+if [[ "$dest" != "" ]]
+then
+    cd ${dest}
+fi
 rv-monitor ${rvpara}| while read line;
 do
     extension="${line##*.}"
@@ -47,3 +85,7 @@ done
 
 # Remove generated rvm files.
 rm ${rvmfiles}
+if [[ "$dest" != "" ]]
+then
+    cd -
+fi
