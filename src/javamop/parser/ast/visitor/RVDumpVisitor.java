@@ -17,6 +17,8 @@ public class RVDumpVisitor extends DumpVisitor {
 	public void visit(EventDefinition e, Object arg) {
 		if (e.isCreationEvent()) {
 			printer.print("creation ");
+		} else if (e.isBlockingEvent()) {
+			printer.print("blocking ");
 		}
 		printer.print("event " + e.getId());
 		// linjus: I fixed this.

@@ -200,7 +200,7 @@ public class EventManager {
 	}
 
 	public static class EventMethodHelper {
-		public static String methodName(String enclosingspec, EventDefinition evt) {
+		public static String methodName(String enclosingspec, EventDefinition event) {
 			boolean mangle = false;
 			if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0)
 				mangle = true;
@@ -216,7 +216,10 @@ public class EventManager {
 				s.append(enclosingspec);
 				s.append('_');
 			}
-			s.append(evt.getId());
+			s.append(event.getId());
+			if (event.isBlockingEvent()) {
+				s.append("Blocking");
+			}
 			s.append("Event");
 			return s.toString();
 		}
