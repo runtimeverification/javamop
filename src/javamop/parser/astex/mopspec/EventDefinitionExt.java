@@ -39,6 +39,8 @@ public class EventDefinitionExt extends ExtNode {
 	
 	// similar to startEvent, but won't be modified
 	boolean creationEvent = false;
+	
+	boolean blockingEvent = false;
 
 	String condition;
 	String threadVar;
@@ -60,7 +62,8 @@ public class EventDefinitionExt extends ExtNode {
 	private Boolean cachedHas__LOC = null;
 
 	public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
-			List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent)
+			List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
+			boolean isBlockingEvent)
 			throws javamop.parser.main_parser.ParseException {
 		super(line, column);
 		this.id = id;
@@ -84,6 +87,7 @@ public class EventDefinitionExt extends ExtNode {
 		this.mopParameters.addAll(this.retVal);
 		this.mopParameters.addAll(this.throwVal);
 		this.abstractEvent = abstractEvent;
+		this.blockingEvent = isBlockingEvent;
 	}
 
 	public EventDefinitionExt(int line, int column, EventDefinitionExt e) {
@@ -101,6 +105,7 @@ public class EventDefinitionExt extends ExtNode {
 		this.pointCut = e.getPointCut();
 		this.startEvent = e.isStartEvent();
 		this.creationEvent = e.isCreationEvent();
+		this.blockingEvent = e.isBlockingEvent();
 		this.mopParameters = e.getMOPParameters();
 		this.condition = e.getCondition();
 		this.threadVar = e.getThreadVar();
@@ -269,6 +274,10 @@ public class EventDefinitionExt extends ExtNode {
 
 	public boolean isStartEvent() {
 		return this.startEvent;
+	}
+	
+	public boolean isBlockingEvent() {
+		return this.blockingEvent;
 	}
 	
 	public boolean isCreationEvent() {

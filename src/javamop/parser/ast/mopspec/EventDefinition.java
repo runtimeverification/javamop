@@ -35,6 +35,8 @@ public class EventDefinition extends Node {
 	
 	// similar to startEvent, but won't be modified
 	boolean creationEvent = false;
+	
+	boolean blockingEvent = false;
 
 	String condition;
 	String threadVar;
@@ -55,7 +57,8 @@ public class EventDefinition extends Node {
 	MOPParameters mopParametersOnSpec; // will be defined in JavaMOPSpec
 
 	public EventDefinition(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
-			boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent)
+			boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent,
+			boolean blockingEvent)
 			throws javamop.parser.main_parser.ParseException {
 		super(line, column);
 		this.id = id;
@@ -76,6 +79,7 @@ public class EventDefinition extends Node {
 		this.mopParameters.addAll(this.parameters);
 		this.mopParameters.addAll(this.retVal);
 		this.mopParameters.addAll(this.throwVal);
+		this.blockingEvent = blockingEvent;
 	}
 
 	private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
@@ -366,6 +370,10 @@ public class EventDefinition extends Node {
 	
 	public boolean isStartEvent() {
 		return this.startEvent;
+	}
+	
+	public boolean isBlockingEvent() {
+		return this.blockingEvent;
 	}
 	
 	public boolean isCreationEvent() {

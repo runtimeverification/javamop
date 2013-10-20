@@ -324,6 +324,7 @@ TOKEN :
 TOKEN :
 {
 	<EVENT: "event">
+|	<BLOCKINGEVENT: "blockingEvent">
 | 	<CREATION: "creation">
 |	<UNSYNC: "unsynchronized">
 |	<DECENT: "decentralized">
@@ -1399,6 +1400,7 @@ EventDefinitionExt Event():
 	List<MOPParameter> throwVal = null;
 	boolean startEvent = false;
 	boolean abstractEvent = false;
+	boolean blockingEvent = false;
 }
 {
    (
@@ -1419,7 +1421,11 @@ EventDefinitionExt Event():
    | 
     ( //old syntax of events: Soha
       ["creation" {startEvent = true;}]
+      (
 	"event" {line = token.beginLine; column = token.beginColumn;}
+        |
+        "blockingEvent"  {line = token.beginLine; column = token.beginColumn; blockingEvent = true;}
+      )
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
 	(
@@ -1434,7 +1440,7 @@ EventDefinitionExt Event():
 	":" {pointCut = getStringUntil('{');} 
 	(block = Block() | ";")))
 	
-	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning, retVal, hasThrowing, throwVal, startEvent, abstractEvent); } 
+	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning, retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent); } 
 }
 
 String Position():
