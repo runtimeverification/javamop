@@ -324,7 +324,7 @@ TOKEN :
 TOKEN :
 {
 	<EVENT: "event">
-|	<BLOCKINGEVENT: "blockingEvent">
+|	<BLOCKINGEVENT: "blocking">
 | 	<CREATION: "creation">
 |	<UNSYNC: "unsynchronized">
 |	<DECENT: "decentralized">
@@ -1420,12 +1420,9 @@ EventDefinitionExt Event():
 	
    | 
     ( //old syntax of events: Soha
-      ["creation" {startEvent = true;}]
-      (
+      ["creation" {startEvent = true;}
+      | "blocking"  {blockingEvent = true;}]
 	"event" {line = token.beginLine; column = token.beginColumn;}
-        |
-        "blockingEvent"  {line = token.beginLine; column = token.beginColumn; blockingEvent = true;}
-      )
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
 	(

@@ -392,7 +392,7 @@ public interface JavaMOPParserConstants {
     "\"volatile\"",
     "\"while\"",
     "\"event\"",
-    "\"blockingEvent\"",
+    "\"blocking\"",
     "\"creation\"",
     "\"unsynchronized\"",
     "\"decentralized\"",
