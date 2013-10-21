@@ -217,9 +217,6 @@ public class EventManager {
 				s.append('_');
 			}
 			s.append(event.getId());
-			if (event.isBlockingEvent()) {
-				s.append("Blocking");
-			}
 			s.append("Event");
 			return s.toString();
 		}
