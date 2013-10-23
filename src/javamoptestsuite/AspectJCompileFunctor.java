@@ -29,9 +29,9 @@ public class AspectJCompileFunctor implements TestCaseFunctor {
 
 				String javamoprtLibPath = null;
 				if (Main.isJarFile)
-					javamoprtLibPath = new File(Main.jarFilePath).getParent() + "\\javamoprt.jar";
+					javamoprtLibPath = new File(Main.jarFilePath).getParent() + "\\rt.jar";
 				else
-					javamoprtLibPath = Main.javamopDir + "\\lib\\javamoprt.jar";
+					javamoprtLibPath = Main.javamopDir + "\\lib\\rt.jar";
 
 				
 				String origDirPath = testCase.basepath + File.separator + testCase.path + File.separator + testCaseProg.dirName;
@@ -65,9 +65,9 @@ public class AspectJCompileFunctor implements TestCaseFunctor {
 
 				String javamoprtLibPath = null;
 				if (Main.isJarFile)
-					javamoprtLibPath = new File(Main.jarFilePath).getParent() + "/javamoprt.jar";
+					javamoprtLibPath = new File(Main.jarFilePath).getParent() + "/rt.jar";
 				else
-					javamoprtLibPath = Main.javamopDir + "/lib/javamoprt.jar";
+					javamoprtLibPath = Main.javamopDir + "/lib/rt.jar";
 
 				String origDirPath = testCase.basepath + File.separator + testCase.path + File.separator + testCaseProg.dirName;
 				String monitoredDirPath = testCase.basepath + File.separator + testCase.path + File.separator + testCaseProg.dirName

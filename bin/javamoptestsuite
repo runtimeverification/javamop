@@ -10,5 +10,5 @@ SRC_ROOT=`dirname "$SRC_ROOT"`
 # Move up into the actual source root directory
 SRC_ROOT="$SRC_ROOT/../"
 
-java -cp "$SRC_ROOT/lib/javamoptestsuite.jar:$SRC_ROOT/lib/javamop.jar:$SRC_ROOT/lib/logicrepository.jar:$SRC_ROOT/lib/*.jar" javamoptestsuite.Main -local "$SRC_ROOT/examples" $@
+java -cp "$SRC_ROOT/lib/rvmonitor.jar":"$SRC_ROOT/lib/rt.jar":"$SRC_ROOT/lib/javamoptestsuite.jar:$SRC_ROOT/lib/javamop.jar:$SRC_ROOT/lib/logicrepository.jar:$SRC_ROOT/lib/*.jar" javamoptestsuite.Main -local "$SRC_ROOT/examples" $@
 

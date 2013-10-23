@@ -5,26 +5,17 @@
 
 package javamop;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javamop.logicclient.LogicRepositoryConnector;
-import javamop.logicpluginshells.LogicPluginShellFactory;
-import javamop.logicpluginshells.LogicPluginShellResult;
 import javamop.output.AspectJCode;
-import javamop.output.JavaLibCode;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
-import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.visitor.CollectUserVarVisitor;
-import javamop.parser.logicrepositorysyntax.LogicRepositoryType;
-import javamop.parser.main_parser.ParseException;
 import javamop.util.Tool;
-import javamop.Main;
 
 public class MOPProcessor {
 	public static boolean verbose = false;
@@ -65,7 +56,7 @@ public class MOPProcessor {
 			}
 		}
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-			if(Main.translate2RV) {
+			if(JavaMOPMain.translate2RV) {
 				rvresult += mopSpec.toRVString();
 			}
 		}
@@ -74,33 +65,11 @@ public class MOPProcessor {
 	}
 
 	public String process(MOPSpecFile mopSpecFile) throws MOPException {
-		String result;
+		String result = "";
 		
 		// register all user variables to MOPNameSpace to avoid conflicts
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs())
 			registerUserVar(mopSpec);
-
-		// Connect to Logic Repository
-		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-			
-			for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
-				// connect to the logic repository and get the logic output
-				LogicRepositoryType logicOutput = LogicRepositoryConnector.process(mopSpec, prop);
-				// get the monitor from the logic shell
-				LogicPluginShellResult logicShellOutput = LogicPluginShellFactory.process(logicOutput, mopSpec.getEventStr());
-				prop.setLogicShellOutput(logicShellOutput);
-				
-				if(logicOutput.getMessage().contains("versioned stack")){
-					prop.setVersionedStack();
-				}
-
-				if (verbose) {
-					System.out.println("== result from logic shell ==");
-					System.out.print(logicShellOutput);
-					System.out.println("");
-				}
-			}
-		}
 
 		// Error Checker
 		for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
@@ -109,13 +78,8 @@ public class MOPProcessor {
 
 		// Generate output code
 		
-		if (Main.translate2RV) {
+		if (JavaMOPMain.translate2RV) {
 			result = (new AspectJCode(name, mopSpecFile)).toRVString();
-		} else {
-			if (Main.toJavaLib)
-				result = (new JavaLibCode(name, mopSpecFile)).toString();
-			else
-				result = (new AspectJCode(name, mopSpecFile)).toString();
 		}
 
 		// Do indentation

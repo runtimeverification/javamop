@@ -7,14 +7,12 @@ import java.util.List;
 import javamop.MOPException;
 import javamop.MOPNameSpace;
 import javamop.parser.ast.Node;
+import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
-import javamop.parser.astex.mopspec.EventDefinitionExt;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.main_parser.ParseException;
 
 ///TODO:  All this has__ methods are carbon copies with the names changed.
 // This should really be refactored.

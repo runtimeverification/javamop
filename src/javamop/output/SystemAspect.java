@@ -1,6 +1,6 @@
 package javamop.output;
 
-import javamop.Main;
+import javamop.JavaMOPMain;
 
 public class SystemAspect {
 	String name;
@@ -32,7 +32,7 @@ public class SystemAspect {
 		
 		
 		ret += "pointcut sysbegin() : execution(* *(..)) && ";
-		if(Main.dacapo){
+		if(JavaMOPMain.dacapo){
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
 		} else {
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
@@ -44,7 +44,7 @@ public class SystemAspect {
 		
 		ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
 		ret += "pointcut sysend() : execution(* *(..)) && ";
-		if(Main.dacapo){
+		if(JavaMOPMain.dacapo){
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
 		} else {
 			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";

@@ -32,7 +32,7 @@ public class JavaMOPSpecExt extends ExtNode {
 	public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
 			List<BodyDeclaration> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
 		super(line, column);
-    this.packageDeclaration = packageDeclaration;
+		this.packageDeclaration = packagedeclaration;	
 		this.modifiers = modifiers;
 		this.name = name;
 		this.parameters = new MOPParameters(parameters);
@@ -227,7 +227,6 @@ public class JavaMOPSpecExt extends ExtNode {
 	}
 
 	private Boolean cachedHas__LOC = null;
-	private Boolean cachedHas__DEFAULT_MESSAGE = null;
 
 	public boolean has__LOC() {
 		if (cachedHas__LOC != null)

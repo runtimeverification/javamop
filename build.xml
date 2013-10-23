@@ -22,7 +22,6 @@
 
         <!-- redefined these if you change the directory names -->
         <property name="javamop" value="javamop" />
-        <property name="lr" value="logicrepository" />
         <property name="test" value="javamoptestsuite" />
         <property name="javamoprt" value="javamoprt" />
 
@@ -38,8 +37,7 @@
                 <delete verbose="true">
                         <fileset dir="${lib}">
                                 <include name="${javamop}.jar" />
-                                <include name="${lr}.jar" />
-                                <include name="${test}.jr" />
+                                <include name="${test}.jar" />
                         </fileset>
                 </delete>
         </target>
@@ -47,6 +45,10 @@
         <target name="compile" depends="init">
                 <javac srcdir="${src}" destdir="${build}" debug="off" optimize="on" includeantruntime="false">
                         <exclude name="**/PTLTLPlugin.java" />
+                        <classpath>
+                          <pathelement location="lib/rvmonitor.jar"/>
+                          <pathelement location="lib/rt.jar"/>
+                        </classpath>
                 </javac>
                 <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" deprecation="yes" force="false">
                         <include name="**/*.scala" />
@@ -67,23 +69,7 @@
 
         <target name="jar" depends="compile">
                 <jar destfile="${lib}/${javamop}.jar" basedir="${build}" includes="${javamop}/**" />
-                <jar destfile="${lib}/${javamoprt}.jar" basedir="${build}" includes="${javamoprt}/**" />
-                <jar destfile="${lib}/${lr}.jar" basedir="${build}">
-                        <include name="${lr}/*" />
-                        <include name="${lr}/parser/**" />
-                        <include name="${lr}/plugins/*.class" />
-                </jar>
                 <jar destfile="${lib}/${test}.jar" basedir="${build}" includes="${test}/**" />
-
-                <jar destfile="${plugins}/CFG.jar" basedir="${build}" includes="${lr}/plugins/cfg/**" />
-                <jar destfile="${plugins}/ERE.jar" basedir="${build}" includes="${lr}/plugins/ere/**" />
-                <jar destfile="${plugins}/FSM.jar" basedir="${build}" includes="${lr}/plugins/fsm/**" />
-                <jar destfile="${plugins}/LTL.jar" basedir="${build}" includes="${lr}/plugins/ltl/**" />
-                <jar destfile="${plugins}/PTLTL.jar" basedir="${build}" includes="${lr}/plugins/ptltl/**" />
-                <jar destfile="${plugins}/PTCARET.jar" basedir="${build}" includes="${lr}/plugins/ptcaret/**" />
-                <jar destfile="${plugins}/PDA.jar" basedir="${build}" includes="${lr}/plugins/pda/**" />
-                <jar destfile="${plugins}/SRS.jar" basedir="${build}" includes="${lr}/plugins/srs/**" />
-                <jar destfile="${plugins}/PO.jar" basedir="${build}" includes="${lr}/plugins/po/**" />
         </target>
 
         <!---   

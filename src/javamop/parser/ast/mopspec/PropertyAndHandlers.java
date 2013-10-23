@@ -5,7 +5,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javamop.logicpluginshells.LogicPluginShellResult;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.visitor.CollectMOPVarVisitor;
@@ -67,16 +66,6 @@ public class PropertyAndHandlers extends Node {
 	
 	public int getPropertyId(){
 		return propertyId;
-	}
-	
-	public void setLogicShellOutput(LogicPluginShellResult logicShellOutput) {
-		this.logicResult = logicShellOutput.properties;
-		
-		if(this.logicResult == null)
-			return;
-		
-		parseMonitoredEvent(eventMonitoringCodes, this.logicResult.getProperty("monitored events"));
-		parseMonitoredEvent(aftereventMonitoringCodes, this.logicResult.getProperty("after monitored events"));
 	}
 	
 	public void parseMonitoredEvent(HashMap<String, String> codes, String eventStr){

@@ -1,29 +1,16 @@
 package javamop.output.combinedaspect.event;
 
-import java.util.HashMap;
-
 import javamop.MOPException;
-import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
-import javamop.output.combinedaspect.event.advice.GeneralAdviceBody;
-import javamop.output.combinedaspect.indexingtree.IndexingDecl;
-import javamop.output.combinedaspect.indexingtree.IndexingTree;
-import javamop.output.monitor.SuffixMonitor;
-import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
-import javamop.parser.ast.mopspec.MOPParameters;
 
 public class StartThread {
 	JavaMOPSpec mopSpec;
 	EventDefinition event;
-	MonitorSet monitorSet;
-	SuffixMonitor monitorClass;
-	IndexingDecl indexingDecl;
-	HashMap<MOPParameters, IndexingTree> indexingTrees;
 	GlobalLock globalLock;
 
 	AdviceBody eventBody;
@@ -39,15 +26,11 @@ public class StartThread {
 
 		this.mopSpec = mopSpec;
 		this.event = event;
-		this.monitorSet = combinedAspect.monitorSets.get(mopSpec);
-		this.monitorClass = combinedAspect.monitors.get(mopSpec);
-		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
-		this.indexingTrees = indexingDecl.getIndexingTrees();
 		this.globalLock = combinedAspect.lockManager.getLock();
 		this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_ThreadToRunnable");
 		this.mainThread = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_MainThread");
 
-		this.eventBody = new GeneralAdviceBody(mopSpec, event, combinedAspect);
+		this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
 	}
 
 	public String printDataStructures() {
@@ -88,16 +71,13 @@ public class StartThread {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 
-		if(Main.translate2RV) {
-			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event);
-			ret += "(";
-			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
-				ret += event.getThreadVar();
-			}
-			ret += ");\n";
-		} else {
-			ret += eventBody;
+		ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+		ret += "(";
+		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+			ret += event.getThreadVar();
 		}
+		ret += ");\n";
+
 		ret += "}\n";
 
 		ret += "}\n";
@@ -119,16 +99,13 @@ public class StartThread {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
 		
-		if(Main.translate2RV) {
-			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event);
-			ret += "(";
-			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
-				ret += event.getThreadVar();
-			}
-			ret += ");\n";
-		} else {
-			ret += eventBody;
+		ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+		ret += "(";
+		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+			ret += event.getThreadVar();
 		}
+		ret += ");\n";
+
 		ret += "}\n";
 		ret += globalLock.getName() + ".unlock();\n";
 
@@ -147,16 +124,14 @@ public class StartThread {
 		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
 			ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
 		}
-		if(Main.translate2RV) {
-			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event);
-			ret += "(";
-			if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
-				ret += event.getThreadVar();
-			}
-			ret += ");\n";
-		} else {
-			ret += eventBody;
+
+		ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+		ret += "(";
+		if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
+			ret += event.getThreadVar();
 		}
+		ret += ");\n";
+
 		ret += "}\n";
 		ret += "}\n";
 		ret += "\n";

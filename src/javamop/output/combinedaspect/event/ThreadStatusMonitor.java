@@ -2,7 +2,7 @@ package javamop.output.combinedaspect.event;
 
 import java.util.List;
 
-import javamop.Main;
+import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
@@ -22,8 +22,6 @@ public class ThreadStatusMonitor extends EndThread{
 	
 	public ThreadStatusMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
 		this.mopSpec = mopSpec;
-		this.monitorClass = combinedAspect.monitors.get(mopSpec);
-		this.monitorName = monitorClass.getOutermostName();
 		this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadToRunnable");
 		this.mainThread = new MOPVariable(mopSpec.getName() + "_" + eventName + "_MainThread");
 		this.threadSet = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadSet");
@@ -215,8 +213,8 @@ public class ThreadStatusMonitor extends EndThread{
 		ret += "call(void Thread+.start()) && target(t))";
 		ret += " && " + commonPointcut + "() {\n";
 		
-		if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
-			ret += Main.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
+		if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && JavaMOPMain.aspectname.length() > 0) {
+			ret += JavaMOPMain.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
 		}
 		else {
 			ret += this.mopSpec.getName() + "RuntimeMonitor.startDeadlockDetection();\n";
@@ -229,8 +227,8 @@ public class ThreadStatusMonitor extends EndThread{
 		String ret = "";
 		ret += "before (): " + "(execution(void *.main(..)) )";
 		ret += " && " + commonPointcut + "() {\n";
-		if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0) {
-			ret += Main.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
+		if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && JavaMOPMain.aspectname.length() > 0) {
+			ret += JavaMOPMain.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
 		}
 		else {
 			ret += this.mopSpec.getName() + "RuntimeMonitor.startDeadlockDetection();\n";
@@ -241,7 +239,7 @@ public class ThreadStatusMonitor extends EndThread{
 	
 	public String printAdvices() {
 		String ret = "";
-		if (!Main.translate2RV) {
+		if (!JavaMOPMain.translate2RV) {
 			ret += printDataStructures();
 			ret += "\n";
 			ret += printContainsBlockedThread();

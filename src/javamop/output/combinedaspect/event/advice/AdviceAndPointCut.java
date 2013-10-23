@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javamop.MOPException;
-import javamop.Main;
+import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.ActivatorManager;
 import javamop.output.combinedaspect.CombinedAspect;
@@ -31,6 +31,7 @@ public class AdviceAndPointCut {
 	public PointCut pointcut;
 	MOPParameters parameters;
 	String specName;
+	String fileName;
 	
 	boolean hasThisJoinPoint;
 	public boolean isAround = false;
@@ -62,6 +63,7 @@ public class AdviceAndPointCut {
 		this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" + event.getUniqueId());
 		this.parameters = event.getParametersWithoutThreadVar();
 		this.inlineParameters = event.getMOPParametersWithoutThreadVar();
+		this.fileName = combinedAspect.getFileName();
 
 		if (event.getPos().equals("around")) {
 			isAround = true;
@@ -81,12 +83,12 @@ public class AdviceAndPointCut {
 
 		this.statManager = combinedAspect.statManager;
 		
-		this.activatorsManager = combinedAspect.activatorsManager;
+		//this.activatorsManager = combinedAspect.activatorsManager;
 		
 		this.globalLock = combinedAspect.lockManager.getLock();
 		this.isSync = mopSpec.isSync();
 
-		this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
+		this.advices.put(event, new AdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
 		if (event.getCountCond() != null && event.getCountCond().length() != 0) {
@@ -138,7 +140,7 @@ public class AdviceAndPointCut {
 		}
 
 		// add an advice body.
-		this.advices.put(event, new GeneralAdviceBody(mopSpec, event, combinedAspect));
+		this.advices.put(event, new AdviceBody(mopSpec, event, combinedAspect));
 		
 		this.events.add(event);
 		if (event.getCountCond() != null && event.getCountCond().length() != 0) {
@@ -154,7 +156,7 @@ public class AdviceAndPointCut {
 	protected String adviceBody(){
 		String ret = "";
 		
-		if(Main.empty_advicebody){
+		if(JavaMOPMain.empty_advicebody){
 			ret += "System.out.print(\"\");\n";
 
 			Iterator<EventDefinition> iter;
@@ -221,7 +223,7 @@ public class AdviceAndPointCut {
 					}
 				}
 				
-				if (Main.statistics) {
+				if (JavaMOPMain.statistics) {
 					MOPStatistics stat = this.statManager.getStat(advice.mopSpec);
 					
 					ret += stat.eventInc(event.getId());
@@ -268,7 +270,7 @@ public class AdviceAndPointCut {
 		String ret = "";
 		String pointcutStr = pointcut.toString();
 
-		if(Main.inline && !isAround){
+		if(JavaMOPMain.inline && !isAround){
 			ret += "void " + inlineFuncName + "(" + inlineParameters.parameterDeclString();
 			if(hasThisJoinPoint){
 				if(inlineParameters.size() > 0) 
@@ -318,7 +320,7 @@ public class AdviceAndPointCut {
 		if (aroundLocalDecl != null)
 			ret += aroundLocalDecl;
 		
-		if(Main.inline && !isAround){
+		if(JavaMOPMain.inline && !isAround){
 			ret += inlineFuncName + "(" + inlineParameters.parameterString();
 			if(hasThisJoinPoint){
 				if(inlineParameters.size() > 0) 
@@ -343,7 +345,7 @@ public class AdviceAndPointCut {
 		String pointcutStr = pointcut.toString();
 
 		// Do we need to handle inline?
-		if(Main.inline && !isAround){
+		if(JavaMOPMain.inline && !isAround){
 			ret += "void " + inlineFuncName + "(" + inlineParameters.parameterDeclString();
 			if(hasThisJoinPoint){
 				if(inlineParameters.size() > 0) 
@@ -393,7 +395,7 @@ public class AdviceAndPointCut {
 		if (aroundLocalDecl != null)
 			ret += aroundLocalDecl;
 		
-		if(Main.inline && !isAround){
+		if(JavaMOPMain.inline && !isAround){
 			ret += inlineFuncName + "(" + inlineParameters.parameterString();
 			if(hasThisJoinPoint){
 				if(inlineParameters.size() > 0) 
@@ -437,7 +439,7 @@ public class AdviceAndPointCut {
 					ret += "if (" + countCond + ") {\n";
 				}
 
-				ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event);
+				ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event, this.fileName);
 				ret += "(";
 				
 				// Parameters

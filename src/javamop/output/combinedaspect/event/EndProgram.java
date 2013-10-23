@@ -3,11 +3,9 @@ package javamop.output.combinedaspect.event;
 import java.util.ArrayList;
 
 import javamop.MOPException;
-import javamop.Main;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
-import javamop.output.combinedaspect.event.advice.GeneralAdviceBody;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
@@ -25,7 +23,7 @@ public class EndProgram {
 		if (!event.isEndProgram())
 			throw new MOPException("EndProgram should be defined only for an endProgram pointcut.");
 
-		this.eventBodies.add(new GeneralAdviceBody(mopSpec, event, combinedAspect));
+		this.eventBodies.add(new AdviceBody(mopSpec, event, combinedAspect));
 	}
 
 	public void registerEndThreadEvents(ArrayList<EndThread> endThreadEvents) {
@@ -63,12 +61,8 @@ public class EndProgram {
 				ret += "{\n";
 			}
 
-			if (Main.translate2RV) {
-				ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event);
-				ret += "();\n";
-			} else {
-				ret += eventBody.toStringForShutdownHook();
-			}
+			ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event, eventBody.fileName);
+			ret += "();\n";
 
 			if (eventBodies.size() > 1) {
 				ret += "}\n";

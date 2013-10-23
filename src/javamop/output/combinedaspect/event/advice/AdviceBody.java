@@ -1,30 +1,18 @@
 package javamop.output.combinedaspect.event.advice;
 
-import java.util.HashMap;
-
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.MOPStatistics;
-import javamop.output.combinedaspect.indexingtree.IndexingDecl;
-import javamop.output.combinedaspect.indexingtree.IndexingTree;
-import javamop.output.combinedaspect.indexingtree.reftree.RefTree;
-import javamop.output.monitor.SuffixMonitor;
-import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameters;
-import javamoprt.mop;
 
-public abstract class AdviceBody {
+public class AdviceBody {
 	JavaMOPSpec mopSpec;
 	public EventDefinition event;
-	public MonitorSet monitorSet;
-	public SuffixMonitor monitorClass;
 	public MOPVariable monitorName;
-	public HashMap<MOPParameters, IndexingTree> indexingTrees;
-	public IndexingDecl indexingDecl;
-	public HashMap<String, RefTree> refTrees;
 	public String specName;
+	public String fileName;
 	
 	public MOPStatistics stat;
 	
@@ -40,19 +28,9 @@ public abstract class AdviceBody {
 		this.aspect = combinedAspect;
 		this.event = event;
 		this.eventParams = event.getMOPParametersOnSpec();
-		this.monitorSet = combinedAspect.monitorSets.get(mopSpec);
-		this.monitorClass = combinedAspect.monitors.get(mopSpec);
-		this.monitorClass.setAspectName(combinedAspect.getAspectName());
-		this.monitorName = monitorClass.getOutermostName();
-		this.indexingDecl = combinedAspect.indexingTreeManager.getIndexingDecl(mopSpec);
-		this.indexingTrees = indexingDecl.getIndexingTrees();
 		this.stat = combinedAspect.statManager.getStat(mopSpec);
-		this.refTrees = combinedAspect.indexingTreeManager.refTrees;
 		this.isGeneral = mopSpec.isGeneral();
 		this.isFullParam = eventParams.equals(mopSpec.getParameters());
+		this.fileName = combinedAspect.getFileName();
 	}
-
-	public abstract String toString();
-	
-	public abstract String toStringForShutdownHook();
 }

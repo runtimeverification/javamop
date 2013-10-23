@@ -14,7 +14,7 @@ public class Main {
 	//all currently sold processors have at least two hardware threads
 	//even if someone does not, running two threads won't hurt their
 	//performance too much
-        static int numThreads = 2;
+    static int numThreads = 2;
 
 	static String errMsg = "";
 
@@ -362,6 +362,7 @@ public class Main {
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		return success;
 	}
@@ -370,13 +371,33 @@ public class Main {
 		int i = 0;
 		String testSuiteDir = null;
 
+		System.out.println("here************************");
 		ClassLoader loader = Main.class.getClassLoader();
-		String mainClassPath = loader.getResource("javamop/Main.class").toString();
-		if (mainClassPath.endsWith(".jar!/javamop/Main.class") && mainClassPath.startsWith("jar:")) {
+		String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
+		String rvClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rvj/Main.class").toString();
+		String rvRtClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rt/observable/IInternalBehaviorObserver.class").toString();
+		String logicRepoClassPath = loader.getResource("com/runtimeverification/rvmonitor/" +
+				"logicrepository/parser/logicrepositorysyntax/LogicRepositoryType.class").toString();
+		
+		System.err.println(mainClassPath);
+		System.err.println(rvClassPath);
+		if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && mainClassPath.startsWith("jar:")) {
 			isJarFile = true;
 
-			jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - "!/javamop/Main.class".length());
+			jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - "!/javamop/JavaMOPMain.class".length());
+			String rvFilePath = rvClassPath.substring("jar:file:".length(), rvClassPath.length() -
+					"!/com/runtimeverification/rvmonitor/java/rvj/Main.class".length());
+			
+			String rvRtFilePath = rvRtClassPath.substring("jar:file:".length(), rvRtClassPath.length() -
+					"!/com/runtimeverification/rvmonitor/java/rt/observable/IInternalBehaviorObserver.class".length());
+			
+			String logicRepoFilePath = logicRepoClassPath.substring("jar:file:".length(), logicRepoClassPath.length() -
+					"!/com/runtimeverification/rvmonitor/logicrepository/parser/logicrepositorysyntax/LogicRepositoryType.class".length());
+			jarFilePath = jarFilePath + File.pathSeparator + rvFilePath + 
+					File.pathSeparator + rvRtFilePath + File.pathSeparator + logicRepoFilePath;
+			System.err.println("jar:    " + jarFilePath);
 			jarFilePath = polishPath(jarFilePath);
+			System.err.println("jar:    " + jarFilePath);
 		}
 
 		String base_path = "";

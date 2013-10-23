@@ -1,17 +1,13 @@
 package javamop.output.combinedaspect.event;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+import javamop.JavaMOPMain;
 import javamop.MOPException;
-import javamop.Main;
-import javamop.output.EnableSet;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
-import javamop.output.monitor.SuffixMonitor;
-import javamop.output.monitorset.MonitorSet;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -25,16 +21,10 @@ public class EventManager {
 	public ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
 	public EndProgram endProgramEvent = null;
 
-	public HashMap<JavaMOPSpec, MonitorSet> monitorSets;
-	public HashMap<JavaMOPSpec, SuffixMonitor> monitors;
-	public HashMap<JavaMOPSpec, EnableSet> enableSets;
 	
 	MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
 	public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) throws MOPException {
-		this.monitorSets = combinedAspect.monitorSets;
-		this.monitors = combinedAspect.monitors;
-		this.enableSets = combinedAspect.enableSets;
 
 		this.endProgramEvent = new EndProgram(name);
 
@@ -104,18 +94,6 @@ public class EventManager {
 
 	}
 
-	public MonitorSet getMonitorSet(JavaMOPSpec spec) {
-		return monitorSets.get(spec);
-	}
-
-	public SuffixMonitor getMonitor(JavaMOPSpec spec) {
-		return monitors.get(spec);
-	}
-
-	public EnableSet getEnableSet(JavaMOPSpec spec) {
-		return enableSets.get(spec);
-	}
-
 	public String printConstructor() {
 		String ret = "";
 
@@ -130,24 +108,16 @@ public class EventManager {
 		String ret = "";
 
 		ret += "pointcut " + commonPointcut + "() : ";
-		if(Main.dacapo){
-			ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
-		} else if (Main.translate2RV) {
-			
-			ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) && !adviceexecution();\n";
-		}
-		else {
-			ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
-		}
-		
+		ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) && !adviceexecution();\n";
+
 		int numAdvice = 1;
 		advices = this.adjustAdviceOrder();
 		for (AdviceAndPointCut advice : advices) {
-			if(Main.empty_advicebody){
+			if(JavaMOPMain.empty_advicebody){
 				ret += "// " + numAdvice++ + "\n";
 			}
 			
-			if (Main.translate2RV) {
+			if (JavaMOPMain.translate2RV) {
 				ret += advice.toRVString();
 			} else {
 				ret += advice;
@@ -162,7 +132,7 @@ public class EventManager {
 		}
 
 		for (EndObject endObject : endObjectEvents) {
-			ret += endObject;
+			ret += endObject.printDecl();
 			ret += "\n";
 		}
 
@@ -200,16 +170,18 @@ public class EventManager {
 	}
 
 	public static class EventMethodHelper {
-		public static String methodName(String enclosingspec, EventDefinition event) {
+		public static String methodName(String enclosingspec, EventDefinition event, String aspectName) {
 			boolean mangle = false;
-			if (Main.merge && Main.aspectname != null && Main.aspectname.length() > 0)
+			if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && JavaMOPMain.aspectname.length() > 0) {
 				mangle = true;
+			}
 			
 			StringBuilder s = new StringBuilder();
-			if (mangle)
-				s.append(Main.aspectname);
-			else
-				s.append(enclosingspec);
+			if (mangle && JavaMOPMain.specifiedAJName) {
+				s.append(JavaMOPMain.aspectname);
+			} else {
+				s.append(aspectName);
+			}
 			s.append("RuntimeMonitor");
 			s.append('.');
 			if (mangle) {
@@ -221,8 +193,8 @@ public class EventManager {
 			return s.toString();
 		}
 
-		public static String methodName(JavaMOPSpec enclosing, EventDefinition evt) {
-			return methodName(enclosing.getName(), evt);
+		public static String methodName(JavaMOPSpec enclosing, EventDefinition evt, String aspectName) {
+			return methodName(enclosing.getName(), evt, aspectName);
 		}
 	}
 }

@@ -2,7 +2,7 @@ package javamop.output.combinedaspect;
 
 import java.util.HashMap;
 
-import javamop.Main;
+import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -50,7 +50,7 @@ public class MOPStatistics {
 
 	public String fieldDecl() {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += "static long " + numMonitor + " = 0;\n";
@@ -77,7 +77,7 @@ public class MOPStatistics {
 
 	public String paramInc(MOPParameter param) {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		/* removed for buggy behavior */
@@ -96,7 +96,7 @@ public class MOPStatistics {
 
 	public String eventInc(String eventName) {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		MOPVariable eventVar = eventVars.get(eventName);
@@ -108,7 +108,7 @@ public class MOPStatistics {
 
 	public String categoryInc(PropertyAndHandlers prop, String category) {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		MOPVariable categoryVar = categoryVars.get(prop).get(category);
@@ -120,7 +120,7 @@ public class MOPStatistics {
 
 	public String incNumMonitor() {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += aspectName + "." + numMonitor + "++;\n";
@@ -130,7 +130,7 @@ public class MOPStatistics {
 
 	public String incCollectedMonitor() {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += aspectName + "." + collectedMonitor + "++;\n";
@@ -140,7 +140,7 @@ public class MOPStatistics {
 
 	public String incTerminatedMonitor() {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += aspectName + "." + terminatedMonitor + "++;\n";
@@ -150,7 +150,7 @@ public class MOPStatistics {
 
 	public String advice() {
 		String ret = "";
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += "after () : execution(* *.main(..)) {\n";

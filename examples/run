@@ -6,7 +6,7 @@ name=${dir##*/}
 
 LIBJARS=; for j in `find /home/qingzhou/projects/rv-monitor/lib/ -name "*.jar"`; do LIBJARS=$LIBJARS:$j; done
 cd ${dir}
-rvmop ${name}.mop
+javamop ${name}.mop
 #javamop ${name}.mop -translate2RV
 #java -cp /home/qingzhou/projects/rv-monitor/bin rvmonitor.Main ${name}.rvm
 #/home/qingzhou/projects/rv-monitor/bin/rv-monitor ${name}.rvm

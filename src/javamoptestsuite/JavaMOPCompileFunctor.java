@@ -25,16 +25,16 @@ public class JavaMOPCompileFunctor implements TestCaseFunctor {
 				if (Main.local) {
 					String logicRepositoryPath = new File(Main.jarFilePath).getParent() + File.separator + "logicrepository.jar";
 
-					String[] cmdarray2 = { "java", "-cp", Main.jarFilePath + File.pathSeparator + logicRepositoryPath, "javamop.Main",
+					String[] cmdarray2 = { "java", "-cp", Main.jarFilePath + File.pathSeparator + logicRepositoryPath, "javamop.JavaMOPMain",
 							server, "-v", "-debug", testCase.basepath + File.separator + testCase.path + File.separator + testCaseSpec.spec_filename };
 					cmdarray = cmdarray2;
 				} else {
-					String[] cmdarray2 = { "java", "-cp", Main.jarFilePath, "javamop.Main", server, "-v", "-debug",
+					String[] cmdarray2 = { "java", "-cp", Main.jarFilePath, "javamop.JavaMOPMain", server, "-v", "-debug",
 							testCase.basepath + File.separator + testCase.path + File.separator + testCaseSpec.spec_filename };
 					cmdarray = cmdarray2;
 				}
 			} else {
-				String[] cmdarray2 = { "java", "-cp", Main.javamopDir, "javamop.Main", server, "-v", "-debug",
+				String[] cmdarray2 = { "java", "-cp", Main.javamopDir, "javamop.JavaMOPMain", server, "-v", "-debug",
 						testCase.basepath + File.separator + testCase.path + File.separator + testCaseSpec.spec_filename };
 				cmdarray = cmdarray2;
 			}

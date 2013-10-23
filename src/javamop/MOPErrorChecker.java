@@ -1,19 +1,13 @@
 package javamop;
 
-import java.util.HashMap;
-
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
-import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public class MOPErrorChecker {
 
 	public static void verify(JavaMOPSpec mopSpec) throws MOPException {
-		for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
-			verifyHandlers(prop);
-		}
 		for (EventDefinition event : mopSpec.getEvents()) {
 			verifyThreadPointCut(event);
 
@@ -33,14 +27,6 @@ public class MOPErrorChecker {
 		//check if two endObject pointcuts share the same parameter, which should not happen
 		
 		
-	}
-
-	public static void verifyHandlers(PropertyAndHandlers prop) throws MOPException {
-		for (String handlerName : prop.getHandlers().keySet()) {
-			if (prop.getLogicProperty(handlerName + " condition") == null) {
-				throw new MOPException(handlerName + " is not a supported state in this logic, " + prop.getProperty().getType() + ".");
-			}
-		}
 	}
 
 	public static void verifyThreadPointCut(EventDefinition event) throws MOPException {

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javamop.MOPException;
-import javamop.Main;
+import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -33,7 +33,7 @@ public class MOPStatManager {
 	public String statClass() {
 		String ret = "";
 
-		if (!Main.statistics2)
+		if (!JavaMOPMain.statistics2)
 			return ret;
 		
 		ret = "class " + statClass + " extends Thread implements javamoprt.MOPObject {\n";
@@ -56,7 +56,7 @@ public class MOPStatManager {
 	public String incEvent(JavaMOPSpec spec, EventDefinition event){
 		String ret = "";
 
-		if (!Main.statistics2)
+		if (!JavaMOPMain.statistics2)
 			return ret;
 
 		ret += statClass + ".numTotalEvents++;\n";
@@ -67,7 +67,7 @@ public class MOPStatManager {
 	public String incMonitor(JavaMOPSpec spec){
 		String ret = "";
 
-		if (!Main.statistics2)
+		if (!JavaMOPMain.statistics2)
 			return ret;
 		
 		ret += statClass + ".numTotalMonitors++;\n";
@@ -78,7 +78,7 @@ public class MOPStatManager {
 	public String fieldDecl2() {
 		String ret = "";
 
-		if (!Main.statistics2)
+		if (!JavaMOPMain.statistics2)
 			return ret;
 
 		ret += "static " + statClass + " " + statObject + ";\n";
@@ -89,7 +89,7 @@ public class MOPStatManager {
 	public String constructor() {
 		String ret = "";
 
-		if (!Main.statistics2)
+		if (!JavaMOPMain.statistics2)
 			return ret;
 
 		ret += statObject + " = new " + statClass + "();\n";
@@ -103,7 +103,7 @@ public class MOPStatManager {
 	public String fieldDecl() {
 		String ret = "";
 
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += "// Declarations for Statistics \n";
@@ -118,7 +118,7 @@ public class MOPStatManager {
 	public String advice() {
 		String ret = "";
 
-		if (!Main.statistics)
+		if (!JavaMOPMain.statistics)
 			return ret;
 
 		ret += "\n";

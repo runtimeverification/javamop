@@ -65,9 +65,9 @@ public class TestingFunctor implements TestCaseFunctor {
 
 		String javamoprtLibPath = null;
 		if (Main.isJarFile)
-			javamoprtLibPath = new File(Main.jarFilePath).getParent() + "/javamoprt.jar";
+			javamoprtLibPath = new File(Main.jarFilePath).getParent() + "/rt.jar";
 		else
-			javamoprtLibPath = Main.javamopDir + "/lib/javamoprt.jar";
+			javamoprtLibPath = Main.javamopDir + "/lib/rt.jar";
 
 		String classpath = System.getenv("CLASSPATH");
 

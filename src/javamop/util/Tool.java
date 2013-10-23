@@ -248,11 +248,11 @@ public class Tool {
 	
 	public static boolean isJavaMOPInJarFile(){
 		try {
-			Class<?> mainClass = Class.forName("javamop.Main");
+			Class<?> mainClass = Class.forName("javamop.JavaMOPMain");
 			ClassLoader loader = mainClass.getClassLoader();
-			String mainClassPath = loader.getResource("javamop/Main.class").toString();
+			String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
 
-			if (mainClassPath.endsWith(".jar!/javamop/Main.class") && mainClassPath.startsWith("jar:")) {
+			if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && mainClassPath.startsWith("jar:")) {
 				return true;
 			} else {
 				return false;
@@ -266,20 +266,20 @@ public class Tool {
 	public static String getConfigPath(){
 		String configPath;
 		try {
-			Class<?> mainClass = Class.forName("javamop.Main");
+			Class<?> mainClass = Class.forName("javamop.JavaMOPMain");
 			ClassLoader loader = mainClass.getClassLoader();
-			String mainClassPath = loader.getResource("javamop/Main.class").toString();
+			String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
 
-			if (mainClassPath.endsWith(".jar!/javamop/Main.class") && mainClassPath.startsWith("jar:")) {
+			if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && mainClassPath.startsWith("jar:")) {
 				String jarFilePath;
-				jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - "!/javamop/Main.class".length());
+				jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - "!/javamop/JavaMOPMain.class".length());
 				jarFilePath = Tool.polishPath(jarFilePath);
 
 				configPath = new File(jarFilePath).getParentFile().getParent() + File.separator + "config";
 			} else {
 				String packageFilePath;
 				
-				packageFilePath = mainClassPath.substring("file:".length(), mainClassPath.length() - "/Main.class".length());
+				packageFilePath = mainClassPath.substring("file:".length(), mainClassPath.length() - "/JavaMOPMain.class".length());
 				packageFilePath = Tool.polishPath(packageFilePath);
 				
 				configPath = new File(packageFilePath).getParentFile().getParent() + File.separator + "config";
