@@ -58,6 +58,7 @@ public class JavaMOPMain {
 	public static boolean inline = false;
 
 	public static boolean scalable = false;
+	public static boolean keepRVFiles = false;
 
         public static List<String []> listFilePairs = new ArrayList<String []>();
         public static List<String> listRVMFiles = new ArrayList<String>();
@@ -442,6 +443,8 @@ public class JavaMOPMain {
 				JavaMOPMain.scalable = true;
 			} else if (args[i].compareTo("-translate2RV") == 0) {
 				JavaMOPMain.translate2RV = true;
+			} else if (args[i].compareTo("-keepRVFiles") == 0) {
+				JavaMOPMain.keepRVFiles = true;
 			} else {
 				if (files.length() != 0)
 					files += ";";
@@ -465,9 +468,19 @@ public class JavaMOPMain {
 		}
 		
 		// replace mop with rvm and call rv-monitor
-		String rvArgs[] = new String [args.length];
+		int length = args.length;
+		if (JavaMOPMain.keepRVFiles) {
+			length--;
+		}
+		String rvArgs[] = new String [length];
+		int p = 0;
 		for (int j = 0; j < args.length; j++) {
-			rvArgs[j] = args[j].replaceAll("\\.mop", "\\.rvm");
+			if (args[j].compareTo("-keepRVFiles") == 0) {
+				// Don't pass keepRVFiles to rvmonitor
+				continue;
+			}
+			rvArgs[p] = args[j].replaceAll("\\.mop", "\\.rvm");
+			p++;
 		}
 		Main.main(rvArgs);
 		
@@ -477,10 +490,12 @@ public class JavaMOPMain {
 			AJFileCombiner.main(filePair);
 			File javaFile = new File(filePair[0]);
 			try {
-				if (javaFile.delete()) {
-				} else {
-					System.err.println("Failed to delete java file: "
-							+ filePair[0]);
+				if (!JavaMOPMain.keepRVFiles) {
+					boolean deleted = javaFile.delete();
+					if (!deleted) {
+						System.err.println("Failed to delete java file: "
+								+ filePair[0]);
+					}
 				}
 			} catch (Exception e) {
 
@@ -489,12 +504,15 @@ public class JavaMOPMain {
 
 		for (String rvmFilePath : listRVMFiles) {
 			File rvmFile = new File(rvmFilePath);
-			try {
-				if (rvmFile.delete()) {
-				} else {
-					System.err.println("Failed to delete rvm file: "
-							+ rvmFilePath);
+			try {				
+				if (!JavaMOPMain.keepRVFiles) {
+					boolean deleted = rvmFile.delete();
+					if (!deleted) {
+						System.err.println("Failed to delete java file: "
+								+ rvmFilePath);
+					}
 				}
+
 			} catch (Exception e) {
 
 			}
