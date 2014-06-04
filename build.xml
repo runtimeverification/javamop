@@ -9,10 +9,12 @@
         <property name="scala.home" value="${env.SCALA_HOME}" />
         <property name="scala-compiler.jar" value="${scala.home}/lib/scala-compiler.jar" />
         <property name="scala-library.jar" value="${scala.home}/lib/scala-library.jar" />
+        <property name="scala-reflect.jar" value="${scala.home}/lib/scala-reflect.jar" />
 
         <path id="scala.classpath">
                 <pathelement location="${scala-compiler.jar}" />
                 <pathelement location="${scala-library.jar}" />
+                <pathelement location="${scala-reflect.jar}" />
                 <pathelement location="build" />
         </path>
 
