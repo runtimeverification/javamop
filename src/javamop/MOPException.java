@@ -13,11 +13,11 @@ package javamop;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class MOPException extends Exception {
-	private static final long serialVersionUID = 2145299315023315212L;
-	public MOPException(Exception e){
-		super("MOP Expection:" + e.getMessage());
-	}
-	public MOPException(String str){
-		super(str);
-	}
+    private static final long serialVersionUID = 2145299315023315212L;
+    public MOPException(Exception e){
+        super("MOP Expection:" + e.getMessage());
+    }
+    public MOPException(String str){
+        super(str);
+    }
 }
