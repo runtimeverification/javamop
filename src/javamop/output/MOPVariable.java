@@ -3,8 +3,8 @@ package javamop.output;
 import javamop.MOPNameSpace;
 
 public class MOPVariable {
-    MOPVariable pred;
-    String varName;
+    private MOPVariable pred;
+    private String varName;
     
     public MOPVariable(String varName){
         this.varName = varName;

@@ -17,10 +17,10 @@ public class AdviceBody {
     public MOPStatistics stat;
     
     public boolean isGeneral;
-    MOPParameters eventParams;
+    private MOPParameters eventParams;
     
     public boolean isFullParam;
-    CombinedAspect aspect;
+    private CombinedAspect aspect;
     
     public AdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
         this.mopSpec = mopSpec;

@@ -4,7 +4,7 @@ import javamop.output.MOPVariable;
 
 public class AroundAdviceLocalDecl {
     
-    MOPVariable skipAroundAdvice;
+    private MOPVariable skipAroundAdvice;
     
     public AroundAdviceLocalDecl(){
         skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice"); 

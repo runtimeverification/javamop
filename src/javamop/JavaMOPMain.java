@@ -32,7 +32,7 @@ class MOPFileFilter implements FilenameFilter {
 
 public class JavaMOPMain {
     
-    static File outputDir = null;
+    private static File outputDir = null;
     public static boolean debug = false;
     public static boolean noopt1 = false;
     public static boolean toJavaLib = false;

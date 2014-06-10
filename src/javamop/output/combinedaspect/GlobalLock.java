@@ -3,7 +3,7 @@ package javamop.output.combinedaspect;
 import javamop.output.MOPVariable;
 
 public class GlobalLock {
-    MOPVariable lock;
+    private MOPVariable lock;
     
     public GlobalLock(MOPVariable lock) {
         this.lock = lock;

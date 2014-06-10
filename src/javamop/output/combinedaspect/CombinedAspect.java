@@ -9,11 +9,11 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class CombinedAspect {
-    String name;
-    MOPVariable mapManager;
-    boolean versionedStack;
+    private String name;
+    private MOPVariable mapManager;
+    private boolean versionedStack;
     
-    List<JavaMOPSpec> specs;
+    private List<JavaMOPSpec> specs;
     public MOPStatManager statManager;
     public LockManager lockManager;
     public EventManager eventManager;

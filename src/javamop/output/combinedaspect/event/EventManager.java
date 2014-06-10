@@ -22,7 +22,7 @@ public class EventManager {
     public EndProgram endProgramEvent = null;
     
     
-    MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+    private MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
     public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) throws MOPException {
         

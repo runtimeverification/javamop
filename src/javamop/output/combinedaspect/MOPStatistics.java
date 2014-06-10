@@ -10,16 +10,16 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public class MOPStatistics {
-    String aspectName;
+    private String aspectName;
     
-    MOPVariable numMonitor;
-    MOPVariable collectedMonitor;
-    MOPVariable terminatedMonitor;
-    HashMap<String, MOPVariable> eventVars = new HashMap<String, MOPVariable>();
-    HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>> categoryVars = new HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>>();
-    HashMap<MOPParameter, MOPVariable> paramVars = new HashMap<MOPParameter, MOPVariable>();
+    private MOPVariable numMonitor;
+    private MOPVariable collectedMonitor;
+    private MOPVariable terminatedMonitor;
+    private HashMap<String, MOPVariable> eventVars = new HashMap<String, MOPVariable>();
+    private HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>> categoryVars = new HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>>();
+    private HashMap<MOPParameter, MOPVariable> paramVars = new HashMap<MOPParameter, MOPVariable>();
     
-    String specName;
+    private String specName;
     
     public MOPStatistics(String name, JavaMOPSpec mopSpec) {
         this.aspectName = name + "MonitorAspect";

@@ -7,9 +7,9 @@ import javamop.parser.ast.type.Type;
 import javamop.parser.ast.type.VoidType;
 
 public class AroundAdviceReturn {
-    MOPVariable skipAroundAdvice;
-    MOPParameters parameters;
-    Type type;
+    private MOPVariable skipAroundAdvice;
+    private MOPParameters parameters;
+    private Type type;
     
     public AroundAdviceReturn(Type type, MOPParameters parameters) {
         skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");

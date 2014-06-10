@@ -8,8 +8,8 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class ActivatorManager {
     
-    List<JavaMOPSpec> specs;
-    TreeMap<JavaMOPSpec, MOPVariable> activators = new TreeMap<JavaMOPSpec, MOPVariable>();
+    private List<JavaMOPSpec> specs;
+    private TreeMap<JavaMOPSpec, MOPVariable> activators = new TreeMap<JavaMOPSpec, MOPVariable>();
     
     public ActivatorManager(String name, List<JavaMOPSpec> specs) {
         this.specs = specs;

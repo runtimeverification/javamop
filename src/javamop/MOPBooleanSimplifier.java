@@ -4,14 +4,14 @@ import javamop.parser.ast.mopspec.MOPParameterSet;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 class MOPTruthTable {
-    int level;
+    private int level;
     
-    MOPTruthTable trueTable;
-    MOPTruthTable falseTable;
+    private MOPTruthTable trueTable;
+    private MOPTruthTable falseTable;
     
     // 0 = false, 1 = true, 2 = true and covered
-    int trueEntry = 0;
-    int falseEntry = 0;
+    private int trueEntry = 0;
+    private int falseEntry = 0;
     
     public MOPTruthTable(int level) {
         this.level = level;
@@ -105,9 +105,9 @@ class MOPTruthTable {
 }
 
 class MOPBitmap {
-    int truesize;
-    int totalsize;
-    boolean[] bitmap;
+    private int truesize;
+    private int totalsize;
+    private boolean[] bitmap;
     
     public MOPBitmap(int truesize, int totalsize) {
         bitmap = new boolean[totalsize];

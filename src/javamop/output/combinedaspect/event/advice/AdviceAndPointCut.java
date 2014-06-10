@@ -24,16 +24,16 @@ public class AdviceAndPointCut {
     public MOPStatManager statManager;
     public ActivatorManager activatorsManager;
     
-    MOPVariable inlineFuncName;
-    MOPParameters inlineParameters;
+    private MOPVariable inlineFuncName;
+    private MOPParameters inlineParameters;
     
-    MOPVariable pointcutName;
+    private MOPVariable pointcutName;
     public PointCut pointcut;
-    MOPParameters parameters;
-    String specName;
-    String fileName;
+    private MOPParameters parameters;
+    private String specName;
+    private String fileName;
     
-    boolean hasThisJoinPoint;
+    private boolean hasThisJoinPoint;
     public boolean isAround = false;
     public boolean beCounted = false;
     public String retType;
@@ -41,19 +41,19 @@ public class AdviceAndPointCut {
     public MOPParameters retVal;
     public MOPParameters throwVal;
     public MOPParameters threadVars = new MOPParameters();
-    GlobalLock globalLock;
-    boolean isSync;
+    private GlobalLock globalLock;
+    private boolean isSync;
     
-    LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
-    HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
-    HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
+    private LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
+    private HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
+    private HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
     
-    HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
+    private HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
     
-    MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+    private MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
-    AroundAdviceLocalDecl aroundLocalDecl = null;
-    AroundAdviceReturn aroundAdviceReturn = null;
+    private AroundAdviceLocalDecl aroundLocalDecl = null;
+    private AroundAdviceReturn aroundAdviceReturn = null;
     
     public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
         this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();

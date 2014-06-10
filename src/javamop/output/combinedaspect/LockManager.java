@@ -10,7 +10,7 @@ public class LockManager {
     
     //HashMap<JavaMOPSpec, GlobalLock> locks = new HashMap<JavaMOPSpec, GlobalLock>();
     
-    GlobalLock lock;
+    private GlobalLock lock;
     
     public LockManager(String name, List<JavaMOPSpec> specs) throws MOPException {
         //      for (JavaMOPSpec spec : specs) {
