@@ -123,8 +123,8 @@ public class JavaMOPExtender {
 			for (ExtendedSpec parentSpecName : context.spec.getExtendedSpec()) {
 				Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), context.currentFile, context.depFiles);
 
-				JavaMOPSpecExt parentSpec = parentSpecPair.left;
-				MOPSpecFileExt parentSpecFile = parentSpecPair.right;
+				JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
+				MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
 				List<EventDefinition> eventsFromParents = collectAndTranslateEvents(new SpecContext(parentSpec, parentSpecFile, context.depFiles));
 
@@ -179,8 +179,8 @@ public class JavaMOPExtender {
 			for (ExtendedSpec parentSpecName : context.spec.getExtendedSpec()) {
 				Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), context.currentFile, context.depFiles);
 
-				JavaMOPSpecExt parentSpec = parentSpecPair.left;
-				MOPSpecFileExt parentSpecFile = parentSpecPair.right;
+				JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
+				MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
 				HashMap<PropertyExt, HashMap<String, HandlerExt>> propsFromParents = collectProps(new SpecContext(parentSpec, parentSpecFile,
 						context.depFiles));
@@ -220,7 +220,7 @@ public class JavaMOPExtender {
 				if (propExtPair == null)
 					throw new MOPException("cannot find the associated property for a handler.");
 
-				PropertyAndHandlersExt pnh2 = propExtPair.left;
+				PropertyAndHandlersExt pnh2 = propExtPair.getLeft();
 
 				HashMap<String, HandlerExt> handlers = ret.get(pnh2.getProperty());
 				handlers.put(handler.getState(), handler);
@@ -271,7 +271,7 @@ public class JavaMOPExtender {
 			if (targetEventExtPair == null)
 				throw new MOPException("cannot find the event " + eventPointCut.getReferenceSpec().getReferenceElement()
 						+ " referred by an event pointcut.");
-			EventDefinition targetEvent = translateEvent(targetEventExtPair.left, targetEventExtPair.right);
+			EventDefinition targetEvent = translateEvent(targetEventExtPair.getLeft(), targetEventExtPair.getRight());
 
 			// prepare renaming table
 			for (int i = 0; i < params.size(); i++) {
@@ -312,8 +312,8 @@ public class JavaMOPExtender {
 				throw new MOPException("cannot find the category " + handlerPointCut.getReferenceSpec().getReferenceElement()
 						+ " referred by an handler pointcut.");
 			}
-			PropertyAndHandlersExt pnh = targetPropExtPair.left;
-			JavaMOPSpecExt spec = targetPropExtPair.right.spec;
+			PropertyAndHandlersExt pnh = targetPropExtPair.getLeft();
+			JavaMOPSpecExt spec = targetPropExtPair.getRight().spec;
 
 			// parse the method pointcut for the handler method
 			String methodPatternStr = "execution(void " + spec.getName() + "." + "Prop_" + pnh.getPropertyId() + "_handler_"
@@ -433,8 +433,8 @@ public class JavaMOPExtender {
 		for (ExtendedSpec parentSpecName : spec.getExtendedSpec()) {
 			Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), currentFile, depFiles);
 
-			JavaMOPSpecExt parentSpec = parentSpecPair.left;
-			MOPSpecFileExt parentSpecFile = parentSpecPair.right;
+			JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
+			MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
 			List<BodyDeclaration> declOfParents = collectDeclarations(parentSpec, parentSpecFile, depFiles);
 
@@ -462,8 +462,8 @@ public class JavaMOPExtender {
 		for (ExtendedSpec parentSpecName : spec.getExtendedSpec()) {
 			Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), currentFile, depFiles);
 
-			JavaMOPSpecExt parentSpec = parentSpecPair.left;
-			MOPSpecFileExt parentSpecFile = parentSpecPair.right;
+			JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
+			MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
 			List<EventDefinitionExt> nonImpAbsEventsFromParents = collectNonImpAbstractEvents(parentSpec, parentSpecFile, depFiles);
 
@@ -507,8 +507,8 @@ public class JavaMOPExtender {
 
 			Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), context.currentFile, context.depFiles);
 
-			JavaMOPSpecExt parentSpec = parentSpecPair.left;
-			MOPSpecFileExt parentSpecFile = parentSpecPair.right;
+			JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
+			MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
 			ret = getReferencedEvent(ref, pos, params, new SpecContext(parentSpec, parentSpecFile, context.depFiles));
 
@@ -551,8 +551,8 @@ public class JavaMOPExtender {
 
 			Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), context.currentFile, context.depFiles);
 
-			JavaMOPSpecExt parentSpec = parentSpecPair.left;
-			MOPSpecFileExt parentSpecFile = parentSpecPair.right;
+			JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
+			MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
 			ret = getReferencedProp(ref, new SpecContext(parentSpec, parentSpecFile, context.depFiles));
 
