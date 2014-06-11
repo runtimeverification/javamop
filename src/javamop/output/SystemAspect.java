@@ -3,7 +3,7 @@ package javamop.output;
 import javamop.JavaMOPMain;
 
 public class SystemAspect {
-    private String name;
+    private final String name;
     
     public SystemAspect(String name) {
         this.name = name + "SystemAspect";

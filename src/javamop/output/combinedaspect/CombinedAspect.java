@@ -9,14 +9,14 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class CombinedAspect {
-    private String name;
-    private MOPVariable mapManager;
-    private boolean versionedStack;
+    private final String name;
+    private final MOPVariable mapManager;
+    private final boolean versionedStack;
     
-    private List<JavaMOPSpec> specs;
-    public MOPStatManager statManager;
-    public LockManager lockManager;
-    public EventManager eventManager;
+    private final List<JavaMOPSpec> specs;
+    public final MOPStatManager statManager;
+    public final LockManager lockManager;
+    private final EventManager eventManager;
     
     public CombinedAspect(String name, MOPSpecFile mopSpecFile, boolean versionedStack) throws MOPException {
         this.name = name + "MonitorAspect";

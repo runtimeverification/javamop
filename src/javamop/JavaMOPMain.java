@@ -60,8 +60,8 @@ public class JavaMOPMain {
     public static boolean scalable = false;
     public static boolean keepRVFiles = false;
     
-    public static List<String []> listFilePairs = new ArrayList<String []>();
-    public static List<String> listRVMFiles = new ArrayList<String>();
+    private static final List<String []> listFilePairs = new ArrayList<String []>();
+    private static final List<String> listRVMFiles = new ArrayList<String>();
     
     static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
         if(JavaMOPMain.outputDir != null){

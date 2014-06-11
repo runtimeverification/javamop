@@ -1,8 +1,8 @@
 package javamop.util;
 
 public class Pair<A, B>{
-    private A left;
-    private B right;
+    private final A left;
+    private final B right;
     
     public Pair(A a, B b){
         this.left = a;

@@ -3,7 +3,7 @@ package javamop.util;
 import java.io.*;
 
 public class StreamGobbler extends Thread {
-    private InputStream is;
+    private final InputStream is;
     public String text = "";
     
     public StreamGobbler(InputStream is) {

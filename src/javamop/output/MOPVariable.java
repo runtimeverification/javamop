@@ -4,7 +4,7 @@ import javamop.MOPNameSpace;
 
 public class MOPVariable {
     private MOPVariable pred;
-    private String varName;
+    private final String varName;
     
     public MOPVariable(String varName){
         this.varName = varName;

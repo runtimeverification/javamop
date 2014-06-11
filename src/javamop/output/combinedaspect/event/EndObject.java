@@ -11,16 +11,16 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public class EndObject {
-    private JavaMOPSpec mopSpec;
-    private EventDefinition event;
+    private final JavaMOPSpec mopSpec;
+    private final EventDefinition event;
     
-    private String endObjectVar;
-    private TypePattern endObjectType;
+    private final String endObjectVar;
+    private final TypePattern endObjectType;
     
-    private boolean isStart;
-    private AdviceBody eventBody = null;
+    private final boolean isStart;
+    private final AdviceBody eventBody;
     
-    private MOPVariable endObjectSupportType;
+    private final MOPVariable endObjectSupportType;
     
     public EndObject(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
         if (!event.isEndObject())

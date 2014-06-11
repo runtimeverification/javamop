@@ -20,7 +20,7 @@ import javamop.util.Tool;
 public class MOPProcessor {
     public static boolean verbose = false;
     
-    public String name;
+    private final String name;
     
     public MOPProcessor(String name) {
         this.name = name;
