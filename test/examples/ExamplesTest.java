@@ -29,8 +29,9 @@ public class ExamplesTest {
     }
     
     /**
-     * Test all the instances of this example. Each example has a _1, _2, and possibly a _3 component. This runs assertions on all the avilable ones.
-     * This function is inspired by the examples/run script.
+     * Test all the instances of this example. Each example has a _1, _2, and possibly a _3 
+     * component. This runs assertions on all the avilable ones. This function is inspired by the 
+     * examples/run script.
      */
     @Test
     public void testExample() throws Exception {
@@ -39,16 +40,41 @@ public class ExamplesTest {
         
         File projectRoot = new File(System.getProperty("user.dir"));
         String libDir = projectRoot + File.separator + "lib" + File.separator;
-        String classpath = ".:mop/:" + libDir + "*.jar:" + libDir + "external" + File.separator + "*.jar:" + libDir + "plugins" + File.separator + "*.jar:" + System.getProperty("java.class.path");
+        String classpath = ".:mop/:" + libDir + "*.jar:" + libDir + "external" + File.separator + 
+            "*.jar:" + libDir + "plugins" + File.separator + "*.jar:" + 
+            System.getProperty("java.class.path");
         
         String subcasePath = testName + "_";
         for(int i = 1; new File(path + File.separator + subcasePath + i).exists(); i++) {
-            System.out.println(i);
-            String specificClasspath = classpath + ":" + subcasePath + i + ":" + subcasePath + i + File.separator + "mop";
+            String subcasePathI = subcasePath + i;
+            String specificClasspath = classpath + ":" + subcasePathI + ":" + subcasePathI + 
+                File.separator + "mop";
             // AJC has nonzero return codes with just warnings, not errorss.
-            helper.testCommand(null, true, "ajc", "-1.6", "-cp", specificClasspath, "-d", subcasePath + i, subcasePath + i + File.separator + testName + "_" + i + ".java",testName + "MonitorAspect.aj");
-            helper.testCommand(subcasePath + i, subcasePath + i, true, "java", "-cp", specificClasspath, testName + "_" + i);
+            helper.testCommand(null, true, "ajc", "-1.6", "-cp", specificClasspath, "-d", 
+                subcasePathI, subcasePathI + File.separator + subcasePathI + ".java", 
+                testName + "MonitorAspect.aj");
+            helper.testCommand(subcasePathI, subcasePathI, true, "java", "-cp", specificClasspath, 
+                subcasePathI);
+            helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".actual.err", 
+                subcasePathI + File.separator + subcasePathI + ".actual.out");
+            helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".class");
+            
+            String[] classFilePrefix = {
+                subcasePathI + File.separator + "mop" + File.separator + testName,
+                subcasePathI + File.separator + testName
+            };
+            for(String prefix : classFilePrefix) {
+                helper.deleteFiles(false, prefix + "Monitor.class", prefix + "Monitor_Set.class", 
+                    prefix + "MonitorAspect.class", prefix + "RuntimeMonitor.class", 
+                    prefix + "SuffixMonitor.class", prefix + "Monitor$IntStack.class",
+                    prefix + "SuffixMonitor_Set.class", prefix  + "DisableHolder.class",
+                    prefix + "MonitorAspect$" + testName + "_DummyHookThread.class"
+                );
+                helper.deleteFiles(false, subcasePathI + File.separator + "mop" + File.separator +
+                    "I" + testName + "Monitor.class");
+            }
         }
+        helper.deleteFiles(true, testName + "MonitorAspect.aj");
     }
     
     /**
