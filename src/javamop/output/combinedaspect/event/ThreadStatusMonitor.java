@@ -10,7 +10,8 @@ import javamop.output.combinedaspect.CombinedAspect;
 
 /**
  * 
- * This class is used to generate code to maintain a set of current active threads, similar to EndThread event.
+ * This class is used to generate code to maintain a set of current active threads, similar to 
+ * EndThread event.
  * 
  * */
 public class ThreadStatusMonitor extends EndThread{
@@ -22,7 +23,8 @@ public class ThreadStatusMonitor extends EndThread{
     
     public ThreadStatusMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
         this.mopSpec = mopSpec;
-        this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadToRunnable");
+        this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + 
+            eventName + "_ThreadToRunnable");
         this.mainThread = new MOPVariable(mopSpec.getName() + "_" + eventName + "_MainThread");
         this.threadSet = new MOPVariable(mopSpec.getName() + "_" + eventName + "_ThreadSet");
         this.globalLock = combinedAspect.lockManager.getLock();
@@ -38,7 +40,8 @@ public class ThreadStatusMonitor extends EndThread{
     public String printDataStructures() {
         String ret = "";
         
-        ret += "static HashMap<Thread, Runnable> " + runnableMap + " = new HashMap<Thread, Runnable>();\n";
+        ret += "static HashMap<Thread, Runnable> " + runnableMap + 
+            " = new HashMap<Thread, Runnable>();\n";
         ret += "static Thread " + mainThread + " = null;\n";
         ret += "static HashSet<Thread> " + threadSet + " = new HashSet<Thread>();\n";
         return ret;
@@ -68,7 +71,8 @@ public class ThreadStatusMonitor extends EndThread{
         //Start deadlock detection thread here
         if (this.hasDeadlockHandler) {
             ret += "javamoprt.MOPDeadlockDetector.startDeadlockDetectionThread(" + this.threadSet 
-            + ", " + this.mainThread + ", " + this.globalLock.getName() + ", new " + this.monitorName + "." + this.monitorName + "DeadlockCallback()" +");\n";
+                + ", " + this.mainThread + ", " + this.globalLock.getName() + ", new "
+                + this.monitorName + "." + this.monitorName + "DeadlockCallback()" +");\n";
         }
         
         ret += globalLock.getName() + ".unlock();\n";
@@ -96,7 +100,8 @@ public class ThreadStatusMonitor extends EndThread{
         String ret = "";
         MOPVariable threadVar = new MOPVariable("t");
         
-        ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
+        ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + 
+            threadVar + ") )";
         ret += " && " + commonPointcut + "() {\n";
         
         ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
@@ -116,7 +121,8 @@ public class ThreadStatusMonitor extends EndThread{
         String ret = "";
         MOPVariable runnableVar = new MOPVariable("r");
         
-        ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
+        ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) " +
+            "&& !execution(void Thread+.run()) && target(" + runnableVar + ") )";
         ret += " && " + commonPointcut + "() {\n";
         
         ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
@@ -146,7 +152,8 @@ public class ThreadStatusMonitor extends EndThread{
         
         ret += "for (Thread t : " + threadSet + ") {\n";
         ret += "if (t.getName().equals(name)) {\n";
-        ret += "if (t.getState() == Thread.State.BLOCKED || t.getState() == Thread.State.WAITING) {\n";
+        ret += "if (t.getState() == Thread.State.BLOCKED || t.getState() == " +
+            "Thread.State.WAITING) {\n";
         ret += globalLock.getName() + ".unlock();\n";
         ret += "return true;\n";
         ret += "}\n";
@@ -213,7 +220,8 @@ public class ThreadStatusMonitor extends EndThread{
         ret += "call(void Thread+.start()) && target(t))";
         ret += " && " + commonPointcut + "() {\n";
         
-        if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && JavaMOPMain.aspectname.length() > 0) {
+        if (JavaMOPMain.merge && JavaMOPMain.aspectname != null 
+                && JavaMOPMain.aspectname.length() > 0) {
             ret += JavaMOPMain.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
         }
         else {
@@ -227,7 +235,8 @@ public class ThreadStatusMonitor extends EndThread{
         String ret = "";
         ret += "before (): " + "(execution(void *.main(..)) )";
         ret += " && " + commonPointcut + "() {\n";
-        if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && JavaMOPMain.aspectname.length() > 0) {
+        if (JavaMOPMain.merge && JavaMOPMain.aspectname != null 
+                && JavaMOPMain.aspectname.length() > 0) {
             ret += JavaMOPMain.aspectname + "RuntimeMonitor.startDeadlockDetection();\n";
         }
         else {

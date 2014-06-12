@@ -13,10 +13,10 @@ public class LockManager {
     private final GlobalLock lock;
     
     public LockManager(String name, List<JavaMOPSpec> specs) throws MOPException {
-        //      for (JavaMOPSpec spec : specs) {
-        //          if (spec.isSync())
-        //              locks.put(spec, new GlobalLock(new MOPVariable(spec.getName() + "_MOPLock")));
-        //      }
+        // for (JavaMOPSpec spec : specs) {
+        //     if (spec.isSync())
+        //         locks.put(spec, new GlobalLock(new MOPVariable(spec.getName() + "_MOPLock")));
+        // }
         
         lock = new GlobalLock(new MOPVariable(name + "_MOPLock"));
     }

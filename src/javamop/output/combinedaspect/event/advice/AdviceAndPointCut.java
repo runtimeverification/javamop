@@ -48,19 +48,22 @@ public class AdviceAndPointCut {
     private final HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
     private final HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
     
-    private final HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
+    private final HashMap<EventDefinition, AdviceBody> advices = 
+        new HashMap<EventDefinition, AdviceBody>();
     
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
     private AroundAdviceLocalDecl aroundLocalDecl = null;
     private AroundAdviceReturn aroundAdviceReturn = null;
     
-    public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+    public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, 
+            CombinedAspect combinedAspect) throws MOPException {
         this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
         
         this.specName = mopSpec.getName();
         this.pointcutName = new MOPVariable(mopSpec.getName() + "_" + event.getUniqueId());
-        this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" + event.getUniqueId());
+        this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" + 
+            event.getUniqueId());
         this.parameters = event.getParametersWithoutThreadVar();
         this.inlineParameters = event.getMOPParametersWithoutThreadVar();
         this.fileName = combinedAspect.getFileName();
@@ -100,7 +103,8 @@ public class AdviceAndPointCut {
         if (mopSpec.has__SKIP() || event.getPos().equals("around"))
             aroundLocalDecl = new AroundAdviceLocalDecl();
         if (event.getPos().equals("around"))
-            aroundAdviceReturn = new AroundAdviceReturn(event.getRetType(), event.getParametersWithoutThreadVar());
+            aroundAdviceReturn = new AroundAdviceReturn(event.getRetType(),
+                event.getParametersWithoutThreadVar());
         
         if(event.isStartEvent())
             specsForActivation.add(mopSpec);
@@ -116,7 +120,8 @@ public class AdviceAndPointCut {
         return pointcutName.getVarName();
     }
     
-    public boolean addEvent(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+    public boolean addEvent(JavaMOPSpec mopSpec, EventDefinition event, 
+            CombinedAspect combinedAspect) throws MOPException {
         
         // Parameter Conflict Check
         for(MOPParameter param : event.getParametersWithoutThreadVar()){
@@ -439,7 +444,8 @@ public class AdviceAndPointCut {
                     ret += "if (" + countCond + ") {\n";
                 }
                 
-                ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event, this.fileName);
+                ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event, 
+                    this.fileName);
                 ret += "(";
                 
                 // Parameters

@@ -64,7 +64,8 @@ public class Tool {
         while (i>-1){
             int j = input.indexOf("\n");
             if (j > -1)
-                input = input.substring(0, i) + input.substring(input.indexOf("\n", i)+1, input.length());
+                input = input.substring(0, i) + input.substring(input.indexOf("\n", i)+1, 
+                    input.length());
             else
                 input = input.substring(0, i);
             i = input.indexOf("//");
@@ -72,7 +73,8 @@ public class Tool {
         i = input.indexOf("/*");
         while (i>-1){
             if (input.indexOf("*/") > -1) {
-                input = input.substring(0, i) + input.substring(input.indexOf("*/", i)+2, input.length());
+                input = input.substring(0, i) + input.substring(input.indexOf("*/", i)+2, 
+                    input.length());
                 i = input.indexOf("/*");
             } else
                 i = -1;
@@ -160,7 +162,8 @@ public class Tool {
             if (j > -1) {
                 String generatedCode = content.substring(i, j + 3);             
                 String str = content.substring(0, i).trim();
-                String lastLine = str.lastIndexOf('\n') > -1 ? str.substring(str.lastIndexOf('\n') + 1) : str;
+                String lastLine = str.lastIndexOf('\n') > -1 ? 
+                    str.substring(str.lastIndexOf('\n') + 1) : str;
                 while (lastLine.startsWith("\r")) lastLine = lastLine.substring(1);
                 StringBuffer offset = new StringBuffer();
                 for (int ii = 0; ii < lastLine.length(); ii++){ 
@@ -211,7 +214,8 @@ public class Tool {
         return path.substring(i+1, j);        
     }
     public static String replacePredefinedKeywords(String str){
-        return str.replaceAll("\\@LINENUM", "thisJoinPoint.getSourceLocation().getLine()").replaceAll("\\@LOC", "thisJoinPoint.getSourceLocation().toString()");
+        return str.replaceAll("\\@LINENUM", "thisJoinPoint.getSourceLocation().getLine()")
+            .replaceAll("\\@LOC", "thisJoinPoint.getSourceLocation().toString()");
     }
     
     public static boolean containsKeywords(String str){
@@ -252,7 +256,8 @@ public class Tool {
             ClassLoader loader = mainClass.getClassLoader();
             String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
             
-            if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && mainClassPath.startsWith("jar:")) {
+            if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
+                    mainClassPath.startsWith("jar:")) {
                 return true;
             } else {
                 return false;
@@ -270,19 +275,24 @@ public class Tool {
             ClassLoader loader = mainClass.getClassLoader();
             String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
             
-            if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && mainClassPath.startsWith("jar:")) {
+            if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
+                    mainClassPath.startsWith("jar:")) {
                 String jarFilePath;
-                jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - "!/javamop/JavaMOPMain.class".length());
+                jarFilePath = mainClassPath.substring("jar:file:".length(), 
+                    mainClassPath.length() - "!/javamop/JavaMOPMain.class".length());
                 jarFilePath = Tool.polishPath(jarFilePath);
                 
-                configPath = new File(jarFilePath).getParentFile().getParent() + File.separator + "config";
+                configPath = new File(jarFilePath).getParentFile().getParent() + File.separator + 
+                    "config";
             } else {
                 String packageFilePath;
                 
-                packageFilePath = mainClassPath.substring("file:".length(), mainClassPath.length() - "/JavaMOPMain.class".length());
+                packageFilePath = mainClassPath.substring("file:".length(), 
+                    mainClassPath.length() - "/JavaMOPMain.class".length());
                 packageFilePath = Tool.polishPath(packageFilePath);
                 
-                configPath = new File(packageFilePath).getParentFile().getParent() + File.separator + "config";
+                configPath = new File(packageFilePath).getParentFile().getParent() + 
+                    File.separator + "config";
             }
             
             return configPath;

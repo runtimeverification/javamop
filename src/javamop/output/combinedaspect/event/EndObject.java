@@ -22,7 +22,8 @@ public class EndObject {
     
     private final MOPVariable endObjectSupportType;
     
-    public EndObject(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+    public EndObject(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) 
+            throws MOPException {
         if (!event.isEndObject())
             throw new MOPException("EndObject should be defined only for endObject pointcut.");
         
@@ -64,7 +65,8 @@ public class EndObject {
         ret += "declare parents : " + endObjectType + " extends " + endObjectSupportType + ";\n";
         ret += "\n";
         
-        ret += "after(" + endObjectType + " " + endObjectVar + ") : execution(void " + endObjectType + ".finalize()) && this(" + endObjectVar + "){\n";
+        ret += "after(" + endObjectType + " " + endObjectVar + ") : execution(void " + 
+            endObjectType + ".finalize()) && this(" + endObjectVar + "){\n";
         ret += eventBody;
         ret += "}\n";
         

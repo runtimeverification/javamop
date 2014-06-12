@@ -18,7 +18,8 @@ public class CombinedAspect {
     public final LockManager lockManager;
     private final EventManager eventManager;
     
-    public CombinedAspect(String name, MOPSpecFile mopSpecFile, boolean versionedStack) throws MOPException {
+    public CombinedAspect(String name, MOPSpecFile mopSpecFile, boolean versionedStack) 
+            throws MOPException {
         this.name = name + "MonitorAspect";
         this.versionedStack = versionedStack;
         

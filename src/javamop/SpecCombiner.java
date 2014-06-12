@@ -22,7 +22,8 @@ public class SpecCombiner {
                 pakage = pakage2;
             else {
                 if(!pakage2.getName().getName().equals(pakage.getName().getName()))
-                    throw new MOPException("Specifications need to be in the same package to be combined.");
+                    throw new MOPException("Specifications need to be in the same package to " +
+                        "be combined.");
             }
             
             //imports

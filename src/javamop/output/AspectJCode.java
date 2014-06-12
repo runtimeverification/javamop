@@ -28,7 +28,8 @@ public class AspectJCode {
             }
         }
         
-        //aspect = new Aspect(name, mopSpecFile, monitorSets, monitors, enableSets, versionedStack);
+        //aspect = new Aspect(name, mopSpecFile, monitorSets, monitors, enableSets, 
+        //    versionedStack);
         aspect = new CombinedAspect(name, mopSpecFile, versionedStack);
         
         if(versionedStack)

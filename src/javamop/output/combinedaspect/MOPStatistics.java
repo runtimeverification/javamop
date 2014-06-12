@@ -16,8 +16,10 @@ public class MOPStatistics {
     private final MOPVariable collectedMonitor;
     private final MOPVariable terminatedMonitor;
     private final HashMap<String, MOPVariable> eventVars = new HashMap<String, MOPVariable>();
-    private final HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>> categoryVars = new HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>>();
-    private final HashMap<MOPParameter, MOPVariable> paramVars = new HashMap<MOPParameter, MOPVariable>();
+    private final HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>> categoryVars = 
+        new HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>>();
+    private final HashMap<MOPParameter, MOPVariable> paramVars = 
+        new HashMap<MOPParameter, MOPVariable>();
     
     private final String specName;
     
@@ -29,21 +31,24 @@ public class MOPStatistics {
         this.terminatedMonitor = new MOPVariable(mopSpec.getName() + "_TerminatedMonitor_num");
         
         for (EventDefinition event : mopSpec.getEvents()) {
-            MOPVariable eventVar = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_num");
+            MOPVariable eventVar = new MOPVariable(mopSpec.getName() + "_" + event.getId() + 
+                "_num");
             this.eventVars.put(event.getId(), eventVar);
         }
         
         for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
             HashMap<String, MOPVariable> categoryVarsforProp = new HashMap<String, MOPVariable>();
             for (String key : prop.getHandlers().keySet()) {
-                MOPVariable categoryVar = new MOPVariable(mopSpec.getName() + "_" + prop.getPropertyId() + "_" + key + "_num");
+                MOPVariable categoryVar = new MOPVariable(mopSpec.getName() + "_" + 
+                    prop.getPropertyId() + "_" + key + "_num");
                 categoryVarsforProp.put(key, categoryVar);
             }
             this.categoryVars.put(prop, categoryVarsforProp);
         }
         
         for (MOPParameter param : mopSpec.getParameters()) {
-            MOPVariable paramVar = new MOPVariable(mopSpec.getName() + "_" + param.getName() + "_set");
+            MOPVariable paramVar = new MOPVariable(mopSpec.getName() + "_" + param.getName() + 
+                "_set");
             this.paramVars.put(param, paramVar);
         }
     }
@@ -167,7 +172,8 @@ public class MOPStatistics {
             HashMap<String, MOPVariable> categoryVarsforProp = categoryVars.get(prop);
             for (String categoryName : categoryVarsforProp.keySet()) {
                 MOPVariable categoryVar = categoryVarsforProp.get(categoryName);
-                ret += "System.err.println(\"#category - prop " + prop.getPropertyId() + " - " + categoryName + ": \" + " + categoryVar + ");\n";
+                ret += "System.err.println(\"#category - prop " + prop.getPropertyId() + " - " + 
+                    categoryName + ": \" + " + categoryVar + ");\n";
             }
         }
         

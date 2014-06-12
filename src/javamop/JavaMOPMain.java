@@ -93,8 +93,9 @@ public class JavaMOPMain {
     
     
     /**
-     * Process a java file including mop annotations to generate an aspectj file. The path argument should be an existing java file name. The location
-     * argument should contain the original file name, But it may have a different directory.
+     * Process a java file including mop annotations to generate an aspectj file. The path 
+     * argument should be an existing java file name. The location argument should contain the 
+     * original file name, But it may have a different directory.
      * 
      * @param path
      *            an absolute path of a specification file
@@ -116,8 +117,9 @@ public class JavaMOPMain {
     }
     
     /**
-     * Process a specification file to generate an aspectj file. The path argument should be an existing specification file name. The location
-     * argument should contain the original file name, But it may have a different directory.
+     * Process a specification file to generate an aspectj file. The path argument should be an 
+     * existing specification file name. The location argument should contain the original file 
+     * name, But it may have a different directory.
      * 
      * @param path
      *            an absolute path of a specification file
@@ -167,7 +169,8 @@ public class JavaMOPMain {
                 File aspectFile;
                 do{
                     suffixNumber++;
-                    aspectFile = new File(outputDir.getAbsolutePath() + File.separator + "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
+                    aspectFile = new File(outputDir.getAbsolutePath() + File.separator + 
+                        "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
                 } while(aspectFile.exists());
                 
                 aspectName = "MultiSpec_" + suffixNumber;
@@ -205,12 +208,14 @@ public class JavaMOPMain {
         }
     }
     
-    protected static void writeCombinedAspectFile(String aspectContent, String aspectName) throws MOPException {
+    protected static void writeCombinedAspectFile(String aspectContent, String aspectName) 
+            throws MOPException {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
         try {
-            FileWriter f = new FileWriter(outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj");
+            FileWriter f = new FileWriter(outputDir.getAbsolutePath() + File.separator + 
+                aspectName + "MonitorAspect.aj");
             f.write(aspectContent);
             f.close();
         } catch (Exception e) {
@@ -219,7 +224,8 @@ public class JavaMOPMain {
         System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
     }
     
-    protected static void writeFile(String content, String location, String suffix) throws MOPException {
+    protected static void writeFile(String content, String location, String suffix) 
+            throws MOPException {
         if (content == null || content.length() == 0)
             return;
         
@@ -240,11 +246,13 @@ public class JavaMOPMain {
     }
     
     // PM
-    protected static void writePluginOutputFile(String pluginOutput, String location) throws MOPException {
+    protected static void writePluginOutputFile(String pluginOutput, String location) 
+            throws MOPException {
         int i = location.lastIndexOf(File.separator);
         
         try {
-            FileWriter f = new FileWriter(location.substring(0, i + 1) + Tool.getFileName(location) + "PluginOutput.txt");
+            FileWriter f = new FileWriter(location.substring(0, i + 1) + 
+                Tool.getFileName(location) + "PluginOutput.txt");
             f.write(pluginOutput);
             f.close();
         } catch (Exception e) {
@@ -278,7 +286,8 @@ public class JavaMOPMain {
                 } else if (Tool.isJavaFile(file)) {
                     ret.add(f);
                 } else
-                    throw new MOPException("Unrecognized file type! The JavaMOP specification file should have .mop as the extension.");
+                    throw new MOPException("Unrecognized file type! The JavaMOP specification " +
+                        "file should have .mop as the extension.");
             }
         }
         
@@ -309,7 +318,8 @@ public class JavaMOPMain {
         } else {
             for (File file : specFiles) {
                 boolean needResetAspectName = JavaMOPMain.aspectname == null;
-                String location = outputDir == null ? file.getAbsolutePath() : outputDir.getAbsolutePath() + File.separator + file.getName();
+                String location = outputDir == null ? file.getAbsolutePath() : 
+                    outputDir.getAbsolutePath() + File.separator + file.getName();
                 System.out.println("-Processing " + file.getPath());
                 if (Tool.isSpecFile(file.getName())) {
                     processSpecFile(file, location);
@@ -339,14 +349,16 @@ public class JavaMOPMain {
     
     public static void process(String arg) throws MOPException {
         if(outputDir != null && !outputDir.exists())
-            throw new MOPException("The output directory, " + outputDir.getPath() + " does not exist.");
+            throw new MOPException("The output directory, " + outputDir.getPath() + 
+                " does not exist.");
         
         process(arg.split(";"), "");
     }
     
     // PM
     public static void print_help() {
-        System.out.println("Usage: java [-cp javmaop_classpath] javamop.JavaMOPMain [-options] files");
+        System.out.println("Usage: java [-cp javmaop_classpath] javamop.JavaMOPMain [-options] " +
+            "files");
         System.out.println("");
         System.out.println("where options include:");
         System.out.println(" Options enabled by default are prefixed with \'+\'");
@@ -364,7 +376,8 @@ public class JavaMOPMain {
         System.out.println();
         
         System.out.println("    -d <output path>\t\t  select directory to store output files");
-        System.out.println("    -n | -aspectname <aspect name>\t  use the given aspect name instead of source code name");
+        System.out.println("    -n | -aspectname <aspect name>\t  use the given aspect name " +
+            "instead of source code name");
         System.out.println();
         
         System.out.println("    -showevents\t\t\t  show every event/handler occurrence");
@@ -373,20 +386,24 @@ public class JavaMOPMain {
         
         System.out.println("    -s | -statistics\t\t  generate monitor with statistics");
         System.out.println("    -noopt1\t\t\t  don't use the enable set optimization");
-        System.out.println("    -javalib\t\t\t  generate a java library rather than an AspectJ file");
+        System.out.println("    -javalib\t\t\t  generate a java library rather than an " +
+            "AspectJ file");
         System.out.println();
         
-        System.out.println("    -aspect:\"<command line>\"\t  compile the result right after it is generated");
+        System.out.println("    -aspect:\"<command line>\"\t  compile the result right after " +
+            "it is generated");
         System.out.println();
     }
     
     public static void main(String[] args) {
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
-        if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && mainClassPath.startsWith("jar:")) {
+        if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
+                mainClassPath.startsWith("jar:")) {
             isJarFile = true;
             
-            jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - "!/javamop/JavaMOPMain.class".length());
+            jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - 
+                "!/javamop/JavaMOPMain.class".length());
             jarFilePath = polishPath(jarFilePath);
         }
         

@@ -9,7 +9,8 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 public class ActivatorManager {
     
     private final List<JavaMOPSpec> specs;
-    private final TreeMap<JavaMOPSpec, MOPVariable> activators = new TreeMap<JavaMOPSpec, MOPVariable>();
+    private final TreeMap<JavaMOPSpec, MOPVariable> activators = 
+        new TreeMap<JavaMOPSpec, MOPVariable>();
     
     public ActivatorManager(String name, List<JavaMOPSpec> specs) {
         this.specs = specs;
