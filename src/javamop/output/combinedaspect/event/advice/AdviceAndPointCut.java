@@ -21,39 +21,39 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public class AdviceAndPointCut {
-    public MOPStatManager statManager;
-    public ActivatorManager activatorsManager;
+    private final MOPStatManager statManager;
+    private final ActivatorManager activatorsManager = null;
     
-    MOPVariable inlineFuncName;
-    MOPParameters inlineParameters;
+    private final MOPVariable inlineFuncName;
+    private final MOPParameters inlineParameters;
     
-    MOPVariable pointcutName;
-    public PointCut pointcut;
-    MOPParameters parameters;
-    String specName;
-    String fileName;
+    private final MOPVariable pointcutName;
+    private final PointCut pointcut;
+    private final MOPParameters parameters;
+    private final String specName;
+    private final String fileName;
     
-    boolean hasThisJoinPoint;
+    private final boolean hasThisJoinPoint;
     public boolean isAround = false;
     public boolean beCounted = false;
     public String retType;
-    public String pos;
-    public MOPParameters retVal;
-    public MOPParameters throwVal;
-    public MOPParameters threadVars = new MOPParameters();
-    GlobalLock globalLock;
-    boolean isSync;
+    public final String pos;
+    public final MOPParameters retVal;
+    public final MOPParameters throwVal;
+    private final MOPParameters threadVars = new MOPParameters();
+    private final GlobalLock globalLock;
+    private final boolean isSync;
     
-    LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
-    HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
-    HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
+    private final LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
+    private final HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
+    private final HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
     
-    HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
+    private final HashMap<EventDefinition, AdviceBody> advices = new HashMap<EventDefinition, AdviceBody>();
     
-    MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+    private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
-    AroundAdviceLocalDecl aroundLocalDecl = null;
-    AroundAdviceReturn aroundAdviceReturn = null;
+    private AroundAdviceLocalDecl aroundLocalDecl = null;
+    private AroundAdviceReturn aroundAdviceReturn = null;
     
     public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
         this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();

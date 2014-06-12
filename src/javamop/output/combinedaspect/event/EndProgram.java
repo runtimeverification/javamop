@@ -10,10 +10,10 @@ import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class EndProgram {
-    MOPVariable hookName = null;
+    private final MOPVariable hookName;
     
-    ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
-    ArrayList<AdviceBody> eventBodies = new ArrayList<AdviceBody>();
+    private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
+    private final ArrayList<AdviceBody> eventBodies = new ArrayList<AdviceBody>();
     
     public EndProgram(String name) {
         this.hookName = new MOPVariable(name + "_DummyHookThread");

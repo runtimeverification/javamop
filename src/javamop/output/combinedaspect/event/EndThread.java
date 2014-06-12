@@ -10,14 +10,14 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class EndThread {
     JavaMOPSpec mopSpec;
-    EventDefinition event;
+    private EventDefinition event;
     GlobalLock globalLock;
     
-    AdviceBody eventBody;
+    private AdviceBody eventBody;
     
     MOPVariable runnableMap;
     MOPVariable mainThread;
-    MOPVariable mainCounter;
+    private MOPVariable mainCounter;
     MOPVariable threadSet;
     
     MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");

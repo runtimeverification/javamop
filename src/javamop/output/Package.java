@@ -3,7 +3,7 @@ package javamop.output;
 import javamop.parser.ast.MOPSpecFile;
 
 public class Package {
-    String packageString;
+    private String packageString;
     
     public Package(MOPSpecFile mopSpecFile) {
         if (mopSpecFile.getPakage() != null) {

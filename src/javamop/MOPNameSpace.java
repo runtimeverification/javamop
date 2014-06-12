@@ -5,9 +5,9 @@ import java.util.*;
 public class MOPNameSpace {
     
     static private boolean used = false;
-    static private List<String> userVariables = new ArrayList<String>();
-    static private List<String> mopVariables = new ArrayList<String>();
-    static private Map<String, String> mapVars = new HashMap<String, String>();
+    static private final List<String> userVariables = new ArrayList<String>();
+    static private final List<String> mopVariables = new ArrayList<String>();
+    static private final Map<String, String> mapVars = new HashMap<String, String>();
     
     static private final HashSet<String> keywords = new HashSet<String>();
     
@@ -22,9 +22,6 @@ public class MOPNameSpace {
     
     static public void init(){
         used = false;
-        userVariables = new ArrayList<String>();
-        mopVariables = new ArrayList<String>();
-        mapVars = new HashMap<String, String>();
     }
     
     static public void addUserVariable(String varName) throws MOPException {

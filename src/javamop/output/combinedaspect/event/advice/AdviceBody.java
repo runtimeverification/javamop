@@ -8,29 +8,55 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameters;
 
 public class AdviceBody {
-    JavaMOPSpec mopSpec;
-    public EventDefinition event;
-    public MOPVariable monitorName;
-    public String specName;
-    public String fileName;
+    final JavaMOPSpec mopSpec;
+    public final EventDefinition event;
+    public final String specName;
+    public final String fileName;
     
-    public MOPStatistics stat;
+    public final MOPStatistics stat;
     
-    public boolean isGeneral;
-    MOPParameters eventParams;
+    public final boolean isGeneral;
     
-    public boolean isFullParam;
-    CombinedAspect aspect;
+    public final boolean isFullParam;
+    private final CombinedAspect aspect;
     
     public AdviceBody(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) {
         this.mopSpec = mopSpec;
         this.specName = mopSpec.getName();
         this.aspect = combinedAspect;
         this.event = event;
-        this.eventParams = event.getMOPParametersOnSpec();
+        MOPParameters eventParams = event.getMOPParametersOnSpec();
         this.stat = combinedAspect.statManager.getStat(mopSpec);
         this.isGeneral = mopSpec.isGeneral();
         this.isFullParam = eventParams.equals(mopSpec.getParameters());
         this.fileName = combinedAspect.getFileName();
+    }
+    
+    public JavaMOPSpec getMOPSpec() {
+        return mopSpec;
+    }
+    
+    public EventDefinition getEvent() {
+        return event;
+    }
+    
+    public String getSpecName() {
+        return specName;
+    }
+    
+    public String getFileName() {
+        return fileName;
+    }
+    
+    public MOPStatistics getStat() {
+        return stat;
+    }
+    
+    public boolean getGeneral() {
+        return isGeneral;
+    }
+    
+    public boolean getFullParam() {
+        return isFullParam;
     }
 }

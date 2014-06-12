@@ -7,14 +7,14 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public class AspectJCode {
-    String name;
+    private final String name;
     
-    Package packageDecl;
-    Imports imports;
+    private final Package packageDecl;
+    private final Imports imports;
     //Aspect aspect;
-    CombinedAspect aspect;
-    boolean versionedStack = false;
-    SystemAspect systemAspect;
+    private final CombinedAspect aspect;
+    private boolean versionedStack = false;
+    private SystemAspect systemAspect;
     
     public AspectJCode(String name, MOPSpecFile mopSpecFile) throws MOPException {
         this.name = name;

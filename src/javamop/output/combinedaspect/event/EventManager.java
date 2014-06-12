@@ -15,14 +15,14 @@ import javamop.parser.ast.visitor.ConvertPointcutToCNFVisitor;
 
 public class EventManager {
     
-    public ArrayList<AdviceAndPointCut> advices = new ArrayList<AdviceAndPointCut>();
-    public ArrayList<EndObject> endObjectEvents = new ArrayList<EndObject>();
-    public ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
-    public ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
-    public EndProgram endProgramEvent = null;
+    private ArrayList<AdviceAndPointCut> advices = new ArrayList<AdviceAndPointCut>();
+    private final ArrayList<EndObject> endObjectEvents = new ArrayList<EndObject>();
+    private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
+    private final ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
+    private final EndProgram endProgramEvent;
     
     
-    MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+    private MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
     public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) throws MOPException {
         

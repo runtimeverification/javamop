@@ -11,10 +11,10 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class MOPStatManager {
     
-    HashMap<JavaMOPSpec, MOPStatistics> stats = new HashMap<JavaMOPSpec, MOPStatistics>();
+    private final HashMap<JavaMOPSpec, MOPStatistics> stats = new HashMap<JavaMOPSpec, MOPStatistics>();
     
-    MOPVariable statClass;
-    MOPVariable statObject;
+    private final MOPVariable statClass;
+    private final MOPVariable statObject;
     
     public MOPStatManager(String name, List<JavaMOPSpec> specs) throws MOPException {
         for (JavaMOPSpec spec : specs) {

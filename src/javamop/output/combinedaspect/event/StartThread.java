@@ -9,16 +9,16 @@ import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class StartThread {
-    JavaMOPSpec mopSpec;
-    EventDefinition event;
-    GlobalLock globalLock;
+    private final JavaMOPSpec mopSpec;
+    private final EventDefinition event;
+    private final GlobalLock globalLock;
     
-    AdviceBody eventBody;
+    private final AdviceBody eventBody;
     
-    MOPVariable runnableMap;
-    MOPVariable mainThread;
+    private final MOPVariable runnableMap;
+    private final MOPVariable mainThread;
     
-    MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+    private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
     public StartThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
         if (!event.isStartThread())

@@ -16,7 +16,7 @@ import javamop.output.combinedaspect.CombinedAspect;
 public class ThreadStatusMonitor extends EndThread{
     
     private final static String eventName = "ThreadMonitor";
-    private MOPVariable monitorName;
+    private final MOPVariable monitorName = null;
     
     private boolean hasDeadlockHandler = false;
     
