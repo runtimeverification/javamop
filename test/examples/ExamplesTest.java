@@ -19,11 +19,19 @@ public class ExamplesTest {
     private final TestHelper helper;
     private final String path;
     
+    /**
+     * Construct this instance of the parameterized test.
+     * @param path The path to the .mop file used in this test.
+     */
     public ExamplesTest(String path) {
         this.path = new File(path).getParent();
         helper = new TestHelper(path);
     }
     
+    /**
+     * Test all the instances of this example. Each example has a _1, _2, and possibly a _3 component. This runs assertions on all the avilable ones.
+     * This function is inspired by the examples/run script.
+     */
     @Test
     public void testExample() throws Exception {
         final String testName = path.substring(path.lastIndexOf('/')+1);
@@ -43,6 +51,9 @@ public class ExamplesTest {
         }
     }
     
+    /**
+     * Run a subset of the examples as tests. These are from the examples/runall script.
+     */
     @Parameterized.Parameters(name="{0}")
     public static Collection<Object[]> data() {
         ArrayList<Object[]> data = new ArrayList<Object[]>();

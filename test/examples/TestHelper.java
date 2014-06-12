@@ -43,6 +43,14 @@ public class TestHelper {
         testCommand(expectedFilePrefix, true, command);
     }
     
+    /**
+     * Execute command, tests return code and potentially checks standard and error output against expected content
+     * in files if {@code expectedFilePrefix} not null.
+     * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
+     * @param mustSucceed if the program's return code must be {@code 0}.
+     * @param command  list of arguments describing the system command to be executed.
+     * @throws Exception
+     */
     public void testCommand(String expectedFilePrefix, boolean mustSucceed, String... commands) throws Exception {
         testCommand("", expectedFilePrefix, mustSucceed, commands);
     }
@@ -50,6 +58,7 @@ public class TestHelper {
     /**
      * Execute command, tests return code and potentially checks standard and error output against expected content
      * in files if {@code expectedFilePrefix} not null.
+     * @param relativePath The path relative to the MOP file directory to run commands from and find expected files in.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
      * @param mustSucceed if the program's return code must be {@code 0}.
      * @param command  list of arguments describing the system command to be executed.
