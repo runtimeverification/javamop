@@ -94,7 +94,7 @@ public class ExamplesTest {
         data.add(new Object[]{"examples/ERE/SafeFileWriter/SafeFileWriter.mop"});
         data.add(new Object[]{"examples/ERE/SafeSyncMap/SafeSyncMap.mop"});
         //Pending Issue 5
-        //data.add(new Object[]{"examples/ERE/SafeEnum/SafeEnum.mop"});
+        data.add(new Object[]{"examples/ERE/SafeEnum/SafeEnum.mop"});
         data.add(new Object[]{"examples/ERE/UnsafeIterator/UnsafeIterator.mop"});
         data.add(new Object[]{"examples/ERE/UnsafeMapIterator/UnsafeMapIterator.mop"});
         
@@ -102,7 +102,7 @@ public class ExamplesTest {
         data.add(new Object[]{"examples/FSM/HasNext2/HasNext2.mop"});
         
         //Pending Issue 5
-        //data.add(new Object[]{"examples/LTL/SafeEnum/SafeEnum.mop"});
+        data.add(new Object[]{"examples/LTL/SafeEnum/SafeEnum.mop"});
         data.add(new Object[]{"examples/LTL/HasNext/HasNext.mop"});
         data.add(new Object[]{"examples/LTL/SafeFileWriter/SafeFileWriter.mop"});
         data.add(new Object[]{"examples/LTL/SafeIterator/SafeIterator.mop"});
