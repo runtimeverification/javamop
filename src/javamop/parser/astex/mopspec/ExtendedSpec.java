@@ -31,13 +31,13 @@ import javamop.parser.astex.visitor.VoidVisitor;
  * @author Soha Hussein
  */
 public final class ExtendedSpec extends ExtNode {
-
+    
     private final String specName;
-
+    
     private final boolean isParametric;
-
+    
     List<String> parameters = null;
-
+    
     public ExtendedSpec(int line, int column, String specName, boolean isParametric, List<String> parameters) {
         super(line, column);
         this.specName = specName;
@@ -48,23 +48,23 @@ public final class ExtendedSpec extends ExtNode {
     public String getName() {
         return specName;
     }
-
+    
     public boolean isParametric() {
         return isParametric;
     }
-
+    
     public List<String> getParameters() {
         return parameters;
     }
-
+    
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
         v.visit(this, arg);
     }
-
+    
     @Override
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-
+    
 }
