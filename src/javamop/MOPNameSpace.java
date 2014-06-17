@@ -56,7 +56,8 @@ public class MOPNameSpace {
         
         int extNum = 1;
         if (userVariables.contains(varName) || mopVariables.contains(varName)) {
-            while (userVariables.contains(varName + "_" + extNum) || mopVariables.contains(varName + "_" + extNum))
+            while (userVariables.contains(varName + "_" + extNum) || 
+                    mopVariables.contains(varName + "_" + extNum))
                 extNum++;
             mapVars.put(varName, varName + "_" + extNum);
             mopVariables.add(varName + "_" + extNum);

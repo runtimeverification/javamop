@@ -36,12 +36,14 @@ public class MOPErrorChecker {
         
         for (MOPParameter param : event.getRetVal()) {
             if (param.getName().equals(threadVar))
-                throw new MOPException("A variable from a thread pointcut cannot appear as the resulting variable.");
+                throw new MOPException("A variable from a thread pointcut cannot appear as " +
+                    "the resulting variable.");
         }
         
         for (MOPParameter param : event.getThrowVal()) {
             if (param.getName().equals(threadVar))
-                throw new MOPException("A variable from a thread pointcut cannot appear as the throwing variable.");
+                throw new MOPException("A variable from a thread pointcut cannot appear as " +
+                    "the throwing variable.");
         }
     }
     
@@ -50,17 +52,18 @@ public class MOPErrorChecker {
         // but different parameters were banned. Now that such events are allowed, this
         // code is not used.
         /*
-         *        HashMap<String, MOPParameters> nameToParam = new HashMap<String, MOPParameters>();
+         * HashMap<String, MOPParameters> nameToParam = new HashMap<String, MOPParameters>();
          *        
-         *        for(EventDefinition event : mopSpec.getEvents()){
-         *            if(nameToParam.get(event.getId()) != null){
-         *                if(!event.getMOPParametersOnSpec().equals(nameToParam.get(event.getId())))
-         *                    throw new MOPException("Events with the same name should have the same parameters when projected to the specification parameters.");
-    } else {
-        nameToParam.put(event.getId(), event.getMOPParametersOnSpec());
-    }
-    }
-    */
+         * for(EventDefinition event : mopSpec.getEvents()) {
+         *     if(nameToParam.get(event.getId()) != null) {
+         *         if(!event.getMOPParametersOnSpec().equals(nameToParam.get(event.getId()))) 
+         *             throw new MOPException("Events with the same name should have the same " +
+         *                 "parameters when projected to the specification parameters.");
+         *     } else {
+         *         nameToParam.put(event.getId(), event.getMOPParametersOnSpec());
+         *     }
+         * }
+         */
     }
     
     public static void verifyUniqueEndProgram(JavaMOPSpec mopSpec) throws MOPException {
@@ -78,7 +81,8 @@ public class MOPErrorChecker {
     
     public static void verifyGeneralParametric(JavaMOPSpec mopSpec) throws MOPException {
         if(mopSpec.isGeneral() && mopSpec.getParameters().size() == 0)
-            throw new MOPException("[Internal Error] It cannot use general parameteric algorithm when there is no parameter");
+            throw new MOPException("[Internal Error] It cannot use general parameteric " +
+                "algorithm when there is no parameter");
     }
     
     public static void verifyEndProgramParam(EventDefinition event) throws MOPException {
@@ -89,7 +93,8 @@ public class MOPErrorChecker {
     public static void verifyEndThreadParam(EventDefinition event) throws MOPException {
         if(event.isEndThread())
             if(event.getParametersWithoutThreadVar().size() >0)
-                throw new MOPException("A endThread pointcut cannot have any parameter except one from thread pointcut.");
+                throw new MOPException("A endThread pointcut cannot have any parameter except " +
+                    "one from thread pointcut.");
     }
     
 }

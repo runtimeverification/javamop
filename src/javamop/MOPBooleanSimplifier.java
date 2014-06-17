@@ -161,11 +161,13 @@ class MOPBitmap {
         // move this one to right and reset all bits after this
         bitmap[movableTrue] = false;
         bitmap[movableTrue + 1] = true;
-        for (int i = movableTrue + 2; i < movableTrue + 2 + (truesize - numTrueBeforeMovableTrue - 1); i++) {
+        for (int i = movableTrue + 2; i < movableTrue + 2 + 
+                (truesize - numTrueBeforeMovableTrue - 1); i++) {
             bitmap[i] = true;
         }
         
-        for (int i = movableTrue + 2 + (truesize - numTrueBeforeMovableTrue - 1); i < totalsize; i++) {
+        for (int i = movableTrue + 2 + 
+                (truesize - numTrueBeforeMovableTrue - 1); i < totalsize; i++) {
             bitmap[i] = false;
         }
         return bitmap;

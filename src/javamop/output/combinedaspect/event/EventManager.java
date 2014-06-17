@@ -24,7 +24,8 @@ public class EventManager {
     
     private MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
-    public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) throws MOPException {
+    public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) 
+            throws MOPException {
         
         this.endProgramEvent = new EndProgram(name);
         
@@ -34,7 +35,8 @@ public class EventManager {
             }
             for (EventDefinition event : spec.getEvents()) {
                 // normal event
-                if (!event.isEndObject() && !event.isEndProgram() && !event.isEndThread() && !event.isStartThread()) {
+                if (!event.isEndObject() && !event.isEndProgram() && !event.isEndThread() && 
+                        !event.isStartThread()) {
                     boolean added = false;
                     for (AdviceAndPointCut advice : advices) {
                         if (advice.isAround != event.getPos().equals("around"))
@@ -51,8 +53,10 @@ public class EventManager {
                             continue;
                         
                         PointcutComparator comparator = new PointcutComparator();
-                        PointCut p1 = event.getPointCut().accept(new ConvertPointcutToCNFVisitor(), null);
-                        PointCut p2 = advice.getPointCut().accept(new ConvertPointcutToCNFVisitor(), null);
+                        PointCut p1 = event.getPointCut().accept(
+                            new ConvertPointcutToCNFVisitor(), null);
+                        PointCut p2 = advice.getPointCut().accept(
+                            new ConvertPointcutToCNFVisitor(), null);
                         
                         if (comparator.compare(p1, p2)) {
                             added = advice.addEvent(spec, event, combinedAspect);
@@ -108,7 +112,8 @@ public class EventManager {
         String ret = "";
         
         ret += "pointcut " + commonPointcut + "() : ";
-        ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) && !adviceexecution();\n";
+        ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) " +
+            "&& !adviceexecution();\n";
         
         int numAdvice = 1;
         advices = this.adjustAdviceOrder();
@@ -170,9 +175,11 @@ public class EventManager {
     }
     
     public static class EventMethodHelper {
-        public static String methodName(String enclosingspec, EventDefinition event, String aspectName) {
+        public static String methodName(String enclosingspec, EventDefinition event, 
+                String aspectName) {
             boolean mangle = false;
-            if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && JavaMOPMain.aspectname.length() > 0) {
+            if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && 
+                    JavaMOPMain.aspectname.length() > 0) {
                 mangle = true;
             }
             
@@ -193,7 +200,8 @@ public class EventManager {
             return s.toString();
         }
         
-        public static String methodName(JavaMOPSpec enclosing, EventDefinition evt, String aspectName) {
+        public static String methodName(JavaMOPSpec enclosing, EventDefinition evt, 
+                String aspectName) {
             return methodName(enclosing.getName(), evt, aspectName);
         }
     }

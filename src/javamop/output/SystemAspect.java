@@ -33,7 +33,8 @@ public class SystemAspect {
         
         ret += "pointcut sysbegin() : execution(* *(..)) && ";
         if(JavaMOPMain.dacapo){
-            ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
+            ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
+                "&& BaseAspect.notwithin();\n";
         } else {
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
         }
@@ -45,7 +46,8 @@ public class SystemAspect {
         ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
         ret += "pointcut sysend() : execution(* *(..)) && ";
         if(JavaMOPMain.dacapo){
-            ret += "!within(javamoprt.MOPObject+) && !adviceexecution() && BaseAspect.notwithin();\n";
+            ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
+                "&& BaseAspect.notwithin();\n";
         } else {
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
         }

@@ -11,7 +11,8 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 
 public class MOPStatManager {
     
-    private final HashMap<JavaMOPSpec, MOPStatistics> stats = new HashMap<JavaMOPSpec, MOPStatistics>();
+    private final HashMap<JavaMOPSpec, MOPStatistics> stats = 
+        new HashMap<JavaMOPSpec, MOPStatistics>();
     
     private final MOPVariable statClass;
     private final MOPVariable statObject;
@@ -43,8 +44,10 @@ public class MOPStatManager {
         
         ret += "public void run() {\n";
         {
-            ret += "System.err.println(\"# of total events: \" + " + statClass + ".numTotalEvents);\n";
-            ret += "System.err.println(\"# of total monitors: \" + " + statClass + ".numTotalMonitors);\n";
+            ret += "System.err.println(\"# of total events: \" + " + statClass + 
+                ".numTotalEvents);\n";
+            ret += "System.err.println(\"# of total monitors: \" + " + statClass + 
+                ".numTotalMonitors);\n";
         }
         ret += "}\n";
         

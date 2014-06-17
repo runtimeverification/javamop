@@ -19,9 +19,11 @@ public class EndProgram {
         this.hookName = new MOPVariable(name + "_DummyHookThread");
     }
     
-    public void addEndProgramEvent(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+    public void addEndProgramEvent(JavaMOPSpec mopSpec, EventDefinition event, 
+            CombinedAspect combinedAspect) throws MOPException {
         if (!event.isEndProgram())
-            throw new MOPException("EndProgram should be defined only for an endProgram pointcut.");
+            throw new MOPException("EndProgram should be defined only for an " +
+                "endProgram pointcut.");
         
         this.eventBodies.add(new AdviceBody(mopSpec, event, combinedAspect));
     }
@@ -61,7 +63,8 @@ public class EndProgram {
                 ret += "{\n";
             }
             
-            ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event, eventBody.fileName);
+            ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event, 
+                eventBody.fileName);
             ret += "();\n";
             
             if (eventBodies.size() > 1) {

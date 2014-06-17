@@ -22,7 +22,8 @@ public class EndThread {
     
     MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
-    public EndThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) throws MOPException {
+    public EndThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) 
+            throws MOPException {
         if (!event.isEndThread())
             throw new MOPException("EndThread should be defined only for an endThread pointcut.");
         
@@ -30,9 +31,11 @@ public class EndThread {
         this.event = event;
         this.globalLock = combinedAspect.lockManager.getLock();
         
-        this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_ThreadToRunnable");
+        this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + event.getId() + 
+            "_ThreadToRunnable");
         this.mainThread = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_MainThread");
-        this.mainCounter = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_MainCounter");
+        this.mainCounter = new MOPVariable(mopSpec.getName() + "_" + event.getId() + 
+            "_MainCounter");
         this.threadSet = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_ThreadSet");
         
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
@@ -45,7 +48,8 @@ public class EndThread {
     public String printDataStructures() {
         String ret = "";
         
-        ret += "static HashMap<Thread, Runnable> " + runnableMap + " = new HashMap<Thread, Runnable>();\n";
+        ret += "static HashMap<Thread, Runnable> " + runnableMap + 
+            " = new HashMap<Thread, Runnable>();\n";
         ret += "static Thread " + mainThread + " = null;\n";
         ret += "static long " + mainCounter + " = 0;\n";
         ret += "static HashSet<Thread> " + threadSet + " = new HashSet<Thread>();\n";
@@ -59,7 +63,8 @@ public class EndThread {
         ret += "after (Runnable r) returning (Thread t): ";
         ret += "(";
         ret += "(call(Thread+.new(Runnable+,..)) && args(r,..))";
-        ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) && args(ThreadGroup, r,..)))";
+        ret += "|| (initialization(Thread+.new(ThreadGroup+, Runnable+,..)) " +
+            "&& args(ThreadGroup, r,..)))";
         ret += " && " + commonPointcut + "() {\n";
         ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
         ret += "Thread.yield();\n";
@@ -75,7 +80,8 @@ public class EndThread {
         String ret = "";
         MOPVariable threadVar = new MOPVariable("t");
         
-        ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" + threadVar + ") )";
+        ret += "after (Thread " + threadVar + "): ( execution(void Thread+.run()) && target(" 
+            + threadVar + ") )";
         ret += " && " + commonPointcut + "() {\n";
         
         ret += "if(Thread.currentThread() == " + threadVar + ") {\n";
@@ -91,7 +97,8 @@ public class EndThread {
         
         ret += globalLock.getName() + ".unlock();\n";
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -109,7 +116,8 @@ public class EndThread {
         String ret = "";
         MOPVariable runnableVar = new MOPVariable("r");
         
-        ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) && !execution(void Thread+.run()) && target(" + runnableVar + ") )";
+        ret += "after (Runnable " + runnableVar + "): ( execution(void Runnable+.run()) "+
+            "&& !execution(void Thread+.run()) && target(" + runnableVar + ") )";
         ret += " && " + commonPointcut + "() {\n";
         
         ret += "if(" + runnableMap + ".get(Thread.currentThread()) == " + runnableVar + ") {\n";
@@ -122,7 +130,8 @@ public class EndThread {
         ret += threadSet + ".remove(Thread.currentThread());\n";
         ret += globalLock.getName() + ".unlock();\n";
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -168,7 +177,8 @@ public class EndThread {
         }
         ret += threadSet + ".remove(Thread.currentThread());\n";
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -215,7 +225,8 @@ public class EndThread {
             ret += threadSet + ".remove(" + t + ");\n";
         }
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, eventBody.fileName);
+        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
