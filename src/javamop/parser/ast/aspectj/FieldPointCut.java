@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class FieldPointCut extends PointCut {
     
-    FieldPattern field;
+    private final FieldPattern field;
     
     public FieldPointCut(int line, int column, String type, FieldPattern field){
         super(line, column, type);

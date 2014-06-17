@@ -10,7 +10,7 @@ import javamop.parser.ast.aspectj.BaseTypePattern;
 
 public class MOPParameters implements Iterable<MOPParameter> {
     
-    ArrayList<MOPParameter> parameters;
+    private final ArrayList<MOPParameter> parameters;
     
     public MOPParameters() {
         this.parameters = new ArrayList<MOPParameter>();

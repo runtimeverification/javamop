@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class NotPointCut extends PointCut {
     
-    PointCut pointcut;
+    private final PointCut pointcut;
     
     public NotPointCut(int line, int column, PointCut pointcut) {
         super(line, column, "!");

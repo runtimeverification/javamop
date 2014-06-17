@@ -7,8 +7,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class IDPointCut extends PointCut {
     
-    List<TypePattern> args;
-    String id;
+    private final List<TypePattern> args;
+    private final String id;
     
     public IDPointCut(int line, int column, String id, List<TypePattern> args){
         super(line, column, "id");

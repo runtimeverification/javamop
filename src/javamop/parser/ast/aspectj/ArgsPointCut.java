@@ -6,7 +6,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class ArgsPointCut extends PointCut {
     
-    List<TypePattern> args;
+    private final List<TypePattern> args;
+    
     public ArgsPointCut(int line, int column, String type, List<TypePattern> args){
         super(line, column, type);
         this.args = args;

@@ -8,8 +8,8 @@ import javamop.parser.astex.visitor.VoidVisitor;
 
 public class HandlerPointCut extends PointCut{
     
-    ReferenceSpec r;
-    String state;
+    private ReferenceSpec r;
+    private final String state;
     
     public HandlerPointCut(int line, int column, String type, String specName, String referenceElement, String state) {
         super(line, column, type);

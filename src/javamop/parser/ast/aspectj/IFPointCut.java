@@ -7,7 +7,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class IFPointCut extends PointCut {
     
-    Expression expr;
+    private final Expression expr;
     
     public IFPointCut(int line, int column, String type, Expression expr) {
         super(line, column, type);

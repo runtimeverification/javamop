@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class WithinPointCut extends PointCut {
     
-    TypePattern pattern;
+    private final TypePattern pattern;
     
     public WithinPointCut(int line, int column, String type, TypePattern pattern){
         super(line, column, type);

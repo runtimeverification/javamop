@@ -6,8 +6,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class EndObjectPointCut extends PointCut {
     
-    TypePattern targetType;
-    String id;
+    private final TypePattern targetType;
+    private final String id;
     
     public EndObjectPointCut(int line, int column, TypePattern targetType, String id){
         super(line, column, "endObject");

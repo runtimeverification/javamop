@@ -6,11 +6,11 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class FieldPattern extends Node {
     
-    int modifiers;
-    int not_modifiers;
-    TypePattern type;
-    TypePattern owner;
-    String name;
+    private final int modifiers;
+    private final int not_modifiers;
+    private final TypePattern type;
+    private final TypePattern owner;
+    private final String name;
     
     public FieldPattern(int line, int column, int modifiers, int not_modifiers, TypePattern type, TypePattern owner, String name){
         super(line, column);

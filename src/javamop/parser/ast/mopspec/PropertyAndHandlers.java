@@ -13,18 +13,18 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class PropertyAndHandlers extends Node {
     
-    Property property;
-    HashMap<String, BlockStmt> handlers;
-    HashMap<String, MOPParameters> usedParameters = new HashMap<String, MOPParameters>();
+    private final Property property;
+    private final HashMap<String, BlockStmt> handlers;
+    private final HashMap<String, MOPParameters> usedParameters = new HashMap<String, MOPParameters>();
     
     //things that should be defined afterward
     int propertyId; //will be defined in JavaMOPSpec
     Properties logicResult; //will be defined by MOPProcessor
     
-    HashMap<String, String> eventMonitoringCodes = new HashMap<String, String>();
-    HashMap<String, String> aftereventMonitoringCodes = new HashMap<String, String>();
+    private final HashMap<String, String> eventMonitoringCodes = new HashMap<String, String>();
+    private final HashMap<String, String> aftereventMonitoringCodes = new HashMap<String, String>();
     
-    boolean versionedStack = false;
+    private boolean versionedStack = false;
     
     public PropertyAndHandlers(int line, int column, Property property, HashMap<String, BlockStmt> handlers) {
         super(line, column);

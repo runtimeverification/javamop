@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class ThisPointCut extends PointCut {
     
-    TypePattern target;
+    private final TypePattern target;
     
     public ThisPointCut(int line, int column, String type, TypePattern target){
         super(line, column, type);

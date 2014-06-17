@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class MethodPointCut extends PointCut {
     
-    MethodPattern signature;
+    private final MethodPattern signature;
     
     public MethodPointCut(int line, int column, String type, MethodPattern signature) {
         super(line, column, type);

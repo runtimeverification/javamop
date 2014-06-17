@@ -18,18 +18,18 @@ import javamop.parser.ast.visitor.VoidVisitor;
 // This should really be refactored.
 // -P
 public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
-    int modifiers;
-    String name;
-    PackageDeclaration packageDeclaration;
-    MOPParameters parameters;
-    String inMethod;
-    List<BodyDeclaration> declarations;
-    List<EventDefinition> events = null;
-    List<PropertyAndHandlers> properties = null;
-    List<String> eventNames = null;
+    private final int modifiers;
+    private final String name;
+    private final PackageDeclaration packageDeclaration;
+    private final MOPParameters parameters;
+    private final String inMethod;
+    private final List<BodyDeclaration> declarations;
+    private final List<EventDefinition> events;
+    private final List<PropertyAndHandlers> properties;
+    private final List<String> eventNames;
     
-    MOPParameters commonParamInEvents;
-    MOPParameters varsToSave;
+    private MOPParameters commonParamInEvents;
+    private final MOPParameters varsToSave;
     
     public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
                        List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {

@@ -1,8 +1,8 @@
 package javamop.parser.ast.mopspec;
 
 public class MOPParameterPair {
-    MOPParameters param1;
-    MOPParameters param2;
+    private final MOPParameters param1;
+    private final MOPParameters param2;
     
     public MOPParameterPair(MOPParameters param1, MOPParameters param2){
         this.param1 = param1;

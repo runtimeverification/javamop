@@ -5,7 +5,7 @@ import javamop.parser.astex.visitor.VoidVisitor;
 
 public class FormulaExt extends PropertyExt {
     
-    String formula;
+    private final String formula;
     
     public FormulaExt(int line, int column, String type, String formula, String propertyName) {
         super(line, column, type, propertyName);

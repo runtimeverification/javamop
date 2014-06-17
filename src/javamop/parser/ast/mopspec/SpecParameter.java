@@ -6,8 +6,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.aspectj.*;
 
 public class SpecParameter extends Node{
-    TypePattern type;
-    String name = "";
+    private final TypePattern type;
+    private final String name;
     
     public SpecParameter (int line, int column, TypePattern type, String name){
         super(line, column);

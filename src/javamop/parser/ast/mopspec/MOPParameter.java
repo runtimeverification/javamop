@@ -6,8 +6,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.aspectj.*;
 
 public class MOPParameter extends Node{
-    TypePattern type;
-    String name = "";
+    private final TypePattern type;
+    private final String name;
     
     public MOPParameter (int line, int column, TypePattern type, String name){
         super(line, column);

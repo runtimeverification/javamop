@@ -7,9 +7,9 @@ import javamop.parser.astex.ExtNode;
 
 public class HandlerExt extends ExtNode {
     
-    String state;
-    BlockStmt blockStmt;
-    ReferenceSpec r;
+    private final String state;
+    private final BlockStmt blockStmt;
+    private ReferenceSpec r;
     
     public HandlerExt(int line, int column, String state, BlockStmt blockStmt, String specReference, String propertyReference) {
         super(line, column);

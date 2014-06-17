@@ -11,7 +11,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
  * */
 public class ThreadBlockedPointCut extends PointCut {
     
-    String id;
+    private final String id;
     
     public ThreadBlockedPointCut(int line, int column, String id){
         super(line, column, "threadBlocked");

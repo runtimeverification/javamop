@@ -10,8 +10,8 @@ import javamop.parser.astex.visitor.VoidVisitor;
 
 public class EventPointCut extends PointCut {
     
-    ReferenceSpec r;
-    List<String> parameterNames;
+    private final ReferenceSpec r;
+    private final List<String> parameterNames;
     
     public EventPointCut(int line, int column, String type, String specName, String referenceElement, List<String> parameterNames) {
         super(line, column, type);

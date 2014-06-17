@@ -6,7 +6,7 @@ import java.util.*;
 
 public class MOPParameterSet implements Iterable<MOPParameters>{
     
-    public ArrayList<MOPParameters> paramSet;
+    public final ArrayList<MOPParameters> paramSet;
     
     public MOPParameterSet() {
         this.paramSet = new ArrayList<MOPParameters>();

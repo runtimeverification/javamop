@@ -5,7 +5,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class Formula extends Property {
     
-    String formula;
+    private final String formula;
     
     public Formula(int line, int column, String type, String formula) {
         super(line, column, type);

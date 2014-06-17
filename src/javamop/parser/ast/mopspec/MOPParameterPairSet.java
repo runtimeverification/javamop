@@ -6,7 +6,7 @@ import javamop.parser.ast.mopspec.MOPParameters;
 
 public class MOPParameterPairSet implements Iterable<MOPParameterPair>{
     
-    public ArrayList<MOPParameterPair> paramPairSet;
+    public final ArrayList<MOPParameterPair> paramPairSet;
     
     public MOPParameterPairSet() {
         this.paramPairSet = new ArrayList<MOPParameterPair>();

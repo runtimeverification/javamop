@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class ThreadPointCut extends PointCut {
     
-    String id;
+    private final String id;
     
     public ThreadPointCut(int line, int column, String id){
         super(line, column, "thread");

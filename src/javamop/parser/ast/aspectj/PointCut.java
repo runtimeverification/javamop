@@ -7,7 +7,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public abstract class PointCut extends Node {
     
-    String type;    
+    private final String type;    
     
     public PointCut(int line, int column, String type){
         super(line, column);

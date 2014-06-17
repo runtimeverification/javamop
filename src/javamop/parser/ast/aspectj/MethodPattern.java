@@ -6,8 +6,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class MethodPattern extends FieldPattern {
     
-    List<TypePattern> parameters;
-    List<TypePattern> throwTypes = null;
+    private final List<TypePattern> parameters;
+    private final List<TypePattern> throwTypes;
     
     public MethodPattern(int line, int column, int modifiers, int not_modifiers, TypePattern type, TypePattern owner, String name, List<TypePattern> parameters, List<TypePattern> throwTypes){
         super(line, column, modifiers, not_modifiers, type, owner, name);

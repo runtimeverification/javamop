@@ -8,7 +8,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class CombinedPointCut extends PointCut {
     
-    List<PointCut> pointcuts;
+    private final List<PointCut> pointcuts;
     
     public CombinedPointCut(int line, int column, String type, List<PointCut> pointcuts){
         super(line, column, type);

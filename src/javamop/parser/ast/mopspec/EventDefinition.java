@@ -10,45 +10,45 @@ import javamop.parser.ast.type.*;
 
 public class EventDefinition extends Node {
     
-    String id;
-    Type retType;
-    String pos;
+    private final String id;
+    private final Type retType;
+    private final String pos;
     
-    String pointCutStr;
-    String purePointCutStr;
-    PointCut pointCut;
+    private final String pointCutStr;
+    private String purePointCutStr;
+    private PointCut pointCut;
     
-    MOPParameters parameters;
-    boolean hasReturning;
-    MOPParameters retVal;
-    boolean hasThrowing;
-    MOPParameters throwVal;
+    private final MOPParameters parameters;
+    private final boolean hasReturning;
+    private final MOPParameters retVal;
+    private final boolean hasThrowing;
+    private final MOPParameters throwVal;
     
-    MOPParameters mopParameters;
+    final MOPParameters mopParameters;
     
-    BlockStmt block;
-    MOPParameters usedParameter = null;
+    private final BlockStmt block;
+    private MOPParameters usedParameter = null;
     
     
     // will be modified by JavaMOPSpec when creation events are not specified
     boolean startEvent = false;
     
     // similar to startEvent, but won't be modified
-    boolean creationEvent = false;
+    private final boolean creationEvent;
     
-    boolean blockingEvent = false;
+    private final boolean blockingEvent;
     
-    String condition;
-    String threadVar;
-    String threadNameVar;
-    ArrayList<String> threadBlockedVars;
-    TypePattern endObjectType;
-    String endObjectId;
-    boolean endProgram = false;
-    boolean endThread = false;
-    boolean startThread = false;
-    boolean endObject = false;
-    String countCond;
+    private String condition;
+    private String threadVar;
+    private String threadNameVar;
+    private ArrayList<String> threadBlockedVars;
+    private TypePattern endObjectType;
+    private String endObjectId;
+    private boolean endProgram = false;
+    private boolean endThread = false;
+    private boolean startThread = false;
+    private boolean endObject = false;
+    private String countCond;
     
     // things that should be defined afterward
     int idnum; // will be defined in JavaMOPSpec

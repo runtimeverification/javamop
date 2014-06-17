@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public abstract class Property extends Node {
     
-    String type;
+    private final String type;
     
     public Property (int line, int column, String type){
         super(line, column);

@@ -4,7 +4,7 @@ import javamop.parser.ast.*;
 
 public abstract class TypePattern extends Node {
     
-    String op;
+    private final String op;
     
     public TypePattern(int line, int column, String op) {
         super(line, column);

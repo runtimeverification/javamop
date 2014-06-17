@@ -6,7 +6,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class CFlowPointCut extends PointCut {
     
-    PointCut pointcut;
+    private final PointCut pointcut;
     
     public CFlowPointCut(int line, int column, String type, PointCut pointcut){
         super(line, column, type);

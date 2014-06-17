@@ -16,20 +16,20 @@ import javamop.parser.astex.visitor.VoidVisitor;
 
 public class PropertyAndHandlersExt extends ExtNode {
     
-    PropertyExt property;
-    HashMap<String, BlockStmt> handlers;
-    HashMap<String, MOPParameters> usedParameters = new HashMap<String, MOPParameters>();
+    private final PropertyExt property;
+    private final HashMap<String, BlockStmt> handlers;
+    private final HashMap<String, MOPParameters> usedParameters = new HashMap<String, MOPParameters>();
     
-    List<HandlerExt> handlerList= new ArrayList<HandlerExt>();
+    private final List<HandlerExt> handlerList;
     
     //things that should be defined afterward
     int propertyId; //will be defined in JavaMOPSpec
     Properties logicResult; //will be defined by MOPProcessor
     
-    HashMap<String, String> eventMonitoringCodes = new HashMap<String, String>();
-    HashMap<String, String> aftereventMonitoringCodes = new HashMap<String, String>();
+    private final HashMap<String, String> eventMonitoringCodes = new HashMap<String, String>();
+    private final HashMap<String, String> aftereventMonitoringCodes = new HashMap<String, String>();
     
-    boolean versionedStack = false;
+    private boolean versionedStack = false;
     
     public PropertyAndHandlersExt(int line, int column, PropertyExt property, HashMap<String, BlockStmt> handlers, List<HandlerExt> handlerList) {
         super(line, column);

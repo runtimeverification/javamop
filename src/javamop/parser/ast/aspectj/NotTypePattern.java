@@ -5,7 +5,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class NotTypePattern extends TypePattern {
     
-    TypePattern type;
+    private final TypePattern type;
     
     public NotTypePattern(int line, int column, TypePattern type){
         super(line, column, "!");

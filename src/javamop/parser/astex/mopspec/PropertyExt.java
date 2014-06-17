@@ -6,8 +6,8 @@ import javamop.parser.astex.ExtNode;
 
 public abstract class PropertyExt extends ExtNode {
     
-    String type;
-    String propertyName; //soha
+    private final String type;
+    private final String propertyName; //soha
     
     public PropertyExt (int line, int column, String type, String propertyName){
         super(line, column);

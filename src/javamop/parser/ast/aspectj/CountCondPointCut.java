@@ -7,7 +7,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class CountCondPointCut extends PointCut {
     
-    Expression expr;
+    private final Expression expr;
     
     public CountCondPointCut(int line, int column, String type, Expression expr) {
         super(line, column, type);

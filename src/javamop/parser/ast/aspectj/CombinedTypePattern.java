@@ -7,7 +7,7 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public class CombinedTypePattern extends TypePattern {
     
-    List<TypePattern> sub_types;
+    private final List<TypePattern> sub_types;
     
     public CombinedTypePattern(int line, int column, String op, List<TypePattern> sub_types){
         super(line, column, op);
