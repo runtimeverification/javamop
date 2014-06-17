@@ -10,26 +10,26 @@ import javamop.parser.ast.visitor.VoidVisitor;
  * 
  * */
 public class ThreadBlockedPointCut extends PointCut {
-	
-	String id;
-
-	public ThreadBlockedPointCut(int line, int column, String id){
-		super(line, column, "threadBlocked");
-		this.id = id;
-	}
-	
-	public String getId() { return id; }
-
+    
+    private final String id;
+    
+    public ThreadBlockedPointCut(int line, int column, String id){
+        super(line, column, "threadBlocked");
+        this.id = id;
+    }
+    
+    public String getId() { return id; }
+    
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
         v.visit(this, arg);
     }
-
+    
     @Override
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-	
+    
     @Override
     public <R, A> R accept(PointcutVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
