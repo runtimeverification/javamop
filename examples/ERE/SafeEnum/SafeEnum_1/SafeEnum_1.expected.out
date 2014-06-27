@@ -1,2 +1,8 @@
-improper enumeration usage at SafeEnum_1.main(SafeEnum_1.java:23)
+improper enumeration usage at 
+[mop.SafeEnumMonitor.Prop_1_handler_match(SafeEnumMonitorAspect.aj:194)
+mop.SafeEnumMonitor_Set.event_next(SafeEnumMonitorAspect.aj:78)
+mop.SafeEnumRuntimeMonitor.nextEvent(SafeEnumMonitorAspect.aj:515)
+mop.SafeEnumMonitorAspect.ajc$before$mop_SafeEnumMonitorAspect$1$14ff65c8(SafeEnumMonitorAspect.aj:539)
+SafeEnum_1.main(SafeEnum_1.java:23)]
+
 sum: 26
