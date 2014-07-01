@@ -110,7 +110,7 @@ public final class JavaMOPMain {
      * argument should be an existing java file name. The location argument should contain the 
      * original file name, But it may have a different directory.
      * 
-     * @param path
+     * @param file
      *            an absolute path of a specification file
      * @param location
      *            an absolute path for result file
@@ -134,7 +134,7 @@ public final class JavaMOPMain {
      * existing specification file name. The location argument should contain the original file 
      * name, But it may have a different directory.
      * 
-     * @param path
+     * @param file
      *            an absolute path of a specification file
      * @param location
      *            an absolute path for result file
