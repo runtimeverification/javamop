@@ -26,14 +26,14 @@ import javamop.util.AJFileCombiner;
  * Entry point class for the JavaMOP program.
  */
 public final class JavaMOPMain {
-    
+
     /**
      * Private to prevent instantiation.
      */
     private JavaMOPMain() {
-        
+
     }
-    
+
     private static File outputDir = null;
     public static boolean debug = false;
     public static boolean noopt1 = false;
@@ -64,13 +64,13 @@ public final class JavaMOPMain {
     
     public static boolean generateAgent = false;
     public static File baseAspect = null;
-    
+
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
     
     /**
-     * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all 
-     * the parameter files are in the same directory, use that directory. Otherwise, use the 
+     * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all
+     * the parameter files are in the same directory, use that directory. Otherwise, use the
      * directory that JavaMOP is executing in.
      * @param specFiles The specifications the program is being run on.
      * @return The directory to place output files in.
@@ -224,7 +224,7 @@ public final class JavaMOPMain {
             throw new MOPException("Nothing to write as a java file");
         if (!Tool.isJavaFile(location))
             throw new MOPException(location + "should be a Java file!");
-        
+
         FileWriter f = null;
         try {
             f = new FileWriter(location);
@@ -241,7 +241,7 @@ public final class JavaMOPMain {
             }
         }
     }
-    
+
     /**
      * Write AspectJ code to a file.
      * @param aspectContent The AspectJ code to write.
@@ -280,7 +280,7 @@ public final class JavaMOPMain {
      * @param suffix The new file extension to use for the file.
      * @throws MOPException If something goes wrong in generating the file.
      */
-    protected static void writeFile(String content, String location, String suffix) 
+    protected static void writeFile(String content, String location, String suffix)
             throws MOPException {
         if (content == null || content.length() == 0)
             return;
@@ -546,7 +546,7 @@ public final class JavaMOPMain {
         }
         
         boolean tempOutput = JavaMOPMain.generateAgent && JavaMOPMain.outputDir == null;
-        
+
         if(tempOutput) {
             tempOutput = true;
             try {
@@ -557,8 +557,8 @@ public final class JavaMOPMain {
                 generateAgent = false;
             }
         }
-        
-        
+
+
         // Generate .rvm files and .aj files
         try {
             process(files); 
@@ -587,16 +587,16 @@ public final class JavaMOPMain {
         }
         
         Main.main(rvArgs.toArray(new String[0]));
-        
+
         if(generateAgent) {
             try {
-                GenerateAgent.generate(JavaMOPMain.outputDir, JavaMOPMain.aspectname, 
+                GenerateAgent.generate(JavaMOPMain.outputDir, JavaMOPMain.aspectname,
                     JavaMOPMain.baseAspect);
             } catch(IOException ioe) {
                 ioe.printStackTrace();
             }
         }
-        
+
         // Call AJFileCombiner here to combine these two
         // TODO
         for (String[] filePair : listFilePairs) {
