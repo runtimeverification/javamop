@@ -610,24 +610,23 @@ public final class JavaMOPMain {
                         + filePair[0]);
                     }
                 }
-            } catch (Exception e) {
-                
+            } catch (SecurityException e) {
+                e.printStackTrace();
             }
         }
         
         for (String rvmFilePath : listRVMFiles) {
             File rvmFile = new File(rvmFilePath);
-            try {               
+            try {
                 if (!JavaMOPMain.keepRVFiles) {
                     boolean deleted = rvmFile.delete();
                     if (!deleted) {
-                        System.err.println("Failed to delete java file: "
-                        + rvmFilePath);
+                        System.err.println("Failed to delete java file: " + rvmFilePath);
                     }
                 }
                 
-            } catch (Exception e) {
-                
+            } catch (SecurityException e) {
+                  e.printStackTrace();
             }
         }
         
