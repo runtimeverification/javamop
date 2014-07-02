@@ -27,10 +27,6 @@ import java.util.Arrays;
  */
 public class GenerateAgent {
     
-    // Step 9: Move all the jars used to a single location
-    private static final String jarBase = new File("lib").getAbsolutePath() + File.separator;
-    private static final String ajToolsJar = jarBase + "aspectjtools.jar";
-    private static final String ajRtJar = jarBase + "aspectjrt.jar";
     private static final String manifest = "MANIFEST.MF";
     
     /**
@@ -42,11 +38,11 @@ public class GenerateAgent {
     public static void generate(final File outputDir, final String aspectname) throws IOException {
         final String ajOutDir = outputDir.getAbsolutePath();
         
-        final String baseClasspath = System.getProperty("java.class.path") + File.pathSeparator;
+        final String baseClasspath = System.getProperty("java.class.path") + File.pathSeparator + ".";
         
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
-            "-cp", baseClasspath + ajRtJar, aspectname + "RuntimeMonitor.java");
+            "-cp", baseClasspath, aspectname + "RuntimeMonitor.java");
         if(javacReturn != 0) {
             System.err.println("(javac) Failed to compile agent.");
             return;
@@ -64,9 +60,8 @@ public class GenerateAgent {
         }
         
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
-        final int ajcReturn = runCommandDir(outputDir, "java",
-            "-cp", baseClasspath + ajToolsJar + File.pathSeparator + ajRtJar + File.pathSeparator + 
-            ".", "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", "BaseAspect.aj", 
+        final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
+            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", "BaseAspect.aj", 
             aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {
@@ -210,13 +205,7 @@ public class GenerateAgent {
         });
     }
     
-    /**
-     * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
-     * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
-     * @param f The file to write the manifest to.
-     * @throws IOException If something goes wrong in writing the file.
-     */
-    public static void writeAgentManifest(File f) throws IOException {
+    private static String findJarOnClasspath(String end) {
         // http://www.java-tips.org/java-se-tips/java.lang/how-to-print-classpath.html
         //Get the System Classloader
         ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
@@ -224,24 +213,25 @@ public class GenerateAgent {
         //Get the URLs
         URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
         
-        URL rvmonitorrt = null;
-        URL aspectjweaver = null;
-        
         for(URL url : urls) {
             final String str = url.toString();
-            if(url.toString().endsWith("rvmonitorrt.jar")) {
-                rvmonitorrt = url;
-            } else if(url.toString().endsWith("aspectjweaver.jar")) {
-                aspectjweaver = url;
+            if(str.endsWith(end)) {
+                return str.replace("file:","");
             }
         }
-        
-        if(rvmonitorrt == null) {
-            System.err.println("Unable to find rvmonitorrt.jar. Make sure it is on your CLASSPATH.");
-        }
-        if(aspectjweaver == null) {
-            System.err.println("Unable to find aspectjweaver.jar. Make sure it is on your CLASSPATH.");
-        }
+        System.err.println("Unable to find " + end + ". Make sure it is on your CLASSPATH.");
+        return null;
+    }
+    
+    /**
+     * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
+     * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
+     * @param f The file to write the manifest to.
+     * @throws IOException If something goes wrong in writing the file.
+     */
+    private static void writeAgentManifest(File f) throws IOException {
+        final String rvmonitorrt = findJarOnClasspath("rvmonitorrt.jar");
+        final String aspectjweaver = findJarOnClasspath("aspectjweaver.jar");
         
         final PrintWriter writer = new PrintWriter(f);
         writer.println("Manifest-Version: 1.0");
@@ -264,7 +254,7 @@ public class GenerateAgent {
      * @param f The file to write to.
      * @throws IOException If something goes wrong in writing the file.
      */
-    public static void writeBaseAspect(File f) throws IOException {
+    private static void writeBaseAspect(File f) throws IOException {
         final PrintWriter writer = new PrintWriter(f);
         writer.println("package mop;");
         writer.println("public aspect BaseAspect {");
