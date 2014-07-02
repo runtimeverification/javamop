@@ -70,20 +70,6 @@ public class GenerateAgent {
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
         agentDir.deleteOnExit();
         try {
-            // copy in the needed jar files
-            copyFile(new File(ajWeaverJar), new File(agentDir, weaverJar));
-            copyFile(new File(rtJar), new File(agentDir, "rt.jar"));
-            
-            // Extract the relevant java files
-            String[] toExtract = { weaverJar, "rt.jar" };
-            for(String jar : toExtract) {
-                int extractReturn = runCommandDir(agentDir, "jar", "xvf", jar);
-                if(extractReturn != 0) {
-                    System.err.println("(jar) Failed to extract " + jar);
-                    return;
-                }
-            }
-            
             // Copy in the postprocessed xml file
             final File metaInf = new File(agentDir, "META-INF");
             final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) ||
