@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import java.nio.channels.FileChannel;
 
@@ -27,10 +31,6 @@ public class GenerateAgent {
     private static final String jarBase = new File("lib").getAbsolutePath() + File.separator;
     private static final String ajToolsJar = jarBase + "aspectjtools.jar";
     private static final String ajRtJar = jarBase + "aspectjrt.jar";
-    private static final String rtJar = jarBase + "rt.jar";
-    private static final String weaverJar = "aspectjweaver.jar";
-    private static final String ajWeaverJar = jarBase + weaverJar;
-    private static final String baseAspectFile = jarBase + "BaseAspect.aj";
     private static final String manifest = "MANIFEST.MF";
     
     /**
@@ -42,18 +42,32 @@ public class GenerateAgent {
     public static void generate(final File outputDir, final String aspectname) throws IOException {
         final String ajOutDir = outputDir.getAbsolutePath();
         
+        final String baseClasspath = System.getProperty("java.class.path") + File.pathSeparator;
+        
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
-            "-cp", ajRtJar + ":" + rtJar, aspectname + "RuntimeMonitor.java");
+            "-cp", baseClasspath + ajRtJar, aspectname + "RuntimeMonitor.java");
         if(javacReturn != 0) {
             System.err.println("(javac) Failed to compile agent.");
             return;
         }
         
+        final File baseAspect = new File(outputDir, "BaseAspect.aj");
+        if(baseAspect.exists()) {}
+        else {
+            final boolean success = baseAspect.createNewFile();
+            if(success) {
+                writeBaseAspect(baseAspect);
+            } else {
+                System.err.println("Unable to write BaseAspect.aj.");
+            }
+        }
+        
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
         final int ajcReturn = runCommandDir(outputDir, "java",
-            "-cp", ajToolsJar + ":" + rtJar + ":" + ajRtJar + ":.", "org.aspectj.tools.ajc.Main",
-            "-1.6", "-d", ajOutDir, "-outxml", baseAspectFile, aspectname + "MonitorAspect.aj");
+            "-cp", baseClasspath + ajToolsJar + File.pathSeparator + ajRtJar + File.pathSeparator + 
+            ".", "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", "BaseAspect.aj", 
+            aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
@@ -87,7 +101,7 @@ public class GenerateAgent {
             
             // # Step 14: copy in the correct MANIFEST FILE
             final File jarManifest = new File(metaInf, manifest);
-            copyFile(new File(jarBase + manifest), jarManifest);
+            writeAgentManifest(jarManifest);
             
             // # Step 15: Stepmake the java agent jar
             final int jarReturn = runCommandDir(new File("."), "jar", "cmf", jarManifest.toString(), 
@@ -194,5 +208,81 @@ public class GenerateAgent {
                 }
             }
         });
+    }
+    
+    /**
+     * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
+     * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
+     * @param f The file to write the manifest to.
+     * @throws IOException If something goes wrong in writing the file.
+     */
+    public static void writeAgentManifest(File f) throws IOException {
+        // http://www.java-tips.org/java-se-tips/java.lang/how-to-print-classpath.html
+        //Get the System Classloader
+        ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
+        
+        //Get the URLs
+        URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
+        
+        URL rvmonitorrt = null;
+        URL aspectjweaver = null;
+        
+        for(URL url : urls) {
+            final String str = url.toString();
+            if(url.toString().endsWith("rvmonitorrt.jar")) {
+                rvmonitorrt = url;
+            } else if(url.toString().endsWith("aspectjweaver.jar")) {
+                aspectjweaver = url;
+            }
+        }
+        
+        if(rvmonitorrt == null) {
+            System.err.println("Unable to find rvmonitorrt.jar. Make sure it is on your CLASSPATH.");
+        }
+        if(aspectjweaver == null) {
+            System.err.println("Unable to find aspectjweaver.jar. Make sure it is on your CLASSPATH.");
+        }
+        
+        final PrintWriter writer = new PrintWriter(f);
+        writer.println("Manifest-Version: 1.0");
+        writer.println("Name: org/aspectj/weaver/");
+        writer.println("Specification-Title: AspectJ Weaver Classes");
+        writer.println("Specification-Version: DEVELOPMENT");
+        writer.println("Specification-Vendor: aspectj.org");
+        writer.println("Implementation-Title: org.aspectj.weaver");
+        writer.println("Implementation-Version: DEVELOPMENT");
+        writer.println("Implementation-Vendor: aspectj.org");
+        writer.println("Premain-Class: org.aspectj.weaver.loadtime.Agent");
+        writer.println("Can-Redefine-Classes: true");
+        writer.println("Boot-Class-Path: "+rvmonitorrt+" "+aspectjweaver);
+        writer.flush();
+        writer.close();
+    }
+    
+    /**
+     * Write the base aspect to a file.
+     * @param f The file to write to.
+     * @throws IOException If something goes wrong in writing the file.
+     */
+    public static void writeBaseAspect(File f) throws IOException {
+        final PrintWriter writer = new PrintWriter(f);
+        writer.println("package mop;");
+        writer.println("public aspect BaseAspect {");
+        writer.println("    pointcut notwithin() :");
+        writer.println("    !within(sun..*) &&");
+        writer.println("    !within(java..*) &&");
+        writer.println("    !within(javax..*) &&");
+        writer.println("    !within(com.sun..*) &&");
+        writer.println("    !within(org.dacapo.harness..*) &&");
+        writer.println("    !within(org.apache.commons..*) &&");
+        writer.println("    !within(org.apache.geronimo..*) &&");
+        writer.println("    !within(net.sf.cglib..*) &&");
+        writer.println("    !within(mop..*) &&");
+        writer.println("    !within(javamoprt..*) &&");
+        writer.println("    !within(rvmonitorrt..*) &&");
+        writer.println("    !within(com.runtimeverification..*);");
+        writer.println("}");
+        writer.flush();
+        writer.close();
     }
 }
