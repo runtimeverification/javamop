@@ -16,19 +16,31 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Arrays;
 
+/**
+ * Handles generating a complete Java agent after .mop files have been processed into .rvm files
+ * and .rvm files have been processed into .java files. Based on Owolabi's build-agent.sh.
+ * @author A. Cody Schuffelen
+ */
 public class GenerateAgent {
     
-    public static void generate(File outputDir, String aspectname) throws IOException {
-        // Step 9: Move all the jars used to a single location
-        final String jarBase = new File("lib").getAbsolutePath() + File.separator;
-        final String ajToolsJar = jarBase + "aspectjtools.jar";
-        final String ajRtJar = jarBase + "aspectjrt.jar";
-        final String rtJar = jarBase + "rt.jar";
-        final String weaverJar = "aspectjweaver.jar";
-        final String ajWeaverJar = jarBase + weaverJar;
+    // Step 9: Move all the jars used to a single location
+    private static final String jarBase = new File("lib").getAbsolutePath() + File.separator;
+    private static final String ajToolsJar = jarBase + "aspectjtools.jar";
+    private static final String ajRtJar = jarBase + "aspectjrt.jar";
+    private static final String rtJar = jarBase + "rt.jar";
+    private static final String weaverJar = "aspectjweaver.jar";
+    private static final String ajWeaverJar = jarBase + weaverJar;
+    private static final String baseAspectFile = jarBase + "BaseAspect.aj";
+    private static final String manifest = "MANIFEST.MF";
+    
+    /**
+     * Generate a JavaMOP agent.
+     * @param outputDir The place to put all the intermediate generated files in.
+     * @param aspectname Generates {@code aspectname}.jar.
+     * @throws IOException If something goes wrong in the many filesystem operations.
+     */
+    public static void generate(final File outputDir, final String aspectname) throws IOException {
         final String ajOutDir = outputDir.getAbsolutePath();
-        final String baseAspectFile = jarBase + "BaseAspect.aj";
-        final String manifest = "MANIFEST.MF";
         
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
@@ -84,17 +96,7 @@ public class GenerateAgent {
             copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
             
             // directory to hold compiled library files
-            
-            /*
-            final File mopDir = new File(agentDir, "mop");
-            final boolean mkdirMopReturn = mopDir.mkdir();
-            if(mkdirMopReturn) {}
-            else {
-                System.err.println("(mkdir) Failed to create mop");
-                return;
-            }*/
-            
-            // # Copy in all the .class files for all the monitor libraries
+            // Copy in all the .class files for all the monitor libraries
             new File(outputDir, "mop").renameTo(new File(agentDir, "mop"));
             
             // # Step 14: copy in the correct MANIFEST FILE
@@ -115,17 +117,21 @@ public class GenerateAgent {
         }
     }
     
-    private static int runCommandDir(File dir, String... args) throws IOException {
+    /**
+     * Run a command in a directory. Passes the output of the run commands through if the program
+     * is in verbose mode.
+     */
+    private static int runCommandDir(final File dir, final String... args) throws IOException {
         try {
             if(MOPProcessor.verbose) { // -v
                 System.out.println(dir.toString() + ": " + Arrays.asList(args).toString());
             }
-            ProcessBuilder builder = new ProcessBuilder();
+            final ProcessBuilder builder = new ProcessBuilder();
             builder.command(args).directory(dir);
             if(MOPProcessor.verbose) { // -v
                 builder.inheritIO();
             }
-            Process proc = builder.start();
+            final Process proc = builder.start();
             return proc.waitFor();
         } catch(InterruptedException ie) {
             ie.printStackTrace();
@@ -133,7 +139,14 @@ public class GenerateAgent {
         }
     }
     
-    private static void copyFile(File sourceFile, File destFile) throws IOException {
+    /**
+     * Copy the contents of one file to another.
+     * @param sourceFile The file to take the contents from.
+     * @param destFile The file to output to. Created if it does not already exist.
+     * @throws IOException If something goes wrong copying the file.
+     */
+    private static void copyFile(final File sourceFile, final File destFile) throws IOException {
+        // http://www.javalobby.org/java/forums/t17036.html
         if(!destFile.exists()) {
             destFile.createNewFile();
         }
@@ -156,7 +169,14 @@ public class GenerateAgent {
         }
     }
     
-    public static void deleteDirectory(Path path) throws IOException {
+    /**
+     * Delete a directory and all its contents. Every file has to be individually deleted, since
+     * there is no built-in java function to delete an entire directory and its contents
+     * recursively.
+     * @param path The path of the directory to delete.
+     * @throws IOException If it cannot traverse the directories or the files cannot be deleted.
+     */
+    public static void deleteDirectory(final Path path) throws IOException {
         // http://stackoverflow.com/a/8685959
         Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override

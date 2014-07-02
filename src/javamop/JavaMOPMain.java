@@ -517,7 +517,6 @@ public class JavaMOPMain {
         
         // replace mop with rvm and call rv-monitor
         List<String> rvArgs = new ArrayList<String>();
-        int p = 0;
         for (int j = 0; j < args.length; j++) {
             if (args[j].compareTo("-keepRVFiles") == 0) {
                 // Don't pass keepRVFiles to rvmonitor
