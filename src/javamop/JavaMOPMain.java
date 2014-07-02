@@ -519,10 +519,9 @@ public class JavaMOPMain {
         List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
             if (args[j].compareTo("-keepRVFiles") == 0) {
-                // Don't pass keepRVFiles to rvmonitor
-                rvArgs.add("");
+                // Don't pass keepRVFiles to rvmonitor\
             } else if("--agent".equals(args[j])) {
-                rvArgs.add("");
+                rvArgs.add("-merge");
             } else {
                 rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
             }
