@@ -1,0 +1,44 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// The SafeSyncCollection property is designed 
+// to match a case where either a collection 
+// is synchronized and an non-synchronized
+// iterator is created for the collection, or 
+// a synchronized iterator is created, but 
+// accessed in an unsynchronized manner.
+
+SafeSyncCollection(Object c, Iterator iter) {
+	Object c;
+
+	creation event sync after() returning(Object c) : 
+		call(* Collections.synchr*(..)) {
+			this.c = c;
+		}
+	event syncCreateIter after(Object c) 
+                returning(Iterator iter) : 
+		call(* Collection+.iterator()) 
+                && target(c) && if(Thread.holdsLock(c)){}
+	event asyncCreateIter after(Object c) returning(Iterator iter) : 
+		call(* Collection+.iterator()) 
+                && target(c) 
+                && if(!Thread.holdsLock(c)){}
+	event accessIter before(Iterator iter) : 
+		call(* Iterator.*(..)) 
+                && target(iter) 
+                && condition(!Thread.holdsLock(this.c)) {}
+
+	ere : (sync asyncCreateIter) 
+            | (sync syncCreateIter accessIter)
+
+	@match{
+		System.out.println("pattern matched!");
+	}
+}
+		
+
+
+
+
