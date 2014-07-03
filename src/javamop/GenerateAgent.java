@@ -30,12 +30,14 @@ public class GenerateAgent {
     private static final String manifest = "MANIFEST.MF";
     
     /**
-     * Generate a JavaMOP agent.
+     * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
      * @param outputDir The place to put all the intermediate generated files in.
      * @param aspectname Generates {@code aspectname}.jar.
+     * @param baseAspect The aspect file to combine with the generated aspects.
      * @throws IOException If something goes wrong in the many filesystem operations.
      */
-    public static void generate(final File outputDir, final String aspectname) throws IOException {
+    public static void generate(final File outputDir, final String aspectname,
+            File baseAspect) throws IOException {
         final String ajOutDir = outputDir.getAbsolutePath();
         
         final String baseClasspath = System.getProperty("java.class.path") + File.pathSeparator + ".";
@@ -48,21 +50,26 @@ public class GenerateAgent {
             return;
         }
         
-        final File baseAspect = new File(outputDir, "BaseAspect.aj");
-        if(baseAspect.exists()) {}
-        else {
+        if(baseAspect == null) {
+            baseAspect = new File(outputDir, "BaseAspect.aj");
+        }
+        if(!"BaseAspect.aj".equals(baseAspect.getName())) {
+            throw new IOException("For now, --baseaspect files should be called BaseAspect.aj");
+        }
+        if(!baseAspect.exists()) {
             final boolean success = baseAspect.createNewFile();
             if(success) {
                 writeBaseAspect(baseAspect);
             } else {
                 System.err.println("Unable to write BaseAspect.aj.");
+                return;
             }
         }
         
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
         final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
-            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", "BaseAspect.aj", 
-            aspectname + "MonitorAspect.aj");
+            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", 
+            baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
@@ -70,8 +77,7 @@ public class GenerateAgent {
         }*/
         final File aopAjc = new File(ajOutDir + File.separator + "META-INF" + File.separator +
             "aop-ajc.xml");
-        if(aopAjc.exists()) {}
-        else {
+        if(!aopAjc.exists()) {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
         }
@@ -83,8 +89,7 @@ public class GenerateAgent {
             final File metaInf = new File(agentDir, "META-INF");
             final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) ||
                 metaInf.mkdir();
-            if(mkdirMetaInfReturn) {}
-            else {
+            if(!mkdirMetaInfReturn) {
                 System.err.println("(mkdir) Failed to create META-INF");
                 return;
             }
@@ -114,7 +119,10 @@ public class GenerateAgent {
     
     /**
      * Run a command in a directory. Passes the output of the run commands through if the program
-     * is in verbose mode.
+     * is in verbose mode. Blocks until the command finishes, then gives the return code.
+     * @param dir The directory to run the command in.
+     * @param args The program to run and its arguments.
+     * @return The return code of the program.
      */
     private static int runCommandDir(final File dir, final String... args) throws IOException {
         try {

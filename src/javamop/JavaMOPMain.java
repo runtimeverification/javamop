@@ -8,18 +8,13 @@
 package javamop;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
-
-import java.nio.channels.FileChannel;
 
 import java.nio.file.Files;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
@@ -68,6 +63,9 @@ public class JavaMOPMain {
     
     public static boolean scalable = false;
     public static boolean keepRVFiles = false;
+    
+    public static boolean generateAgent = false;
+    public static File baseAspect = null;
     
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
@@ -418,8 +416,6 @@ public class JavaMOPMain {
             jarFilePath = polishPath(jarFilePath);
         }
         
-        boolean generateAgent = false;
-        
         int i = 0;
         String files = "";
         
@@ -476,9 +472,12 @@ public class JavaMOPMain {
             } else if (args[i].compareTo("-keepRVFiles") == 0) {
                 JavaMOPMain.keepRVFiles = true;
             } else if("--agent".equals(args[i])) {
-                merge = true;
-                generateAgent = true;
-                keepRVFiles = true;
+                JavaMOPMain.merge = true;
+                JavaMOPMain.generateAgent = true;
+                JavaMOPMain.keepRVFiles = true;
+            } else if("--baseaspect".equals(args[i])) {
+                i++;
+                JavaMOPMain.baseAspect = new File(args[i]);
             } else {
                 if (files.length() != 0)
                     files += ";";
@@ -492,7 +491,7 @@ public class JavaMOPMain {
             return;
         }
         
-        boolean tempOutput = generateAgent && outputDir == null;
+        boolean tempOutput = JavaMOPMain.generateAgent && JavaMOPMain.outputDir == null;
         
         if(tempOutput) {
             tempOutput = true;
@@ -522,20 +521,23 @@ public class JavaMOPMain {
                 // Don't pass keepRVFiles to rvmonitor\
             } else if("--agent".equals(args[j])) {
                 rvArgs.add("-merge");
+            } else if("--baseaspect".equals(args[j])) {
+                j++;
             } else {
                 rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
             }
         }
         if(tempOutput) {
             rvArgs.add("-d");
-            rvArgs.add(outputDir.getAbsolutePath());
+            rvArgs.add(JavaMOPMain.outputDir.getAbsolutePath());
         }
         
         Main.main(rvArgs.toArray(new String[0]));
         
         if(generateAgent) {
             try {
-                GenerateAgent.generate(outputDir, aspectname);
+                GenerateAgent.generate(JavaMOPMain.outputDir, JavaMOPMain.aspectname, 
+                    JavaMOPMain.baseAspect);
             } catch(IOException ioe) {
                 ioe.printStackTrace();
             }
