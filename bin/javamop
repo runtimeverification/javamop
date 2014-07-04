@@ -10,5 +10,5 @@ SRC_ROOT=`dirname "$SRC_ROOT"`
 # Move up into the actual source root directory
 SRC_ROOT="$SRC_ROOT/../"
 
-java -cp "$SRC_ROOT/lib/rvmonitor.jar":"$SRC_ROOT/lib/rt.jar":"$SRC_ROOT/lib/javamop.jar":"$SRC_ROOT/lib/logicrepository.jar":"$SRC_ROOT/lib/plugins/ERE.jar":"$SRC_ROOT/lib/plugins/LTL.jar":"$SRC_ROOT/lib/plugins/PTLTL.jar":"$SRC_ROOT/lib/plugins/FSM.jar":"$SRC_ROOT/lib/plugins/CFG.jar":"$SRC_ROOT/lib/mysql-connector-java-3.0.9-stable-bin.jar" javamop.JavaMOPMain $@
+java -cp "$CLASSPATH:$SRC_ROOT/lib/rvmonitor.jar":"$SRC_ROOT/lib/rvmonitorrt.jar":"$SRC_ROOT/lib/javamop.jar":"$SRC_ROOT/lib/logicrepository.jar":"$SRC_ROOT/lib/plugins/ERE.jar":"$SRC_ROOT/lib/plugins/LTL.jar":"$SRC_ROOT/lib/plugins/PTLTL.jar":"$SRC_ROOT/lib/plugins/FSM.jar":"$SRC_ROOT/lib/plugins/CFG.jar":"$SRC_ROOT/lib/mysql-connector-java-3.0.9-stable-bin.jar" javamop.JavaMOPMain $@
 
