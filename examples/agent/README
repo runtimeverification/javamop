@@ -1,0 +1,8 @@
+In all of these folders, to build the agent, run:
+
+javamop --agent rvm -n agent
+
+To run the agent with a file:
+
+javac <Class>.java
+java -javaagent:agent.jar <Class>

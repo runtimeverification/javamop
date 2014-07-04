@@ -1,0 +1,51 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies a usage ere 
+// of a HashSet, that is, after an object 
+// is added to the set, it can be fetched 
+// from the set only before it is removed 
+// from the set. The property should be 
+// monitored for pattern fail (@fail). 
+// This ere, combined with monitor variables, 
+// can also be used to check whether the 
+// object's hashcode is changed when it is 
+// still in the set.  If any change is 
+// detected, it is regarded as an 
+// error in the program.  In such case, 
+// this ere is monitored for match, like 
+// in the Tracematches' ECOOP'07 paper 
+// (http://abc.comlab.ox.ac.uk/papers).  
+
+SafeHashSet(HashSet t, Object o) {
+  int hashcode;
+  Object myObj;
+ 
+  event add after(HashSet t, Object o) : 
+    call(* Collection+.add(Object)) 
+      && target(t) && args(o) {
+      hashcode = o.hashCode();
+      myObj = o;
+    }
+  event unsafe_contains 
+    before(HashSet t, Object o) : 
+    call(* Collection+.contains(Object)) 
+    && target(t) && args(o) 
+    && condition(hashcode != o.hashCode()) {}
+  event remove after(HashSet t, Object o) : 
+    call(* Collection+.remove(Object)) 
+    && target(t) && args(o){}
+ 
+  ere: add unsafe_contains unsafe_contains*
+ 
+  @match{
+    System.err.println(
+       "HashCode changed for Object " 
+     + myObj
+     + " while being in a   Hashtable!"); 
+    System.exit(1); 
+  }
+}
+

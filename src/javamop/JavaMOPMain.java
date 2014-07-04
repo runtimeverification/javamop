@@ -10,6 +10,10 @@ package javamop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.IOException;
+
+import java.nio.file.Files;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +63,9 @@ public class JavaMOPMain {
     
     public static boolean scalable = false;
     public static boolean keepRVFiles = false;
+    
+    public static boolean generateAgent = false;
+    public static File baseAspect = null;
     
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
@@ -181,6 +188,7 @@ public class JavaMOPMain {
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
+            //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
             if (translate2RV) {
@@ -199,12 +207,20 @@ public class JavaMOPMain {
         if (!Tool.isJavaFile(location))
             throw new MOPException(location + "should be a Java file!");
         
+        FileWriter f = null;
         try {
-            FileWriter f = new FileWriter(location);
+            f = new FileWriter(location);
             f.write(javaContent);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
     }
     
@@ -213,13 +229,22 @@ public class JavaMOPMain {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
+        FileWriter f = null;
         try {
-            FileWriter f = new FileWriter(outputDir.getAbsolutePath() + File.separator + 
+            f = new FileWriter(outputDir.getAbsolutePath() + File.separator + 
                 aspectName + "MonitorAspect.aj");
             f.write(aspectContent);
             f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
         System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
     }
@@ -230,14 +255,21 @@ public class JavaMOPMain {
             return;
         
         int i = location.lastIndexOf(File.separator);
-        String filePath = ""; 
+        String filePath = location.substring(0, i + 1) + Tool.getFileName(location) + suffix;
+        FileWriter f = null;
         try {
-            filePath = location.substring(0, i + 1) + Tool.getFileName(location) + suffix;
-            FileWriter f = new FileWriter(filePath);
+            f = new FileWriter(filePath);
             f.write(content);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
         if (suffix.equals(".rvm")) {
             listRVMFiles.add(filePath);
@@ -248,15 +280,23 @@ public class JavaMOPMain {
     // PM
     protected static void writePluginOutputFile(String pluginOutput, String location) 
             throws MOPException {
-        int i = location.lastIndexOf(File.separator);
+        final int i = location.lastIndexOf(File.separator);
         
+        FileWriter f = null;
         try {
-            FileWriter f = new FileWriter(location.substring(0, i + 1) + 
+            f = new FileWriter(location.substring(0, i + 1) + 
                 Tool.getFileName(location) + "PluginOutput.txt");
             f.write(pluginOutput);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
         System.out.println(" " + Tool.getFileName(location) + "PluginOutput.txt is generated");
     }
@@ -278,16 +318,17 @@ public class JavaMOPMain {
             if (!f.exists()) {
                 throw new MOPException("[Error] Target file, " + file + ", doesn't exsit!");
             } else if (f.isDirectory()) {
-                ret.addAll(collectFiles(f.list(new JavaFileFilter()), f.getAbsolutePath()));
-                ret.addAll(collectFiles(f.list(new MOPFileFilter()), f.getAbsolutePath()));
+                ret.addAll(collectFiles(f.list(), f.getAbsolutePath()));
             } else {
                 if (Tool.isSpecFile(file)) {
                     ret.add(f);
                 } else if (Tool.isJavaFile(file)) {
                     ret.add(f);
-                } else
-                    throw new MOPException("Unrecognized file type! The JavaMOP specification " +
-                        "file should have .mop as the extension.");
+                } else {
+                    //System.err.println("Ignoring " + file);
+                    /*throw new MOPException("Unrecognized file type! The JavaMOP specification " +
+                        "file should have .mop as the extension.");*/
+                }
             }
         }
         
@@ -462,6 +503,13 @@ public class JavaMOPMain {
                 JavaMOPMain.translate2RV = true;
             } else if (args[i].compareTo("-keepRVFiles") == 0) {
                 JavaMOPMain.keepRVFiles = true;
+            } else if("--agent".equals(args[i])) {
+                JavaMOPMain.merge = true;
+                JavaMOPMain.generateAgent = true;
+                JavaMOPMain.keepRVFiles = true;
+            } else if("--baseaspect".equals(args[i])) {
+                i++;
+                JavaMOPMain.baseAspect = new File(args[i]);
             } else {
                 if (files.length() != 0)
                     files += ";";
@@ -475,6 +523,20 @@ public class JavaMOPMain {
             return;
         }
         
+        boolean tempOutput = JavaMOPMain.generateAgent && JavaMOPMain.outputDir == null;
+        
+        if(tempOutput) {
+            tempOutput = true;
+            try {
+                outputDir = Files.createTempDirectory(new File(".").toPath(), "output").toFile();
+                outputDir.deleteOnExit();
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+                generateAgent = false;
+            }
+        }
+        
+        
         // Generate .rvm files and .aj files
         try {
             process(files); 
@@ -485,21 +547,33 @@ public class JavaMOPMain {
         }
         
         // replace mop with rvm and call rv-monitor
-        int length = args.length;
-        if (JavaMOPMain.keepRVFiles) {
-            length--;
-        }
-        String rvArgs[] = new String [length];
-        int p = 0;
+        List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
             if (args[j].compareTo("-keepRVFiles") == 0) {
-                // Don't pass keepRVFiles to rvmonitor
-                continue;
+                // Don't pass keepRVFiles to rvmonitor\
+            } else if("--agent".equals(args[j])) {
+                rvArgs.add("-merge");
+            } else if("--baseaspect".equals(args[j])) {
+                j++;
+            } else {
+                rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
             }
-            rvArgs[p] = args[j].replaceAll("\\.mop", "\\.rvm");
-            p++;
         }
-        Main.main(rvArgs);
+        if(tempOutput) {
+            rvArgs.add("-d");
+            rvArgs.add(JavaMOPMain.outputDir.getAbsolutePath());
+        }
+        
+        Main.main(rvArgs.toArray(new String[0]));
+        
+        if(generateAgent) {
+            try {
+                GenerateAgent.generate(JavaMOPMain.outputDir, JavaMOPMain.aspectname, 
+                    JavaMOPMain.baseAspect);
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
         
         // Call AJFileCombiner here to combine these two
         // TODO
@@ -535,5 +609,13 @@ public class JavaMOPMain {
             }
         }
         
+        if(tempOutput) {
+            try {
+                GenerateAgent.deleteDirectory(outputDir.toPath());
+            } catch(IOException e) {
+                e.printStackTrace();
+                System.err.println("Failed to remove temporary files.");
+            }
+        }
     }
 }

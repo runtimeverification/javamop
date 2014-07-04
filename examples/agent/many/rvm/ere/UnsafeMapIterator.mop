@@ -1,0 +1,50 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+
+// UnsafeMapIterator is similar to 
+// UnsafeIterator.  The biggest difference 
+// is that a key collection of the map 
+// is created, and the iterator is created 
+// from collection.  This offers a larger 
+// challenge in JavaMOP, because the monitor 
+// creation events do not contain all the 
+// parameters (because the collection will be 
+// created before the iterator, and, in fact, 
+// many iterators can be created from one map).
+
+full-binding UnsafeMapIterator(Map map, Collection c, Iterator i){
+	event createColl after(Map map) 
+              returning(Collection c) : 
+              (call(* Map.values()) 
+              || call(* Map.keySet())) 
+              && target(map) {}
+	event createIter after(Collection c) 
+              returning(Iterator i) : 
+	      call(* Collection.iterator()) 
+              && target(c) {}
+	event useIter before(Iterator i) : 
+	      call(* Iterator.next()) 
+              && target(i) {}
+	event updateMap after(Map map) : 
+	      (call(* Map.put*(..)) 
+              || call(* Map.putAll*(..)) 
+              || call(* Map.clear()) 
+              || call(* Map.remove*(..))) 
+              && target(map) {}
+
+    ere : createColl updateMap* createIter useIter* updateMap updateMap* useIter
+
+	@match{
+           System.out.println("unsafe iterator usage!");
+	}
+}
+		
+
+
+
+
+
+

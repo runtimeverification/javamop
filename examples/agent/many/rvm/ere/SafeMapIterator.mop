@@ -1,0 +1,47 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+
+// SafeMapIterator is similar to 
+// SafeIterator.  The biggest difference 
+// is that a key set of the map 
+// is used, and the iterator is over 
+// the collection.  
+
+full-binding SafeMapIterator(Map map, Collection c, Iterator i){
+	event createColl after(Map map) 
+              returning(Collection c) : 
+              (call(* Map.values()) 
+              || call(* Map.keySet())) 
+              && target(map) {}
+	event createIter after(Collection c) 
+              returning(Iterator i) : 
+	      call(* Collection.iterator()) 
+              && target(c) {}
+	event useIter before(Iterator i) : 
+	      call(* Iterator.next()) 
+              && target(i) {}
+	event updateMap after(Map map) : 
+	      (call(* Map.put*(..)) 
+              || call(* Map.putAll*(..)) 
+              || call(* Map.clear()) 
+              || call(* Map.remove*(..))) 
+              && target(map) {}
+
+       // the positive LTL formula capturing the exact same meaning as the ERE
+       // for UnsafeMapeIterator would be:
+       // [](useIter => (not updateMap S (createIter S createColl)))
+       // however, this logically simplifies to:
+       ltl: [](useIter => (not updateMap S createColl))
+
+	@violation{
+           System.out.println("unsafe iterator usage!");
+	}
+}
+		
+
+
+
+

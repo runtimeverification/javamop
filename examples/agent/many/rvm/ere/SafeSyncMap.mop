@@ -1,0 +1,60 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// The SafeSyncMap property is designed 
+// to match a case where either a collection 
+// is synchronized and an non-synchronized
+// iterator is created for the collection, 
+// or a synchronized iterator is created, but 
+// accessed in an unsynchronized manner. The 
+// difference from SafeSyncCollection is that 
+// a set must be created from the 
+// synchronized map.
+
+SafeSyncMap(Map syncMap, Set+ mapSet, Iterator iter) {
+	Map c;
+	creation event sync after() 
+                returning(Map syncMap) : 
+		call(* Collections.synchr*(..)) {
+			this.c = syncMap;
+		}
+	event createSet after(Map syncMap) 
+                returning(Set+ mapSet) : 
+		        call(* Map+.keySet())
+                && target(syncMap) {
+                }
+	event syncCreateIter after(Set+ mapSet) 
+                returning(Iterator iter) : 
+		call(* Collection+.iterator()) 
+                && target(mapSet) 
+                && condition(Thread.holdsLock(c)){
+                }
+	event asyncCreateIter after(Set mapSet) 
+                returning(Iterator iter) : 
+		call(* Collection+.iterator()) 
+                && target(mapSet) 
+                && condition(!Thread.holdsLock(c)) {
+                }
+	event accessIter before(Iterator iter) : 
+		call(* Iterator.*(..)) 
+                && target(iter) 
+                && condition(!Thread.holdsLock(c)) {
+                }
+
+	ere : sync createSet 
+              (asyncCreateIter | (syncCreateIter accessIter))
+
+	@match{
+           System.out.println("synchronized collection accessed in non threadsafe manner!");
+	}
+}
+		
+
+
+
+
+
+
+
