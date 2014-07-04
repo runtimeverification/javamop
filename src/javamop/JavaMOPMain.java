@@ -207,12 +207,20 @@ public class JavaMOPMain {
         if (!Tool.isJavaFile(location))
             throw new MOPException(location + "should be a Java file!");
         
+        FileWriter f = null;
         try {
-            FileWriter f = new FileWriter(location);
+            f = new FileWriter(location);
             f.write(javaContent);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
     }
     
@@ -221,13 +229,22 @@ public class JavaMOPMain {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
+        FileWriter f = null;
         try {
-            FileWriter f = new FileWriter(outputDir.getAbsolutePath() + File.separator + 
+            f = new FileWriter(outputDir.getAbsolutePath() + File.separator + 
                 aspectName + "MonitorAspect.aj");
             f.write(aspectContent);
             f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
         System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
     }
@@ -238,14 +255,21 @@ public class JavaMOPMain {
             return;
         
         int i = location.lastIndexOf(File.separator);
-        String filePath = ""; 
+        String filePath = location.substring(0, i + 1) + Tool.getFileName(location) + suffix;
+        FileWriter f = null;
         try {
-            filePath = location.substring(0, i + 1) + Tool.getFileName(location) + suffix;
-            FileWriter f = new FileWriter(filePath);
+            f = new FileWriter(filePath);
             f.write(content);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
         if (suffix.equals(".rvm")) {
             listRVMFiles.add(filePath);
@@ -256,15 +280,23 @@ public class JavaMOPMain {
     // PM
     protected static void writePluginOutputFile(String pluginOutput, String location) 
             throws MOPException {
-        int i = location.lastIndexOf(File.separator);
+        final int i = location.lastIndexOf(File.separator);
         
+        FileWriter f = null;
         try {
-            FileWriter f = new FileWriter(location.substring(0, i + 1) + 
+            f = new FileWriter(location.substring(0, i + 1) + 
                 Tool.getFileName(location) + "PluginOutput.txt");
             f.write(pluginOutput);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
+        } finally {
+            if(f != null) {
+                try {
+                    f.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
         }
         System.out.println(" " + Tool.getFileName(location) + "PluginOutput.txt is generated");
     }

@@ -242,19 +242,22 @@ public class GenerateAgent {
         final String aspectjweaver = findJarOnClasspath("aspectjweaver.jar");
         
         final PrintWriter writer = new PrintWriter(f);
-        writer.println("Manifest-Version: 1.0");
-        writer.println("Name: org/aspectj/weaver/");
-        writer.println("Specification-Title: AspectJ Weaver Classes");
-        writer.println("Specification-Version: DEVELOPMENT");
-        writer.println("Specification-Vendor: aspectj.org");
-        writer.println("Implementation-Title: org.aspectj.weaver");
-        writer.println("Implementation-Version: DEVELOPMENT");
-        writer.println("Implementation-Vendor: aspectj.org");
-        writer.println("Premain-Class: org.aspectj.weaver.loadtime.Agent");
-        writer.println("Can-Redefine-Classes: true");
-        writer.println("Boot-Class-Path: "+rvmonitorrt+" "+aspectjweaver);
-        writer.flush();
-        writer.close();
+        try {
+            writer.println("Manifest-Version: 1.0");
+            writer.println("Name: org/aspectj/weaver/");
+            writer.println("Specification-Title: AspectJ Weaver Classes");
+            writer.println("Specification-Version: DEVELOPMENT");
+            writer.println("Specification-Vendor: aspectj.org");
+            writer.println("Implementation-Title: org.aspectj.weaver");
+            writer.println("Implementation-Version: DEVELOPMENT");
+            writer.println("Implementation-Vendor: aspectj.org");
+            writer.println("Premain-Class: org.aspectj.weaver.loadtime.Agent");
+            writer.println("Can-Redefine-Classes: true");
+            writer.println("Boot-Class-Path: "+rvmonitorrt+" "+aspectjweaver);
+            writer.flush();
+        } finally {
+            writer.close();
+        }
     }
     
     /**
@@ -264,23 +267,26 @@ public class GenerateAgent {
      */
     private static void writeBaseAspect(File f) throws IOException {
         final PrintWriter writer = new PrintWriter(f);
-        writer.println("package mop;");
-        writer.println("public aspect BaseAspect {");
-        writer.println("    pointcut notwithin() :");
-        writer.println("    !within(sun..*) &&");
-        writer.println("    !within(java..*) &&");
-        writer.println("    !within(javax..*) &&");
-        writer.println("    !within(com.sun..*) &&");
-        writer.println("    !within(org.dacapo.harness..*) &&");
-        writer.println("    !within(org.apache.commons..*) &&");
-        writer.println("    !within(org.apache.geronimo..*) &&");
-        writer.println("    !within(net.sf.cglib..*) &&");
-        writer.println("    !within(mop..*) &&");
-        writer.println("    !within(javamoprt..*) &&");
-        writer.println("    !within(rvmonitorrt..*) &&");
-        writer.println("    !within(com.runtimeverification..*);");
-        writer.println("}");
-        writer.flush();
-        writer.close();
+        try {
+            writer.println("package mop;");
+            writer.println("public aspect BaseAspect {");
+            writer.println("    pointcut notwithin() :");
+            writer.println("    !within(sun..*) &&");
+            writer.println("    !within(java..*) &&");
+            writer.println("    !within(javax..*) &&");
+            writer.println("    !within(com.sun..*) &&");
+            writer.println("    !within(org.dacapo.harness..*) &&");
+            writer.println("    !within(org.apache.commons..*) &&");
+            writer.println("    !within(org.apache.geronimo..*) &&");
+            writer.println("    !within(net.sf.cglib..*) &&");
+            writer.println("    !within(mop..*) &&");
+            writer.println("    !within(javamoprt..*) &&");
+            writer.println("    !within(rvmonitorrt..*) &&");
+            writer.println("    !within(com.runtimeverification..*);");
+            writer.println("}");
+            writer.flush();
+        } finally {
+            writer.close();
+        }
     }
 }
