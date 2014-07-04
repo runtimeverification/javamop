@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+    <!-- General Application Information -->
+    <info>
+        <appname>JavaMOP</appname>
+        <appversion>@{javamop.version}</appversion>
+        <uninstaller path="${INSTALL_PATH}/uninstall" write="no"/>
+        <run-privileged condition="izpack.windowsinstall|izpack.macinstall" />
+    </info>
+
+    <variables>
+        <variable name="DependencyPanel.rvm.site" value="http://runtimeverification.com/monitor"/>
+        <variable name="DependencyPanel.rvm.exe.1" value="rv-monitor"/>
+        <variable name="DependencyPanel.rvm.exe.2" value="rv-monitor.bat"/>
+    </variables>
+
+    <!-- GUI-Specific Preferences -->
+    <guiprefs width="630" height="700" resizable="yes">
+        <modifier key="useHeadingPanel" value="yes"/>
+        <modifier key="useHeadingForSummary" value="no"/>
+        <modifier key="headingImageOnLeft" value="yes"/>
+        <modifier key="headingLineCount" value="2"/>
+        <modifier key="headingFontSize" value="1.5"/>
+        <modifier key="headingBackgroundColor" value="0x00ffffff"/>
+    </guiprefs>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <!-- Installer Resources -->
+    <resources>
+        <res id="CustomLangpack.xml_eng" src="@{temp}/res/izpack-rv-eng-lang.xml"/>
+        <res id="LicencePanel.licence" src="@{base}/LICENSE"/>
+        <res id="DependencyPanel.rvm.html" src="@{temp}/res/rvdependencies/rvm.html"/>
+        <res id="HTMLFinishInfoPanel.finish" src="@{temp}/res/rvdependencies/finish.html"/>
+        <res id="Heading.image" src="@{temp}/res/images/javamop.png"/>
+    </resources>
+
+    <!-- Installer Panel Sequence -->
+    <panels>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="DependencyPanel" id="rvm" jar="@{temp}/res/panels/RVPanels.jar"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="HTMLFinishInfoPanel" id="finish" jar="@{temp}/res/panels/RVPanels.jar"/>
+    </panels>
+
+    <!-- Installable Package Tasks -->
+    <packs>
+        <pack name="JavaMOP" required="yes" installGroups="New Application" >
+            <description>Required JavaMOP libraries and executables.</description>
+            <file src="@{base}/README" targetdir="$INSTALL_PATH"/>
+            <file src="@{base}/LICENSE" targetdir="$INSTALL_PATH"/>
+            <file src="@{bin}" targetdir="$INSTALL_PATH"/>
+            <file src="@{config}" targetdir="$INSTALL_PATH"/>
+            <file src="@{lib}" targetdir="$INSTALL_PATH"/>
+            <file src="@{examples}" targetdir="$INSTALL_PATH"/>
+            <executable targetfile="$INSTALL_PATH/bin/ajc" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/ajc.bat" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/javamop" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/javamop.bat" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/javamoptestsuite" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/javamoptestsuite.bat" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/logicrepository" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/logicrepository.bat" keep="true" stage="never" />
+            <executable targetfile="$INSTALL_PATH/bin/rvmop" keep="true" stage="never" />
+        </pack>
+        <pack name="Examples" required="no" installGroups="New Application" >
+            <description>Example programs illustrating JavaMOP's features.</description>
+            <fileset dir="@{examples}" casesensitive="yes" targetdir="$INSTALL_PATH/examples">
+                <exclude name="bin/*"/>
+                <exclude name="log/*"/>
+            </fileset>
+        </pack>
+    </packs>
+
+    <!-- The native libraries to add. This is required for creating shortcuts on Windows -->
+    <native type="izpack" name="ShellLink.dll"/>
+
+</installation>

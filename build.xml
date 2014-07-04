@@ -1,11 +1,18 @@
 <?xml version="1.0"?>
 <project name="javamop" default="jar" basedir=".">
+    <property name="installer.version" value="0.1" />
+    <property name="javamop.version" value="0.1" />
+    <property name="base" value="." />
     <property name="bin" value="bin" />
     <property name="build" value="build" />
+    <property name="config" value="config" />
+    <property name="dist" value="dist" />
+    <property name="examples" value="examples" />
     <property name="lib" value="lib" />
     <property name="plugins" value="lib/plugins" />
     <property name="src" value="src" />
     <property name="src.tests" value="test" />
+    <property name="temp" value="tmp" />
     <property name="reports.tests" value="test-reports" />
     <property name="build.tests" value="build" />
     <property environment="env" />
@@ -45,6 +52,11 @@
         <delete verbose="true">
             <fileset dir="${build}" />
         </delete>
+        <delete dir="${dist}" />
+        <delete dir="${build}" />
+        <delete verbose="true" quiet="true">
+            <fileset dir="${dist}" />
+        </delete>
         <delete verbose="true">
             <fileset dir="${lib}">
                 <include name="${javamop}.jar" />
@@ -81,6 +93,33 @@
     <target name="jar" depends="compile">
         <jar destfile="${lib}/${javamop}.jar" basedir="${build}" includes="${javamop}/**" />
         <jar destfile="${lib}/${test}.jar" basedir="${build}" includes="${test}/**" />
+    </target>
+
+    <target name="installer" depends="jar">
+        <!-- Run installer build -->
+        <property name="install.jarfile" value="rv-install-${installer.version}.jar" />
+        <echo message="Running IzPack to build the installer..."/>
+        <mkdir dir="${temp}"/>
+        <mkdir dir="${dist}"/>
+        <echo message="Fetching RV installer base..."/>
+        <get src="http://runtimeverification.com/dist/${install.jarfile}" dest="${temp}/${install.jarfile}"/>
+        <unzip src="${temp}/${install.jarfile}" dest="${temp}">
+            <patternset>
+                <include name="res/**"/>
+            </patternset>
+        </unzip>
+        <taskdef name="izpack" classpath="${temp}/${install.jarfile}" classname="com.izforge.izpack.ant.IzPackTask"/>
+        <izpack input="install-definition.xml"
+          output="${dist}/javamop-install.jar"
+          installerType="standard"
+          inheritAll="true"
+          basedir="${base}"
+          compression="deflate"
+          compressionlevel="9"/>
+        <!-- Clean working directory -->
+        <echo message="Cleaning up working directory..."/>
+        <delete dir="${temp}" quiet="true" includeemptydirs="true"/>
+        <echo message="Done."/>
     </target>
     
     <target name="build-test" depends="jar" >
