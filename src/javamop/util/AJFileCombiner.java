@@ -46,6 +46,7 @@ public class AJFileCombiner {
                     ajCode.append("\n");
                 }
             }
+            scanner.close();
             
             scanner = new Scanner(javaFile);
             while (scanner.hasNextLine()) {
@@ -83,6 +84,7 @@ public class AJFileCombiner {
             bw.flush();
             bw.close();
             scanner.close();
+            fw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

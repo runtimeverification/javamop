@@ -229,17 +229,17 @@ public class JavaMOPMain {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
+        final String path = outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj";
         FileWriter f = null;
         try {
-            f = new FileWriter(outputDir.getAbsolutePath() + File.separator + 
-                aspectName + "MonitorAspect.aj");
+            f = new FileWriter(path);
             f.write(aspectContent);
-            f.close();
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
         } finally {
             if(f != null) {
                 try {
+                    System.out.println("Closing " + path);
                     f.close();
                 } catch(IOException ioe) {
                     ioe.printStackTrace();
