@@ -35,7 +35,7 @@
         <res id="CustomLangpack.xml_eng" src="@{temp}/res/izpack-rv-eng-lang.xml"/>
         <res id="LicencePanel.licence" src="@{base}/LICENSE"/>
         <res id="DependencyPanel.rvm.html" src="@{temp}/res/rvdependencies/rvm.html"/>
-        <res id="HTMLFinishInfoPanel.finish" src="@{temp}/res/rvdependencies/finish.html"/>
+        <res id="HTMLFinishInfoPanel.finish" src="@{temp}/res/rvdependencies/finish_mop_classpath.html"/>
         <res id="Heading.image" src="@{temp}/res/images/javamop.png"/>
     </resources>
 

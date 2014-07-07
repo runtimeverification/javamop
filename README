@@ -19,24 +19,7 @@ future states); and as a lightweight formal method.
 
 JavaMOP is an instance of MOP for Java.
 
-For more information, refer to the following URL:
-
-  javamop.googlecode.com
-
-==2. Installation==
-
-For detailed installation instructions, please see the INSTALL file.
-
-As the tool is still under active development, it is recommended that you
-install JavaMOP directly from the svn repository and update it regularly using
-
-  svn up 
-
-from the base directory to benefit of the latest fixes and features.
-
-==3. Usage==
-
-=3.1 Linux and Mac (POSIX)
+==2. Usage==
 
 If you want to use the Logic Repository Server provided by UIUC, use the
 -remote option when using the 'javamop' script.
@@ -60,46 +43,18 @@ Example) javamop -d examples/FSM/ examples/FSM/HasNext.mop
 
 For more options, type 'javamop' or 'javamop -h'
 
-=3.2 Windows
+==3. Additional Features of the JavaMOP Distribution==
 
-If you want to use the Logic Repository server provided by UIUC, use -remote
-option when using the script 'javamop.bat'
-
-If you want to use the Logic Repository included in this package, use -local
-option when using the script 'javamop.bat'
-
-The script, 'javamop.bat' has the following usage.
-
-Usage) javamop.bat [-v] [-d <target directory>] <specification file or dir>
-
-The -v option is used to specify verbose mode. The -d option is used to specify
-the target directory where the resulting aspectj code will be saved.
-Specification files must have The .mop file extension.
-
-Example) javamop.bat -d examples\FSM examples\FSM\HasNext.mop
-
-For more options, type 'javamop.bat' or 'javamop.bat -h'
-
-==4. Additional Features of the JavaMOP Distribution==
-
-=4.1 Executing a Monitored Program
+=3.1 Executing a Monitored Program
 
 When you execute a monitored program, you need to include the AspectJ library
-and JavaMOP Runtime Library in your class path. The JavaMOP Runtime Library is
-provided in this package in the javamop2.3/lib directory. A typical value of
-this is:
+and RV-Monitor Runtime Library in your class path. 
 
-In Windows,
-  c:\javamop2.3\lib\javamoprt.jar
+For more information, see the web documentation here: 
+http://runtimeverification.com/monitor/docs/runningexamples.html#preparation
 
-In Linux and Mac,
-  ~/javamop2.3/lib/javamoprt.jar
 
-Add this to the left end of the "CLASSPATH" followed by ";" (in Windows) or ":"
-(in Linux and Mac). For more information, refer to Section 5 from the following
-URL http://java.sun.com/j2se/1.4.2/install-windows.html
-
-=4.2 Running the Logic Repository Tool
+=3.2 Running the Logic Repository Tool
 
 JavaMOP uses the Logic Repository automatically. Therefore, you do not need to
 invoke the Logic Repository explicitly. JavaMOP will connect to the Logic
@@ -108,9 +63,7 @@ However, it is possible to use the Logic Repository directly for other uses.
 
 To use the LogicRepository, type 
 
-  'logicrepository' in Linux and Mac,
-
-  'logicrepository.bat' in Windows.
+  'logicrepository'
 
 And provide input through the standard input. For the XML syntax of input, refer
 to the following pages:
@@ -119,9 +72,12 @@ to the following pages:
 
 The resulting monitoring code is piped to standard output, in XML format.
 
-=5. Contact Information
+=4. Contact Information
 
 We welcome your interest in JavaMOP. Your feedback, comments and bug reports are
 highly appreciated. Please feel free to contact us by sending email to
 mop@cs.uiuc.edu. Bugs and feature requests may be submitted at the project
 website at javamop.googlecode.com.
+
+
+For more information, please see http://fsl.cs.illinois.edu/index.php/Special:JavaMOP3
