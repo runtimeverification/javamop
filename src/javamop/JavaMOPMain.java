@@ -229,7 +229,7 @@ public class JavaMOPMain {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
-		final String path = outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj";
+        final String path = outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj";
         FileWriter f = null;
         try {
             f = new FileWriter(path);
@@ -239,7 +239,7 @@ public class JavaMOPMain {
         } finally {
             if(f != null) {
                 try {
-					System.out.println("Closing " + path);
+                    System.out.println("Closing " + path);
                     f.close();
                 } catch(IOException ioe) {
                     ioe.printStackTrace();
