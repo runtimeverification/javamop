@@ -1,9 +1,3 @@
-/*
- * Created on 2004-10-6
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package javamop.util;
 
 import java.io.*;
@@ -15,24 +9,59 @@ import javamop.MOPException;
  *
  * A set of tool functions
  */
-public class Tool {
-    public static boolean isJavaFile(String path){
+public final class Tool {
+    
+    /**
+     * To prevent instantiation.
+     */
+    private Tool() {
+        
+    }
+    
+    /**
+     * Determine if a path belongs to a Java file based on its extension.
+     * @param path The path of the file.
+     * @return If the file is a Java file.
+     */
+    public static boolean isJavaFile(final String path) {
         return path.endsWith(".java");
     }
     
-    public static boolean isSpecFile(String path){
+    /**
+     * Determine if a path belongs to a Specification file based on its extension.
+     * @param path The path of the file.
+     * @return If the file is a specification file.
+     */
+    public static boolean isSpecFile(final String path) {
         return path.endsWith(".mop");
     }
     
-    public static boolean isListFile(String path){
+    /**
+     * Determine if a path belongs to a List file based on its extension.
+     * @param path The path of the file.
+     * @return If the file is a list file.
+     */
+    public static boolean isListFile(final String path) {
         return path.endsWith(".lst");
     }
     
-    public static int findBlockStart(String str, int pos){
+    /**
+     * Find the location of next opening curly bracket.
+     * @param str The string to search.
+     * @param pos The index to start searching.
+     * @return The index of the next open curly bracket in {@code str} after {@code pos}.
+     */
+    public static int findBlockStart(final String str, final int pos) {
         return str.lastIndexOf("{", pos) + 1;
     }
     
-    public static int findBlockEnd(String str, int pos){
+    /**
+     * Find the matching close curly bracket to an open curly bracket.
+     * @param str The string to search through.
+     * @param pos The index to start searching.
+     * @return The index of the matching close curly bracket, or a number less than 0 in invalid input.
+     */
+    public static int findBlockEnd(final String str, final int pos) {
         int c = 0;
         int i = str.indexOf("}", pos);
         int j = str.indexOf("{", pos);
@@ -59,7 +88,12 @@ public class Tool {
         return i;
     }
     
-    public static String removeComments(String input){
+    /**
+     * Strip line and block comments from a source code string.
+     * @param input The source code.
+     * @return The source code, stripped of comments.
+     */
+    public static String removeComments(String input) {
         int i = input.indexOf("//");
         while (i>-1){
             int j = input.indexOf("\n");
@@ -83,13 +117,14 @@ public class Tool {
     }
     
     /**
-     * format the code to insert appropriate indentation
+     * Format the code to insert appropriate indentation.
      * @param content: the code to reformat
      * @param prefix: the current indentation
      * @param offset: the string used in indentation, like "\t"
-     * @return
+     * @return The properly indented code.
      */
-    public static String changeIndentation(String content, String offset, String prefix){
+    public static String changeIndentation(final String content, String offset, 
+            final String prefix) {
         StringBuffer output = new StringBuffer();
         BufferedReader br = new BufferedReader(new StringReader(content));
         String aLine = "";
@@ -154,75 +189,24 @@ public class Tool {
         return output.toString();
     }
     
-    public static String formatGeneratedCode(String content, String prefix){
-        StringBuffer output = new StringBuffer();
-        for (int i = content.indexOf("/*+"); i > -1; i = content.indexOf("/*+")){
-            output.append(content.substring(0, i));
-            int j = content.indexOf("+*/");
-            if (j > -1) {
-                String generatedCode = content.substring(i, j + 3);             
-                String str = content.substring(0, i).trim();
-                String lastLine = str.lastIndexOf('\n') > -1 ? 
-                    str.substring(str.lastIndexOf('\n') + 1) : str;
-                while (lastLine.startsWith("\r")) lastLine = lastLine.substring(1);
-                StringBuffer offset = new StringBuffer();
-                for (int ii = 0; ii < lastLine.length(); ii++){ 
-                    if (lastLine.charAt(ii) == ' ')
-                        offset.append(' ');
-                    else if (lastLine.charAt(ii) == '\t')
-                        offset.append('\t');
-                    else
-                        break;
-                }
-                if (lastLine.endsWith("{"))
-                    offset.append(prefix);
-                    generatedCode = changeIndentation(generatedCode, offset.toString(), prefix);
-                    output.append(generatedCode);
-                    content = content.substring(j+3);
-            }               
-        }
-        output.append(content);
-        return output.toString();
-    }
-    public static String getPackage(String str){
-        int i = str.indexOf("package");
-        if (i > -1)
-            return str.substring(i, str.indexOf("\n", i)+1);
-        else
-            return "";
-    }
-    public static String getImports(String str) throws MOPException {
-        BufferedReader reader = new BufferedReader(new StringReader(str));
-        String result = "";
-        try{
-            String aLine = reader.readLine();
-            while (aLine != null){
-                aLine = aLine.trim();
-                if (aLine.startsWith("import ")){
-                    result += aLine + "\n";
-                }
-                aLine = reader.readLine();
-            }
-        } catch (IOException e){
-            throw new MOPException(e);
-        }
-        return result;
-    }
+    /**
+     * Retrieve the file name of a given path, stripping its directory and file extension.
+     * @param path The path to the filename.
+     * @return The name of the file, without path or suffix.
+     */
     public static String getFileName(String path){
         int i = path.lastIndexOf(File.separator);
         int j = path.lastIndexOf(".");
         return path.substring(i+1, j);        
     }
-    public static String replacePredefinedKeywords(String str){
-        return str.replaceAll("\\@LINENUM", "thisJoinPoint.getSourceLocation().getLine()")
-            .replaceAll("\\@LOC", "thisJoinPoint.getSourceLocation().toString()");
-    }
     
-    public static boolean containsKeywords(String str){
-        return str.indexOf("@LINENUM")>-1 || str.indexOf("@LOC")>-1;
-    }
-    
-    public static String convertFileToString(File file) throws IOException{
+    /**
+     * Retrieve the contents of the given file.
+     * @param file The file to read.
+     * @return The contents of the file.
+     * @throws IOException If there is an error in reading the file.
+     */
+    public static String convertFileToString(final File file) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(file);
         byte[] b = new byte[fileInputStream.available()];
         fileInputStream.read(b);
@@ -231,49 +215,34 @@ public class Tool {
         return content;
     }
     
-    public static String convertFileToString(String path) throws IOException{
+    /**
+     * Retrieve the contents of the given file.
+     * @param path The path to the file to read.
+     * @return The contents of the file.
+     * @throws IOException If there is an error in reading the file.
+     */
+    public static String convertFileToString(final String path) throws IOException {
         return convertFileToString(new File(path));
     }
     
-    public static String polishPath(String path) {
-        if (path.indexOf("%20") > 0)
-            path = path.replaceAll("%20", " ");
-        
-        return path;
+    /**
+     * Make a filesystem path look nice for windows.
+     * @param path The path to improve.
+     * @return The aesthetically improved path.
+     */
+    public static String polishPath(final String path) {
+        return path.replaceAll("%20", " ");
     }
     
-    public static String stripFilenameExtension(String path) {
-        if (path == null) {
-            return null;
-        }
-        int sepIndex = path.lastIndexOf(".");
-        return (sepIndex != -1 ? path.substring(0, sepIndex) : path);
-    }
-    
-    public static boolean isJavaMOPInJarFile(){
-        try {
-            Class<?> mainClass = Class.forName("javamop.JavaMOPMain");
-            ClassLoader loader = mainClass.getClassLoader();
-            String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
-            
-            if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
-                    mainClassPath.startsWith("jar:")) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch  (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
+    /**
+     * Retrieve the path of the configuration file.
+     * @return The string path to the configuration file.
+     */
     public static String getConfigPath(){
-        String configPath;
         try {
-            Class<?> mainClass = Class.forName("javamop.JavaMOPMain");
-            ClassLoader loader = mainClass.getClassLoader();
-            String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
+            final Class<?> mainClass = Class.forName("javamop.JavaMOPMain");
+            final ClassLoader loader = mainClass.getClassLoader();
+            final String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
             
             if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
                     mainClassPath.startsWith("jar:")) {
@@ -282,7 +251,7 @@ public class Tool {
                     mainClassPath.length() - "!/javamop/JavaMOPMain.class".length());
                 jarFilePath = Tool.polishPath(jarFilePath);
                 
-                configPath = new File(jarFilePath).getParentFile().getParent() + File.separator + 
+                return new File(jarFilePath).getParentFile().getParent() + File.separator + 
                     "config";
             } else {
                 String packageFilePath;
@@ -291,11 +260,9 @@ public class Tool {
                     mainClassPath.length() - "/JavaMOPMain.class".length());
                 packageFilePath = Tool.polishPath(packageFilePath);
                 
-                configPath = new File(packageFilePath).getParentFile().getParent() + 
+                return new File(packageFilePath).getParentFile().getParent() + 
                     File.separator + "config";
             }
-            
-            return configPath;
         } catch  (Exception e){
             e.printStackTrace();
             return null;

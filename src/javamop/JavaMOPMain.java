@@ -309,18 +309,6 @@ public final class JavaMOPMain {
     }
     
     /**
-     * Make a filesystem path look nice for windows.
-     * @param path The path to improve.
-     * @return The aesthetically improved path.
-     */
-    public static String polishPath(String path) {
-        if (path.indexOf("%20") > 0)
-            path = path.replaceAll("%20", " ");
-        
-        return path;
-    }
-    
-    /**
      * Aggregate MOP files and recursively search directories for more MOP files.
      * @param files Path array. Files are added directly, directories are searched recursively.
      * @param path A common prefix for all the paths in {@code files}.
@@ -479,7 +467,7 @@ public final class JavaMOPMain {
             
             jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - 
                 "!/javamop/JavaMOPMain.class".length());
-            jarFilePath = polishPath(jarFilePath);
+            jarFilePath = Tool.polishPath(jarFilePath);
         }
         
         int i = 0;
