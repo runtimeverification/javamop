@@ -2,17 +2,34 @@ package javamop.output;
 
 import javamop.JavaMOPMain;
 
+/**
+ * An aspect that is included with the generated code to keep track of the depth of the call stack.
+ * It has thread-local storage to keep independent storage for each thread's callstack.
+ */
 public class SystemAspect {
     private final String name;
     
+    /**
+     * Construct a SystemAspect with the given name.
+     * @param name The name of the SystemAspect.
+     */
     public SystemAspect(String name) {
         this.name = name + "SystemAspect";
     }
     
+    /**
+     * The name of the SystemAspect.
+     * @return The name.
+     */
     public String getSystemAspectName() {
         return name;
     }
     
+    /**
+     * The source code of the SystemAspect to include with the generated code.
+     * @return The SystemAspect source code.
+     */
+    @Override
     public String toString() {
         String ret = "";
         

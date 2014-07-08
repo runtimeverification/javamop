@@ -6,16 +6,24 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
+/**
+ * The top-level generated AspectJ code.
+ */
 public class AspectJCode {
     private final String name;
     
     private final Package packageDecl;
     private final Imports imports;
-    //Aspect aspect;
     private final CombinedAspect aspect;
     private boolean versionedStack = false;
-    private SystemAspect systemAspect;
+    private final SystemAspect systemAspect;
     
+    /**
+     * Construct the AspectJ code.
+     * @param name The name of the aspect.
+     * @param mopSpecFile The specification file that will be used to build aspects.
+     * @throw MOPException If something goes wrong in generating the aspects.
+     */
     public AspectJCode(String name, MOPSpecFile mopSpecFile) throws MOPException {
         this.name = name;
         packageDecl = new Package(mopSpecFile);
@@ -28,19 +36,19 @@ public class AspectJCode {
             }
         }
         
-        //aspect = new Aspect(name, mopSpecFile, monitorSets, monitors, enableSets, 
-        //    versionedStack);
         aspect = new CombinedAspect(name, mopSpecFile, versionedStack);
         
-        if(versionedStack)
-            systemAspect = new SystemAspect(name); 
+        if(versionedStack) {
+            systemAspect = new SystemAspect(name);
+        } else {
+            systemAspect = null;
+        }
     }
     
-    /*
-     * 
-     * Generate RV aspect
-     * 
-     * */
+    /**
+     * Generate the AspectJ code that complements the generated RV-Monitor monitoring code.
+     * @return The AspectJ/Java source code.
+     */
     public String toRVString() {
         String ret = "";
         ret += packageDecl;
