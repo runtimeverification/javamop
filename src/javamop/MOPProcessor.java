@@ -17,15 +17,29 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.visitor.CollectUserVarVisitor;
 import javamop.util.Tool;
 
+/**
+ * A class for taking in specification file objects and producing the JavaMOP additions to
+ * RV-Monitor code.
+ */
 public class MOPProcessor {
     public static boolean verbose = false;
     
     private final String name;
     
+    /**
+     * Construct a MOPProcessor.
+     * @param name The name of the processor.
+     */
     public MOPProcessor(String name) {
         this.name = name;
     }
     
+    /**
+     * Register user variables into the MOPNameSpace so that generated code does not clash with
+     * them.
+     * @param mopSpec The specification to extract variables from.
+     * @throws MOPException If something goes wrong reading or registering the variables.
+     */
     private void registerUserVar(JavaMOPSpec mopSpec) throws MOPException {
         for (EventDefinition event : mopSpec.getEvents()) {
             MOPNameSpace.addUserVariable(event.getId());
@@ -45,6 +59,13 @@ public class MOPProcessor {
         }
     }
     
+    /**
+     * Convert a MOPSpecFile into program source with the JavaMOP additions to the specification,
+     * assuming RV-Monitor is run together with JavaMOP to complete the output.
+     * @param mopSpecFile The parameter to convert.
+     * @return The Java code for the additions.
+     * @throws MOPException If there is a logic error in conversion.
+     */
     public String translate2RV(MOPSpecFile mopSpecFile) throws MOPException {
         String rvresult = "";
         if (mopSpecFile.getPakage() != null) {
@@ -64,6 +85,13 @@ public class MOPProcessor {
         return rvresult;
     }
     
+    /**
+     * Convert a MOPSpecFile into program source with the JavaMOP additions to the specification,
+     * assuming RV-Monitor is run together with JavaMOP to complete the output.
+     * @param mopSpecFile The parameter to convert.
+     * @return The Java code for the additions.
+     * @throws MOPException If there is a logic error in conversion.
+     */
     public String process(MOPSpecFile mopSpecFile) throws MOPException {
         String result = "";
         

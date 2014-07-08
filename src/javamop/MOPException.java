@@ -1,23 +1,34 @@
-/*
- * Created on Aug 17, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 package javamop;
 
 /**
+ * A general exception class signifying something went wrong in the JavaMOP logic.
  * @author fengchen
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class MOPException extends Exception {
     private static final long serialVersionUID = 2145299315023315212L;
-    public MOPException(Exception e){
-        super("MOP Expection:" + e.getMessage());
+    
+    /**
+     * Wrap another exception as a MOP logic exception.
+     * @param e The exception to wrap.
+     */
+    public MOPException(final Exception e){
+        super("MOP Expection:" + e.getMessage(), e);
     }
-    public MOPException(String str){
+    
+    /**
+     * Construct a MOPException with an informative message.
+     * @param str An informative message describing the error.
+     */
+    public MOPException(final String str){
         super(str);
+    }
+    
+    /**
+     * Wrap another exception as a MOP logic exception, with an additional message.
+     * @param message A descriptive message for the error.
+     * @param e The exception to be wrapped.
+     */
+    public MOPException(final String message, final Exception e) {
+        super("MOP Exception: " + message + ": " + e.getMessage(), e);
     }
 }

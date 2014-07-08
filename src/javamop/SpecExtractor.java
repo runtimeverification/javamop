@@ -9,19 +9,33 @@ import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.main_parser.JavaMOPParser;
 import javamop.util.Tool;
 
-public class SpecExtractor {
+/**
+ * Class for retrieving specifications from files.
+ */
+public final class SpecExtractor {
     
-    static private String convertFileToString(String path) throws MOPException {
-        String content;
+    /**
+     * Retrieve the text of the file at the given path.
+     * @param path The path of the file.
+     * @return A string with the content of the file.
+     * @throws MOPException If something goes wrong opening or reading the file.
+     */
+    static private String convertFileToString(final String path) throws MOPException {
         try {
-            content = Tool.convertFileToString(path);
+            return Tool.convertFileToString(path);
         } catch (Exception e) {
             throw new MOPException(e.getMessage());
         }
-        return content;
     }
     
-    static private String getAnnotations(String input) throws MOPException {
+    /**
+     * Retrieve all the annotation blocks of the form /*@ ... @* /. They are concatenated
+     * together.
+     * @param input The program source.
+     * @return The annotation blocks concatenated together.
+     * @throws MOPException When an annotation block does not end.
+     */
+    static private String getAnnotations(final String input) throws MOPException {
         String content = "";
         
         int start = input.indexOf("/*@", 0), end;
@@ -39,30 +53,40 @@ public class SpecExtractor {
         return content;
     }
     
-    static public String process(File file) throws MOPException {
+    /**
+     * Retrieve the specification information from a File. If it is a Java file, return
+     * the annotations in the file. If it is a specification file, return the entire file.
+     * @param file The file to read from.
+     * @return The specification information in the file.
+     * @throws MOPException If something goes wrong in reading the file.
+     */
+    static public String process(final File file) throws MOPException {
         if (Tool.isSpecFile(file.getName())) {
             return convertFileToString(file.getAbsolutePath());
         } else if (Tool.isJavaFile(file.getName())) {
-            String javaContent = convertFileToString(file.getAbsolutePath());
-            String specContent = getAnnotations(javaContent);
+            final String javaContent = convertFileToString(file.getAbsolutePath());
+            final String specContent = getAnnotations(javaContent);
             return specContent;
         } else {
             return "";
         }
     }
     
+    /**
+     * Produce a MOP Specification File object from text input.
+     * @param input The specification as text.
+     * @return The specifications parsed into an object.
+     * @throws MOPException If something goes wrong reading or parsing the specification.
+     */
     static public MOPSpecFile parse(String input) throws MOPException {
-        MOPSpecFile mopSpecFile;
         try {
-            MOPSpecFileExt mopSpecFileExt = JavaMOPParser.parse(
+            final MOPSpecFileExt mopSpecFileExt = JavaMOPParser.parse(
                 new ByteArrayInputStream(input.getBytes()));
-            mopSpecFile = JavaMOPExtender.translateMopSpecFile(mopSpecFileExt);
+            return JavaMOPExtender.translateMopSpecFile(mopSpecFileExt);
         } catch (Exception e) {
             e.printStackTrace();
             throw new MOPException("Error when parsing a specification file:\n" + e.getMessage());
         }
-        
-        return mopSpecFile;
     }
     
 }

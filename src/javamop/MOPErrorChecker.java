@@ -5,9 +5,21 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
-public class MOPErrorChecker {
+public final class MOPErrorChecker {
     
-    public static void verify(JavaMOPSpec mopSpec) throws MOPException {
+    /**
+     * Private to prevent instantiation.
+     */
+    private MOPErrorChecker() {
+        
+    }
+    
+    /**
+     * Verify that certain properties about the specification are true.
+     * @param mopSpec The specification to verify the properties of.
+     * @throws MOPException If some properties are not met.
+     */
+    public static void verify(final JavaMOPSpec mopSpec) throws MOPException {
         for (EventDefinition event : mopSpec.getEvents()) {
             verifyThreadPointCut(event);
             
@@ -21,16 +33,18 @@ public class MOPErrorChecker {
         //there should be only one endProgram event
         verifyUniqueEndProgram(mopSpec);
         
-        verifySameEventName(mopSpec);
         verifyGeneralParametric(mopSpec);
         
         //check if two endObject pointcuts share the same parameter, which should not happen
-        
-        
     }
     
-    public static void verifyThreadPointCut(EventDefinition event) throws MOPException {
-        String threadVar = event.getThreadVar();
+    /**
+     * Ensure that thread parameters are not used improperly.
+     * @param event The event definition to verify.
+     * @throws MOPException If the thread variable is used improperly.
+     */
+    public static void verifyThreadPointCut(final EventDefinition event) throws MOPException {
+        final String threadVar = event.getThreadVar();
         if (threadVar == null || threadVar.length() == 0)
             return;
         
@@ -47,25 +61,11 @@ public class MOPErrorChecker {
         }
     }
     
-    public static void verifySameEventName(JavaMOPSpec mopSpec) throws MOPException {
-        // This check was necessary becuase previously multiple events with the same name
-        // but different parameters were banned. Now that such events are allowed, this
-        // code is not used.
-        /*
-         * HashMap<String, MOPParameters> nameToParam = new HashMap<String, MOPParameters>();
-         *        
-         * for(EventDefinition event : mopSpec.getEvents()) {
-         *     if(nameToParam.get(event.getId()) != null) {
-         *         if(!event.getMOPParametersOnSpec().equals(nameToParam.get(event.getId()))) 
-         *             throw new MOPException("Events with the same name should have the same " +
-         *                 "parameters when projected to the specification parameters.");
-         *     } else {
-         *         nameToParam.put(event.getId(), event.getMOPParametersOnSpec());
-         *     }
-         * }
-         */
-    }
-    
+    /**
+     * Verify there is only one endProgram event.
+     * @param mopSpec The specification to verify.
+     * @throws MOPException if there is more than one endProgram event.
+     */
     public static void verifyUniqueEndProgram(JavaMOPSpec mopSpec) throws MOPException {
         boolean found = false;
         
@@ -79,22 +79,36 @@ public class MOPErrorChecker {
         }
     }
     
+    /**
+     * Verify that parametric properties have at least one parameter.
+     * @param mopSpec The specification to verify.
+     * @throws MOPException If the specification has no parameters and is parametric.
+     */
     public static void verifyGeneralParametric(JavaMOPSpec mopSpec) throws MOPException {
         if(mopSpec.isGeneral() && mopSpec.getParameters().size() == 0)
             throw new MOPException("[Internal Error] It cannot use general parameteric " +
                 "algorithm when there is no parameter");
     }
     
+    /**
+     * Verify that an endProgram event cannot have parameters.
+     * @param event The event to verify.
+     * @throws MOPException If the event is an endProgram event and has parameters.
+     */
     public static void verifyEndProgramParam(EventDefinition event) throws MOPException {
-        if(event.isEndProgram() && event.getParameters().size() >0)
+        if(event.isEndProgram() && event.getParameters().size() > 0)
             throw new MOPException("A endProgram pointcut cannot have any parameter.");
     }
     
+    /**
+     * Verify that an endThread parameter only has the thread as a parameter.
+     * @param event The event to verify.
+     * @throws MOPException If the endThread event doesn't have only the thread parameter.
+     */
     public static void verifyEndThreadParam(EventDefinition event) throws MOPException {
-        if(event.isEndThread())
-            if(event.getParametersWithoutThreadVar().size() >0)
-                throw new MOPException("A endThread pointcut cannot have any parameter except " +
-                    "one from thread pointcut.");
+        if(event.isEndThread() && event.getParametersWithoutThreadVar().size() > 0)
+            throw new MOPException("A endThread pointcut cannot have any parameter except " +
+                "one from thread pointcut.");
     }
     
 }

@@ -25,9 +25,16 @@ import java.util.Arrays;
  * and .rvm files have been processed into .java files. Based on Owolabi's build-agent.sh.
  * @author A. Cody Schuffelen
  */
-public class GenerateAgent {
+public final class GenerateAgent {
     
     private static final String manifest = "MANIFEST.MF";
+    
+    /**
+     * Private to avoid instantiation.
+     */
+    private GenerateAgent() {
+        
+    }
     
     /**
      * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
@@ -251,16 +258,16 @@ public class GenerateAgent {
         } catch(LinkageError le) {
             throw new RuntimeException(
                 "Class " + name + " is on the classpath, but is outdated.", le);
-        } 
+        }
     }
-    
+
     /**
      * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
      * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
      * @param f The file to write the manifest to.
      * @throws IOException If something goes wrong in writing the file.
      */
-    private static void writeAgentManifest(File f) throws IOException {
+    private static void writeAgentManifest(final File f) throws IOException {
         final PrintWriter writer = new PrintWriter(f);
         try {
             writer.println("Manifest-Version: 1.0");
@@ -290,7 +297,7 @@ public class GenerateAgent {
      * @param f The file to write to.
      * @throws IOException If something goes wrong in writing the file.
      */
-    private static void writeBaseAspect(File f) throws IOException {
+    private static void writeBaseAspect(final File f) throws IOException {
         final PrintWriter writer = new PrintWriter(f);
         try {
             writer.println("package mop;");

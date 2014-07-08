@@ -22,19 +22,17 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.util.Tool;
 import javamop.util.AJFileCombiner;
 
-class JavaFileFilter implements FilenameFilter {
-    public boolean accept(File dir, String name) {
-        return name.endsWith(".java");
+/**
+ * Entry point class for the JavaMOP program.
+ */
+public final class JavaMOPMain {
+    
+    /**
+     * Private to prevent instantiation.
+     */
+    private JavaMOPMain() {
+        
     }
-}
-
-class MOPFileFilter implements FilenameFilter {
-    public boolean accept(File dir, String name) {
-        return name.endsWith(".mop");
-    }
-}
-
-public class JavaMOPMain {
     
     private static File outputDir = null;
     public static boolean debug = false;
@@ -70,6 +68,14 @@ public class JavaMOPMain {
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
     
+    /**
+     * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all 
+     * the parameter files are in the same directory, use that directory. Otherwise, use the 
+     * directory that JavaMOP is executing in.
+     * @param specFiles The specifications the program is being run on.
+     * @return The directory to place output files in.
+     * @throws MOPException If something goes wrong finding the file locations.
+     */
     static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
         if(JavaMOPMain.outputDir != null){
             return outputDir;
@@ -157,6 +163,12 @@ public class JavaMOPMain {
         }
     }
     
+    /**
+     * Process multiple specification files, either each to a corresponding RVM/AJ file or merging
+     * all of them together into two combined RVM/AJ files.
+     * @param specFiles All the specifications to consider.
+     * @throws MOPException If something goes wrong in conversion.
+     */
     public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
         String aspectName;
         
@@ -201,6 +213,12 @@ public class JavaMOPMain {
         writeCombinedAspectFile(output, aspectName);
     }
     
+    /**
+     * Write Java source code to a file.
+     * @param javaContent The Java source.
+     * @param location The location of the file to write it to.
+     * @throws MOPException If something goes wrong writing the file.
+     */
     protected static void writeJavaFile(String javaContent, String location) throws MOPException {
         if ((javaContent == null) || (javaContent.length() == 0))
             throw new MOPException("Nothing to write as a java file");
@@ -212,7 +230,7 @@ public class JavaMOPMain {
             f = new FileWriter(location);
             f.write(javaContent);
         } catch (Exception e) {
-            throw new MOPException(e.getMessage());
+            throw new MOPException("Failed to write Java file", e);
         } finally {
             if(f != null) {
                 try {
@@ -224,6 +242,12 @@ public class JavaMOPMain {
         }
     }
     
+    /**
+     * Write AspectJ code to a file.
+     * @param aspectContent The AspectJ code to write.
+     * @param aspectName The name of the aspect, used to determine the file.
+     * @throws MOPException If something goes wrong writing the file.
+     */
     protected static void writeCombinedAspectFile(String aspectContent, String aspectName) 
             throws MOPException {
         if (aspectContent == null || aspectContent.length() == 0)
@@ -235,7 +259,7 @@ public class JavaMOPMain {
             f = new FileWriter(path);
             f.write(aspectContent);
         } catch (Exception e) {
-            throw new MOPException(e.getMessage());
+            throw new MOPException("Failed to write Combined Aspect", e);
         } finally {
             if(f != null) {
                 try {
@@ -249,6 +273,13 @@ public class JavaMOPMain {
         System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
     }
     
+    /**
+     * Write any sort of content to a file.
+     * @param content The text to write into the file.
+     * @param location The file to write into.
+     * @param suffix The new file extension to use for the file.
+     * @throws MOPException If something goes wrong in generating the file.
+     */
     protected static void writeFile(String content, String location, String suffix) 
             throws MOPException {
         if (content == null || content.length() == 0)
@@ -261,7 +292,7 @@ public class JavaMOPMain {
             f = new FileWriter(filePath);
             f.write(content);
         } catch (Exception e) {
-            throw new MOPException(e.getMessage());
+            throw new MOPException(e);
         } finally {
             if(f != null) {
                 try {
@@ -277,30 +308,11 @@ public class JavaMOPMain {
         System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
     }
     
-    // PM
-    protected static void writePluginOutputFile(String pluginOutput, String location) 
-            throws MOPException {
-        final int i = location.lastIndexOf(File.separator);
-        
-        FileWriter f = null;
-        try {
-            f = new FileWriter(location.substring(0, i + 1) + 
-                Tool.getFileName(location) + "PluginOutput.txt");
-            f.write(pluginOutput);
-        } catch (Exception e) {
-            throw new MOPException(e.getMessage());
-        } finally {
-            if(f != null) {
-                try {
-                    f.close();
-                } catch(IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
-        }
-        System.out.println(" " + Tool.getFileName(location) + "PluginOutput.txt is generated");
-    }
-    
+    /**
+     * Make a filesystem path look nice for windows.
+     * @param path The path to improve.
+     * @return The aesthetically improved path.
+     */
     public static String polishPath(String path) {
         if (path.indexOf("%20") > 0)
             path = path.replaceAll("%20", " ");
@@ -308,6 +320,11 @@ public class JavaMOPMain {
         return path;
     }
     
+    /**
+     * Aggregate MOP files and recursively search directories for more MOP files.
+     * @param files Path array. Files are added directly, directories are searched recursively.
+     * @param path A common prefix for all the paths in {@code files}.
+     */
     public static ArrayList<File> collectFiles(String[] files, String path) throws MOPException {
         ArrayList<File> ret = new ArrayList<File>();
         
@@ -335,6 +352,11 @@ public class JavaMOPMain {
         return ret;
     }
     
+    /**
+     * Parse all MOP files into one or more RVM files.
+     * @param files Array of MOP file and directory paths.
+     * @param path Common prefix to all the paths in {@code files}.
+     */
     public static void process(String[] files, String path) throws MOPException {
         ArrayList<File> specFiles = collectFiles(files, path);
         
@@ -388,6 +410,10 @@ public class JavaMOPMain {
         }
     }
     
+    /**
+     * Handle one or multiple input files and produce .rvm files.
+     * @param arg A semicolon-separated list of MOP files.
+     */
     public static void process(String arg) throws MOPException {
         if(outputDir != null && !outputDir.exists())
             throw new MOPException("The output directory, " + outputDir.getPath() + 
@@ -397,6 +423,9 @@ public class JavaMOPMain {
     }
     
     // PM
+    /**
+     * Print command-line options available for controlling JavaMOP, and through it RV-Monitor.
+     */
     public static void print_help() {
         System.out.println("Usage: java [-cp javmaop_classpath] javamop.JavaMOPMain [-options] " +
             "files");
@@ -436,6 +465,11 @@ public class JavaMOPMain {
         System.out.println();
     }
     
+    /**
+     * Initialize JavaMOP with the given command-line parameters, process the given MOP files
+     * into RVM files, run RV-Monitor on the MOP files, and optionally postprocess the output.
+     * @param args Configuration options and input files for JavaMOP.
+     */
     public static void main(String[] args) {
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();

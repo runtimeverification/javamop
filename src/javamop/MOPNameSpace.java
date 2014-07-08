@@ -2,7 +2,18 @@ package javamop;
 
 import java.util.*;
 
-public class MOPNameSpace {
+/**
+ * A namespace class to keep track of which variable names are being used to avoid duplicate
+ * variables with the same name.
+ */
+public final class MOPNameSpace {
+    
+    /**
+     * Private to prevent instantiation.
+     */
+    private MOPNameSpace() {
+        
+    }
     
     static private boolean used = false;
     static private final List<String> userVariables = new ArrayList<String>();
@@ -20,11 +31,19 @@ public class MOPNameSpace {
         
     }
     
+    /**
+     * Reinitialize the static data.
+     */
     static public void init(){
         used = false;
     }
     
-    static public void addUserVariable(String varName) throws MOPException {
+    /**
+     * Register a new user variable.
+     * @param varName The name of the user variable.
+     * @throws MOPException If the name is reserved in JavaMOP.
+     */
+    static public void addUserVariable(final String varName) throws MOPException {
         if (used)
             throw new MOPException("Cannot update MOPNameSpace after once used");
         
@@ -35,16 +54,31 @@ public class MOPNameSpace {
             userVariables.add(varName);
     }
     
-    static public void addUserVariables(Collection<String> varNames) throws MOPException {
+    /**
+     * Add a collection of user variables.
+     * @param varNames A collection of user variable names.
+     * @throws MOPException If any of the names is reserved in JavaMOP.
+     */
+    static public void addUserVariables(final Collection<String> varNames) throws MOPException {
         for (String varName : varNames)
             addUserVariable(varName);
     }
     
-    static public boolean checkUserVariable(String varName) {
+    /**
+     * Check the existence of a named user variable.
+     * @param varName The name of the variable to look for.
+     * @return Whether there exists a user variable by that name or not.
+     */
+    static public boolean checkUserVariable(final String varName) {
         return userVariables.contains(varName);
     }
     
-    static public String getMOPVar(String varName) {
+    /**
+     * Retrieve a unique variable name with a given base for use in JavaMOP code.
+     * @param varName The base of the variable name.
+     * @return A unique name to use at a particular instnace.
+     */
+    static public String getMOPVar(final String varName) {
         used = true;
         
         String cachedVar = mapVars.get(varName);
@@ -66,10 +100,5 @@ public class MOPNameSpace {
             mapVars.put(varName, varName);
             return varName;
         }
-    }
-    
-    // only for debugging
-    static public List<String> getUserVariables() {
-        return userVariables;
     }
 }
