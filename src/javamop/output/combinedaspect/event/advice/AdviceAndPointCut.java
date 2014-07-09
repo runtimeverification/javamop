@@ -20,6 +20,9 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
+/**
+ * A pointcut for where to place code and advice code to place in it.
+ */
 public class AdviceAndPointCut {
     private final MOPStatManager statManager;
     private final ActivatorManager activatorsManager = null;
@@ -56,8 +59,14 @@ public class AdviceAndPointCut {
     private AroundAdviceLocalDecl aroundLocalDecl = null;
     private AroundAdviceReturn aroundAdviceReturn = null;
     
-    public AdviceAndPointCut(JavaMOPSpec mopSpec, EventDefinition event, 
-            CombinedAspect combinedAspect) throws MOPException {
+    /**
+     * Construct the advice and pointcut for a specific event.
+     * @param mopSpec The specification this is a part of.
+     * @param event The event this advice is for.
+     * @param combinedAspect The generated aspect that this is a part of.
+     */
+    public AdviceAndPointCut(final JavaMOPSpec mopSpec, final EventDefinition event, 
+            final CombinedAspect combinedAspect) throws MOPException {
         this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
         
         this.specName = mopSpec.getName();
@@ -112,16 +121,30 @@ public class AdviceAndPointCut {
             specsForChecking.add(mopSpec);
     }
     
+    /**
+     * The pointcut object where the code is placed.
+     * @return The pointcut.
+     */
     public PointCut getPointCut() {
         return pointcut;
     }
     
+    /**
+     * The name of the pointcut object for the event.
+     * @return The pointcut's name.
+     */
     public String getPointCutName() {
         return pointcutName.getVarName();
     }
     
-    public boolean addEvent(JavaMOPSpec mopSpec, EventDefinition event, 
-            CombinedAspect combinedAspect) throws MOPException {
+    /**
+     * Add an additional event to be managed by this class.
+     * @param mopSpec The specification of the new event.
+     * @param event The new event to manage.
+     * @param combinedAspect The generated aspect that includes the event.
+     */
+    public boolean addEvent(final JavaMOPSpec mopSpec, final EventDefinition event, 
+            final CombinedAspect combinedAspect) throws MOPException {
         
         // Parameter Conflict Check
         for(MOPParameter param : event.getParametersWithoutThreadVar()){
@@ -158,6 +181,10 @@ public class AdviceAndPointCut {
         return true;
     }
     
+    /**
+     * The generated advice code for this event.
+     * @return Generated advice code.
+     */
     protected String adviceBody(){
         String ret = "";
         
@@ -271,6 +298,11 @@ public class AdviceAndPointCut {
         return ret;
     }
     
+    /**
+     * Generated Java/AspectJ complete source code for this advice and pointcut as standalone code.
+     * @return Java/AspectJ source code.
+     */
+    @Override
     public String toString() {
         String ret = "";
         String pointcutStr = pointcut.toString();
@@ -345,6 +377,11 @@ public class AdviceAndPointCut {
         return ret;
     }
     
+    /**
+     * Generated Java/AspectJ complete source code for this advice and pointcut as code that works
+     * together with RV-Monitor generated code.
+     * @return Java/AspectJ source code.
+     */
     public String toRVString() {
         String ret = "";
         String pointcutStr = pointcut.toString();

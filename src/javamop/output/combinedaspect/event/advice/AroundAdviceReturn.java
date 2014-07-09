@@ -6,18 +6,31 @@ import javamop.parser.ast.type.PrimitiveType;
 import javamop.parser.ast.type.Type;
 import javamop.parser.ast.type.VoidType;
 
+/**
+ * Generates the return statements used in around advice.
+ */
 public class AroundAdviceReturn {
     private final MOPVariable skipAroundAdvice;
     private final MOPParameters parameters;
     private final Type type;
     
-    public AroundAdviceReturn(Type type, MOPParameters parameters) {
+    /**
+     * Construct the around advice return statement.
+     * @param type The return type of the around advice.
+     * @param parameters The parameters of the around advice.
+     */
+    public AroundAdviceReturn(final Type type, final MOPParameters parameters) {
         skipAroundAdvice = new MOPVariable("MOP_skipAroundAdvice");
         this.parameters = parameters;
         
         this.type = type;
     }
     
+    /**
+     * The return statement for the around advice.
+     * @return Java source code of a return statement for the around advice.
+     */
+    @Override
     public String toString() {
         String ret = "";
         
