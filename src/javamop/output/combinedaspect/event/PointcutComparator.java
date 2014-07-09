@@ -23,6 +23,10 @@ import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
 
+/**
+ * Compares the various types of pointcuts with themselves. Unless otherwise specified, each
+ * comparison function just compares the string representations of the two pointcuts.
+ */
 public class PointcutComparator {
     
     public boolean compare(PointCut p1, PointCut p2){
@@ -33,6 +37,12 @@ public class PointcutComparator {
         return p1.toString().equals(p2.toString());
     }
     
+    /**
+     * Compare two composite pointcuts for equality by comparing their members.
+     * @param p1 The first pointcut.
+     * @param p2 The second pointcut.
+     * @return If the two pointcuts are equal.
+     */
     public boolean compare(CombinedPointCut p1, CombinedPointCut p2){
         ArrayList<PointCut> list2 = new ArrayList<PointCut>();
         list2.addAll(p2.getPointcuts());
@@ -107,10 +117,22 @@ public class PointcutComparator {
         return p1.toString().equals(p2.toString());
     }
     
+    /**
+     * ThreadNamePointCuts are always equal.
+     * @param p1 The first pointcut.
+     * @param p2 The second pointcut.
+     * @return {@code true}.
+     */
     public boolean compare(ThreadNamePointCut p1, ThreadNamePointCut p2){
         return true;
     }
     
+    /**
+     * ThreadBlockedPointCuts are always equal.
+     * @param p1 The first pointcut.
+     * @param p2 The second pointcut.
+     * @return {@code true}.
+     */
     public boolean compare(ThreadBlockedPointCut p1, ThreadBlockedPointCut p2){
         return true;
     }

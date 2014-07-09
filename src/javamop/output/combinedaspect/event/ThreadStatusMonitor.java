@@ -8,12 +8,12 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.output.combinedaspect.CombinedAspect;
 
+/// TODO: disentangle this from EndThread.
+
 /**
- * 
- * This class is used to generate code to maintain a set of current active threads, similar to 
- * EndThread event.
- * 
- * */
+ * Generates code to maintain a set of current active threads, similar to the generated code for
+ * the EndThread event.
+ */
 public class ThreadStatusMonitor extends EndThread{
     
     private final static String eventName = "ThreadMonitor";
@@ -21,6 +21,11 @@ public class ThreadStatusMonitor extends EndThread{
     
     private boolean hasDeadlockHandler = false;
     
+    /**
+     * Construct a thread status monitor.
+     * @param mopSpec The specification this is running for.
+     * @param combinedAspect The generated aspect that this is a part of.
+     */
     public ThreadStatusMonitor(JavaMOPSpec mopSpec, CombinedAspect combinedAspect) {
         this.mopSpec = mopSpec;
         this.runnableMap = new MOPVariable(mopSpec.getName() + "_" + 
@@ -137,10 +142,9 @@ public class ThreadStatusMonitor extends EndThread{
     }
     
     /**
-     * 
-     * Print a helper method used to check whether a thread is blocked or not.
-     * 
-     * */
+     * Generate a helper method used to check whether a thread is blocked or not.
+     * @return Java source code checking if a thread is blocked.
+     */
     public String printContainsBlockedThread() {
         String ret = "";
         
@@ -168,10 +172,9 @@ public class ThreadStatusMonitor extends EndThread{
     }
     
     /**
-     * 
-     * Print a helper method used to check whether a thread is contained in the threadSet.
-     * 
-     * */
+     * Generate a helper method used to check whether a thread is contained in the threadSet.
+     * @return Java source code checking if a thread is registered.
+     */
     public String printContainsThread() {
         String ret = "";
         
@@ -194,6 +197,10 @@ public class ThreadStatusMonitor extends EndThread{
         return ret;
     }
     
+    /**
+     * Generate AspectJ code to register new threads in the global set.
+     * @return AspectJ/Java source code registering new threads.
+     */
     public String printAdviceForNewThread() {
         String ret = "";
         
@@ -212,6 +219,10 @@ public class ThreadStatusMonitor extends EndThread{
         return ret;
     }
     
+    /**
+     * Generate AspectJ to trigger deadlock detection on starting new threads.
+     * @return AspectJ/Java code that starts deadlock detection.
+     */
     public String printMethodCallForNewThread() {
         String ret = "";
         
@@ -231,6 +242,10 @@ public class ThreadStatusMonitor extends EndThread{
         return ret;
     }
     
+    /**
+     * Generate AspectJ to trigger deadlock detection on starting the main thread.
+     * @return AspectJ/Java code that starts deadlock detection.
+     */
     public String printMethodCallForMainStart() {
         String ret = "";
         ret += "before (): " + "(execution(void *.main(..)) )";
@@ -246,6 +261,7 @@ public class ThreadStatusMonitor extends EndThread{
         return ret;
     }
     
+    @Override
     public String printAdvices() {
         String ret = "";
         if (!JavaMOPMain.translate2RV) {
