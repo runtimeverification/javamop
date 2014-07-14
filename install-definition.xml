@@ -37,6 +37,7 @@
         <res id="DependencyPanel.rvm.html" src="@{temp}/res/rvdependencies/rvm.html"/>
         <res id="HTMLFinishInfoPanel.finish" src="@{temp}/res/rvdependencies/finish_mop_classpath.html"/>
         <res id="Heading.image" src="@{temp}/res/images/javamop.png"/>
+        <res id="TargetPanel.dir.windows" src="@{temp}/res/windows-installpath.txt"/>
     </resources>
 
     <!-- Installer Panel Sequence -->
