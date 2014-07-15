@@ -54,7 +54,7 @@
     <packs>
         <pack name="JavaMOP" required="yes" installGroups="New Application" >
             <description>Required JavaMOP libraries and executables.</description>
-            <file src="@{base}/README" targetdir="$INSTALL_PATH"/>
+            <file src="@{base}/README.md" targetdir="$INSTALL_PATH"/>
             <file src="@{base}/LICENSE" targetdir="$INSTALL_PATH"/>
             <file src="@{bin}" targetdir="$INSTALL_PATH"/>
             <file src="@{config}" targetdir="$INSTALL_PATH"/>
