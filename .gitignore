@@ -7,3 +7,4 @@ lib/log/
 test-reports/
 build/
 target/
+release/

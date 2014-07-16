@@ -2,4 +2,11 @@
 
 set SRC_ROOT=%~dp0..
 
-java -cp "%CLASSPATH%;%SRC_ROOT%\lib\rvmonitor.jar;%SRC_ROOT%\lib\rvmonitorrt.jar;%SRC_ROOT%\lib\javamop.jar;%SRC_ROOT%\lib\logicrepository.jar;%SRC_ROOT%\lib\plugins\*.jar;%SRC_ROOT%\lib\mysql-connector-java-3.0.9-stable-bin.jar" javamop.JavaMOPMain %*
+set RELEASE=%SRC_ROOT%\release\rv-monitor\lib
+
+set PLUGINS=%RELEASE%\plugins
+set LOGICPLUGINPATH=%PLUGINS%
+set CP=%RELEASE%\*;%PLUGINS%\*
+for /f %%a IN ('dir /b /s "%PLUGINS%\*.jar"') do call :concat %%a
+
+java -cp "%CLASSPATH%;%CP%" javamop.JavaMOPMain %*
