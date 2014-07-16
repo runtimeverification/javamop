@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * JUnit test case to run through select program examples. Based on examples/run and examples/runall.
  */
 @RunWith(Parameterized.class)
-public class ExamplesTest {
+public class ExamplesIT {
     
     private final TestHelper helper;
     private final String path;
@@ -23,7 +23,7 @@ public class ExamplesTest {
      * Construct this instance of the parameterized test.
      * @param path The path to the .mop file used in this test.
      */
-    public ExamplesTest(String path) {
+    public ExamplesIT(String path) {
         this.path = new File(path).getParent();
         helper = new TestHelper(path);
     }
