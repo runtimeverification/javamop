@@ -6,3 +6,4 @@ lib/javamoptestsuite.jar
 lib/log/
 test-reports/
 build/
+target/
