@@ -37,7 +37,6 @@
     <resources>
         <res id="CustomLangpack.xml_eng" src="res/izpack-rv-eng-lang.xml"/>
         <res id="LicencePanel.licence" src="LICENSE"/>
-        <res id="DependencyPanel.rvm.html" src="res/rvdependencies/rvm.html"/>
         <res id="HTMLFinishInfoPanel.finish" src="res/rvdependencies/finish_mop_classpath.html"/>
         <res id="Heading.image" src="res/images/javamop.png"/>
     </resources>
@@ -46,7 +45,6 @@
     <panels>
         <panel classname="LicencePanel"/>
         <panel classname="TargetPanel"/>
-        <panel classname="com.izforge.izpack.panels.dependency.DependencyPanel" id="rvm" />
         <panel classname="PacksPanel"/>
         <panel classname="InstallPanel"/>
         <panel classname="com.izforge.izpack.panels.htmlfinishinfo.HTMLFinishInfoPanel" id="finish" />
