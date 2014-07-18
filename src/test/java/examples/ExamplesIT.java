@@ -38,11 +38,7 @@ public class ExamplesIT {
         final String testName = path.substring(path.lastIndexOf('/')+1);
         helper.testCommand(null, true, "javamop", testName + ".mop");
         
-        File projectRoot = new File(System.getProperty("user.dir"));
-        String libDir = projectRoot + File.separator + "lib" + File.separator;
-        String classpath = ".:mop/:" + libDir + "*.jar:" + libDir + "external" + File.separator + 
-            "*.jar:" + libDir + "plugins" + File.separator + "*.jar:" + 
-            System.getProperty("java.class.path");
+        String classpath = ".:mop/:" + System.getProperty("java.class.path");
         
         String subcasePath = testName + "_";
         for(int i = 1; new File(path + File.separator + subcasePath + i).exists(); i++) {

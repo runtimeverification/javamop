@@ -2,11 +2,4 @@
 
 set SRC_ROOT=%~dp0..
 
-set RELEASE=%SRC_ROOT%\release\rv-monitor\lib
-
-set PLUGINS=%RELEASE%\plugins
-set LOGICPLUGINPATH=%PLUGINS%
-set CP=%RELEASE%\*;%PLUGINS%\*
-for /f %%a IN ('dir /b /s "%PLUGINS%\*.jar"') do call :concat %%a
-
-java -cp "%CLASSPATH%;%CP%" javamop.JavaMOPMain %*
+%SRC_ROOT%\target\release\javamop\bin\javamop %1 %2 %3 %4 %5 %6 %7 %8 %9
