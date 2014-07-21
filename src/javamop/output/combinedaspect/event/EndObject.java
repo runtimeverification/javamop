@@ -10,6 +10,12 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 
+/**
+ * Generates AspectJ code to insert a class into the class hierarchy. This takes a class, and uses
+ * the AspectJ "declare parents" support to inject a class between the given class and its
+ * superclass. The injected class hijacks the finalize method to trigger endObject events
+ * in the monitor.
+ */
 public class EndObject {
     private final JavaMOPSpec mopSpec;
     private final EventDefinition event;
@@ -22,8 +28,14 @@ public class EndObject {
     
     private final MOPVariable endObjectSupportType;
     
-    public EndObject(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) 
-            throws MOPException {
+    /**
+     * Construct an EndObject generator.
+     * @param mopSpec The specification this is relevant for.
+     * @param event The endObject event relevant to this class.
+     * @param combinedAspect The combined aspect this is a part of.
+     */
+    public EndObject(final JavaMOPSpec mopSpec, final EventDefinition event,
+            final CombinedAspect combinedAspect) throws MOPException {
         if (!event.isEndObject())
             throw new MOPException("EndObject should be defined only for endObject pointcut.");
         
@@ -46,6 +58,10 @@ public class EndObject {
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
     }
     
+    /**
+     * Print the class declaration for the hijacking class.
+     * @return The Java/AspectJ class declaration source.
+     */
     public String printDecl() {
         String ret = "";
         

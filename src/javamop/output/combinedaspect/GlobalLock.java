@@ -2,17 +2,32 @@ package javamop.output.combinedaspect;
 
 import javamop.output.MOPVariable;
 
+/**
+ * A globally available lock for use in the generated code.
+ */
 public class GlobalLock {
     private final MOPVariable lock;
     
-    public GlobalLock(MOPVariable lock) {
+    /**
+     * Assign a variable to be a global lock.
+     * @param lock The variable to use.
+     */
+    public GlobalLock(final MOPVariable lock) {
         this.lock = lock;
     }
     
+    /**
+     * The variable being used as a lock.
+     * @return The lock variable.
+     */
     public MOPVariable getName() {
         return lock;
     }
     
+    /**
+     * Generate declarations for the global lock to be made.
+     */
+    @Override
     public String toString() {
         String ret = "";
         

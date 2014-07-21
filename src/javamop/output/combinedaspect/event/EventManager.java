@@ -13,6 +13,9 @@ import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.visitor.ConvertPointcutToCNFVisitor;
 
+/**
+ * Manages all the different types of events for one or more specifications.
+ */
 public class EventManager {
     
     private ArrayList<AdviceAndPointCut> advices = new ArrayList<AdviceAndPointCut>();
@@ -22,10 +25,16 @@ public class EventManager {
     private final EndProgram endProgramEvent;
     
     
-    private MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+    private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
-    public EventManager(String name, List<JavaMOPSpec> specs, CombinedAspect combinedAspect) 
-            throws MOPException {
+    /**
+     * Construct an event manager over multiple specifications.
+     * @param name The name of the event manager.
+     * @param specs All the specifications that this manages events from.
+     * @param combinedAspect The AspectJ output for this program.
+     */
+    public EventManager(final String name, final List<JavaMOPSpec> specs, 
+            final CombinedAspect combinedAspect) throws MOPException {
         
         this.endProgramEvent = new EndProgram(name);
         
@@ -98,6 +107,10 @@ public class EventManager {
         
     }
     
+    /**
+     * The internals of the constructor code for the event manager.
+     * @return Java code for constructing the event manager.
+     */
     public String printConstructor() {
         String ret = "";
         
@@ -108,6 +121,10 @@ public class EventManager {
         return ret;
     }
     
+    /**
+     * The aggregated AspectJ hooks/advice from the managed events.
+     * @return AspectJ/Java code for the managed events.
+     */
     public String advices() {
         String ret = "";
         
@@ -156,12 +173,9 @@ public class EventManager {
         return ret;
     } 
     
-    /* 
-     * 
-     * Adjust advice order in the aspect so the before advice 
-     * comes before the after advices
-     * 
-     * **/
+    /**
+     * Move "before" advice to the front.
+     */
     private ArrayList<AdviceAndPointCut> adjustAdviceOrder() {
         ArrayList<AdviceAndPointCut> result = new ArrayList<AdviceAndPointCut>();
         for (AdviceAndPointCut advice : this.advices) {
@@ -174,7 +188,17 @@ public class EventManager {
         return result;
     }
     
+    /**
+     * A utility class with static methods for constructing unique method names.
+     */
     public static class EventMethodHelper {
+        
+        /**
+         * Construct a method name for a particular event.
+         * @param enclosingspec The name of the specification the event is a part of.
+         * @param event The event the method is being generated for.
+         * @param aspectName The aspect the method will be a part of.
+         */
         public static String methodName(String enclosingspec, EventDefinition event, 
                 String aspectName) {
             boolean mangle = false;
@@ -200,6 +224,12 @@ public class EventManager {
             return s.toString();
         }
         
+        /**
+         * Construct a method name for a particular event.
+         * @param enclosing The specification the event is a part of.
+         * @param event The event the method is being generated for.
+         * @param aspectName The aspect the method will be a part of.
+         */
         public static String methodName(JavaMOPSpec enclosing, EventDefinition evt, 
                 String aspectName) {
             return methodName(enclosing.getName(), evt, aspectName);

@@ -9,6 +9,9 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
+/**
+ * Statistics for a single property.
+ */
 public class MOPStatistics {
     private final String aspectName;
     
@@ -23,7 +26,12 @@ public class MOPStatistics {
     
     private final String specName;
     
-    public MOPStatistics(String name, JavaMOPSpec mopSpec) {
+    /**
+     * Construct statistics variables for a single property.
+     * @param name The name of the property.
+     * @param mopSpec The specification that has statistics being collected on it.
+     */
+    public MOPStatistics(final String name, final JavaMOPSpec mopSpec) {
         this.aspectName = name + "MonitorAspect";
         this.specName = mopSpec.getName();
         this.numMonitor = new MOPVariable(mopSpec.getName() + "_Monitor_num");
@@ -53,6 +61,10 @@ public class MOPStatistics {
         }
     }
     
+    /**
+     * Fields used in maintaining statistics for this property.
+     * @return Java source code declarations for maintaining statistics.
+     */
     public String fieldDecl() {
         String ret = "";
         if (!JavaMOPMain.statistics)
@@ -72,34 +84,19 @@ public class MOPStatistics {
             }
         }
         
-        /* removed for buggy behavior */
-        // for(MOPVariable paramVar : paramVars.values()){
-        // ret += "static HashSet " + paramVar + " = new HashSet();\n";
-        // }
-        
         return ret;
     }
     
-    public String paramInc(MOPParameter param) {
-        String ret = "";
-        if (!JavaMOPMain.statistics)
-            return ret;
-        
-        /* removed for buggy behavior */
-        // MOPVariable paramVar = null;
-        //      
-        // for(MOPParameter p : paramVars.keySet()){
-        // if(p.getName().equals(param.getName()))
-        // paramVar = paramVars.get(p);
-        // }
-        //      
-        // if(paramVar != null)
-        // ret += paramVar + ".add(" + param.getName() + ");\n";
-        
-        return ret;
+    public String paramInc(final MOPParameter param) {
+        return "";
     }
     
-    public String eventInc(String eventName) {
+    /**
+     * Code to increment the counter for an event.
+     * @param eventName The name of the event that was incremented.
+     * @return Java source code to increment the counter for receiving events.
+     */
+    public String eventInc(final String eventName) {
         String ret = "";
         if (!JavaMOPMain.statistics)
             return ret;
@@ -111,7 +108,7 @@ public class MOPStatistics {
         return ret;
     }
     
-    public String categoryInc(PropertyAndHandlers prop, String category) {
+    public String categoryInc(final PropertyAndHandlers prop, final String category) {
         String ret = "";
         if (!JavaMOPMain.statistics)
             return ret;
@@ -123,6 +120,10 @@ public class MOPStatistics {
         return ret;
     }
     
+    /**
+     * Code to increment the counter for number of monitors generated.
+     * @return Java code to increment the counter for a monitor being generated.
+     */
     public String incNumMonitor() {
         String ret = "";
         if (!JavaMOPMain.statistics)
@@ -133,6 +134,10 @@ public class MOPStatistics {
         return ret;
     }
     
+    /**
+     * Code to increment the counter for collected monitors.
+     * @return Java code to increment the counter for a monitor being collected.
+     */
     public String incCollectedMonitor() {
         String ret = "";
         if (!JavaMOPMain.statistics)
@@ -143,6 +148,10 @@ public class MOPStatistics {
         return ret;
     }
     
+    /**
+     * Code to increment the counter for terminated monitors.
+     * @return Java code to increment the counter for a monitor being terminated.
+     */
     public String incTerminatedMonitor() {
         String ret = "";
         if (!JavaMOPMain.statistics)
@@ -153,6 +162,10 @@ public class MOPStatistics {
         return ret;
     }
     
+    /**
+     * AspectJ advice code to display the statistics after termination of the program.
+     * @return AspectJ/Java source code displaying statistics.
+     */
     public String advice() {
         String ret = "";
         if (!JavaMOPMain.statistics)

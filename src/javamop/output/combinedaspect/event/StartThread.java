@@ -8,6 +8,9 @@ import javamop.output.combinedaspect.event.advice.AdviceBody;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
+/**
+ * Hooks for startThread events.
+ */
 public class StartThread {
     private final JavaMOPSpec mopSpec;
     private final EventDefinition event;
@@ -20,8 +23,14 @@ public class StartThread {
     
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
-    public StartThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) 
-            throws MOPException {
+    /**
+     * Construct a StartThread hook for a particular event.
+     * @param mopSpec The specification the event is part of.
+     * @param event The startThread event.
+     * @param combinedAspect The generated code that this will be part of.
+     */
+    public StartThread(final JavaMOPSpec mopSpec, final EventDefinition event, 
+            final CombinedAspect combinedAspect) throws MOPException {
         if (!event.isStartThread())
             throw new MOPException("StartThread should be defined only " +
                 "for an startThread pointcut.");
@@ -37,6 +46,10 @@ public class StartThread {
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
     }
     
+    /**
+     * The datastructures needed to trigger the startThread events.
+     * @return Java code with necessary datastructure declarations.
+     */
     public String printDataStructures() {
         String ret = "";
         
@@ -46,6 +59,10 @@ public class StartThread {
         return ret;
     }
     
+    /**
+     * The AspectJ hook to keep track of all Runnables initialized with threads.
+     * @return AspectJ advice to register Runnables in a global table.
+     */
     public String printAdviceForThreadWithRunnable() {
         String ret = "";
         
@@ -65,6 +82,10 @@ public class StartThread {
         return ret;
     }
     
+    /**
+     * The AspectJ hook to trigger the startThread event on new threads starting.
+     * @return AspectJ advice that triggers the startThread event.
+     */
     public String printAdviceForStartThread() {
         String ret = "";
         MOPVariable threadVar = new MOPVariable("t");
@@ -93,6 +114,10 @@ public class StartThread {
         return ret;
     }
     
+    /**
+     * The AspectJ hook to trigger the startThread event on Runnables running.
+     * @return AspectJ advice that triggers the startThread event.
+     */
     public String printAdviceForStartRunnable() {
         String ret = "";
         MOPVariable runnableVar = new MOPVariable("r");
@@ -123,6 +148,10 @@ public class StartThread {
         return ret;
     }
     
+    /**
+     * AspectJ hook to trigger the startThread event for the main thread.
+     * @return AspectJ advice that triggers the startThread event.
+     */
     public String printAdviceForMainStart() {
         String ret = "";
         
@@ -150,6 +179,10 @@ public class StartThread {
         return ret;
     }
     
+    /**
+     * Aggregate all AspectJ code together.
+     * @return All AspectJ advice relevant to the startThread event.
+     */
     public String printAdvices() {
         String ret = "";
         

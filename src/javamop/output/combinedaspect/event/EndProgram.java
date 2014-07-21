@@ -9,18 +9,32 @@ import javamop.output.combinedaspect.event.advice.AdviceBody;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
+/**
+ * An AspectJ hook in the generated code to trigger an event on the program ending.
+ * Also manages hooks for threads ending.
+ */
 public class EndProgram {
     private final MOPVariable hookName;
     
     private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
     private final ArrayList<AdviceBody> eventBodies = new ArrayList<AdviceBody>();
     
-    public EndProgram(String name) {
+    /**
+     * Construct a named end program hook.
+     * @param name The name of the hook.
+     */
+    public EndProgram(final String name) {
         this.hookName = new MOPVariable(name + "_DummyHookThread");
     }
     
-    public void addEndProgramEvent(JavaMOPSpec mopSpec, EventDefinition event, 
-            CombinedAspect combinedAspect) throws MOPException {
+    /**
+     * Register an end program event from a specification.
+     * @param mopSpec The specification with the event.
+     * @param event The end program event.
+     * @param combinedAspect The complete aspect that the event is part of.
+     */
+    public void addEndProgramEvent(final JavaMOPSpec mopSpec, final EventDefinition event, 
+            final CombinedAspect combinedAspect) throws MOPException {
         if (!event.isEndProgram())
             throw new MOPException("EndProgram should be defined only for an " +
                 "endProgram pointcut.");
@@ -28,10 +42,18 @@ public class EndProgram {
         this.eventBodies.add(new AdviceBody(mopSpec, event, combinedAspect));
     }
     
+    /**
+     * Register end thread hooks.
+     * @param endThreadEvents A list of end thread hooks.
+     */
     public void registerEndThreadEvents(ArrayList<EndThread> endThreadEvents) {
         this.endThreadEvents.addAll(endThreadEvents);
     }
     
+    /**
+     * Java source code to add the shutdown hook.
+     * @return Java source code that adds the shutdown hook to trigger events.
+     */
     public String printAddStatement() {
         String ret = "";
         
@@ -43,6 +65,10 @@ public class EndProgram {
         return ret;
     }
     
+    /**
+     * Java source code for the thread ending hook.
+     * @return Java source code that adds the thread shutdown hook for all threads.
+     */
     public String printHookThread() {
         String ret = "";
         

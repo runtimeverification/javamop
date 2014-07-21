@@ -8,8 +8,18 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
+/**
+ * Manages combining multiple MOP specification file objects into a single one.
+ */
 public class SpecCombiner {
     
+    /**
+     * Combine multiple MOP specification files into a single one. They must all be in the same
+     * package, or with some in one package and the rest with no package.
+     * @param specFiles A list of specification files.
+     * @return A single aggregate MOPSpecFile.
+     * @throws MOPException When the specification files are in conflicting packages.
+     */
     static public MOPSpecFile process(ArrayList<MOPSpecFile> specFiles) throws MOPException{
         PackageDeclaration pakage = null;
         List<ImportDeclaration> imports = new ArrayList<ImportDeclaration>();

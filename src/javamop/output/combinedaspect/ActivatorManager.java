@@ -6,23 +6,39 @@ import java.util.TreeMap;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
+/**
+ * Generates code that allows activating/deactivating properties.
+ */
 public class ActivatorManager {
     
     private final List<JavaMOPSpec> specs;
     private final TreeMap<JavaMOPSpec, MOPVariable> activators = 
         new TreeMap<JavaMOPSpec, MOPVariable>();
     
-    public ActivatorManager(String name, List<JavaMOPSpec> specs) {
+    /**
+     * Construct an ActivatorManager managing the given specifications.
+     * @param specs The specifications to manage.
+     */
+    public ActivatorManager(final List<JavaMOPSpec> specs) {
         this.specs = specs;
         for (JavaMOPSpec spec : specs) {
             activators.put(spec, new MOPVariable(spec.getName() + "_activated"));
         }
     }
     
-    public MOPVariable getActivator(JavaMOPSpec spec) {
+    /**
+     * The variable managing the activation of a particular specification.
+     * @param spec The specification.
+     * @return The variable managing {@code spec}.
+     */
+    public MOPVariable getActivator(final JavaMOPSpec spec) {
         return activators.get(spec);
     }
     
+    /**
+     * The code for the declarations that the ActivationManager needs.
+     * @return The Java source code for the declarations.
+     */
     public String decl() {
         String ret = "";
         
@@ -36,6 +52,10 @@ public class ActivatorManager {
         return ret;
     }
     
+    /**
+     * Code to reset all the activation variables.
+     * @return The Java source code to reset the declarations.
+     */
     public String reset() {
         String ret = "";
         

@@ -9,6 +9,10 @@ import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 
+/**
+ * Manages the relationship between specifications and their statistics, and also generates
+ * a global statistics aspect/class.
+ */
 public class MOPStatManager {
     
     private final HashMap<JavaMOPSpec, MOPStatistics> stats = 
@@ -17,20 +21,33 @@ public class MOPStatManager {
     private final MOPVariable statClass;
     private final MOPVariable statObject;
     
-    public MOPStatManager(String name, List<JavaMOPSpec> specs) throws MOPException {
+    /**
+     * Construct a statistics manager with a name over some specifications.
+     * @param name The name to put on the statistics variables.
+     * @param specs All the specifications to generate statistics for.
+     */
+    public MOPStatManager(final String name, final List<JavaMOPSpec> specs) throws MOPException {
         for (JavaMOPSpec spec : specs) {
             stats.put(spec, new MOPStatistics(name, spec));
         }
-        
         
         statClass = new MOPVariable(name + "_Statistics");
         statObject = new MOPVariable(name + "_StatisticsInstance");
     }
     
-    public MOPStatistics getStat(JavaMOPSpec spec){
+    /**
+     * Retrieve the statistics object for a particular specification.
+     * @param spec The specification to find statistics for.
+     * @return The statistics relevant to that specification.
+     */
+    public MOPStatistics getStat(final JavaMOPSpec spec){
         return stats.get(spec);
     }
     
+    /**
+     * Java code for a statistics class with some global statistics.
+     * @return Global statistics class java source code.
+     */
     public String statClass() {
         String ret = "";
         
@@ -56,7 +73,13 @@ public class MOPStatManager {
         return ret;
     }
     
-    public String incEvent(JavaMOPSpec spec, EventDefinition event){
+    /**
+     * Java code to increment the counter for total events accross all specifications.
+     * @param spec The specification of the event that was triggered.
+     * @param event The event that was triggered.
+     * @return Java source to increment the global event counter.
+     */
+    public String incEvent(final JavaMOPSpec spec, final EventDefinition event){
         String ret = "";
         
         if (!JavaMOPMain.statistics2)
@@ -67,7 +90,12 @@ public class MOPStatManager {
         return ret;
     }
     
-    public String incMonitor(JavaMOPSpec spec){
+    /**
+     * Java code to increment the counter for total monitors created accross all specifications.
+     * @param spec The specification for which a monitor was created.
+     * @return Java code incrementing the global monitor counter.
+     */
+    public String incMonitor(final JavaMOPSpec spec){
         String ret = "";
         
         if (!JavaMOPMain.statistics2)
@@ -78,6 +106,10 @@ public class MOPStatManager {
         return ret;
     }
     
+    /**
+     * Supplemental field declarations for the global statistics.
+     * @return Java code with field declarations.
+     */
     public String fieldDecl2() {
         String ret = "";
         
@@ -89,6 +121,10 @@ public class MOPStatManager {
         return ret;
     }
     
+    /**
+     * Constructor code for the global statistics.
+     * @return Java constructor code for the global statistics.
+     */
     public String constructor() {
         String ret = "";
         
@@ -101,8 +137,10 @@ public class MOPStatManager {
         return ret;
     }
     
-    
-    
+    /**
+     * Field declarations for the global statistics.
+     * @return Java code with field declarations.
+     */
     public String fieldDecl() {
         String ret = "";
         
@@ -118,6 +156,10 @@ public class MOPStatManager {
         return ret;
     }
     
+    /**
+     * AspectJ advice code for all of the managed statistics.
+     * @return AspectJ code.
+     */
     public String advice() {
         String ret = "";
         
