@@ -38,9 +38,22 @@ public class GenerateAgent {
      */
     public static void generate(final File outputDir, final String aspectname,
             File baseAspect) throws IOException {
-        final String ajOutDir = outputDir.getAbsolutePath();
         
-        final String baseClasspath = System.getProperty("java.class.path") + File.pathSeparator + ".";
+        if(!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
+            System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
+            return;
+        }
+        if(!classOnClasspath("org.aspectj.tools.ajc.Main")) {
+            System.err.println("aspectjtools.jar is missing from the classpath. Halting.");
+            return;
+        }
+        if(!classOnClasspath("org.aspectj.weaver.Advice")) {
+            System.err.println("aspectjweaver.jar is missing from the classpath. Halting.");
+            return;
+        }
+        
+        final String ajOutDir = outputDir.getAbsolutePath();
+        final String baseClasspath = getClasspath();
         
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
@@ -213,22 +226,32 @@ public class GenerateAgent {
         });
     }
     
-    private static String findJarOnClasspath(String end) {
-        // http://www.java-tips.org/java-se-tips/java.lang/how-to-print-classpath.html
-        //Get the System Classloader
-        ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
-        
-        //Get the URLs
-        URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
-        
-        for(URL url : urls) {
-            final String str = url.toString();
-            if(str.endsWith(end)) {
-                return str.replace("file:","");
-            }
-        }
-        System.err.println("Unable to find " + end + ". Make sure it is on your CLASSPATH.");
-        return null;
+    /**
+     * The system classpath.
+     * @return The classpath, separated in a platform-dependent manner.
+     */
+    private static String getClasspath() {
+        return System.getProperty("java.class.path") + File.pathSeparator + ".";
+    }
+    
+    /**
+     * Test if a class is present on the system classpath.
+     * @param name The full class name, including packages.
+     * @return If the class {@code name} is on the classpath.
+     */
+    private static boolean classOnClasspath(String name) {
+        try {
+            Class.forName(name, false, GenerateAgent.class.getClassLoader());
+            return true;
+        } catch(ExceptionInInitializerError eiie) {
+            throw new RuntimeException(
+                "Class initializer for " + name + " should not have run.", eiie);
+        } catch(ClassNotFoundException cnfe) {
+            return false;
+        } catch(LinkageError le) {
+            throw new RuntimeException(
+                "Class " + name + " is on the classpath, but is outdated.", le);
+        } 
     }
     
     /**
@@ -238,9 +261,6 @@ public class GenerateAgent {
      * @throws IOException If something goes wrong in writing the file.
      */
     private static void writeAgentManifest(File f) throws IOException {
-        final String rvmonitorrt = findJarOnClasspath("rvmonitorrt.jar");
-        final String aspectjweaver = findJarOnClasspath("aspectjweaver.jar");
-        
         final PrintWriter writer = new PrintWriter(f);
         try {
             writer.println("Manifest-Version: 1.0");
@@ -253,7 +273,12 @@ public class GenerateAgent {
             writer.println("Implementation-Vendor: aspectj.org");
             writer.println("Premain-Class: org.aspectj.weaver.loadtime.Agent");
             writer.println("Can-Redefine-Classes: true");
-            writer.println("Boot-Class-Path: "+rvmonitorrt+" "+aspectjweaver);
+            /*
+             * Jar files can have at most 72 characters per line, so this splits it by jar file
+             * into many lines.
+             */
+            writer.println("Boot-Class-Path: " + 
+                getClasspath().replace(File.pathSeparator, System.lineSeparator() + " "));
             writer.flush();
         } finally {
             writer.close();
