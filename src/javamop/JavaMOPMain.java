@@ -42,8 +42,8 @@ public final class JavaMOPMain {
 //    public static boolean debug = false;
 //    public static boolean noopt1 = false;
 //    public static boolean toJavaLib = false;
-//    public static boolean statistics = false;
-//    public static boolean statistics2 = false;
+    public static boolean statistics = false;
+    public static boolean statistics2 = false;
 //    public static String aspectname = null;
     public static boolean specifiedAJName = false;
     public static boolean isJarFile = false;
@@ -61,7 +61,7 @@ public final class JavaMOPMain {
 //    public static boolean translate2RV = true;
 //
 //    public static boolean merge = false;
-//    public static boolean inline = false;
+    public static boolean inline = false;
 //
 //    public static boolean scalable = false;
 //    public static boolean keepRVFiles = false;
@@ -469,6 +469,8 @@ public final class JavaMOPMain {
         if (args.length == 0 || options.files.size() == 0){
             jc.usage();
             System.exit(1);
+        } else {
+            processOptions(options);
         }
 
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
@@ -650,5 +652,20 @@ public final class JavaMOPMain {
                 System.err.println("Failed to remove temporary files.");
             }
         }
+    }
+
+    private static void processOptions(JavaMOPOptions options) {
+        if (options.statistics){
+           statistics = true;
+        }
+
+        if (options.statistics2){
+           statistics2 = true;
+        }
+
+        if (options.inline){
+            inline = true;
+        }
+
     }
 }
