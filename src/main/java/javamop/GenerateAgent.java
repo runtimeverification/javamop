@@ -234,26 +234,11 @@ public final class GenerateAgent {
     }
     
     /**
-     * Find the path of a jar file on the classpath.
-     * @param name The name of the jar file to find.
-     * @return The path to the jar.
+     * The system classpath.
+     * @return The classpath, separated in a platform-dependent manner.
      */
-    private static String findJarOnClasspath(String name) {
-        // http://www.java-tips.org/java-se-tips/java.lang/how-to-print-classpath.html
-        //Get the System Classloader
-        ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
-        
-        //Get the URLs
-        URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
-        
-        for(URL url : urls) {
-            final String str = url.toString();
-            if(str.contains(name)) {
-                return str.replace("file:","");
-            }
-        }
-        System.err.println("Unable to find " + name + ". Make sure it is on your CLASSPATH.");
-        return null;
+    private static String getClasspath() {
+        return System.getProperty("java.class.path") + File.pathSeparator + ".";
     }
     
     /**
@@ -283,10 +268,6 @@ public final class GenerateAgent {
      * @throws IOException If something goes wrong in writing the file.
      */
     private static void writeAgentManifest(final File f) throws IOException {
-        // Make sure these two are on the classpath.
-        final String rvmonitorrt = findJarOnClasspath("rvmonitorrt");
-        final String aspectjweaver = findJarOnClasspath("aspectjweaver");
-        
         final PrintWriter writer = new PrintWriter(f);
         try {
             writer.println("Manifest-Version: 1.0");
