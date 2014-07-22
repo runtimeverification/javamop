@@ -118,7 +118,7 @@ public final class AspectJModifierSet {
      */
     public static int addModifier(int modifiers, int mod, Token token) throws ParseException {
         if ((modifiers & mod) != 0) {
-            throw new ParseException(token, "Duplicated modifier");
+            throw new ParseException("Duplicated modifier");
         }
         return modifiers |= mod;
     }

@@ -1285,21 +1285,21 @@ int SpecModifier():
 }
 {
 	(
-	"unsynchronized" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.UNSYNC, token); }
+	"unsynchronized" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.UNSYNC); }
 	|
-	"decentralized" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.DECENTRL, token); }
+	"decentralized" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.DECENTRL); }
 	|
-	"perthread" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.PERTHREAD, token); }
+	"perthread" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.PERTHREAD); }
 	|
-	"suffix" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.SUFFIX, token); }
+	"suffix" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.SUFFIX); }
 	|
-	"full-binding" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.FULLBINDING, token); }
+	"full-binding" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.FULLBINDING); }
         |
-	"avoid" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.AVOID, token); }
+	"avoid" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.AVOID); }
 	|
-        "enforce" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.ENFORCE, token); }
+        "enforce" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.ENFORCE); }
 	|
-	"connected" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.CONNECTED, token); }
+	"connected" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, SpecModifierSet.CONNECTED); }
 	)* 
 	{return modifiers;}
 }
@@ -1614,27 +1614,27 @@ Modifier Modifiers():
  (
   LOOKAHEAD(2)
   (
-   "public" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.PUBLIC, token); }
+   "public" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.PUBLIC); }
   |
-   "static" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.STATIC, token); }
+   "static" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.STATIC); }
   |
-   "protected" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.PROTECTED, token); }
+   "protected" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.PROTECTED); }
   |
-   "private" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.PRIVATE, token); }
+   "private" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.PRIVATE); }
   |
-   "final" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.FINAL, token); }
+   "final" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.FINAL); }
   |
-   "abstract" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.ABSTRACT, token); }
+   "abstract" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.ABSTRACT); }
   |
-   "synchronized" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.SYNCHRONIZED, token); }
+   "synchronized" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.SYNCHRONIZED); }
   |
-   "native" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.NATIVE, token); }
+   "native" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.NATIVE); }
   |
-   "transient" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.TRANSIENT, token); }
+   "transient" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.TRANSIENT); }
   |
-   "volatile" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.VOLATILE, token); }
+   "volatile" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.VOLATILE); }
   |
-   "strictfp" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.STRICTFP, token); }
+   "strictfp" { modifiers = javamop.parser.ast.body.ModifierSet.addModifier(modifiers, javamop.parser.ast.body.ModifierSet.STRICTFP); }
   |
    ann = Annotation() { annotations = add(annotations, ann); }
   )

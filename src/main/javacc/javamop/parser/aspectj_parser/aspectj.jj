@@ -1,5 +1,10 @@
  /*
  * Copyright (C) 2008 Feng Chen.
+ * 
+ * This file is part of JavaMOP parser.  It is based on the Java 1.5 parser developed by Julio Vilmar Gesser
+ *
+ * The original parser is under the LGPL, you should have recieve a copy of the LGPL with this
+ * parser code.  If not see <http://www.gnu.org/licenses/>.
  */
 options
 {
@@ -12,7 +17,6 @@ options
   DEBUG_PARSER = false;
   DEBUG_LOOKAHEAD = false;
   DEBUG_TOKEN_MANAGER = false;
-  JDK_VERSION = "1.5";
 }
 
 PARSER_BEGIN(AspectJParser)
@@ -1048,19 +1052,19 @@ TOKEN :
 /* >'s need special attention due to generics syntax. */
 TOKEN :
 {
-  < RUNSIGNEDSHIFT : ">>>" >
+  < RUNSIGNEDSHIFT: ">>>" >
   {
-    matchedToken.kind = GT;
-    ((Token.GTToken) matchedToken).realKind = RUNSIGNEDSHIFT;
-    input_stream.backup(2);
+     matchedToken.kind = GT;
+     matchedToken.realKind = RUNSIGNEDSHIFT;
+     input_stream.backup(2);
   }
-| < RSIGNEDSHIFT : ">>" >
+| < RSIGNEDSHIFT: ">>" >
   {
-    matchedToken.kind = GT;
-    ((Token.GTToken) matchedToken).realKind = RSIGNEDSHIFT;
-    input_stream.backup(1);
+     matchedToken.kind = GT;
+     matchedToken.realKind = RSIGNEDSHIFT;
+     input_stream.backup(1);
   }
-| < GT : ">" >
+| < GT: ">" >
 }
 
 /* .'s need special attention due to ApsectJ syntax. */
@@ -2447,7 +2451,7 @@ BodyDeclaration ClassOrInterfaceBodyDeclaration(boolean isInterface) :
     LOOKAHEAD(2)
     ret = Initializer()
     {
-      if (isInterface) throw new ParseException(token, "An interface cannot have initializers");
+      if (isInterface) throw new ParseException("An interface cannot have initializers");
     }
   | modifier = Modifiers() // Just get all the modifiers out of the way. If you want to do
     // more checks, pass the modifiers down to the member
@@ -4625,21 +4629,21 @@ TryStmt TryStatement() :
 /* We use productions to match >>>, >> and > so that we can keep the
  * type declaration syntax with generics clean
  */
-void RUNSIGNEDSHIFT() :
+void RUNSIGNEDSHIFT():
 {}
 {
-  (
-    LOOKAHEAD({ getToken(1).kind == GT && ((Token.GTToken) getToken(1)).realKind == RUNSIGNEDSHIFT })
-    ">" ">" ">"
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                (getToken(1)).realKind == RUNSIGNEDSHIFT} )
+   ">" ">" ">"
   )
 }
 
-void RSIGNEDSHIFT() :
+void RSIGNEDSHIFT():
 {}
 {
-  (
-    LOOKAHEAD({ getToken(1).kind == GT && ((Token.GTToken) getToken(1)).realKind == RSIGNEDSHIFT })
-    ">" ">"
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                (getToken(1)).realKind == RSIGNEDSHIFT} )
+  ">" ">"
   )
 }
 
@@ -4917,121 +4921,121 @@ Modifier Modifiers() :
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.PUBLIC, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.PUBLIC);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "static"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.STATIC, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.STATIC);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "protected"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.PROTECTED, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.PROTECTED);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "private"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.PRIVATE, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.PRIVATE);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "final"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.FINAL, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.FINAL);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "abstract"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.ABSTRACT, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.ABSTRACT);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "synchronized"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.SYNCHRONIZED, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.SYNCHRONIZED);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "native"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.NATIVE, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.NATIVE);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "transient"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.TRANSIENT, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.TRANSIENT);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "volatile"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.VOLATILE, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.VOLATILE);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | "strictfp"
       {
         try
         {
-          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.STRICTFP, new javamop.parser.main_parser.Token(token));
+          modifiers = ModifierSet.addModifier(modifiers, ModifierSet.STRICTFP);
         }
         catch (javamop.parser.main_parser.ParseException e)
         {
-          throw new ParseException(token, e.getMessage());
+          throw new ParseException(e.getMessage());
         }
       }
     | ann = Annotation()
@@ -5195,7 +5199,7 @@ List ExtendsList(boolean isInterface) :
     }
   )*
   {
-    if (extendsMoreThanOne && !isInterface) throw new ParseException(token, "A class cannot extend more than one other class");
+    if (extendsMoreThanOne && !isInterface) throw new ParseException("A class cannot extend more than one other class");
   }
   {
     return ret;
@@ -5269,7 +5273,7 @@ List ImplementsList(boolean isInterface) :
     }
   )*
   {
-    if (isInterface) throw new ParseException(token, "An interface cannot implement other interfaces");
+    if (isInterface) throw new ParseException("An interface cannot implement other interfaces");
   }
   {
     return ret;

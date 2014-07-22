@@ -98,14 +98,7 @@ public final class ModifierSet {
     public static boolean isVolatile(int modifiers) {
         return (modifiers & VOLATILE) != 0;
     }
-
-    /**
-     * Adds the given modifier.
-     */
-    public static int addModifier(int modifiers, int mod) {
-        return modifiers |= mod;
-    }
-
+    
     /**
      * Removes the given modifier.
      */
@@ -116,7 +109,7 @@ public final class ModifierSet {
     /**
      * Adds the given modifier.
      */
-    public static int addModifier(int modifiers, int mod, Token token) throws ParseException {
+    public static int addModifier(int modifiers, int mod) throws ParseException {
         if ((modifiers & mod) != 0) {
             throw new ParseException("Duplicated modifier");
         }
