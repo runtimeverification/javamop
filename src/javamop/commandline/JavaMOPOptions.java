@@ -3,10 +3,15 @@ package javamop.commandline;
 import com.beust.jcommander.Parameter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JavaMOPOptions {
+    @Parameter(description = "Files")
+    public List<String> files = new ArrayList<String>();
+
     @Parameter(names="-d",description = "Directory in which to store the output", converter = FileConverter.class)
-    private File outputDir;
+    public File outputDir;
 
     @Parameter(names="-debug",description = "Print verbose error messages")
     public boolean debug = false;
@@ -72,5 +77,5 @@ public class JavaMOPOptions {
 
     @Parameter(names="-baseAspect",description = "Optionally provide a BaseAspect.aj file for use " +
             "in generating an agent", converter = FileConverter.class)
-    public String baseAspect;
+    public File baseAspect;
 }
