@@ -17,7 +17,7 @@ public class JavaMOPOptions {
     @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file")
     public boolean toJavaLib = false;
 
-    @Parameter(names={"=s","-statistics"},description = "generate monitor with statistics")
+    @Parameter(names={"-s","-statistics"},description = "generate monitor with statistics")
     public boolean statistics = false;
 
     @Parameter(names={"-v","-verbose"}, description = "Enable verbose output")
@@ -41,10 +41,10 @@ public class JavaMOPOptions {
     @Parameter(names="-silent",description = "A Good description is needed here")
     public boolean silent = false;
 
-    @Parameter(names="-silent",description = "show every event/handler occurrence")
+    @Parameter(names="-showevents",description = "show every event/handler occurrence")
     public boolean showevents = false;
 
-    @Parameter(names="-silent",description = "show every handler occurrence")
+    @Parameter(names="-showhandlers",description = "show every handler occurrence")
     public boolean showhandlers = false;
 
     @Parameter(names="-noadvicebody",description = "A Good description is needed here")
