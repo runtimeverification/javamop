@@ -78,12 +78,11 @@ public final class SpecExtractor {
      * @return The specifications parsed into an object.
      * @throws MOPException If something goes wrong reading or parsing the specification.
      */
-    static public MOPSpecFile parse(String input) throws MOPException {
+    static public MOPSpecFile parse(final String input) throws MOPException {
         try {
-            final MOPSpecFileExt mopSpecFileExt = JavaMOPParser.parse(
-                new ByteArrayInputStream(input.getBytes()));
+            final MOPSpecFileExt mopSpecFileExt = JavaParserAdapter.parse(input);
             return JavaMOPExtender.translateMopSpecFile(mopSpecFileExt);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             throw new MOPException("Error when parsing a specification file:\n" + e.getMessage());
         }
