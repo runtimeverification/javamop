@@ -1,6 +1,7 @@
 package javamop.output;
 
 import javamop.MOPException;
+import javamop.commandline.JavaMOPOptions;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -17,6 +18,7 @@ public class AspectJCode {
     private final CombinedAspect aspect;
     private boolean versionedStack = false;
     private final SystemAspect systemAspect;
+    private boolean statistics;
     
     /**
      * Construct the AspectJ code.
@@ -24,10 +26,11 @@ public class AspectJCode {
      * @param mopSpecFile The specification file that will be used to build aspects.
      * @throw MOPException If something goes wrong in generating the aspects.
      */
-    public AspectJCode(String name, MOPSpecFile mopSpecFile) throws MOPException {
+    public AspectJCode(String name, MOPSpecFile mopSpecFile, JavaMOPOptions options) throws MOPException {
         this.name = name;
         packageDecl = new Package(mopSpecFile);
         imports = new Imports(mopSpecFile);
+        this.statistics = options.statistics;
         
         for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs()) {
             
@@ -36,10 +39,10 @@ public class AspectJCode {
             }
         }
         
-        aspect = new CombinedAspect(name, mopSpecFile, versionedStack);
+        aspect = new CombinedAspect(name, mopSpecFile, versionedStack, options);
         
         if(versionedStack) {
-            systemAspect = new SystemAspect(name);
+            systemAspect = new SystemAspect(name, options.dacapo);
         } else {
             systemAspect = null;
         }

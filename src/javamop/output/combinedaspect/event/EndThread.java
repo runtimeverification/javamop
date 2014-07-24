@@ -1,6 +1,7 @@
 package javamop.output.combinedaspect.event;
 
 import javamop.MOPException;
+import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -24,6 +25,10 @@ public class EndThread {
     MOPVariable threadSet;
     
     MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
+
+    JavaMOPOptions options;
+
+
     
     /**
      * Construct an EndThread hook.
@@ -49,6 +54,8 @@ public class EndThread {
         this.threadSet = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_ThreadSet");
         
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
+
+        this.options = combinedAspect.options;
     }
     
     /**
@@ -124,7 +131,7 @@ public class EndThread {
         ret += globalLock.getName() + ".unlock();\n";
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName);
+            eventBody.fileName,options);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -161,7 +168,7 @@ public class EndThread {
         ret += globalLock.getName() + ".unlock();\n";
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName);
+            eventBody.fileName,options);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -212,7 +219,7 @@ public class EndThread {
         ret += threadSet + ".remove(Thread.currentThread());\n";
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName);
+            eventBody.fileName, options);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -268,7 +275,7 @@ public class EndThread {
         }
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName);
+            eventBody.fileName, options);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
