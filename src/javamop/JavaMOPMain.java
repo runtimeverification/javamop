@@ -481,7 +481,6 @@ public final class JavaMOPMain {
             jarFilePath = Tool.polishPath(jarFilePath);
         }
 
-        //TODO: Add and handle help option
 
 //        int i = 0;
 //        String files = "";
