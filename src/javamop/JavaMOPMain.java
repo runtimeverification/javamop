@@ -9,7 +9,6 @@ package javamop;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -175,11 +174,11 @@ public final class JavaMOPMain {
      */
     public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
         String aspectName;
-        
+
         if(options.outputDir == null){
             options.outputDir = getTargetDir(specFiles);
         }
-        
+
         if(options.aspectname != null) {
             aspectName = options.aspectname;
         } else {
@@ -188,19 +187,17 @@ public final class JavaMOPMain {
             } else {
                 int suffixNumber = 0;
                 // generate auto name like 'MultiMonitorApsect.aj'
-                
                 File aspectFile;
                 do{
                     suffixNumber++;
                     aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
                         "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
                 } while(aspectFile.exists());
-                
                 aspectName = "MultiSpec_" + suffixNumber;
             }
             options.aspectname = aspectName;
         }
-        MOPProcessor processor = new MOPProcessor(aspectName);
+        MOPProcessor processor = new MOPProcessor(options);
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
@@ -267,7 +264,6 @@ public final class JavaMOPMain {
         } finally {
             if(f != null) {
                 try {
-                    System.out.println("Closing " + path);
                     f.close();
                 } catch(IOException ioe) {
                     ioe.printStackTrace();
@@ -471,6 +467,8 @@ public final class JavaMOPMain {
             System.exit(1);
         }
 
+        handleOptions(options);
+
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
         if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
@@ -481,7 +479,9 @@ public final class JavaMOPMain {
                 "!/javamop/JavaMOPMain.class".length());
             jarFilePath = Tool.polishPath(jarFilePath);
         }
-        
+
+        //TODO: Add and handle help option
+
 //        int i = 0;
 //        String files = "";
         
@@ -649,6 +649,26 @@ public final class JavaMOPMain {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");
             }
+        }
+    }
+
+    private static void handleOptions(JavaMOPOptions options) {
+        if (options.verbose){
+            MOPProcessor.verbose = true;
+        }
+
+        if (options.aspectname != null){
+            JavaMOPMain.specifiedAJName = true;
+        }
+
+        if (options.showhandlers){
+            if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
+                    JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
+        }
+
+        if (options.showevents){
+            if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
+                    JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
         }
     }
 }
