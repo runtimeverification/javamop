@@ -461,6 +461,7 @@ public final class JavaMOPMain {
     public static void main(String[] args) {
         options = new JavaMOPOptions();
         JCommander jc = new JCommander(options,args);
+        jc.setProgramName("javamop");
 
         if (args.length == 0 || options.files.size() == 0){
             jc.usage();
