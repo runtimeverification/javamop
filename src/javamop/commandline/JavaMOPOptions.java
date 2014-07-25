@@ -78,4 +78,8 @@ public class JavaMOPOptions {
     @Parameter(names="-baseAspect",description = "Optionally provide a BaseAspect.aj file for use " +
             "in generating an agent", converter = FileConverter.class)
     public File baseAspect;
+
+    @Parameter(names = "--help", description = "Show this help message", help = true)
+    private boolean help = false;
+
 }
