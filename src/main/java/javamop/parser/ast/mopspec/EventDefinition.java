@@ -398,57 +398,20 @@ public class EventDefinition extends Node {
         return this.startThread;
     }
     
-    private Boolean cachedHas__SKIP = null;
+    public boolean hasSpecialModifier(String modifier) {
+        return getAction().toString().contains(modifier);
+    }
     
     public boolean has__SKIP() {
-        if (cachedHas__SKIP != null)
-            return cachedHas__SKIP.booleanValue();
-        
-        if(this.getAction() != null){
-            String eventAction = this.getAction().toString();
-            if (eventAction.indexOf("__SKIP") != -1){
-                cachedHas__SKIP = new Boolean(true);
-                return true;
-            }
-        }
-        cachedHas__SKIP = new Boolean(false);
-        return false;
+        return hasSpecialModifier("__SKIP");
     }
-    
-    private Boolean cachedHas__LOC = null;
     
     public boolean has__LOC() {
-        if (cachedHas__LOC != null)
-            return cachedHas__LOC.booleanValue();
-        
-        if(this.getAction() != null){
-            String eventAction = this.getAction().toString();
-            if (eventAction.indexOf("__LOC") != -1
-                || eventAction.indexOf("__DEFAULT_MESSAGE") != -1){
-                cachedHas__LOC = new Boolean(true);
-            return true;
-                }
-        }
-        cachedHas__LOC = new Boolean(false);
-        return false;
+        return hasSpecialModifier("__LOC") || hasSpecialModifier("__DEFAULT_MESSAGE");
     }
     
-    private Boolean cachedHas__STATICSIG = null;
-    
     public boolean has__STATICSIG() {
-        if (cachedHas__STATICSIG != null)
-            return cachedHas__STATICSIG.booleanValue();
-        
-        if (this.getAction() != null) {
-            String eventAction = this.getAction().toString();
-            // Nice! (This was copied from the JavaMOPSpec class.)
-            if (eventAction.indexOf("__STATICSIG") != -1){
-                cachedHas__STATICSIG = new Boolean(true);
-                return true;
-            }
-        }
-        cachedHas__STATICSIG = new Boolean(false);
-        return false;
+        return hasSpecialModifier("__STATICSIG");
     }
     
     @Override

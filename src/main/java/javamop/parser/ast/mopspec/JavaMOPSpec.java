@@ -282,84 +282,32 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         return this.properties == null || this.properties.size() == 0;
     }
     
-    private Boolean cachedHas__LOC = null;
+    public boolean hasSpecialModifier(String modifier) {
+        for(EventDefinition event : events) {
+            if(event.getAction().toString().contains(modifier)) {
+                return true;
+            }
+        }
+        for(PropertyAndHandlers property : properties) {
+            for(BlockStmt handler : property.getHandlers().values()) {
+                if(handler.toString().contains(modifier)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     public boolean has__LOC() {
-        if (cachedHas__LOC != null)
-            return cachedHas__LOC.booleanValue();
-        
-        for (EventDefinition event : this.events) {
-            String eventAction = event.getAction().toString();
-            if (eventAction.indexOf("__LOC") != -1
-                || eventAction.indexOf("__DEFAULT_MESSAGE") != -1){
-                cachedHas__LOC = new Boolean(true);
-            return true;
-                }
-        }
-        for (PropertyAndHandlers prop : this.properties) {
-            for (BlockStmt handler : prop.getHandlers().values()) {
-                if (handler.toString().indexOf("__LOC") != -1
-                    || handler.toString().indexOf("__DEFAULT_MESSAGE") != -1){
-                    cachedHas__LOC = new Boolean(true);
-                return true;
-                    }
-            }
-        }
-        cachedHas__LOC = new Boolean(false);
-        return false;
+        return hasSpecialModifier("__LOC") || hasSpecialModifier("__DEFAULT_MESSAGE");
     }
-    
-    private Boolean cachedHas__STATICSIG = null;
     
     public boolean has__STATICSIG() {
-        if (cachedHas__STATICSIG != null)
-            return cachedHas__STATICSIG.booleanValue();
-        
-        for (EventDefinition event : this.events) {
-            String eventAction = event.getAction().toString();
-            if (eventAction.indexOf("__STATICSIG") != -1){
-                cachedHas__STATICSIG = new Boolean(true);
-                return true;
-            }
-        }
-        for (PropertyAndHandlers prop : this.properties) {
-            for (BlockStmt handler : prop.getHandlers().values()) {
-                if (handler.toString().indexOf("__STATICSIG") != -1){
-                    cachedHas__STATICSIG = new Boolean(true);
-                    return true;
-                }
-            }
-        }
-        cachedHas__STATICSIG = new Boolean(false);
-        return false;
+        return hasSpecialModifier("__STATICSIG");
     }
     
-    
-    private Boolean cachedHas__SKIP = null;
-    
     public boolean has__SKIP() {
-        if (cachedHas__SKIP != null)
-            return cachedHas__SKIP.booleanValue();
-        
-        for (EventDefinition event : this.events) {
-            if(event.getAction() == null)
-                continue;
-            String eventAction = event.getAction().toString();
-            if (eventAction.indexOf("__SKIP") != -1){
-                cachedHas__SKIP = new Boolean(true);
-                return true;
-            }
-        }
-        for (PropertyAndHandlers prop : this.properties) {
-            for (BlockStmt handler : prop.getHandlers().values()) {
-                if (handler.toString().indexOf("__SKIP") != -1){
-                    cachedHas__SKIP = new Boolean(true);
-                    return true;
-                }
-            }
-        }
-        cachedHas__SKIP = new Boolean(false);
-        return false;
+        return hasSpecialModifier("__SKIP");
     }
     
     private Boolean cachedHasThisJoinPoint = null;

@@ -58,8 +58,6 @@ public class EventDefinitionExt extends ExtNode {
     MOPParameters mopParametersOnSpec; // will be defined in JavaMOPSpec
 
     private MOPParameters parametersWithoutThreadVar = null;
-    private Boolean cachedHas__SKIP = null;
-    private Boolean cachedHas__LOC = null;
 
     public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
             List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
@@ -124,9 +122,6 @@ public class EventDefinitionExt extends ExtNode {
                                                                 // JavaMOPSpec
 
         this.parametersWithoutThreadVar = e.getParametersWithoutThreadVar();
-        this.cachedHas__SKIP = e.isCashedHas__SKIP();
-        // this.cachedHas__LOC = e.isCachedHas__LOC();
-
     }
 
     private PointCut parsePointCutAsRaw(String input) throws javamop.parser.main_parser.ParseException {
@@ -295,39 +290,7 @@ public class EventDefinitionExt extends ExtNode {
     public boolean isEndObject() {
         return this.endObject;
     }
-
-    public boolean has__SKIP() {
-        if (cachedHas__SKIP != null)
-            return cachedHas__SKIP.booleanValue();
-
-        if (this.getAction() != null) {
-            String eventAction = this.getAction().toString();
-            if (eventAction.indexOf("__SKIP") != -1) {
-                cachedHas__SKIP = new Boolean(true);
-                return true;
-            }
-        }
-        cachedHas__SKIP = new Boolean(false);
-        return false;
-    }
-
-    public boolean has__LOC() {
-        if (cachedHas__LOC != null)
-            return cachedHas__LOC.booleanValue();
-
-        if (this.getAction() != null) {
-            String eventAction = this.getAction().toString();
-            if (eventAction.indexOf("__LOC") != -1
-          || 
-          eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
-                cachedHas__LOC = new Boolean(true);
-                return true;
-            }
-        }
-        cachedHas__LOC = new Boolean(false);
-        return false;
-    }
-
+    
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
         v.visit(this, arg);
@@ -360,15 +323,6 @@ public class EventDefinitionExt extends ExtNode {
 
     public boolean isDuplicated() {
         return this.duplicated;
-    }
-
-    public Boolean isCashedHas__SKIP() {
-
-        return this.cachedHas__SKIP;
-    }
-
-    public Boolean isCachedHas__LOC() {
-        return this.isCachedHas__LOC();
     }
     
     public boolean isImplementing(EventDefinitionExt absEvent){

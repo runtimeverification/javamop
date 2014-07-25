@@ -226,62 +226,6 @@ public class JavaMOPSpecExt extends ExtNode {
         return this.properties == null || this.properties.size() == 0;
     }
     
-    private Boolean cachedHas__LOC = null;
-    
-    public boolean has__LOC() {
-        if (cachedHas__LOC != null)
-            return cachedHas__LOC.booleanValue();
-        
-        for (EventDefinitionExt event : this.events) {
-            String eventAction = event.getAction().toString();
-            if (eventAction.indexOf("__LOC") != -1
-                || 
-                eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
-                cachedHas__LOC = new Boolean(true);
-            return true;
-                }
-        }
-        for (PropertyAndHandlersExt prop : this.properties) {
-            for (BlockStmt handler : prop.getHandlers().values()) {
-                if (handler.toString().indexOf("__LOC") != -1 
-                    || 
-                    handler.toString().indexOf("__DEFAULT_MESSAGE") != -1) {
-                    cachedHas__LOC = new Boolean(true);
-                return true;
-                    }
-            }
-        }
-        cachedHas__LOC = new Boolean(false);
-        return false;
-    }
-    
-    private Boolean cachedHas__SKIP = null;
-    
-    public boolean has__SKIP() {
-        if (cachedHas__SKIP != null)
-            return cachedHas__SKIP.booleanValue();
-        
-        for (EventDefinitionExt event : this.events) {
-            if (event.getAction() == null)
-                continue;
-            String eventAction = event.getAction().toString();
-            if (eventAction.indexOf("__SKIP") != -1) {
-                cachedHas__SKIP = new Boolean(true);
-                return true;
-            }
-        }
-        for (PropertyAndHandlersExt prop : this.properties) {
-            for (BlockStmt handler : prop.getHandlers().values()) {
-                if (handler.toString().indexOf("__SKIP") != -1) {
-                    cachedHas__SKIP = new Boolean(true);
-                    return true;
-                }
-            }
-        }
-        cachedHas__SKIP = new Boolean(false);
-        return false;
-    }
-    
     /**
     * returns if the specification is extending other specifications.
     * 
@@ -309,14 +253,6 @@ public class JavaMOPSpecExt extends ExtNode {
     
     public String isCachedEventStr() {
         return this.cachedEventStr;
-    }
-    
-    public Boolean isCachedHas__LOC() {
-        return this.cachedHas__LOC;
-    }
-    
-    public Boolean isCashedHas__SKIP() {
-        return this.cachedHas__SKIP;
     }
     
     public boolean isPublic() {
