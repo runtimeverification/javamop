@@ -58,7 +58,6 @@ public class JavaMOPOptions {
     @Parameter(names="-translate2RV",description = "A Good description is needed here")
     public boolean translate2RV = true;
 
-
     @Parameter(names="-merge",description = "A Good description is needed here")
     public boolean merge = false;
 
