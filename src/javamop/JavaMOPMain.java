@@ -653,22 +653,27 @@ public final class JavaMOPMain {
     }
 
     private static void handleOptions(JavaMOPOptions options) {
-        if (options.verbose){
+        if (options.verbose) {
             MOPProcessor.verbose = true;
         }
 
-        if (options.aspectname != null){
+        if (options.aspectname != null) {
             JavaMOPMain.specifiedAJName = true;
         }
 
-        if (options.showhandlers){
+        if (options.showhandlers) {
             if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
-                    JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
+                JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
         }
 
-        if (options.showevents){
+        if (options.showevents) {
             if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
-                    JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
+                JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
+        }
+
+        if (options.generateAgent) {
+            options.merge = true;
+            options.keepRVFiles = true;
         }
     }
 }
