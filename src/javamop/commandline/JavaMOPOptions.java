@@ -74,7 +74,7 @@ public class JavaMOPOptions {
     @Parameter(names="--agent",description = "Generate an agent from the given .mop files")
     public boolean generateAgent = false;
 
-    @Parameter(names="-baseAspect",description = "Optionally provide a BaseAspect.aj file for use " +
+    @Parameter(names="--baseaspect",description = "Optionally provide a BaseAspect.aj file for use " +
             "in generating an agent", converter = FileConverter.class)
     public File baseAspect;
 
