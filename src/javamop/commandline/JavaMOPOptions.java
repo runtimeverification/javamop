@@ -55,7 +55,7 @@ public class JavaMOPOptions {
     @Parameter(names="-noadvicebody",description = "A Good description is needed here")
     public boolean noadvicebody = false;
 
-    @Parameter(names="-translate2RV",description = "A Good description is needed here", arity = 1)
+    @Parameter(names="-translate2RV",description = "A Good description is needed here")
     public boolean translate2RV = true;
 
 
@@ -72,7 +72,7 @@ public class JavaMOPOptions {
     @Parameter(names="-keepRVFiles",description = "A Good description is needed here")
     public boolean keepRVFiles = false;
 
-    @Parameter(names="-generateAgent",description = "Generate an agent from the given .mop files")
+    @Parameter(names="--agent",description = "Generate an agent from the given .mop files")
     public boolean generateAgent = false;
 
     @Parameter(names="-baseAspect",description = "Optionally provide a BaseAspect.aj file for use " +
