@@ -1,5 +1,7 @@
 package javamop.parser.astex;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javamop.parser.ast.ImportDeclaration;
@@ -9,28 +11,26 @@ import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
 
 public class MOPSpecFileExt extends ExtNode {
-	PackageDeclaration pakage = null;
-	List<ImportDeclaration> imports = null;
-	List<JavaMOPSpecExt> specList = null;
-	
-    public MOPSpecFileExt(int line, int column, PackageDeclaration pakage, List<ImportDeclaration> imports, List<JavaMOPSpecExt> specList) {
+    private final PackageDeclaration pakage;
+    private final List<ImportDeclaration> imports;
+    private final List<JavaMOPSpecExt> specList;
+    
+    public MOPSpecFileExt(final int line, final int column, final PackageDeclaration pakage, 
+            final List<ImportDeclaration> imports, final List<JavaMOPSpecExt> specList) {
         super(line, column);
         this.pakage = pakage;
-        this.imports = imports;
-        this.specList = specList;
+        this.imports = Collections.unmodifiableList(new ArrayList<ImportDeclaration>(imports));
+        this.specList = Collections.unmodifiableList(new ArrayList<JavaMOPSpecExt>(specList));
     }
-    public MOPSpecFileExt() {
-		super(0,0);
-	}
-	public PackageDeclaration getPakage() {
+    
+    public PackageDeclaration getPakage() {
         return pakage;
     }
-
 
     public List<ImportDeclaration> getImports() {
         return imports;
     }
-	
+    
     public List<JavaMOPSpecExt> getSpecs() {
         return specList;
     }
@@ -46,16 +46,15 @@ public class MOPSpecFileExt extends ExtNode {
     }
     
     /**
-     * returns the JavaMOPSpecExt object for a specification with a specified name
-     *
+     * Search the specifications for one with a particular name.
+     * @param name The name of the desired specification
+     * @return The JavaMOPSpecExt object for a specification with a specified name
      */
-  
-	public JavaMOPSpecExt getSpec(String name) {
-		for(JavaMOPSpecExt spec:this.getSpecs()){
-			if(spec.getName().compareTo(name)==0)
-				return spec;
-		}
-		return null;
-	}
-
+    public JavaMOPSpecExt getSpec(String name) {
+        for(JavaMOPSpecExt spec:this.getSpecs()){
+            if(spec.getName().compareTo(name)==0)
+                return spec;
+        }
+        return null;
+    }
 }

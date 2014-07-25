@@ -1,21 +1,24 @@
 package javamop.parser.ast;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 
 public class MOPSpecFile extends Node {
-	PackageDeclaration pakage = null;
-	List<ImportDeclaration> imports = null;
-	List<JavaMOPSpec> specList = null;
-	
-    public MOPSpecFile(int line, int column, PackageDeclaration pakage, List<ImportDeclaration> imports, List<JavaMOPSpec> specList) {
+    private final PackageDeclaration pakage;
+    private final List<ImportDeclaration> imports;
+    private final List<JavaMOPSpec> specList;
+    
+    public MOPSpecFile(final int line, final int column, final PackageDeclaration pakage, 
+            final List<ImportDeclaration> imports, final List<JavaMOPSpec> specList) {
         super(line, column);
         this.pakage = pakage;
-        this.imports = imports;
-        this.specList = specList;
+        this.imports = Collections.unmodifiableList(new ArrayList<ImportDeclaration>(imports));
+        this.specList = Collections.unmodifiableList(new ArrayList<JavaMOPSpec>(specList));
     }
     public PackageDeclaration getPakage() {
         return pakage;
