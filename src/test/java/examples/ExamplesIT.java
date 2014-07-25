@@ -46,9 +46,9 @@ public class ExamplesIT {
             String specificClasspath = classpath + ":" + subcasePathI + ":" + subcasePathI + 
                 File.separator + "mop";
             // AJC has nonzero return codes with just warnings, not errorss.
-            helper.testCommand(null, true, "ajc", "-1.6", "-cp", specificClasspath, "-d", 
-                subcasePathI, subcasePathI + File.separator + subcasePathI + ".java", 
-                testName + "MonitorAspect.aj");
+            helper.testCommand(null, true, "java", "-cp", specificClasspath, 
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI + 
+                File.separator + subcasePathI + ".java", testName + "MonitorAspect.aj");
             helper.testCommand(subcasePathI, subcasePathI, true, "java", "-cp", specificClasspath, 
                 subcasePathI);
             helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".actual.err", 
