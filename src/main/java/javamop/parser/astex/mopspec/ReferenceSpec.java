@@ -9,11 +9,9 @@ import javamop.parser.astex.visitor.VoidVisitor;
  */
 public class ReferenceSpec extends ExtNode {
     
-    private String specName;
-    
-    private String referenceElement;
-    
-    private String elementType;
+    private final String specName;
+    private final String referenceElement;
+    private final String elementType;
     
     public ReferenceSpec(int line, int column, String specName, String referenceElement, String elementType) {
         super(line, column);

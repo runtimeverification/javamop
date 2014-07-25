@@ -15,9 +15,13 @@ public abstract class PropertyExt extends ExtNode {
         this.propertyName = propertyName;
     }
     
-    public String getType() { return type; }
+    public String getType() {
+        return type;
+    }
     
-    public String getName() {return propertyName; } //soha 
+    public String getName() {
+        return propertyName;
+    } //soha 
     
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
