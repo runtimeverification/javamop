@@ -235,7 +235,7 @@ public class EventManager {
          */
         public static String methodName(JavaMOPSpec enclosing, EventDefinition evt,
                 String aspectName) {
-            return methodName(enclosing.getName(), evt, aspectName, new JavaMOPOptions());
+            return methodName(enclosing.getName(), evt, aspectName, JavaMOPMain.options);
         }
     }
 }
