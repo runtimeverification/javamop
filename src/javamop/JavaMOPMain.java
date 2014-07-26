@@ -28,7 +28,7 @@ import javamop.util.AJFileCombiner;
  */
 public final class JavaMOPMain {
 
-    private static JavaMOPOptions options;
+    public static JavaMOPOptions options;
 
     /**
      * Private to prevent instantiation.
