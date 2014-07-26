@@ -610,7 +610,6 @@ public final class JavaMOPMain {
         }
 
         // Call AJFileCombiner here to combine these two
-        // TODO
         for (String[] filePair : listFilePairs) {
             AJFileCombiner.main(filePair);
             File javaFile = new File(filePair[0]);
@@ -652,6 +651,13 @@ public final class JavaMOPMain {
         }
     }
 
+    /**
+     * This method sets some field and other (dependent) options, based on the
+     * flags that the user called JavaMOP with.
+     *
+     * @param options  The object holding the options that the user called
+     *                 JavaMOP with
+     */
     private static void handleOptions(JavaMOPOptions options) {
         if (options.verbose) {
             MOPProcessor.verbose = true;
@@ -674,6 +680,10 @@ public final class JavaMOPMain {
         if (options.generateAgent) {
             options.merge = true;
             options.keepRVFiles = true;
+        }
+
+        if (options.noadvicebody){
+            JavaMOPMain.empty_advicebody = true;
         }
     }
 }
