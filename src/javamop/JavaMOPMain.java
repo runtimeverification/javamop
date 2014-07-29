@@ -126,7 +126,7 @@ public final class JavaMOPMain {
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
-        MOPProcessor processor = new MOPProcessor(options);
+        MOPProcessor processor = new MOPProcessor(options.aspectname);
         
         String aspect = processor.process(spec);
         writeFile(aspect, location, "MonitorAspect.aj");
@@ -197,7 +197,7 @@ public final class JavaMOPMain {
             }
             options.aspectname = aspectName;
         }
-        MOPProcessor processor = new MOPProcessor(options);
+        MOPProcessor processor = new MOPProcessor(aspectName);
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){

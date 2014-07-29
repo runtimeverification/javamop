@@ -25,7 +25,6 @@ public class MOPProcessor {
     public static boolean verbose = false;
     
     private final String name;
-    private boolean translate2RV;
 
     /**
      * Construct a MOPProcessor.
@@ -78,7 +77,7 @@ public class MOPProcessor {
             }
         }
         for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-            if(translate2RV) {
+            if(JavaMOPMain.options.translate2RV) {
                 rvresult += mopSpec.toRVString();
             }
         }
@@ -107,7 +106,7 @@ public class MOPProcessor {
         
         // Generate output code
         
-        if (translate2RV) {
+        if (JavaMOPMain.options.translate2RV) {
             result = (new AspectJCode(name, mopSpecFile)).toRVString();
         }
         
