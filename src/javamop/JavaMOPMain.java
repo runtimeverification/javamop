@@ -236,7 +236,8 @@ public final class JavaMOPMain {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
-        final String path = options.outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj";
+        final String path = options.outputDir.getAbsolutePath() + File.separator +
+                aspectName + "MonitorAspect.aj";
         FileWriter f = null;
         try {
             f = new FileWriter(path);
@@ -425,7 +426,8 @@ public final class JavaMOPMain {
         if(tempOutput) {
             tempOutput = true;
             try {
-                options.outputDir = Files.createTempDirectory(new File(".").toPath(), "output").toFile();
+                options.outputDir =
+                        Files.createTempDirectory(new File(".").toPath(), "output").toFile();
                 options.outputDir.deleteOnExit();
             } catch(IOException ioe) {
                 ioe.printStackTrace();
