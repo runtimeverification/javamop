@@ -37,13 +37,6 @@ public final class JavaMOPMain {
 
     }
 
-//    private static File outputDir = null;
-//    public static boolean debug = false;
-//    public static boolean noopt1 = false;
-//    public static boolean toJavaLib = false;
-//    public static boolean statistics = false;
-//    public static boolean statistics2 = false;
-//    public static String aspectname = null;
     public static boolean specifiedAJName = false;
     public static boolean isJarFile = false;
     public static String jarFilePath = null;
@@ -52,21 +45,10 @@ public final class JavaMOPMain {
     public static final int HANDLERS = 1;
     public static final int EVENTS = 2;
     public static int logLevel = NONE;
-    
-//    public static boolean dacapo = false;
-//    public static boolean dacapo2 = false;
-//    public static boolean silent = false;
+
     public static boolean empty_advicebody = false;
-//    public static boolean translate2RV = true;
-//
-//    public static boolean merge = false;
+
     public static boolean inline = false;
-//
-//    public static boolean scalable = false;
-//    public static boolean keepRVFiles = false;
-//
-//    public static boolean generateAgent = false;
-//    public static File baseAspect = null;
 
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
@@ -410,49 +392,6 @@ public final class JavaMOPMain {
         process(files.toArray(new String[0]), "");
     }
     
-    // PM
-    /**
-     * Print command-line options available for controlling JavaMOP, and through it RV-Monitor.
-     */
-//    public static void print_help() {
-//        System.out.println("Usage: java [-cp javmaop_classpath] javamop.JavaMOPMain [-options] " +
-//            "files");
-//        System.out.println("");
-//        System.out.println("where options include:");
-//        System.out.println(" Options enabled by default are prefixed with \'+\'");
-//        System.out.println("    -h -help\t\t\t  print this help message");
-//        System.out.println("    -v | -verbose\t\t  enable verbose output");
-//        System.out.println("    -debug\t\t\t  enable verbose error message");
-//        System.out.println();
-//
-//        System.out.println("    -local\t\t\t+ use local logic engine");
-//        System.out.println("    -remote\t\t\t  use default remote logic engine");
-//        System.out.println("\t\t\t\t  " + Configuration.getServerAddr());
-//        System.out.println("\t\t\t\t  (You can change the default address");
-//        System.out.println("\t\t\t\t   in javamop/config/remote_server_addr.properties)");
-//        System.out.println("    -remote:<server address>\t  use remote logic engine");
-//        System.out.println();
-//
-//        System.out.println("    -d <output path>\t\t  select directory to store output files");
-//        System.out.println("    -n | -aspectname <aspect name>\t  use the given aspect name " +
-//            "instead of source code name");
-//        System.out.println();
-//
-//        System.out.println("    -showevents\t\t\t  show every event/handler occurrence");
-//        System.out.println("    -showhandlers\t\t\t  show every handler occurrence");
-//        System.out.println();
-//
-//        System.out.println("    -s | -statistics\t\t  generate monitor with statistics");
-//        System.out.println("    -noopt1\t\t\t  don't use the enable set optimization");
-//        System.out.println("    -javalib\t\t\t  generate a java library rather than an " +
-//            "AspectJ file");
-//        System.out.println();
-//
-//        System.out.println("    -aspect:\"<command line>\"\t  compile the result right after " +
-//            "it is generated");
-//        System.out.println();
-//    }
-    
     /**
      * Initialize JavaMOP with the given command-line parameters, process the given MOP files
      * into RVM files, run RV-Monitor on the MOP files, and optionally postprocess the output.
@@ -481,81 +420,6 @@ public final class JavaMOPMain {
             jarFilePath = Tool.polishPath(jarFilePath);
         }
 
-
-//        int i = 0;
-//        String files = "";
-        
-//        while (i < args.length) {
-//            if (args[i].compareTo("-h") == 0 || args[i].compareTo("-help") == 0) {
-//                print_help();
-//                return;
-//            }
-//
-//            if (args[i].compareTo("-d") == 0) {
-//                i++;
-//                outputDir = new File(args[i]);
-//            } else if (args[i].compareTo("-local") == 0) {
-//            } else if (args[i].compareTo("-remote") == 0) {
-//            } else if (args[i].startsWith("-remote:")) {
-//            } else if (args[i].compareTo("-v") == 0 || args[i].compareTo("-verbose") == 0) {
-//                MOPProcessor.verbose = true;
-//            } else if (args[i].compareTo("-javalib") == 0) {
-//                toJavaLib = true;
-//            } else if (args[i].compareTo("-debug") == 0) {
-//                JavaMOPMain.debug = true;
-//            } else if (args[i].compareTo("-noopt1") == 0) {
-//                JavaMOPMain.noopt1 = true;
-//            } else if (args[i].compareTo("-s") == 0 || args[i].compareTo("-statistics") == 0) {
-//                JavaMOPMain.statistics = true;
-//            } else if (args[i].compareTo("-s2") == 0 || args[i].compareTo("-statistics2") == 0) {
-//                JavaMOPMain.statistics2 = true;
-//            } else if (args[i].compareTo("-n") == 0 || args[i].compareTo("-aspectname") == 0) {
-//                i++;
-//                JavaMOPMain.aspectname = args[i];
-//                JavaMOPMain.specifiedAJName = true;
-//            } else if (args[i].compareTo("-showhandlers") == 0) {
-//                if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
-//                    JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
-//            } else if (args[i].compareTo("-showevents") == 0) {
-//                if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
-//                    JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
-//            } else if (args[i].compareTo("-dacapo") == 0) {
-//                JavaMOPMain.dacapo = true;
-//            } else if (args[i].compareTo("-dacapo2") == 0) {
-//                JavaMOPMain.dacapo2 = true;
-//            } else if (args[i].compareTo("-silent") == 0) {
-//                JavaMOPMain.silent = true;
-//            } else if (args[i].compareTo("-merge") == 0) {
-//                JavaMOPMain.merge = true;
-//            } else if (args[i].compareTo("-inline") == 0) {
-//                JavaMOPMain.inline = true;
-//            } else if (args[i].compareTo("-noadvicebody") == 0) {
-//                JavaMOPMain.empty_advicebody = true;
-//            } else if (args[i].compareTo("-scalable") == 0) {
-//                JavaMOPMain.scalable = true;
-//            } else if (args[i].compareTo("-translate2RV") == 0) {
-//                JavaMOPMain.translate2RV = true;
-//            } else if (args[i].compareTo("-keepRVFiles") == 0) {
-//                JavaMOPMain.keepRVFiles = true;
-//                JavaMOPMain.merge = true;
-//                JavaMOPMain.generateAgent = true;
-//                JavaMOPMain.keepRVFiles = true;
-//            } else if("--baseaspect".equals(args[i])) {
-//                i++;
-//                JavaMOPMain.baseAspect = new File(args[i]);
-//            } else {
-//                if (files.length() != 0)
-//                    files += ";";
-//                files += args[i];
-//            }
-//            ++i;
-//        }
-        
-//        if (files.length() == 0) {
-//            print_help();
-//            return;
-//        }
-        
         boolean tempOutput = options.generateAgent && options.outputDir == null;
 
         if(tempOutput) {

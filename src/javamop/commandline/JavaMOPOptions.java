@@ -6,6 +6,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command-line options available for controlling JavaMOP, and through it RV-Monitor.
+ */
 public class JavaMOPOptions {
     @Parameter(description = "Files")
     public List<String> files = new ArrayList<String>();
@@ -80,5 +83,4 @@ public class JavaMOPOptions {
 
     @Parameter(names = "-help", description = "Show this help message", help = true)
     private boolean help = false;
-
 }
