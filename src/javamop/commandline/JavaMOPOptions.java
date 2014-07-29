@@ -8,12 +8,14 @@ import java.util.List;
 
 /**
  * Command-line options available for controlling JavaMOP, and through it RV-Monitor.
+ * TODO(OwolabiL): Add correct/better descriptions of options after consulting with others
  */
 public class JavaMOPOptions {
     @Parameter(description = "Files")
     public List<String> files = new ArrayList<String>();
 
-    @Parameter(names="-d",description = "Directory in which to store the output", converter = FileConverter.class)
+    @Parameter(names="-d",description = "Directory in which to store the output",
+            converter = FileConverter.class)
     public File outputDir;
 
     @Parameter(names="-debug",description = "Print verbose error messages")
