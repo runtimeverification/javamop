@@ -537,7 +537,6 @@ public final class JavaMOPMain {
 //                JavaMOPMain.translate2RV = true;
 //            } else if (args[i].compareTo("-keepRVFiles") == 0) {
 //                JavaMOPMain.keepRVFiles = true;
-//            } else if("--agent".equals(args[i])) {
 //                JavaMOPMain.merge = true;
 //                JavaMOPMain.generateAgent = true;
 //                JavaMOPMain.keepRVFiles = true;
@@ -585,9 +584,9 @@ public final class JavaMOPMain {
         for (int j = 0; j < args.length; j++) {
             if (args[j].compareTo("-keepRVFiles") == 0) {
                 // Don't pass keepRVFiles to rvmonitor\
-            } else if("--agent".equals(args[j])) {
+            } else if("-agent".equals(args[j])) {
                 rvArgs.add("-merge");
-            } else if("--baseaspect".equals(args[j])) {
+            } else if("-baseaspect".equals(args[j])) {
                 j++;
             } else {
                 rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
