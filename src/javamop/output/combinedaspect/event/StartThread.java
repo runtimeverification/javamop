@@ -1,7 +1,6 @@
 package javamop.output.combinedaspect.event;
 
 import javamop.MOPException;
-import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -24,8 +23,6 @@ public class StartThread {
     
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
-    private JavaMOPOptions options;
-    
     /**
      * Construct a StartThread hook for a particular event.
      * @param mopSpec The specification the event is part of.
@@ -47,8 +44,6 @@ public class StartThread {
             event.getId() + "_MainThread");
         
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
-
-        this.options = combinedAspect.options;
     }
     
     /**
@@ -105,7 +100,7 @@ public class StartThread {
         }
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName, options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -139,7 +134,7 @@ public class StartThread {
         }
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName, options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -170,7 +165,7 @@ public class StartThread {
         }
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName, options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();

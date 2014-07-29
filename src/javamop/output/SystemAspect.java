@@ -9,15 +9,13 @@ import javamop.commandline.JavaMOPOptions;
  */
 public class SystemAspect {
     private final String name;
-    private final boolean dacapo;
-    
+
     /**
      * Construct a SystemAspect with the given name.
      * @param name The name of the SystemAspect.
      */
-    public SystemAspect(String name, boolean dacapo) {
+    public SystemAspect(String name) {
         this.name = name + "SystemAspect";
-        this.dacapo = dacapo;
     }
     
     /**
@@ -52,7 +50,7 @@ public class SystemAspect {
         
         
         ret += "pointcut sysbegin() : execution(* *(..)) && ";
-        if(dacapo){
+        if(JavaMOPMain.options.dacapo){
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
                 "&& BaseAspect.notwithin();\n";
         } else {
@@ -65,7 +63,7 @@ public class SystemAspect {
         
         ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
         ret += "pointcut sysend() : execution(* *(..)) && ";
-        if(dacapo){
+        if(JavaMOPMain.options.dacapo){
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
                 "&& BaseAspect.notwithin();\n";
         } else {

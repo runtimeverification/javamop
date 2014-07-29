@@ -26,10 +26,7 @@ public class EndThread {
     
     MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
-    JavaMOPOptions options;
 
-
-    
     /**
      * Construct an EndThread hook.
      * @param mopSpec The specification that the endThread is in.
@@ -55,7 +52,6 @@ public class EndThread {
         
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
 
-        this.options = combinedAspect.options;
     }
     
     /**
@@ -131,7 +127,7 @@ public class EndThread {
         ret += globalLock.getName() + ".unlock();\n";
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName,options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -168,7 +164,7 @@ public class EndThread {
         ret += globalLock.getName() + ".unlock();\n";
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName,options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -219,7 +215,7 @@ public class EndThread {
         ret += threadSet + ".remove(Thread.currentThread());\n";
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName, options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();
@@ -275,7 +271,7 @@ public class EndThread {
         }
         
         ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
-            eventBody.fileName, options);
+            eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             ret += event.getThreadVar();

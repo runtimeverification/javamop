@@ -3,7 +3,6 @@ package javamop.output.combinedaspect.event;
 import java.util.ArrayList;
 
 import javamop.MOPException;
-import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
@@ -19,15 +18,13 @@ public class EndProgram {
     
     private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
     private final ArrayList<AdviceBody> eventBodies = new ArrayList<AdviceBody>();
-    private final JavaMOPOptions options;
-    
+
     /**
      * Construct a named end program hook.
      * @param name The name of the hook.
      */
-    public EndProgram(final String name, JavaMOPOptions options) {
+    public EndProgram(final String name) {
         this.hookName = new MOPVariable(name + "_DummyHookThread");
-        this.options = options;
     }
     
     /**
@@ -93,7 +90,7 @@ public class EndProgram {
             }
             
             ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event, 
-                eventBody.fileName, options);
+                eventBody.fileName);
             ret += "();\n";
             
             if (eventBodies.size() > 1) {

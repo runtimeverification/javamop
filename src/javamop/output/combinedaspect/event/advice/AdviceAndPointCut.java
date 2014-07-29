@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import javamop.MOPException;
 import javamop.JavaMOPMain;
-import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.ActivatorManager;
 import javamop.output.combinedaspect.CombinedAspect;
@@ -60,8 +59,6 @@ public class AdviceAndPointCut {
     private AroundAdviceLocalDecl aroundLocalDecl = null;
     private AroundAdviceReturn aroundAdviceReturn = null;
 
-    private JavaMOPOptions options;
-    
     /**
      * Construct the advice and pointcut for a specific event.
      * @param mopSpec The specification this is a part of.
@@ -80,8 +77,6 @@ public class AdviceAndPointCut {
         this.inlineParameters = event.getMOPParametersWithoutThreadVar();
         this.fileName = combinedAspect.getFileName();
 
-        this.options = combinedAspect.options;
-        
         if (event.getPos().equals("around")) {
             isAround = true;
             retType = event.getRetType().toString();
@@ -260,7 +255,7 @@ public class AdviceAndPointCut {
                     }
                 }
                 
-                if (options.statistics) {
+                if (JavaMOPMain.options.statistics) {
                     MOPStatistics stat = this.statManager.getStat(advice.mopSpec);
                     
                     ret += stat.eventInc(event.getId());

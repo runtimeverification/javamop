@@ -3,7 +3,6 @@ package javamop.output.combinedaspect;
 import java.util.List;
 
 import javamop.MOPException;
-import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.event.EventManager;
 import javamop.parser.ast.MOPSpecFile;
@@ -21,7 +20,6 @@ public class CombinedAspect {
     public final MOPStatManager statManager;
     public final LockManager lockManager;
     private final EventManager eventManager;
-    public final JavaMOPOptions options;
 
     /**
      * Construct the combined aspect.
@@ -29,20 +27,19 @@ public class CombinedAspect {
      * @param mopSpecFile The specifications to monitor.
      * @param versionedStack Whether or not to maintain extra information about the call stack.
      */
-    public CombinedAspect(final String name, final MOPSpecFile mopSpecFile, 
-            final boolean versionedStack, JavaMOPOptions options) throws MOPException {
+    public CombinedAspect(final String name, final MOPSpecFile mopSpecFile,
+                          final boolean versionedStack) throws MOPException {
         this.name = name + "MonitorAspect";
         this.versionedStack = versionedStack;
         
         this.specs = mopSpecFile.getSpecs();
-        this.statManager = new MOPStatManager(name, this.specs, options);
+        this.statManager = new MOPStatManager(name, this.specs);
         this.lockManager = new LockManager(name, this.specs);
 
-        this.eventManager = new EventManager(name, this.specs, this, options);
+        this.eventManager = new EventManager(name, this.specs, this);
         
         this.mapManager = new MOPVariable(name + "MapManager");
 
-        this.options = options;
     }
     
     /**
