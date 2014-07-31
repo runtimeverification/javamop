@@ -403,12 +403,7 @@ public final class JavaMOPMain {
         JCommander jc = new JCommander(options,args);
         jc.setProgramName("javamop");
 
-        if (args.length == 0 || options.files.size() == 0){
-            jc.usage();
-            System.exit(1);
-        }
-
-        handleOptions(options);
+        handleOptions(options, args, jc);
 
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
@@ -523,7 +518,12 @@ public final class JavaMOPMain {
      * @param options  The object holding the options that the user called
      *                 JavaMOP with
      */
-    private static void handleOptions(JavaMOPOptions options) {
+    private static void handleOptions(JavaMOPOptions options, String[] args, JCommander jc) {
+        if (args.length == 0 || (options.files.size() == 0 && !options.usedb)){
+            jc.usage();
+            System.exit(1);
+        }
+
         if (options.verbose) {
             MOPProcessor.verbose = true;
         }
