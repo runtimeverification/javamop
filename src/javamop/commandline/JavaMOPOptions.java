@@ -85,4 +85,8 @@ public class JavaMOPOptions {
 
     @Parameter(names = "-help", description = "Show this help message", help = true)
     private boolean help = false;
+
+    @Parameter(names = "-usedb", description = "Use the property database for building an Agent. " +
+            "Setting this option without setting the '-agent' option will result in an Exception")
+    public boolean usedb = false;
 }
