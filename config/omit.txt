@@ -1,0 +1,8 @@
+Serializable_UID.mop
+Dictionary_Obsolete.mop
+Collection_StandardConstructors.mop
+SortedSet_StandardConstructors.mop
+Enumeration_Obsolete.mop
+Map_StandardConstructors.mop
+Enum_UserFriendlyName.mop
+Enum_NoOrdinal.mop

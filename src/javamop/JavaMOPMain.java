@@ -19,6 +19,7 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
+import javamop.commandline.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.Tool;
 import javamop.util.AJFileCombiner;
@@ -430,6 +431,13 @@ public final class JavaMOPMain {
                 options.generateAgent = false;
             }
         }
+
+        if (options.usedb) {
+            SpecFilter filter = new SpecFilter();
+            options.files = filter.filterProperties();
+
+        }
+
 
 
         // Generate .rvm files and .aj files
