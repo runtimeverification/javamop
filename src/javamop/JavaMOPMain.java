@@ -550,5 +550,10 @@ public final class JavaMOPMain {
         if (options.noadvicebody){
             JavaMOPMain.empty_advicebody = true;
         }
+
+        if ((options.usedb) && !options.generateAgent){
+            throw new IllegalArgumentException("The \"-usedb\" option should only be set in " +
+                    "conjunction with the \"-agent\" option (which was not set in this case)");
+        }
     }
 }
