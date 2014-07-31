@@ -419,7 +419,8 @@ public final class JavaMOPMain {
         boolean tempOutput = options.generateAgent && options.outputDir == null;
 
         if(tempOutput) {
-            tempOutput = true;
+            // this line is redundant
+//            tempOutput = true;
             try {
                 options.outputDir =
                         Files.createTempDirectory(new File(".").toPath(), "output").toFile();
