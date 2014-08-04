@@ -6,3 +6,6 @@ lib/javamoptestsuite.jar
 lib/log/
 test-reports/
 build/
+
+.idea
+*.iml
