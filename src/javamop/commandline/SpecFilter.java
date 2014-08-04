@@ -29,6 +29,7 @@ public class SpecFilter {
     private final String configPath;
     public static String specDirPath;
     private List<String> specsToOmit;
+    private boolean cleanup;
 
     public SpecFilter() {
         url = Configuration.getServerSetting("PropertyDBURL");
@@ -39,6 +40,11 @@ public class SpecFilter {
         specDirPath = SPEC_DIRECTORY + File.separator + "properties" + File.separator + "java";
         specsToOmit = getFilesToOmit();
         downloadAllSpecs();
+    }
+
+    public SpecFilter(boolean cleanup) {
+        this();
+        this.cleanup = cleanup;
     }
 
     private List<String> getFilesToOmit() {
@@ -52,7 +58,7 @@ public class SpecFilter {
         return omitFiles;
     }
 
-    public String filter(boolean cleanup) {
+    public String filter() {
         Properties filters = Configuration.getSettingFile(filterConfig);
         //1. if a spec directory exists, but it has not been listed in the filter config,
         //   delete the entire contents of the directory
@@ -94,16 +100,12 @@ public class SpecFilter {
             }
         }
 
-        if (cleanup){
-            cleanup();
-        }
-
         return specDirPath;
     }
 
-    private void cleanup() {
+    public void cleanup() {
         try {
-            Files.delete(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
         } catch (IOException e) {
             System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
             e.printStackTrace();
@@ -120,6 +122,7 @@ public class SpecFilter {
         for (File specFile : specFiles){
             if ((FileUtils.readFileToString(specFile, Charset.defaultCharset()).contains(SEVERITY_PREFIX + level))
                     || specsToOmit.contains(specFile.getName()) ) {
+                System.out.println("ToDelete: "+specFile.toPath());
                 Files.delete(specFile.toPath());
             }
         }
@@ -158,5 +161,9 @@ public class SpecFilter {
             success = false;
         }
         return success;
+    }
+
+    public boolean isCleanup() {
+        return cleanup;
     }
 }

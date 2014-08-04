@@ -432,11 +432,12 @@ public final class JavaMOPMain {
             }
         }
 
+        SpecFilter filter = null;
         if (options.usedb) {
             try {
-                SpecFilter filter = new SpecFilter();
+                filter = new SpecFilter(true);
                 options.files = new ArrayList<String>();
-                options.files.add(filter.filter(true));
+                options.files.add(filter.filter());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -525,6 +526,10 @@ public final class JavaMOPMain {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");
             }
+        }
+
+        if (filter != null && filter.isCleanup()) {
+            filter.cleanup();
         }
     }
 
