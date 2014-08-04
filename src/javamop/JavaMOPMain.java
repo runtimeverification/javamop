@@ -433,9 +433,13 @@ public final class JavaMOPMain {
         }
 
         if (options.usedb) {
-            SpecFilter filter = new SpecFilter();
-            options.files = filter.filterProperties();
-
+            try {
+                SpecFilter filter = new SpecFilter();
+                options.files = new ArrayList<String>();
+                options.files.add(filter.filter());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -452,7 +456,7 @@ public final class JavaMOPMain {
         // replace mop with rvm and call rv-monitor
         List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
-            if (args[j].compareTo("-keepRVFiles") == 0) {
+            if (args[j].compareTo("-keepRVFiles") == 0 || args[j].compareTo("-usedb") == 0) {
                 // Don't pass keepRVFiles to rvmonitor\
             } else if("-agent".equals(args[j])) {
                 rvArgs.add("-merge");
@@ -465,6 +469,10 @@ public final class JavaMOPMain {
         if(tempOutput) {
             rvArgs.add("-d");
             rvArgs.add(options.outputDir.getAbsolutePath());
+        }
+
+        if (options.usedb){
+            rvArgs.add(SpecFilter.specDirPath);
         }
         
         Main.main(rvArgs.toArray(new String[0]));
