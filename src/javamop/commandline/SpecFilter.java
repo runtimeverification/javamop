@@ -107,6 +107,7 @@ public class SpecFilter {
     }
 
     private void downloadAllSpecs() {
+        System.err.println("Downloading specs from "+ url + " ...");
         // use vcs and url to get the properties
         Path path = FileSystems.getDefault().getPath(SPEC_DIRECTORY);
 
@@ -119,6 +120,7 @@ public class SpecFilter {
         }
 
         runCommand(vcs, "clone", url, SPEC_DIRECTORY);
+        System.err.println(" Done downloading specs.");
     }
 
     private boolean runCommand(String... args) {
