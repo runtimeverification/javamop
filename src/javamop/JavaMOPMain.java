@@ -436,7 +436,7 @@ public final class JavaMOPMain {
             try {
                 SpecFilter filter = new SpecFilter();
                 options.files = new ArrayList<String>();
-                options.files.add(filter.filter());
+                options.files.add(filter.filter(true));
             } catch (Exception e) {
                 e.printStackTrace();
             }
