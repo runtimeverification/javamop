@@ -516,7 +516,17 @@ public final class JavaMOPMain {
                   e.printStackTrace();
             }
         }
-        
+
+        cleanup(tempOutput, filter);
+    }
+
+    /**
+     * This method will cleans up temporary files used during agent generation
+     * @param tempOutput temporary directory used to hold agent generation artifacts
+     * @param filter  a SpecFilter which holds, among other things, the directory
+     *                where specs from property-db are stored
+     */
+    private static void cleanup(boolean tempOutput, SpecFilter filter) {
         if(tempOutput) {
             try {
                 GenerateAgent.deleteDirectory(options.outputDir.toPath());
