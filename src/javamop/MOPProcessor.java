@@ -7,6 +7,7 @@ package javamop;
 
 import java.util.List;
 
+import javamop.commandline.JavaMOPOptions;
 import javamop.output.AspectJCode;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
@@ -25,13 +26,25 @@ public class MOPProcessor {
     public static boolean verbose = false;
     
     private final String name;
-    
+    private boolean translate2RV;
+    private JavaMOPOptions options;
+
     /**
      * Construct a MOPProcessor.
      * @param name The name of the processor.
      */
     public MOPProcessor(String name) {
         this.name = name;
+    }
+
+    /**
+     * MOPProcessor with extra arguments
+     *
+     */
+    public MOPProcessor(JavaMOPOptions options) {
+        this.name = options.aspectname;
+        this.translate2RV = options.translate2RV;
+        this.options = options;
     }
     
     /**
@@ -77,7 +90,7 @@ public class MOPProcessor {
             }
         }
         for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-            if(JavaMOPMain.translate2RV) {
+            if(translate2RV) {
                 rvresult += mopSpec.toRVString();
             }
         }
@@ -106,8 +119,8 @@ public class MOPProcessor {
         
         // Generate output code
         
-        if (JavaMOPMain.translate2RV) {
-            result = (new AspectJCode(name, mopSpecFile)).toRVString();
+        if (translate2RV) {
+            result = (new AspectJCode(name, mopSpecFile,options)).toRVString();
         }
         
         // Do indentation

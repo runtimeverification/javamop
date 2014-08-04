@@ -5,6 +5,7 @@ import java.util.List;
 
 import javamop.MOPException;
 import javamop.JavaMOPMain;
+import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -20,19 +21,23 @@ public class MOPStatManager {
     
     private final MOPVariable statClass;
     private final MOPVariable statObject;
-    
+    private boolean statistics;
+    private boolean statistics2;
+
     /**
      * Construct a statistics manager with a name over some specifications.
      * @param name The name to put on the statistics variables.
      * @param specs All the specifications to generate statistics for.
      */
-    public MOPStatManager(final String name, final List<JavaMOPSpec> specs) throws MOPException {
+    public MOPStatManager(final String name, final List<JavaMOPSpec> specs, JavaMOPOptions options) throws MOPException {
         for (JavaMOPSpec spec : specs) {
-            stats.put(spec, new MOPStatistics(name, spec));
+            stats.put(spec, new MOPStatistics(name, spec, statistics));
         }
         
         statClass = new MOPVariable(name + "_Statistics");
         statObject = new MOPVariable(name + "_StatisticsInstance");
+        this.statistics = options.statistics;
+        this.statistics2 = options.statistics2;
     }
     
     /**
@@ -51,7 +56,7 @@ public class MOPStatManager {
     public String statClass() {
         String ret = "";
         
-        if (!JavaMOPMain.statistics2)
+        if (!statistics2)
             return ret;
         
         ret = "class " + statClass + " extends Thread implements javamoprt.MOPObject {\n";
@@ -82,7 +87,7 @@ public class MOPStatManager {
     public String incEvent(final JavaMOPSpec spec, final EventDefinition event){
         String ret = "";
         
-        if (!JavaMOPMain.statistics2)
+        if (!statistics2)
             return ret;
         
         ret += statClass + ".numTotalEvents++;\n";
@@ -98,7 +103,7 @@ public class MOPStatManager {
     public String incMonitor(final JavaMOPSpec spec){
         String ret = "";
         
-        if (!JavaMOPMain.statistics2)
+        if (!statistics2)
             return ret;
         
         ret += statClass + ".numTotalMonitors++;\n";
@@ -113,7 +118,7 @@ public class MOPStatManager {
     public String fieldDecl2() {
         String ret = "";
         
-        if (!JavaMOPMain.statistics2)
+        if (!statistics2)
             return ret;
         
         ret += "static " + statClass + " " + statObject + ";\n";
@@ -128,7 +133,7 @@ public class MOPStatManager {
     public String constructor() {
         String ret = "";
         
-        if (!JavaMOPMain.statistics2)
+        if (!statistics2)
             return ret;
         
         ret += statObject + " = new " + statClass + "();\n";
@@ -144,7 +149,7 @@ public class MOPStatManager {
     public String fieldDecl() {
         String ret = "";
         
-        if (!JavaMOPMain.statistics)
+        if (!statistics)
             return ret;
         
         ret += "// Declarations for Statistics \n";
@@ -163,7 +168,7 @@ public class MOPStatManager {
     public String advice() {
         String ret = "";
         
-        if (!JavaMOPMain.statistics)
+        if (!statistics)
             return ret;
         
         ret += "\n";

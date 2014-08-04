@@ -9,7 +9,6 @@ package javamop;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import java.nio.file.Files;
@@ -17,7 +16,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.beust.jcommander.JCommander;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
+import javamop.commandline.JavaMOPOptions;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.Tool;
 import javamop.util.AJFileCombiner;
@@ -26,21 +27,23 @@ import javamop.util.AJFileCombiner;
  * Entry point class for the JavaMOP program.
  */
 public final class JavaMOPMain {
-    
+
+    public static JavaMOPOptions options;
+
     /**
      * Private to prevent instantiation.
      */
     private JavaMOPMain() {
-        
+
     }
-    
-    private static File outputDir = null;
-    public static boolean debug = false;
-    public static boolean noopt1 = false;
-    public static boolean toJavaLib = false;
-    public static boolean statistics = false;
-    public static boolean statistics2 = false;
-    public static String aspectname = null;
+
+//    private static File outputDir = null;
+//    public static boolean debug = false;
+//    public static boolean noopt1 = false;
+//    public static boolean toJavaLib = false;
+//    public static boolean statistics = false;
+//    public static boolean statistics2 = false;
+//    public static String aspectname = null;
     public static boolean specifiedAJName = false;
     public static boolean isJarFile = false;
     public static String jarFilePath = null;
@@ -50,35 +53,35 @@ public final class JavaMOPMain {
     public static final int EVENTS = 2;
     public static int logLevel = NONE;
     
-    public static boolean dacapo = false;
-    public static boolean dacapo2 = false;
-    public static boolean silent = false;
+//    public static boolean dacapo = false;
+//    public static boolean dacapo2 = false;
+//    public static boolean silent = false;
     public static boolean empty_advicebody = false;
-    public static boolean translate2RV = true;
-    
-    public static boolean merge = false;
+//    public static boolean translate2RV = true;
+//
+//    public static boolean merge = false;
     public static boolean inline = false;
-    
-    public static boolean scalable = false;
-    public static boolean keepRVFiles = false;
-    
-    public static boolean generateAgent = false;
-    public static File baseAspect = null;
-    
+//
+//    public static boolean scalable = false;
+//    public static boolean keepRVFiles = false;
+//
+//    public static boolean generateAgent = false;
+//    public static File baseAspect = null;
+
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
     
     /**
-     * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all 
-     * the parameter files are in the same directory, use that directory. Otherwise, use the 
+     * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all
+     * the parameter files are in the same directory, use that directory. Otherwise, use the
      * directory that JavaMOP is executing in.
      * @param specFiles The specifications the program is being run on.
      * @return The directory to place output files in.
      * @throws MOPException If something goes wrong finding the file locations.
      */
     static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
-        if(JavaMOPMain.outputDir != null){
-            return outputDir;
+        if(options.outputDir != null){
+            return options.outputDir;
         }
         
         boolean sameDir = true;
@@ -110,7 +113,7 @@ public final class JavaMOPMain {
      * argument should be an existing java file name. The location argument should contain the 
      * original file name, But it may have a different directory.
      * 
-     * @param path
+     * @param file
      *            an absolute path of a specification file
      * @param location
      *            an absolute path for result file
@@ -120,10 +123,10 @@ public final class JavaMOPMain {
         String specStr = SpecExtractor.process(file);
         MOPSpecFile spec =  SpecExtractor.parse(specStr);
         
-        if (JavaMOPMain.aspectname == null) {
-            JavaMOPMain.aspectname = Tool.getFileName(file.getAbsolutePath());
+        if (options.aspectname == null) {
+            options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
-        MOPProcessor processor = new MOPProcessor(JavaMOPMain.aspectname);
+        MOPProcessor processor = new MOPProcessor(options);
         
         String aspect = processor.process(spec);
         writeFile(aspect, location, "MonitorAspect.aj");
@@ -134,7 +137,7 @@ public final class JavaMOPMain {
      * existing specification file name. The location argument should contain the original file 
      * name, But it may have a different directory.
      * 
-     * @param path
+     * @param file
      *            an absolute path of a specification file
      * @param location
      *            an absolute path for result file
@@ -144,19 +147,19 @@ public final class JavaMOPMain {
         String specStr = SpecExtractor.process(file);
         MOPSpecFile spec =  SpecExtractor.parse(specStr);
         
-        if (JavaMOPMain.aspectname == null) {
-            JavaMOPMain.aspectname = Tool.getFileName(file.getAbsolutePath());
+        if (options.aspectname == null) {
+            options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
         
-        MOPProcessor processor = new MOPProcessor(JavaMOPMain.aspectname);
+        MOPProcessor processor = new MOPProcessor(options.aspectname);
         
         String output = processor.process(spec);
         
-        if (translate2RV) {
+        if (options.translate2RV) {
             writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
         }
         
-        if (toJavaLib) {
+        if (options.toJavaLib) {
             writeFile(output, location, "JavaLibMonitor.java");
         } else {
             writeFile(output, location, "MonitorAspect.aj");
@@ -171,39 +174,37 @@ public final class JavaMOPMain {
      */
     public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
         String aspectName;
-        
-        if(outputDir == null){
-            outputDir = getTargetDir(specFiles);
+
+        if(options.outputDir == null){
+            options.outputDir = getTargetDir(specFiles);
         }
-        
-        if(JavaMOPMain.aspectname != null) {
-            aspectName = JavaMOPMain.aspectname;
+
+        if(options.aspectname != null) {
+            aspectName = options.aspectname;
         } else {
             if(specFiles.size() == 1) {
                 aspectName = Tool.getFileName(specFiles.get(0).getAbsolutePath());
             } else {
                 int suffixNumber = 0;
                 // generate auto name like 'MultiMonitorApsect.aj'
-                
                 File aspectFile;
                 do{
                     suffixNumber++;
-                    aspectFile = new File(outputDir.getAbsolutePath() + File.separator + 
+                    aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
                         "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
                 } while(aspectFile.exists());
-                
                 aspectName = "MultiSpec_" + suffixNumber;
             }
-            JavaMOPMain.aspectname = aspectName;
+            options.aspectname = aspectName;
         }
-        MOPProcessor processor = new MOPProcessor(aspectName);
+        MOPProcessor processor = new MOPProcessor(options);
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
             //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            if (translate2RV) {
+            if (options.translate2RV) {
                 writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
             }
             specs.add(spec);
@@ -224,7 +225,7 @@ public final class JavaMOPMain {
             throw new MOPException("Nothing to write as a java file");
         if (!Tool.isJavaFile(location))
             throw new MOPException(location + "should be a Java file!");
-        
+
         FileWriter f = null;
         try {
             f = new FileWriter(location);
@@ -241,7 +242,7 @@ public final class JavaMOPMain {
             }
         }
     }
-    
+
     /**
      * Write AspectJ code to a file.
      * @param aspectContent The AspectJ code to write.
@@ -253,7 +254,7 @@ public final class JavaMOPMain {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
-        final String path = outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj";
+        final String path = options.outputDir.getAbsolutePath() + File.separator + aspectName + "MonitorAspect.aj";
         FileWriter f = null;
         try {
             f = new FileWriter(path);
@@ -263,7 +264,6 @@ public final class JavaMOPMain {
         } finally {
             if(f != null) {
                 try {
-                    System.out.println("Closing " + path);
                     f.close();
                 } catch(IOException ioe) {
                     ioe.printStackTrace();
@@ -280,7 +280,7 @@ public final class JavaMOPMain {
      * @param suffix The new file extension to use for the file.
      * @throws MOPException If something goes wrong in generating the file.
      */
-    protected static void writeFile(String content, String location, String suffix) 
+    protected static void writeFile(String content, String location, String suffix)
             throws MOPException {
         if (content == null || content.length() == 0)
             return;
@@ -348,18 +348,18 @@ public final class JavaMOPMain {
     public static void process(String[] files, String path) throws MOPException {
         ArrayList<File> specFiles = collectFiles(files, path);
         
-        if(JavaMOPMain.aspectname != null && files.length > 1){
-            JavaMOPMain.merge = true;
+        if(options.aspectname != null && files.length > 1){
+            options.merge = true;
         }
         
-        if (JavaMOPMain.merge) {
+        if (options.merge) {
             System.out.println("-Processing " + specFiles.size()
             + " specification(s)");
             processMultipleFiles(specFiles);
-            String javaFile = outputDir.getAbsolutePath() + File.separator
-            + JavaMOPMain.aspectname + "RuntimeMonitor.java";
-            String ajFile = outputDir.getAbsolutePath() + File.separator
-            + JavaMOPMain.aspectname + "MonitorAspect.aj";
+            String javaFile = options.outputDir.getAbsolutePath() + File.separator
+            + options.aspectname + "RuntimeMonitor.java";
+            String ajFile = options.outputDir.getAbsolutePath() + File.separator
+            + options.aspectname + "MonitorAspect.aj";
             String combinerArgs[] = new String[2];
             combinerArgs[0] = javaFile;
             combinerArgs[1] = ajFile;
@@ -368,9 +368,9 @@ public final class JavaMOPMain {
             
         } else {
             for (File file : specFiles) {
-                boolean needResetAspectName = JavaMOPMain.aspectname == null;
-                String location = outputDir == null ? file.getAbsolutePath() : 
-                    outputDir.getAbsolutePath() + File.separator + file.getName();
+                boolean needResetAspectName = options.aspectname == null;
+                String location = options.outputDir == null ? file.getAbsolutePath() :
+                    options.outputDir.getAbsolutePath() + File.separator + file.getName();
                 System.out.println("-Processing " + file.getPath());
                 if (Tool.isSpecFile(file.getName())) {
                     processSpecFile(file, location);
@@ -378,13 +378,13 @@ public final class JavaMOPMain {
                     processJavaFile(file, location);
                 }
                 
-                File combineDir = outputDir == null ? file.getAbsoluteFile()
-                .getParentFile() : outputDir;
+                File combineDir = options.outputDir == null ? file.getAbsoluteFile()
+                .getParentFile() : options.outputDir;
                 
                 String javaFile = combineDir.getAbsolutePath() + File.separator
-                + JavaMOPMain.aspectname + "RuntimeMonitor.java";
+                + options.aspectname + "RuntimeMonitor.java";
                 String ajFile = combineDir.getAbsolutePath() + File.separator
-                + JavaMOPMain.aspectname + "MonitorAspect.aj";
+                + options.aspectname + "MonitorAspect.aj";
                 String combinerArgs[] = new String[2];
                 combinerArgs[0] = javaFile;
                 combinerArgs[1] = ajFile;
@@ -392,7 +392,7 @@ public final class JavaMOPMain {
                 listFilePairs.add(combinerArgs);
                 
                 if (needResetAspectName) {
-                    JavaMOPMain.aspectname = null;
+                    options.aspectname = null;
                 }
             }
         }
@@ -400,58 +400,58 @@ public final class JavaMOPMain {
     
     /**
      * Handle one or multiple input files and produce .rvm files.
-     * @param arg A semicolon-separated list of MOP files.
+     * @param files a list of file names.
      */
-    public static void process(String arg) throws MOPException {
-        if(outputDir != null && !outputDir.exists())
-            throw new MOPException("The output directory, " + outputDir.getPath() + 
+    public static void process(List<String> files) throws MOPException {
+        if(options.outputDir != null && !options.outputDir.exists())
+            throw new MOPException("The output directory, " + options.outputDir.getPath() +
                 " does not exist.");
         
-        process(arg.split(";"), "");
+        process(files.toArray(new String[0]), "");
     }
     
     // PM
     /**
      * Print command-line options available for controlling JavaMOP, and through it RV-Monitor.
      */
-    public static void print_help() {
-        System.out.println("Usage: java [-cp javmaop_classpath] javamop.JavaMOPMain [-options] " +
-            "files");
-        System.out.println("");
-        System.out.println("where options include:");
-        System.out.println(" Options enabled by default are prefixed with \'+\'");
-        System.out.println("    -h -help\t\t\t  print this help message");
-        System.out.println("    -v | -verbose\t\t  enable verbose output");
-        System.out.println("    -debug\t\t\t  enable verbose error message");
-        System.out.println();
-        
-        System.out.println("    -local\t\t\t+ use local logic engine");
-        System.out.println("    -remote\t\t\t  use default remote logic engine");
-        System.out.println("\t\t\t\t  " + Configuration.getServerAddr());
-        System.out.println("\t\t\t\t  (You can change the default address");
-        System.out.println("\t\t\t\t   in javamop/config/remote_server_addr.properties)");
-        System.out.println("    -remote:<server address>\t  use remote logic engine");
-        System.out.println();
-        
-        System.out.println("    -d <output path>\t\t  select directory to store output files");
-        System.out.println("    -n | -aspectname <aspect name>\t  use the given aspect name " +
-            "instead of source code name");
-        System.out.println();
-        
-        System.out.println("    -showevents\t\t\t  show every event/handler occurrence");
-        System.out.println("    -showhandlers\t\t\t  show every handler occurrence");
-        System.out.println();
-        
-        System.out.println("    -s | -statistics\t\t  generate monitor with statistics");
-        System.out.println("    -noopt1\t\t\t  don't use the enable set optimization");
-        System.out.println("    -javalib\t\t\t  generate a java library rather than an " +
-            "AspectJ file");
-        System.out.println();
-        
-        System.out.println("    -aspect:\"<command line>\"\t  compile the result right after " +
-            "it is generated");
-        System.out.println();
-    }
+//    public static void print_help() {
+//        System.out.println("Usage: java [-cp javmaop_classpath] javamop.JavaMOPMain [-options] " +
+//            "files");
+//        System.out.println("");
+//        System.out.println("where options include:");
+//        System.out.println(" Options enabled by default are prefixed with \'+\'");
+//        System.out.println("    -h -help\t\t\t  print this help message");
+//        System.out.println("    -v | -verbose\t\t  enable verbose output");
+//        System.out.println("    -debug\t\t\t  enable verbose error message");
+//        System.out.println();
+//
+//        System.out.println("    -local\t\t\t+ use local logic engine");
+//        System.out.println("    -remote\t\t\t  use default remote logic engine");
+//        System.out.println("\t\t\t\t  " + Configuration.getServerAddr());
+//        System.out.println("\t\t\t\t  (You can change the default address");
+//        System.out.println("\t\t\t\t   in javamop/config/remote_server_addr.properties)");
+//        System.out.println("    -remote:<server address>\t  use remote logic engine");
+//        System.out.println();
+//
+//        System.out.println("    -d <output path>\t\t  select directory to store output files");
+//        System.out.println("    -n | -aspectname <aspect name>\t  use the given aspect name " +
+//            "instead of source code name");
+//        System.out.println();
+//
+//        System.out.println("    -showevents\t\t\t  show every event/handler occurrence");
+//        System.out.println("    -showhandlers\t\t\t  show every handler occurrence");
+//        System.out.println();
+//
+//        System.out.println("    -s | -statistics\t\t  generate monitor with statistics");
+//        System.out.println("    -noopt1\t\t\t  don't use the enable set optimization");
+//        System.out.println("    -javalib\t\t\t  generate a java library rather than an " +
+//            "AspectJ file");
+//        System.out.println();
+//
+//        System.out.println("    -aspect:\"<command line>\"\t  compile the result right after " +
+//            "it is generated");
+//        System.out.println();
+//    }
     
     /**
      * Initialize JavaMOP with the given command-line parameters, process the given MOP files
@@ -459,6 +459,17 @@ public final class JavaMOPMain {
      * @param args Configuration options and input files for JavaMOP.
      */
     public static void main(String[] args) {
+        options = new JavaMOPOptions();
+        JCommander jc = new JCommander(options,args);
+        jc.setProgramName("javamop");
+
+        if (args.length == 0 || options.files.size() == 0){
+            jc.usage();
+            System.exit(1);
+        }
+
+        handleOptions(options);
+
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
         if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
@@ -469,102 +480,103 @@ public final class JavaMOPMain {
                 "!/javamop/JavaMOPMain.class".length());
             jarFilePath = Tool.polishPath(jarFilePath);
         }
+
+
+//        int i = 0;
+//        String files = "";
         
-        int i = 0;
-        String files = "";
+//        while (i < args.length) {
+//            if (args[i].compareTo("-h") == 0 || args[i].compareTo("-help") == 0) {
+//                print_help();
+//                return;
+//            }
+//
+//            if (args[i].compareTo("-d") == 0) {
+//                i++;
+//                outputDir = new File(args[i]);
+//            } else if (args[i].compareTo("-local") == 0) {
+//            } else if (args[i].compareTo("-remote") == 0) {
+//            } else if (args[i].startsWith("-remote:")) {
+//            } else if (args[i].compareTo("-v") == 0 || args[i].compareTo("-verbose") == 0) {
+//                MOPProcessor.verbose = true;
+//            } else if (args[i].compareTo("-javalib") == 0) {
+//                toJavaLib = true;
+//            } else if (args[i].compareTo("-debug") == 0) {
+//                JavaMOPMain.debug = true;
+//            } else if (args[i].compareTo("-noopt1") == 0) {
+//                JavaMOPMain.noopt1 = true;
+//            } else if (args[i].compareTo("-s") == 0 || args[i].compareTo("-statistics") == 0) {
+//                JavaMOPMain.statistics = true;
+//            } else if (args[i].compareTo("-s2") == 0 || args[i].compareTo("-statistics2") == 0) {
+//                JavaMOPMain.statistics2 = true;
+//            } else if (args[i].compareTo("-n") == 0 || args[i].compareTo("-aspectname") == 0) {
+//                i++;
+//                JavaMOPMain.aspectname = args[i];
+//                JavaMOPMain.specifiedAJName = true;
+//            } else if (args[i].compareTo("-showhandlers") == 0) {
+//                if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
+//                    JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
+//            } else if (args[i].compareTo("-showevents") == 0) {
+//                if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
+//                    JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
+//            } else if (args[i].compareTo("-dacapo") == 0) {
+//                JavaMOPMain.dacapo = true;
+//            } else if (args[i].compareTo("-dacapo2") == 0) {
+//                JavaMOPMain.dacapo2 = true;
+//            } else if (args[i].compareTo("-silent") == 0) {
+//                JavaMOPMain.silent = true;
+//            } else if (args[i].compareTo("-merge") == 0) {
+//                JavaMOPMain.merge = true;
+//            } else if (args[i].compareTo("-inline") == 0) {
+//                JavaMOPMain.inline = true;
+//            } else if (args[i].compareTo("-noadvicebody") == 0) {
+//                JavaMOPMain.empty_advicebody = true;
+//            } else if (args[i].compareTo("-scalable") == 0) {
+//                JavaMOPMain.scalable = true;
+//            } else if (args[i].compareTo("-translate2RV") == 0) {
+//                JavaMOPMain.translate2RV = true;
+//            } else if (args[i].compareTo("-keepRVFiles") == 0) {
+//                JavaMOPMain.keepRVFiles = true;
+//            } else if("--agent".equals(args[i])) {
+//                JavaMOPMain.merge = true;
+//                JavaMOPMain.generateAgent = true;
+//                JavaMOPMain.keepRVFiles = true;
+//            } else if("--baseaspect".equals(args[i])) {
+//                i++;
+//                JavaMOPMain.baseAspect = new File(args[i]);
+//            } else {
+//                if (files.length() != 0)
+//                    files += ";";
+//                files += args[i];
+//            }
+//            ++i;
+//        }
         
-        while (i < args.length) {
-            if (args[i].compareTo("-h") == 0 || args[i].compareTo("-help") == 0) {
-                print_help();
-                return;
-            }
-            
-            if (args[i].compareTo("-d") == 0) {
-                i++;
-                outputDir = new File(args[i]);
-            } else if (args[i].compareTo("-local") == 0) {
-            } else if (args[i].compareTo("-remote") == 0) {
-            } else if (args[i].startsWith("-remote:")) {
-            } else if (args[i].compareTo("-v") == 0 || args[i].compareTo("-verbose") == 0) {
-                MOPProcessor.verbose = true;
-            } else if (args[i].compareTo("-javalib") == 0) {
-                toJavaLib = true;
-            } else if (args[i].compareTo("-debug") == 0) {
-                JavaMOPMain.debug = true;
-            } else if (args[i].compareTo("-noopt1") == 0) {
-                JavaMOPMain.noopt1 = true;
-            } else if (args[i].compareTo("-s") == 0 || args[i].compareTo("-statistics") == 0) {
-                JavaMOPMain.statistics = true;
-            } else if (args[i].compareTo("-s2") == 0 || args[i].compareTo("-statistics2") == 0) {
-                JavaMOPMain.statistics2 = true;
-            } else if (args[i].compareTo("-n") == 0 || args[i].compareTo("-aspectname") == 0) {
-                i++;
-                JavaMOPMain.aspectname = args[i];
-                JavaMOPMain.specifiedAJName = true;
-            } else if (args[i].compareTo("-showhandlers") == 0) {
-                if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
-                    JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
-            } else if (args[i].compareTo("-showevents") == 0) {
-                if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
-                    JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
-            } else if (args[i].compareTo("-dacapo") == 0) {
-                JavaMOPMain.dacapo = true;
-            } else if (args[i].compareTo("-dacapo2") == 0) {
-                JavaMOPMain.dacapo2 = true;
-            } else if (args[i].compareTo("-silent") == 0) {
-                JavaMOPMain.silent = true;
-            } else if (args[i].compareTo("-merge") == 0) {
-                JavaMOPMain.merge = true;
-            } else if (args[i].compareTo("-inline") == 0) {
-                JavaMOPMain.inline = true;
-            } else if (args[i].compareTo("-noadvicebody") == 0) {
-                JavaMOPMain.empty_advicebody = true;
-            } else if (args[i].compareTo("-scalable") == 0) {
-                JavaMOPMain.scalable = true;
-            } else if (args[i].compareTo("-translate2RV") == 0) {
-                JavaMOPMain.translate2RV = true;
-            } else if (args[i].compareTo("-keepRVFiles") == 0) {
-                JavaMOPMain.keepRVFiles = true;
-            } else if("--agent".equals(args[i])) {
-                JavaMOPMain.merge = true;
-                JavaMOPMain.generateAgent = true;
-                JavaMOPMain.keepRVFiles = true;
-            } else if("--baseaspect".equals(args[i])) {
-                i++;
-                JavaMOPMain.baseAspect = new File(args[i]);
-            } else {
-                if (files.length() != 0)
-                    files += ";";
-                files += args[i];
-            }
-            ++i;
-        }
+//        if (files.length() == 0) {
+//            print_help();
+//            return;
+//        }
         
-        if (files.length() == 0) {
-            print_help();
-            return;
-        }
-        
-        boolean tempOutput = JavaMOPMain.generateAgent && JavaMOPMain.outputDir == null;
-        
+        boolean tempOutput = options.generateAgent && options.outputDir == null;
+
         if(tempOutput) {
             tempOutput = true;
             try {
-                outputDir = Files.createTempDirectory(new File(".").toPath(), "output").toFile();
-                outputDir.deleteOnExit();
+                options.outputDir = Files.createTempDirectory(new File(".").toPath(), "output").toFile();
+                options.outputDir.deleteOnExit();
             } catch(IOException ioe) {
                 ioe.printStackTrace();
-                generateAgent = false;
+                options.generateAgent = false;
             }
         }
-        
-        
+
+
         // Generate .rvm files and .aj files
         try {
-            process(files); 
+            process(options.files);
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            if (JavaMOPMain.debug)
+            if (options.debug)
                 e.printStackTrace();
         }
         
@@ -583,61 +595,95 @@ public final class JavaMOPMain {
         }
         if(tempOutput) {
             rvArgs.add("-d");
-            rvArgs.add(JavaMOPMain.outputDir.getAbsolutePath());
+            rvArgs.add(options.outputDir.getAbsolutePath());
         }
         
         Main.main(rvArgs.toArray(new String[0]));
-        
-        if(generateAgent) {
+
+        if(options.generateAgent) {
             try {
-                GenerateAgent.generate(JavaMOPMain.outputDir, JavaMOPMain.aspectname, 
-                    JavaMOPMain.baseAspect);
+                GenerateAgent.generate(options.outputDir, options.aspectname,
+                    options.baseAspect);
             } catch(IOException ioe) {
                 ioe.printStackTrace();
             }
         }
-        
+
         // Call AJFileCombiner here to combine these two
-        // TODO
         for (String[] filePair : listFilePairs) {
             AJFileCombiner.main(filePair);
             File javaFile = new File(filePair[0]);
             try {
-                if (!JavaMOPMain.keepRVFiles) {
+                if (!options.keepRVFiles) {
                     boolean deleted = javaFile.delete();
                     if (!deleted) {
                         System.err.println("Failed to delete java file: "
                         + filePair[0]);
                     }
                 }
-            } catch (Exception e) {
-                
+            } catch (SecurityException e) {
+                e.printStackTrace();
             }
         }
         
         for (String rvmFilePath : listRVMFiles) {
             File rvmFile = new File(rvmFilePath);
-            try {               
-                if (!JavaMOPMain.keepRVFiles) {
+            try {
+                if (!options.keepRVFiles) {
                     boolean deleted = rvmFile.delete();
                     if (!deleted) {
-                        System.err.println("Failed to delete java file: "
-                        + rvmFilePath);
+                        System.err.println("Failed to delete java file: " + rvmFilePath);
                     }
                 }
                 
-            } catch (Exception e) {
-                
+            } catch (SecurityException e) {
+                  e.printStackTrace();
             }
         }
         
         if(tempOutput) {
             try {
-                GenerateAgent.deleteDirectory(outputDir.toPath());
+                GenerateAgent.deleteDirectory(options.outputDir.toPath());
             } catch(IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");
             }
+        }
+    }
+
+    /**
+     * This method sets some field and other (dependent) options, based on the
+     * flags that the user called JavaMOP with.
+     *
+     * @param options  The object holding the options that the user called
+     *                 JavaMOP with
+     */
+    private static void handleOptions(JavaMOPOptions options) {
+        if (options.verbose) {
+            MOPProcessor.verbose = true;
+        }
+
+        if (options.aspectname != null) {
+            JavaMOPMain.specifiedAJName = true;
+        }
+
+        if (options.showhandlers) {
+            if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
+                JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
+        }
+
+        if (options.showevents) {
+            if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
+                JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
+        }
+
+        if (options.generateAgent) {
+            options.merge = true;
+            options.keepRVFiles = true;
+        }
+
+        if (options.noadvicebody){
+            JavaMOPMain.empty_advicebody = true;
         }
     }
 }

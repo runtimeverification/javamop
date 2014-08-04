@@ -1,6 +1,7 @@
 package javamop.output;
 
 import javamop.JavaMOPMain;
+import javamop.commandline.JavaMOPOptions;
 
 /**
  * An aspect that is included with the generated code to keep track of the depth of the call stack.
@@ -8,13 +9,15 @@ import javamop.JavaMOPMain;
  */
 public class SystemAspect {
     private final String name;
+    private final boolean dacapo;
     
     /**
      * Construct a SystemAspect with the given name.
      * @param name The name of the SystemAspect.
      */
-    public SystemAspect(String name) {
+    public SystemAspect(String name, boolean dacapo) {
         this.name = name + "SystemAspect";
+        this.dacapo = dacapo;
     }
     
     /**
@@ -49,7 +52,7 @@ public class SystemAspect {
         
         
         ret += "pointcut sysbegin() : execution(* *(..)) && ";
-        if(JavaMOPMain.dacapo){
+        if(dacapo){
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
                 "&& BaseAspect.notwithin();\n";
         } else {
@@ -62,7 +65,7 @@ public class SystemAspect {
         
         ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
         ret += "pointcut sysend() : execution(* *(..)) && ";
-        if(JavaMOPMain.dacapo){
+        if(dacapo){
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
                 "&& BaseAspect.notwithin();\n";
         } else {
