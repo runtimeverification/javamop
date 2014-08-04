@@ -435,15 +435,13 @@ public final class JavaMOPMain {
         SpecFilter filter = null;
         if (options.usedb) {
             try {
-                filter = new SpecFilter(true);
+                filter = new SpecFilter();
                 options.files = new ArrayList<String>();
                 options.files.add(filter.filter());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
 
         // Generate .rvm files and .aj files
         try {

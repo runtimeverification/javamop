@@ -21,6 +21,7 @@ import java.util.Properties;
 public class SpecFilter {
 
     public static final String SPEC_DIRECTORY = "annotated-java-api";
+    public static final String SPEC_DIRECTORY_COPY = "annotated-java-api-copy";
     public static final String SEVERITY_PREFIX = " * @severity ";
     private final String url;
     private final String vcs;
@@ -37,14 +38,13 @@ public class SpecFilter {
         filterConfig = Configuration.getServerSetting("FilterConf");
         omitFile = Configuration.getServerSetting("OmitFile");
         configPath = Tool.getConfigPath()+File.separator;
-        specDirPath = SPEC_DIRECTORY + File.separator + "properties" + File.separator + "java";
+        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "properties" + File.separator + "java";
         specsToOmit = getFilesToOmit();
+        String cleanupOption = Configuration.getServerSetting("PropertyDBCleanup");
+        if (cleanupOption.equals("true")){
+            this.cleanup = true;
+        }
         downloadAllSpecs();
-    }
-
-    public SpecFilter(boolean cleanup) {
-        this();
-        this.cleanup = cleanup;
     }
 
     private List<String> getFilesToOmit() {
@@ -63,6 +63,9 @@ public class SpecFilter {
         //1. if a spec directory exists, but it has not been listed in the filter config,
         //   delete the entire contents of the directory
         File dir = new File(specDirPath);
+        if (!dir.exists()){
+            System.err.println("The directory does not exist: " + specDirPath);
+        }
         for (File file : dir.listFiles()){
             if (!filters.stringPropertyNames().contains(file.getName())){
                 try {
@@ -106,6 +109,7 @@ public class SpecFilter {
     public void cleanup() {
         try {
             GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
         } catch (IOException e) {
             System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
             e.printStackTrace();
@@ -122,27 +126,36 @@ public class SpecFilter {
         for (File specFile : specFiles){
             if ((FileUtils.readFileToString(specFile, Charset.defaultCharset()).contains(SEVERITY_PREFIX + level))
                     || specsToOmit.contains(specFile.getName()) ) {
-                System.out.println("ToDelete: "+specFile.toPath());
                 Files.delete(specFile.toPath());
             }
         }
     }
 
     private void downloadAllSpecs() {
-        System.err.println("Downloading specs from "+ url + " ...");
         // use vcs and url to get the properties
-        Path path = FileSystems.getDefault().getPath(SPEC_DIRECTORY);
+        Path specPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY);
+        Path specCopyPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY);
 
-        if(Files.exists(path)){
+        if (Files.notExists(specPath)) {
+            System.err.println("Downloading specs from " + url + " ...");
+            runCommand(vcs, "clone", url, SPEC_DIRECTORY);
+            System.err.println("Done downloading specs.");
+        }
+        //copy make a copy of the specDirectory
+        if (Files.exists(specCopyPath)) {
             try {
-                GenerateAgent.deleteDirectory(path);
+                GenerateAgent.deleteDirectory(specCopyPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        runCommand(vcs, "clone", url, SPEC_DIRECTORY);
-        System.err.println("Done downloading specs.");
+        try {
+            System.err.println("Copying Specs ...");
+            FileUtils.copyDirectory(new File(SPEC_DIRECTORY), new File(SPEC_DIRECTORY_COPY), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean runCommand(String... args) {
