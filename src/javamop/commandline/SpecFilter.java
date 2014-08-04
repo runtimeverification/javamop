@@ -52,7 +52,7 @@ public class SpecFilter {
         return omitFiles;
     }
 
-    public String filter() {
+    public String filter(boolean cleanup) {
         Properties filters = Configuration.getSettingFile(filterConfig);
         //1. if a spec directory exists, but it has not been listed in the filter config,
         //   delete the entire contents of the directory
@@ -94,7 +94,20 @@ public class SpecFilter {
             }
         }
 
+        if (cleanup){
+            cleanup();
+        }
+
         return specDirPath;
+    }
+
+    private void cleanup() {
+        try {
+            Files.delete(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+        } catch (IOException e) {
+            System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
+            e.printStackTrace();
+        }
     }
 
     private void filterPackage(String packageName, String level) throws Exception {
