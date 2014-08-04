@@ -77,6 +77,12 @@ public class SpecFilter {
                 levelsToDelete.add("suggestion");
             } else if (highestLevel.equals("warning")){
                 levelsToDelete.add("suggestion");
+            } else {
+                // This means we want all severity levels for the selected packages.
+                // However we still need a dummy string so that the specs in the omitFile
+                // get a chance to be excluded in this case. Any string but "error",
+                // "warning" or "suggestion" is acceptable here.
+                levelsToDelete.add("none");
             }
 
             for (String level : levelsToDelete){
