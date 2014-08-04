@@ -104,13 +104,11 @@ public final class GenerateAgent {
         String generatedAJFileName = aspectname + "MonitorAspect.aj";
         if (JavaMOPMain.options.usedb){
             //sed -i 's/javamoprt/com\.runtimeverification\.rvmonitor\.java\.rt/g' $GENERATED_AJ
-//            File generatedAJ = new File(outputDir.getName()+ File.separator + generatedAJFileName);
-//            String lines = FileUtils.readFileToString(generatedAJ, Charset.defaultCharset());
-//            lines = lines.replaceAll("javamoprt","com.runtimeverification.rvmonitor.java.rt");
-//            lines = lines.replaceAll("MOPLogging","RVMLogging");
-//            sed -i 's/adviceexecution()/adviceexecution() \&\& BaseAspect\.notwithin()/g' $GENERATED_AJ
-//            lines = lines.replaceAll("adviceexecution()","adviceexecution() && BaseAspect.notwithin");
-//            FileUtils.write(generatedAJ,lines);
+            File generatedAJ = new File(outputDir.getName()+ File.separator + generatedAJFileName);
+            String lines = FileUtils.readFileToString(generatedAJ, Charset.defaultCharset());
+            //sed -i 's/adviceexecution()/adviceexecution() \&\& BaseAspect\.notwithin()/g' $GENERATED_AJ
+            lines = lines.replaceAll("adviceexecution()","adviceexecution() && BaseAspect.notwithin");
+            FileUtils.write(generatedAJ,lines);
         }
 
         final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
