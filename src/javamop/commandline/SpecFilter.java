@@ -120,7 +120,7 @@ public class SpecFilter {
         }
 
         runCommand(vcs, "clone", url, SPEC_DIRECTORY);
-        System.err.println(" Done downloading specs.");
+        System.err.println("Done downloading specs.");
     }
 
     private boolean runCommand(String... args) {
