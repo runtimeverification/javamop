@@ -101,16 +101,6 @@ public final class GenerateAgent {
         }
 
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
-        String generatedAJFileName = aspectname + "MonitorAspect.aj";
-        if (JavaMOPMain.options.usedb){
-            //sed -i 's/javamoprt/com\.runtimeverification\.rvmonitor\.java\.rt/g' $GENERATED_AJ
-            File generatedAJ = new File(outputDir.getName()+ File.separator + generatedAJFileName);
-            String lines = FileUtils.readFileToString(generatedAJ, Charset.defaultCharset());
-            //sed -i 's/adviceexecution()/adviceexecution() \&\& BaseAspect\.notwithin()/g' $GENERATED_AJ
-            lines = lines.replaceAll("adviceexecution()","adviceexecution() && BaseAspect.notwithin");
-            FileUtils.write(generatedAJ,lines);
-        }
-
         final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
             "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
             baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
