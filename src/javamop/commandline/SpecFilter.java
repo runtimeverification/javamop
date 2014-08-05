@@ -54,6 +54,54 @@ public class SpecFilter {
     }
 
     /**
+     * Reads a list of .mop filenames which are to be excluded from agent generation.
+     * This allows the user to omit some files even after filtering by severity level.
+     *
+     * @return List of .mop files to be omitted from the agent building process
+     */
+    private List<String> getFilesToOmit() {
+        List<String> omitFiles = null;
+        File omitConfig = new File(configPath + File.separator + omitFile);
+        try {
+            omitFiles = FileUtils.readLines(omitConfig, Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return omitFiles;
+    }
+
+    /**
+     * This method downloads the .mop properties from the given url,
+     * using the given VSC tool.
+     */
+    private void downloadAllSpecs() {
+        // use vcs and url to get the properties
+        Path specPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY);
+        Path specCopyPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY);
+
+        if (Files.notExists(specPath)) {
+            System.err.println("Downloading specs from " + url + " ...");
+            runCommand(vcs, "clone", url, SPEC_DIRECTORY);
+            System.err.println("Done downloading specs.");
+        }
+        //copy make a copy of the specDirectory
+        if (Files.exists(specCopyPath)) {
+            try {
+                GenerateAgent.deleteDirectory(specCopyPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            System.err.println("Copying Specs ...");
+            FileUtils.copyDirectory(new File(SPEC_DIRECTORY), new File(SPEC_DIRECTORY_COPY), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Uses information from the spec_levels.properties file for filtering
      * out .mop files which are *NOT* to be used for agent generation. For
      * each package (key) listed in that file, the corresponding severity
@@ -111,37 +159,6 @@ public class SpecFilter {
     }
 
     /**
-     * Reads a list of .mop filenames which are to be excluded from agent generation.
-     * This allows the user to omit some files even after filtering by severity level.
-     *
-     * @return List of .mop files to be omitted from the agent building process
-     */
-    private List<String> getFilesToOmit() {
-        List<String> omitFiles = null;
-        File omitConfig = new File(configPath + File.separator + omitFile);
-        try {
-            omitFiles = FileUtils.readLines(omitConfig, Charset.defaultCharset());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return omitFiles;
-    }
-
-    /**
-     * removes the directories containing the .mop files after the agent
-     * has been generated.
-     */
-    public void cleanup() {
-        try {
-            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
-            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
-        } catch (IOException e) {
-            System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * For a single package, this method filters out
      *  1) all .mop files which have severity level lower than the one listed
      *     for the package in the spec_levels.properties file and
@@ -163,37 +180,6 @@ public class SpecFilter {
                     || specsToOmit.contains(specFile.getName()) ) {
                 Files.delete(specFile.toPath());
             }
-        }
-    }
-
-    /**
-     * This method downloads the .mop properties from the given url,
-     * using the given VSC tool.
-     */
-    private void downloadAllSpecs() {
-        // use vcs and url to get the properties
-        Path specPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY);
-        Path specCopyPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY);
-
-        if (Files.notExists(specPath)) {
-            System.err.println("Downloading specs from " + url + " ...");
-            runCommand(vcs, "clone", url, SPEC_DIRECTORY);
-            System.err.println("Done downloading specs.");
-        }
-        //copy make a copy of the specDirectory
-        if (Files.exists(specCopyPath)) {
-            try {
-                GenerateAgent.deleteDirectory(specCopyPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            System.err.println("Copying Specs ...");
-            FileUtils.copyDirectory(new File(SPEC_DIRECTORY), new File(SPEC_DIRECTORY_COPY), true);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -224,6 +210,20 @@ public class SpecFilter {
             success = false;
         }
         return success;
+    }
+
+    /**
+     * removes the directories containing the .mop files after the agent
+     * has been generated.
+     */
+    public void cleanup() {
+        try {
+            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
+        } catch (IOException e) {
+            System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
+            e.printStackTrace();
+        }
     }
 
     /**
