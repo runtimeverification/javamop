@@ -44,7 +44,8 @@ public class SpecFilter {
         filterConfig = Configuration.getServerSetting("FilterConf");
         omitFile = Configuration.getServerSetting("OmitFile");
         configPath = Tool.getConfigPath()+File.separator;
-        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "properties" + File.separator + "java";
+        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "properties" +
+                File.separator + "java";
         specsToOmit = getFilesToOmit();
         String cleanupOption = Configuration.getServerSetting("PropertyDBCleanup");
         if (cleanupOption.equals("true")){
@@ -88,7 +89,7 @@ public class SpecFilter {
                         "Internet connection problems?");
             }
         }
-        //copy make a copy of the specDirectory
+        //make a copy of the specDirectory
         if (Files.exists(specCopyPath)) {
             try {
                 GenerateAgent.deleteDirectory(specCopyPath);
@@ -110,6 +111,8 @@ public class SpecFilter {
      * out .mop files which are *NOT* to be used for agent generation. For
      * each package (key) listed in that file, the corresponding severity
      * level (value) is the highest severity level of spec files to be used.
+     * To omit an entire package from use, simply comment it out in the config
+     * file.
      *
      * @return The base name of the directory which contains the unfiltered
      *         .mop files
