@@ -200,8 +200,10 @@ public class SpecFilter {
         builder.command(args);
         try {
             Process proc = builder.start();
-            proc.waitFor();
-            success = true;
+            int ret = proc.waitFor();
+            if (ret == 0){
+                success = true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             success = false;
