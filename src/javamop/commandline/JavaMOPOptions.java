@@ -86,7 +86,9 @@ public class JavaMOPOptions {
     @Parameter(names = "-help", description = "Show this help message", help = true)
     private boolean help = false;
 
-    @Parameter(names = "-usedb", description = "Use the property database for building an Agent. " +
-            "Setting this option without setting the '-agent' option will result in an Exception")
+    @Parameter(names = "-usedb", description = "Use only the property database for building an Agent. " +
+            "Setting this option without setting the '-agent' option will result in an Exception. For " +
+            "a list config files used with this option, please see the " +
+            "javamop/config/remote_server_addr.properties file")
     public boolean usedb = false;
 }
