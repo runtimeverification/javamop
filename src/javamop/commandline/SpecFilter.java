@@ -26,16 +26,16 @@ import java.util.Properties;
  */
 public class SpecFilter {
 
-    public static final String SPEC_DIRECTORY = "annotated-java-api";
-    public static final String SPEC_DIRECTORY_COPY = "annotated-java-api-copy";
-    public static final String SEVERITY_PREFIX = " * @severity ";
+    private static final String SPEC_DIRECTORY = "annotated-java-api";
+    private static final String SPEC_DIRECTORY_COPY = "annotated-java-api-copy";
+    private static final String SEVERITY_PREFIX = " * @severity ";
     private final String url;
     private final String vcs;
     private final String filterConfig;
     private final String omitFile;
     private final String configPath;
     public static String specDirPath;
-    private List<String> specsToOmit;
+    private final List<String> specsToOmit;
     private boolean cleanup;
 
     public SpecFilter() {
@@ -81,8 +81,12 @@ public class SpecFilter {
 
         if (Files.notExists(specPath)) {
             System.err.println("Downloading specs from " + url + " ...");
-            runCommand(vcs, "clone", url, SPEC_DIRECTORY);
-            System.err.println("Done downloading specs.");
+            if(runCommand(vcs, "clone", url, SPEC_DIRECTORY)){
+                System.err.println("Done downloading specs.");
+            } else{
+                System.err.println("(Download Error): The specs could not be downloaded. " +
+                        "Internet connection problems?");
+            }
         }
         //copy make a copy of the specDirectory
         if (Files.exists(specCopyPath)) {
@@ -118,12 +122,15 @@ public class SpecFilter {
         if (!dir.exists()){
             System.err.println("The directory does not exist: " + specDirPath);
         }
-        for (File file : dir.listFiles()){
-            if (!filters.stringPropertyNames().contains(file.getName())){
-                try {
-                    GenerateAgent.deleteDirectory(file.toPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
+        File[] specDirs = dir.listFiles();
+        if (specDirs != null) {
+            for (File file : specDirs){
+                if (!filters.stringPropertyNames().contains(file.getName())){
+                    try {
+                        GenerateAgent.deleteDirectory(file.toPath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -175,10 +182,12 @@ public class SpecFilter {
             throw new Exception(path.toString() +" does not exist!");
         }
         File [] specFiles = packageDir.listFiles();
-        for (File specFile : specFiles){
-            if ((FileUtils.readFileToString(specFile, Charset.defaultCharset()).contains(SEVERITY_PREFIX + level))
-                    || specsToOmit.contains(specFile.getName()) ) {
-                Files.delete(specFile.toPath());
+        if (specFiles != null) {
+            for (File specFile : specFiles){
+                if ((FileUtils.readFileToString(specFile, Charset.defaultCharset()).contains(SEVERITY_PREFIX + level))
+                        || specsToOmit.contains(specFile.getName()) ) {
+                    Files.delete(specFile.toPath());
+                }
             }
         }
     }
