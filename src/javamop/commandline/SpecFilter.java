@@ -16,7 +16,13 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * This class handles the filtering of properties that are used for building a javamop agent
+ * This class handles the filtering of properties that are used for building
+ * a javamop agent from the property-db. For now, the property-db refers to
+ * the old google-code repository at https://code.google.com/p/annotated-java-api/
+ * The plan is to change this so that it pulls from this repository instead:
+ * https://github.com/runtimeverification/property-db.
+ * Please see the comments in javamop/config/remote_server_addr.properties
+ * for the various configuration options available.
  */
 public class SpecFilter {
 
@@ -47,17 +53,15 @@ public class SpecFilter {
         downloadAllSpecs();
     }
 
-    private List<String> getFilesToOmit() {
-        List<String> omitFiles = null;
-        File omitConfig = new File(configPath + File.separator + omitFile);
-        try {
-            omitFiles = FileUtils.readLines(omitConfig, Charset.defaultCharset());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return omitFiles;
-    }
-
+    /**
+     * Uses information from the spec_levels.properties file for filtering
+     * out .mop files which are *NOT* to be used for agent generation. For
+     * each package (key) listed in that file, the corresponding severity
+     * level (value) is the highest severity level of spec files to be used.
+     *
+     * @return The base name of the directory which contains the unfiltered
+     *         .mop files
+     */
     public String filter() {
         Properties filters = Configuration.getSettingFile(filterConfig);
         //1. if a spec directory exists, but it has not been listed in the filter config,
@@ -106,6 +110,27 @@ public class SpecFilter {
         return specDirPath;
     }
 
+    /**
+     * Reads a list of .mop filenames which are to be excluded from agent generation.
+     * This allows the user to omit some files even after filtering by severity level.
+     *
+     * @return List of .mop files to be omitted from the agent building process
+     */
+    private List<String> getFilesToOmit() {
+        List<String> omitFiles = null;
+        File omitConfig = new File(configPath + File.separator + omitFile);
+        try {
+            omitFiles = FileUtils.readLines(omitConfig, Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return omitFiles;
+    }
+
+    /**
+     * removes the directories containing the .mop files after the agent
+     * has been generated.
+     */
     public void cleanup() {
         try {
             GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
@@ -116,6 +141,16 @@ public class SpecFilter {
         }
     }
 
+    /**
+     * For a single package, this method filters out
+     *  1) all .mop files which have severity level lower than the one listed
+     *     for the package in the spec_levels.properties file and
+     *  2) any .mop files in this package which is also listed in the omit.txt file
+     *
+     * @param packageName The package from which .mop files are to be filtered
+     * @param level  The highest severity level of .mop files that are allowed to remain
+     * @throws Exception
+     */
     private void filterPackage(String packageName, String level) throws Exception {
         File packageDir = new File(specDirPath + File.separator + packageName);
         Path path = FileSystems.getDefault().getPath(specDirPath, packageName);
@@ -131,6 +166,10 @@ public class SpecFilter {
         }
     }
 
+    /**
+     * This method downloads the .mop properties from the given url,
+     * using the given VSC tool.
+     */
     private void downloadAllSpecs() {
         // use vcs and url to get the properties
         Path specPath = FileSystems.getDefault().getPath(SPEC_DIRECTORY);
@@ -158,6 +197,17 @@ public class SpecFilter {
         }
     }
 
+    /**
+     * This method creates a new process and executes the command represented by
+     * the <code>args</code> parameter.
+     *
+     * @param args a comma seperated list of strings which represent
+     *             the command to be executed.
+     * @return a boolean value indicating whether the command was successfully
+     *         run or not. Although process.waitfor() will return a non-zero
+     *         integer value on failure, this method  "overrides" that and
+     *         returns a boolean in order to make checks in client code simpler.
+     */
     private boolean runCommand(String... args) {
         boolean success = false;
         ProcessBuilder builder  = new ProcessBuilder();
@@ -176,6 +226,10 @@ public class SpecFilter {
         return success;
     }
 
+    /**
+     * whether or not the directories containing the .mop files should
+     * be deleted after agent generation.
+     */
     public boolean isCleanup() {
         return cleanup;
     }
