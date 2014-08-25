@@ -1,5 +1,7 @@
 package javamop;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +13,7 @@ import java.net.URLClassLoader;
 
 import java.nio.channels.FileChannel;
 
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -19,6 +22,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
@@ -63,13 +67,23 @@ public final class GenerateAgent {
         final String baseClasspath = getClasspath();
         
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
+        String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
+        if (JavaMOPMain.options.usedb){
+            //sed -i 's/javamoprt/com\.runtimeverification\.rvmonitor\.java\.rt/g' $GENERATED_AJ
+            File generatedJava = new File(outputDir.getName()+ File.separator + generatedJavaFileName);
+            String lines = FileUtils.readFileToString(generatedJava, Charset.defaultCharset());
+            lines = lines.replaceAll("javamoprt","com.runtimeverification.rvmonitor.java.rt");
+            lines = lines.replaceAll("MOPLogging","RVMLogging");
+            FileUtils.write(generatedJava,lines);
+        }
+
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
-            "-cp", baseClasspath, aspectname + "RuntimeMonitor.java");
+            "-cp", baseClasspath, generatedJavaFileName);
         if(javacReturn != 0) {
             System.err.println("(javac) Failed to compile agent.");
             return;
         }
-        
+
         if(baseAspect == null) {
             baseAspect = new File(outputDir, "BaseAspect.aj");
         }
@@ -85,10 +99,10 @@ public final class GenerateAgent {
                 return;
             }
         }
-        
+
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
         final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
-            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", 
+            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
             baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {

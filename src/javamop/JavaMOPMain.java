@@ -19,6 +19,7 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
+import javamop.commandline.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.Tool;
 import javamop.util.AJFileCombiner;
@@ -403,12 +404,7 @@ public final class JavaMOPMain {
         JCommander jc = new JCommander(options,args);
         jc.setProgramName("javamop");
 
-        if (args.length == 0 || options.files.size() == 0){
-            jc.usage();
-            System.exit(1);
-        }
-
-        handleOptions(options);
+        handleOptions(options, args, jc);
 
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
@@ -424,7 +420,8 @@ public final class JavaMOPMain {
         boolean tempOutput = options.generateAgent && options.outputDir == null;
 
         if(tempOutput) {
-            tempOutput = true;
+            // this line is redundant
+//            tempOutput = true;
             try {
                 options.outputDir =
                         Files.createTempDirectory(new File(".").toPath(), "output").toFile();
@@ -435,6 +432,16 @@ public final class JavaMOPMain {
             }
         }
 
+        SpecFilter filter = null;
+        if (options.usedb) {
+            try {
+                filter = new SpecFilter();
+                options.files = new ArrayList<String>();
+                options.files.add(filter.filter());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         // Generate .rvm files and .aj files
         try {
@@ -448,7 +455,7 @@ public final class JavaMOPMain {
         // replace mop with rvm and call rv-monitor
         List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
-            if (args[j].compareTo("-keepRVFiles") == 0) {
+            if (args[j].compareTo("-keepRVFiles") == 0 || args[j].compareTo("-usedb") == 0) {
                 // Don't pass keepRVFiles to rvmonitor\
             } else if("-agent".equals(args[j])) {
                 rvArgs.add("-merge");
@@ -461,6 +468,10 @@ public final class JavaMOPMain {
         if(tempOutput) {
             rvArgs.add("-d");
             rvArgs.add(options.outputDir.getAbsolutePath());
+        }
+
+        if (options.usedb){
+            rvArgs.add(SpecFilter.specDirPath);
         }
         
         Main.main(rvArgs.toArray(new String[0]));
@@ -505,7 +516,17 @@ public final class JavaMOPMain {
                   e.printStackTrace();
             }
         }
-        
+
+        cleanup(tempOutput, filter);
+    }
+
+    /**
+     * This method will cleans up temporary files used during agent generation
+     * @param tempOutput temporary directory used to hold agent generation artifacts
+     * @param filter  a SpecFilter which holds, among other things, the directory
+     *                where specs from property-db are stored
+     */
+    private static void cleanup(boolean tempOutput, SpecFilter filter) {
         if(tempOutput) {
             try {
                 GenerateAgent.deleteDirectory(options.outputDir.toPath());
@@ -513,6 +534,10 @@ public final class JavaMOPMain {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");
             }
+        }
+
+        if (filter != null && filter.isCleanup()) {
+            filter.cleanup();
         }
     }
 
@@ -523,7 +548,12 @@ public final class JavaMOPMain {
      * @param options  The object holding the options that the user called
      *                 JavaMOP with
      */
-    private static void handleOptions(JavaMOPOptions options) {
+    private static void handleOptions(JavaMOPOptions options, String[] args, JCommander jc) {
+        if (args.length == 0 || (options.files.size() == 0 && !options.usedb)){
+            jc.usage();
+            System.exit(1);
+        }
+
         if (options.verbose) {
             MOPProcessor.verbose = true;
         }
@@ -549,6 +579,11 @@ public final class JavaMOPMain {
 
         if (options.noadvicebody){
             JavaMOPMain.empty_advicebody = true;
+        }
+
+        if ((options.usedb) && !options.generateAgent){
+            throw new IllegalArgumentException("The \"-usedb\" option should only be set in " +
+                    "conjunction with the \"-agent\" option (which was not set in this case)");
         }
     }
 }

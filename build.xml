@@ -72,6 +72,7 @@
                 <pathelement location="lib/rvmonitor.jar"/>
                 <pathelement location="lib/rt.jar"/>
 		<pathelement location="lib/external/jcommander-1.36-SNAPSHOT.jar" />
+		<pathelement location="lib/external/commons-io-2.4.jar" />
             </classpath>
         </javac>
         <scalac srcdir="${src}" destdir="${build}" classpathref="scala.classpath" deprecation="yes" force="false">
