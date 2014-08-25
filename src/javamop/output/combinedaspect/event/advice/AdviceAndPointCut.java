@@ -58,7 +58,7 @@ public class AdviceAndPointCut {
     
     private AroundAdviceLocalDecl aroundLocalDecl = null;
     private AroundAdviceReturn aroundAdviceReturn = null;
-    
+
     /**
      * Construct the advice and pointcut for a specific event.
      * @param mopSpec The specification this is a part of.
@@ -76,7 +76,7 @@ public class AdviceAndPointCut {
         this.parameters = event.getParametersWithoutThreadVar();
         this.inlineParameters = event.getMOPParametersWithoutThreadVar();
         this.fileName = combinedAspect.getFileName();
-        
+
         if (event.getPos().equals("around")) {
             isAround = true;
             retType = event.getRetType().toString();
@@ -255,7 +255,7 @@ public class AdviceAndPointCut {
                     }
                 }
                 
-                if (JavaMOPMain.statistics) {
+                if (JavaMOPMain.options.statistics) {
                     MOPStatistics stat = this.statManager.getStat(advice.mopSpec);
                     
                     ret += stat.eventInc(event.getId());

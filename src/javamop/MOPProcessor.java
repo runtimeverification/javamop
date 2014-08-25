@@ -25,7 +25,7 @@ public class MOPProcessor {
     public static boolean verbose = false;
     
     private final String name;
-    
+
     /**
      * Construct a MOPProcessor.
      * @param name The name of the processor.
@@ -33,7 +33,7 @@ public class MOPProcessor {
     public MOPProcessor(String name) {
         this.name = name;
     }
-    
+
     /**
      * Register user variables into the MOPNameSpace so that generated code does not clash with
      * them.
@@ -77,7 +77,7 @@ public class MOPProcessor {
             }
         }
         for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-            if(JavaMOPMain.translate2RV) {
+            if(JavaMOPMain.options.translate2RV) {
                 rvresult += mopSpec.toRVString();
             }
         }
@@ -106,7 +106,7 @@ public class MOPProcessor {
         
         // Generate output code
         
-        if (JavaMOPMain.translate2RV) {
+        if (JavaMOPMain.options.translate2RV) {
             result = (new AspectJCode(name, mopSpecFile)).toRVString();
         }
         

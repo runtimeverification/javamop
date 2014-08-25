@@ -1,6 +1,7 @@
 package javamop.output.combinedaspect.event;
 
 import javamop.MOPException;
+import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -24,7 +25,8 @@ public class EndThread {
     MOPVariable threadSet;
     
     MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
-    
+
+
     /**
      * Construct an EndThread hook.
      * @param mopSpec The specification that the endThread is in.
@@ -49,6 +51,7 @@ public class EndThread {
         this.threadSet = new MOPVariable(mopSpec.getName() + "_" + event.getId() + "_ThreadSet");
         
         this.eventBody = new AdviceBody(mopSpec, event, combinedAspect);
+
     }
     
     /**

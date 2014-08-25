@@ -20,26 +20,26 @@ public class CombinedAspect {
     public final MOPStatManager statManager;
     public final LockManager lockManager;
     private final EventManager eventManager;
-    
+
     /**
      * Construct the combined aspect.
      * @param name The name of the combined monitoring aspects.
      * @param mopSpecFile The specifications to monitor.
      * @param versionedStack Whether or not to maintain extra information about the call stack.
      */
-    public CombinedAspect(final String name, final MOPSpecFile mopSpecFile, 
-            final boolean versionedStack) throws MOPException {
+    public CombinedAspect(final String name, final MOPSpecFile mopSpecFile,
+                          final boolean versionedStack) throws MOPException {
         this.name = name + "MonitorAspect";
         this.versionedStack = versionedStack;
         
         this.specs = mopSpecFile.getSpecs();
         this.statManager = new MOPStatManager(name, this.specs);
         this.lockManager = new LockManager(name, this.specs);
-        
-        
+
         this.eventManager = new EventManager(name, this.specs, this);
         
         this.mapManager = new MOPVariable(name + "MapManager");
+
     }
     
     /**

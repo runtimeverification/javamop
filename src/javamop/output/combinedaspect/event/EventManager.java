@@ -5,6 +5,7 @@ import java.util.List;
 
 import javamop.JavaMOPMain;
 import javamop.MOPException;
+import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
@@ -23,7 +24,7 @@ public class EventManager {
     private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
     private final ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
     private final EndProgram endProgramEvent;
-    
+
     
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
     
@@ -33,11 +34,11 @@ public class EventManager {
      * @param specs All the specifications that this manages events from.
      * @param combinedAspect The AspectJ output for this program.
      */
-    public EventManager(final String name, final List<JavaMOPSpec> specs, 
-            final CombinedAspect combinedAspect) throws MOPException {
+    public EventManager(final String name, final List<JavaMOPSpec> specs,
+                        final CombinedAspect combinedAspect) throws MOPException {
         
         this.endProgramEvent = new EndProgram(name);
-        
+
         for (JavaMOPSpec spec : specs) {
             if (spec.isEnforce()) {
                 endThreadEvents.add(new ThreadStatusMonitor(spec, combinedAspect));
@@ -139,7 +140,7 @@ public class EventManager {
                 ret += "// " + numAdvice++ + "\n";
             }
             
-            if (JavaMOPMain.translate2RV) {
+            if (JavaMOPMain.options.translate2RV) {
                 ret += advice.toRVString();
             } else {
                 ret += advice;
@@ -199,17 +200,17 @@ public class EventManager {
          * @param event The event the method is being generated for.
          * @param aspectName The aspect the method will be a part of.
          */
-        public static String methodName(String enclosingspec, EventDefinition event, 
-                String aspectName) {
+        public static String methodName(String enclosingspec, EventDefinition event,
+                                        String aspectName) {
             boolean mangle = false;
-            if (JavaMOPMain.merge && JavaMOPMain.aspectname != null && 
-                    JavaMOPMain.aspectname.length() > 0) {
+            if (JavaMOPMain.options.merge && JavaMOPMain.options.aspectname != null &&
+                    JavaMOPMain.options.aspectname.length() > 0) {
                 mangle = true;
             }
             
             StringBuilder s = new StringBuilder();
             if (mangle && JavaMOPMain.specifiedAJName) {
-                s.append(JavaMOPMain.aspectname);
+                s.append(JavaMOPMain.options.aspectname);
             } else {
                 s.append(aspectName);
             }
@@ -227,10 +228,10 @@ public class EventManager {
         /**
          * Construct a method name for a particular event.
          * @param enclosing The specification the event is a part of.
-         * @param event The event the method is being generated for.
+         * @param evt The event the method is being generated for.
          * @param aspectName The aspect the method will be a part of.
          */
-        public static String methodName(JavaMOPSpec enclosing, EventDefinition evt, 
+        public static String methodName(JavaMOPSpec enclosing, EventDefinition evt,
                 String aspectName) {
             return methodName(enclosing.getName(), evt, aspectName);
         }
