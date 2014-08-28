@@ -1,13 +1,41 @@
 package javamop.parser.ast.visitor;
 
-import java.util.*;
-import javamop.parser.ast.*;
-import javamop.parser.ast.body.*;
+import javamop.parser.ast.CompilationUnit;
+import javamop.parser.ast.ImportDeclaration;
+import javamop.parser.ast.MOPSpecFile;
+import javamop.parser.ast.Node;
+import javamop.parser.ast.PackageDeclaration;
+import javamop.parser.ast.TypeParameter;
+import javamop.parser.ast.body.AnnotationDeclaration;
+import javamop.parser.ast.body.AnnotationMemberDeclaration;
+import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
+import javamop.parser.ast.body.ConstructorDeclaration;
+import javamop.parser.ast.body.EmptyMemberDeclaration;
+import javamop.parser.ast.body.EmptyTypeDeclaration;
+import javamop.parser.ast.body.EnumConstantDeclaration;
+import javamop.parser.ast.body.EnumDeclaration;
+import javamop.parser.ast.body.FieldDeclaration;
+import javamop.parser.ast.body.InitializerDeclaration;
+import javamop.parser.ast.body.MethodDeclaration;
+import javamop.parser.ast.body.Parameter;
+import javamop.parser.ast.body.VariableDeclarator;
+import javamop.parser.ast.body.VariableDeclaratorId;
 import javamop.parser.ast.expr.*;
+import javamop.parser.ast.mopspec.EventDefinition;
+import javamop.parser.ast.mopspec.Formula;
+import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameter;
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
-import javamop.parser.ast.mopspec.*;
-import javamop.parser.ast.aspectj.*;;
+import javamop.parser.ast.aspectj.*;
+import javamop.parser.ast.type.ClassOrInterfaceType;
+import javamop.parser.ast.type.PrimitiveType;
+import javamop.parser.ast.type.ReferenceType;
+import javamop.parser.ast.type.VoidType;
+import javamop.parser.ast.type.WildcardType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RemoveThreadVisitor implements GenericVisitor<PointCut, Integer>{
 

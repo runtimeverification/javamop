@@ -99,7 +99,7 @@ import javamop.parser.ast.type.VoidType;
 import javamop.parser.ast.type.WildcardType;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.*;
-import javamop.parser.ast.aspectj.*;;
+import javamop.parser.ast.aspectj.*;
 
 /**
  * @author Julio Vilmar Gesser
