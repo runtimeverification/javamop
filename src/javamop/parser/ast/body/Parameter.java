@@ -21,7 +21,6 @@
  */
 package javamop.parser.ast.body;
 
-
 import java.util.List;
 
 import javamop.parser.ast.Node;
