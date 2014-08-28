@@ -21,7 +21,6 @@
  */
 package javamop.parser.ast.expr;
 
-
 import java.util.List;
 
 import javamop.parser.ast.visitor.GenericVisitor;
