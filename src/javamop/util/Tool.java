@@ -1,8 +1,13 @@
 package javamop.util;
 
-import java.io.*;
 
 import javamop.MOPException;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * @author fengchen
