@@ -1,7 +1,6 @@
 package javamop.output.combinedaspect.event;
 
 import javamop.MOPException;
-import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;

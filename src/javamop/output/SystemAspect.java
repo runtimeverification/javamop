@@ -1,7 +1,6 @@
 package javamop.output;
 
 import javamop.JavaMOPMain;
-import javamop.commandline.JavaMOPOptions;
 
 /**
  * An aspect that is included with the generated code to keep track of the depth of the call stack.
