@@ -23,7 +23,7 @@ public final class Util {
      */
     public static String packageAndNameToUrl(final PackageDeclaration packageDeclaration, 
             final String name) {
-        return "http://fsl.cs.uiuc.edu/annotated-java/__properties/html/" +
+        return "http://runtimeverification.com/monitor/annotated-java/__properties/html/" +
         packageToUrlFragment(packageDeclaration) + "/" + name + ".html"; 
     }
     
