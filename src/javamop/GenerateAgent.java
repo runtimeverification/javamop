@@ -1,5 +1,6 @@
 package javamop;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -115,6 +116,10 @@ public final class GenerateAgent {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
         }
+
+        // Step 12: suppress aspectJ warnings
+        suppress_warnings(aopAjc);
+
         // Step 13: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
         agentDir.deleteOnExit();
@@ -150,7 +155,19 @@ public final class GenerateAgent {
             deleteDirectory(agentDir.toPath());
         }
     }
-    
+
+    private static void suppress_warnings(File aopAjc) {
+        try {
+            List<String> lines = FileUtils.readLines(aopAjc, Charsets.UTF_8);
+            int index = lines.indexOf("</aspects>") + 1;
+            lines.add(index, "<weaver options=\"-nowarn -Xlint:ignore\"></weaver>");
+            FileUtils.writeLines(aopAjc,lines);
+        } catch (IOException e) {
+            System.err.println("(ajc) There was a problem reading aop-ajc.xml");
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Run a command in a directory. Passes the output of the run commands through if the program
      * is in verbose mode. Blocks until the command finishes, then gives the return code.
