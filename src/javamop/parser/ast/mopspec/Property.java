@@ -1,6 +1,6 @@
 package javamop.parser.ast.mopspec;
 
-import javamop.parser.ast.*;
+import javamop.parser.ast.Node;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 

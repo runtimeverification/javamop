@@ -1,8 +1,8 @@
 package javamop.parser.ast.mopspec;
 
-import java.util.*;
 
-import javamop.parser.ast.mopspec.MOPParameters;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MOPParameterPairSet implements Iterable<MOPParameterPair>{
     

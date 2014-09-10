@@ -1,6 +1,6 @@
 package javamop.parser.ast.aspectj;
 
-import javamop.parser.ast.expr.*;
+import javamop.parser.ast.expr.Expression;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.PointcutVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;

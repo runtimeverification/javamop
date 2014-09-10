@@ -1,10 +1,11 @@
 package javamop.parser.ast;
 
-import java.util.*;
 
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
+
+import java.util.List;
 
 public class MOPSpecFile extends Node {
 	PackageDeclaration pakage = null;

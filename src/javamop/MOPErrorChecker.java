@@ -3,7 +3,6 @@ package javamop;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
-import javamop.parser.ast.mopspec.PropertyAndHandlers;
 
 public final class MOPErrorChecker {
     

@@ -1,11 +1,11 @@
 package javamop.parser.ast.mopspec;
 
-import javamop.parser.ast.*;
+import javamop.parser.ast.Node;
+import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
-import javamop.parser.ast.aspectj.*;
 
-public class SpecParameter extends Node{
+public class SpecParameter extends Node {
     private final TypePattern type;
     private final String name;
     

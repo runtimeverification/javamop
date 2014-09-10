@@ -5,7 +5,6 @@ import java.util.List;
 
 import javamop.JavaMOPMain;
 import javamop.MOPException;
-import javamop.commandline.JavaMOPOptions;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;

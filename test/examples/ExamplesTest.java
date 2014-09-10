@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static org.junit.Assert.*;
 
 /**
  * JUnit test case to run through select program examples. Based on examples/run and examples/runall.
