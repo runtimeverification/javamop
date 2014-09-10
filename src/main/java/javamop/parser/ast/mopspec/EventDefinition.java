@@ -11,6 +11,8 @@ import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.type.*;
 import javamop.parser.ast.visitor.*;
 
+import javamop.parser.main_parser.ParseException;
+
 public class EventDefinition extends Node {
     
     private final String id;
