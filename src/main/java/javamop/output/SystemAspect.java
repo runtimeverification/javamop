@@ -8,7 +8,7 @@ import javamop.JavaMOPMain;
  */
 public class SystemAspect {
     private final String name;
-    
+
     /**
      * Construct a SystemAspect with the given name.
      * @param name The name of the SystemAspect.
@@ -49,7 +49,7 @@ public class SystemAspect {
         
         
         ret += "pointcut sysbegin() : execution(* *(..)) && ";
-        if(JavaMOPMain.dacapo){
+        if(JavaMOPMain.options.dacapo){
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
                 "&& BaseAspect.notwithin();\n";
         } else {
@@ -62,7 +62,7 @@ public class SystemAspect {
         
         ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
         ret += "pointcut sysend() : execution(* *(..)) && ";
-        if(JavaMOPMain.dacapo){
+        if(JavaMOPMain.options.dacapo){
             ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
                 "&& BaseAspect.notwithin();\n";
         } else {

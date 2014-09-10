@@ -1,6 +1,5 @@
 package javamop.output.combinedaspect.event.advice;
 
-import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.MOPStatistics;
 import javamop.parser.ast.mopspec.EventDefinition;

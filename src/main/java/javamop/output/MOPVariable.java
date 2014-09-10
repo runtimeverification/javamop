@@ -21,7 +21,7 @@ public class MOPVariable {
     /**
      * A MOP variable in a scope.
      * @param pred The scope/package of the variable.
-     * @param nvarName The name of the variable.
+     * @param varName The name of the variable.
      */
     public MOPVariable(MOPVariable pred, String varName){
         this.pred = pred;

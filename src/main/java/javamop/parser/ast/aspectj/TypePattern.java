@@ -1,6 +1,6 @@
 package javamop.parser.ast.aspectj;
 
-import javamop.parser.ast.*;
+import javamop.parser.ast.Node;
 
 public abstract class TypePattern extends Node {
     

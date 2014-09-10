@@ -17,9 +17,10 @@ public class AspectJCode {
     private final CombinedAspect aspect;
     private boolean versionedStack = false;
     private final SystemAspect systemAspect;
-    
+
     /**
      * Construct the AspectJ code.
+     *
      * @param name The name of the aspect.
      * @param mopSpecFile The specification file that will be used to build aspects.
      * @throw MOPException If something goes wrong in generating the aspects.
@@ -28,7 +29,7 @@ public class AspectJCode {
         this.name = name;
         packageDecl = new Package(mopSpecFile);
         imports = new Imports(mopSpecFile);
-        
+
         for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs()) {
             
             for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {

@@ -25,7 +25,7 @@ public class MOPStatistics {
         new HashMap<MOPParameter, MOPVariable>();
     
     private final String specName;
-    
+
     /**
      * Construct statistics variables for a single property.
      * @param name The name of the property.
@@ -37,7 +37,7 @@ public class MOPStatistics {
         this.numMonitor = new MOPVariable(mopSpec.getName() + "_Monitor_num");
         this.collectedMonitor = new MOPVariable(mopSpec.getName() + "_CollectedMonitor_num");
         this.terminatedMonitor = new MOPVariable(mopSpec.getName() + "_TerminatedMonitor_num");
-        
+
         for (EventDefinition event : mopSpec.getEvents()) {
             MOPVariable eventVar = new MOPVariable(mopSpec.getName() + "_" + event.getId() + 
                 "_num");
@@ -67,7 +67,7 @@ public class MOPStatistics {
      */
     public String fieldDecl() {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         ret += "static long " + numMonitor + " = 0;\n";
@@ -98,7 +98,7 @@ public class MOPStatistics {
      */
     public String eventInc(final String eventName) {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         MOPVariable eventVar = eventVars.get(eventName);
@@ -110,7 +110,7 @@ public class MOPStatistics {
     
     public String categoryInc(final PropertyAndHandlers prop, final String category) {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         MOPVariable categoryVar = categoryVars.get(prop).get(category);
@@ -126,7 +126,7 @@ public class MOPStatistics {
      */
     public String incNumMonitor() {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         ret += aspectName + "." + numMonitor + "++;\n";
@@ -140,7 +140,7 @@ public class MOPStatistics {
      */
     public String incCollectedMonitor() {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         ret += aspectName + "." + collectedMonitor + "++;\n";
@@ -154,7 +154,7 @@ public class MOPStatistics {
      */
     public String incTerminatedMonitor() {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         ret += aspectName + "." + terminatedMonitor + "++;\n";
@@ -168,7 +168,7 @@ public class MOPStatistics {
      */
     public String advice() {
         String ret = "";
-        if (!JavaMOPMain.statistics)
+        if (!JavaMOPMain.options.statistics)
             return ret;
         
         ret += "after () : execution(* *.main(..)) {\n";

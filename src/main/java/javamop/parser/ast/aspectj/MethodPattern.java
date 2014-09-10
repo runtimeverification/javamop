@@ -1,8 +1,9 @@
 package javamop.parser.ast.aspectj;
 
-import java.util.*;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
+
+import java.util.List;
 
 public class MethodPattern extends FieldPattern {
     

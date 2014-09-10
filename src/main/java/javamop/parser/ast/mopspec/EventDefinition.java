@@ -1,13 +1,15 @@
 package javamop.parser.ast.mopspec;
 
-import java.util.*;
-import java.io.*;
-import javamop.parser.main_parser.ParseException;
-import javamop.parser.ast.*;
-import javamop.parser.ast.aspectj.*;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.visitor.*;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javamop.parser.ast.Node;
+import javamop.parser.ast.aspectj.PointCut;
+import javamop.parser.ast.aspectj.TypePattern;
+import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.type.*;
+import javamop.parser.ast.visitor.*;
 
 public class EventDefinition extends Node {
     

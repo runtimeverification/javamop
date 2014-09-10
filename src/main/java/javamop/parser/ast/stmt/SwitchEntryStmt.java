@@ -21,7 +21,6 @@
  */
 package javamop.parser.ast.stmt;
 
-
 import java.util.List;
 
 import javamop.parser.ast.expr.Expression;

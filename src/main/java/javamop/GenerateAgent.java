@@ -1,16 +1,17 @@
 package javamop;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import java.nio.channels.FileChannel;
 
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
@@ -63,13 +65,23 @@ public final class GenerateAgent {
         final String baseClasspath = getClasspath();
         
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
+        String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
+        if (JavaMOPMain.options.usedb){
+            //sed -i 's/javamoprt/com\.runtimeverification\.rvmonitor\.java\.rt/g' $GENERATED_AJ
+            File generatedJava = new File(outputDir.getName()+ File.separator + generatedJavaFileName);
+            String lines = FileUtils.readFileToString(generatedJava, Charset.defaultCharset());
+            lines = lines.replaceAll("javamoprt","com.runtimeverification.rvmonitor.java.rt");
+            lines = lines.replaceAll("MOPLogging","RVMLogging");
+            FileUtils.write(generatedJava,lines);
+        }
+
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
-            "-cp", baseClasspath, aspectname + "RuntimeMonitor.java");
+            "-cp", baseClasspath, generatedJavaFileName);
         if(javacReturn != 0) {
             System.err.println("(javac) Failed to compile agent.");
             return;
         }
-        
+
         if(baseAspect == null) {
             baseAspect = new File(outputDir, "BaseAspect.aj");
         }
@@ -85,10 +97,10 @@ public final class GenerateAgent {
                 return;
             }
         }
-        
+
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
         final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
-            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", 
+            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
             baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {
@@ -101,6 +113,10 @@ public final class GenerateAgent {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
         }
+
+        // Step 12: suppress aspectJ warnings
+        suppress_warnings(aopAjc);
+
         // Step 13: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
         agentDir.deleteOnExit();
@@ -136,7 +152,19 @@ public final class GenerateAgent {
             deleteDirectory(agentDir.toPath());
         }
     }
-    
+
+    private static void suppress_warnings(File aopAjc) {
+        try {
+            List<String> lines = FileUtils.readLines(aopAjc, Charsets.UTF_8);
+            int index = lines.indexOf("</aspects>") + 1;
+            lines.add(index, "<weaver options=\"-nowarn -Xlint:ignore\"></weaver>");
+            FileUtils.writeLines(aopAjc,lines);
+        } catch (IOException e) {
+            System.err.println("(ajc) There was a problem reading aop-ajc.xml");
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Run a command in a directory. Passes the output of the run commands through if the program
      * is in verbose mode. Blocks until the command finishes, then gives the return code.
@@ -283,9 +311,10 @@ public final class GenerateAgent {
             /*
              * Jar files can have at most 72 characters per line, so this splits it by jar file
              * into many lines.
-             */
+             
             writer.println("Boot-Class-Path: " + 
                 getClasspath().replace(File.pathSeparator, System.lineSeparator() + " "));
+			*/
             writer.flush();
         } finally {
             writer.close();

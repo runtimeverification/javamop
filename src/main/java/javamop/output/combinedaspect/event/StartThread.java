@@ -22,7 +22,7 @@ public class StartThread {
     private final MOPVariable mainThread;
     
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
-    
+
     /**
      * Construct a StartThread hook for a particular event.
      * @param mopSpec The specification the event is part of.
