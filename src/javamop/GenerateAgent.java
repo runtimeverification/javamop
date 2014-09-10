@@ -314,9 +314,10 @@ public final class GenerateAgent {
             /*
              * Jar files can have at most 72 characters per line, so this splits it by jar file
              * into many lines.
-             */
+             
             writer.println("Boot-Class-Path: " + 
                 getClasspath().replace(File.pathSeparator, System.lineSeparator() + " "));
+			*/
             writer.flush();
         } finally {
             writer.close();
