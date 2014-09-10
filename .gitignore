@@ -1,11 +1,11 @@
 examples/**/*.aj
 examples/**/*.class
-
 lib/javamop.jar
 lib/javamoptestsuite.jar
 lib/log/
 test-reports/
 build/
-
+target/
+release/
 .idea
 *.iml
