@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.runtimeverification.rvmonitor</groupId>
             <artifactId>rv-monitor</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.2-SNAPSHOT</version>
         </dependency>
         <!-- A runtime dependency, as JavaMOP uses AspectJ to compile agents. -->
         <dependency>
