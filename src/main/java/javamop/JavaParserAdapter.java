@@ -56,14 +56,14 @@ import com.runtimeverification.rvmonitor.core.parser.RVParser;
  * @author A. Cody Schuffelen
  */
 public final class JavaParserAdapter {
-    
+
     /**
      * Private constructor to prevent instantiation.
      */
     private JavaParserAdapter() {
-        
+
     }
-    
+
     /**
      * Produce a MOPSpecFileExt by reading a file through the language-independent MOP parser.
      * @param file The file to read from.
@@ -78,7 +78,7 @@ public final class JavaParserAdapter {
             throw new MOPException(e);
         }
     }
-    
+
     /**
      * Produce a MOPSpecFileExt by reading a string through the language-independent MOP parser.
      * @param str The string to read from.
@@ -93,7 +93,7 @@ public final class JavaParserAdapter {
             throw new MOPException(e);
         }
     }
-    
+
     /**
      * Convert a language-independent specification into one with Java-specific information.
      * @param spec The specification to convert.
@@ -108,11 +108,11 @@ public final class JavaParserAdapter {
         }
         return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
     }
-    
+
     private static JavaMOPParser parseJavaBubble(String bubble) {
         return new JavaMOPParser(new StringReader(bubble));
     }
-    
+
     /**
      * Extract the package from the package statement in the preamble.
      * @param preamble The beginning of the specification file.
@@ -126,7 +126,7 @@ public final class JavaParserAdapter {
             return null;
         }
     }
-    
+
     /**
      * Extract the imports from the import statements in the preamble.
      * @param preamble The beginning of the specification file.
@@ -153,14 +153,14 @@ public final class JavaParserAdapter {
         }
         return imports;
     }
-    
+
     /**
      * Convert a {@link Specification} into a {@link JavaMOPSpecExt}.
      * @param pack The package declaration of the file the specification is in.
      * @param spec The specification to convert.
      * @return The Java-specific specification.
      */
-    private static JavaMOPSpecExt convert(final PackageDeclaration pack, 
+    private static JavaMOPSpecExt convert(final PackageDeclaration pack,
             final Specification spec) throws ParseException {
         final List<String> modifierList = spec.getLanguageModifiers();
         final boolean isPublic = modifierList.contains("public");
@@ -169,7 +169,7 @@ public final class JavaParserAdapter {
         final List<MOPParameter> parameters = convertParameters(spec.getLanguageParameters());
         final String inMethod = null;
         final List<ExtendedSpec> extensions = null;
-        final List<BodyDeclaration> declarations = 
+        final List<BodyDeclaration> declarations =
             convertDeclarations(spec.getLanguageDeclarations());
         final List<EventDefinitionExt> events = new ArrayList<EventDefinitionExt>();
         for(Event e : spec.getEvents()) {
@@ -184,7 +184,7 @@ public final class JavaParserAdapter {
         return new JavaMOPSpecExt(pack, 0, 0, isPublic, modifierBitfield, name, parameters,
             inMethod, extensions, declarations, events, properties);
     }
-    
+
     /**
      * Produce the integer bitfield representing the different Java-specific specification
      * modifiers.
@@ -192,7 +192,6 @@ public final class JavaParserAdapter {
      * @return A bitfield with the appropriate bits for each modifier set.
      */
     private static int extractModifierBitfield(final List<String> modifierList) {
-        System.out.println("modifier list: " + modifierList);
         int modifierBitfield = 0;
         if(modifierList.contains("unsynchronized")) {
             modifierBitfield |= SpecModifierSet.UNSYNC;
@@ -220,7 +219,7 @@ public final class JavaParserAdapter {
         }
         return modifierBitfield;
     }
-    
+
     /**
      * Convert a specification parameter string into a parameter object.
      * @param paramString The string witht he specification parameters.
@@ -234,7 +233,7 @@ public final class JavaParserAdapter {
             return null;
         }
     }
-    
+
     /**
      * Convert a {@link String} of declarations into a list of Java {@link BodyDeclaration}
      * elements.
@@ -249,7 +248,7 @@ public final class JavaParserAdapter {
             return null;
         }
     }
-    
+
     /**
      * Convert a language-independent event into a Java event.
      * @param event The language-independent event object.
@@ -270,7 +269,7 @@ public final class JavaParserAdapter {
         eventString.append(event.getAction());
         return parseJavaBubble(eventString.toString()).Event();
     }
-    
+
     /**
      * Convert a language-independent property into a Java property object.
      * @param index The index of this property in the specification.
@@ -282,7 +281,7 @@ public final class JavaParserAdapter {
         final String propertyName = "defaultProp" + index;
         final String formula = property.getSyntax();
         final PropertyExt propertyExt = new FormulaExt(0, 0, logicId, formula, propertyName);
-        
+
         final List<HandlerExt> handlerList = new ArrayList<HandlerExt>();
         final HashMap<String, BlockStmt> handlerMap = new HashMap<String, BlockStmt>();
         for(PropertyHandler handler : property.getHandlers()) {
@@ -292,7 +291,7 @@ public final class JavaParserAdapter {
         }
         return new PropertyAndHandlersExt(0, 0, propertyExt, handlerMap, handlerList);
     }
-    
+
     /**
      * Convert a language-independent handler into a Java handler object.
      * @param handler The handler to convert.
