@@ -83,7 +83,7 @@ public class JavaMOPOptions {
             "for use in generating an agent", converter = FileConverter.class)
     public File baseAspect;
 
-    @Parameter(names = "-help", description = "Show this help message", help = true)
+    @Parameter(names={"-h","-help"}, description = "Show this help message", help = true)
     private boolean help = false;
 
     @Parameter(names = "-usedb", description = "Use only the property database for building an Agent. " +
