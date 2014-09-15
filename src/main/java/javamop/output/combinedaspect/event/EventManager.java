@@ -129,9 +129,14 @@ public class EventManager {
         String ret = "";
         
         ret += "pointcut " + commonPointcut + "() : ";
-        ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) " +
-            "&& !adviceexecution()&& BaseAspect.notwithin();\n";
-        
+        if (JavaMOPMain.options.generateAgent){
+            ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) " +
+                    "&& !adviceexecution()&& BaseAspect.notwithin();\n";
+        } else {
+            ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) " +
+                    "&& !adviceexecution();\n";
+        }
+
         int numAdvice = 1;
         advices = this.adjustAdviceOrder();
         for (AdviceAndPointCut advice : advices) {
