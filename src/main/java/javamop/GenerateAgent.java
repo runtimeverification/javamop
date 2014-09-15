@@ -148,8 +148,10 @@ public final class GenerateAgent {
             String weaverJarName = getJarName(weaverJarPath);
             System.out.println("WVJARNAME: "+weaverJarName);
             String rvmRTJarName = getJarName(rvMonitorRTJarPath);
-            copyFile(ajWeaverJar, new File(agentDir,weaverJarName));
-            copyFile(rvmRTJar, new File(agentDir,rvmRTJarName));
+            File actualWeaverFile = new File(agentDir, weaverJarName);
+            copyFile(ajWeaverJar, actualWeaverFile);
+            File actualRTFile = new File(agentDir, rvmRTJarName);
+            copyFile(rvmRTJar, actualRTFile);
             int extractReturn = runCommandDir(agentDir, "jar", "xvf", weaverJarName);
             if (extractReturn != 0){
                 System.err.println("(jar) Failed to extract the AspectJ weaver jar");
@@ -169,7 +171,18 @@ public final class GenerateAgent {
             // # Step 14: copy in the correct MANIFEST FILE
             final File jarManifest = new File(metaInf, manifest);
             writeAgentManifest(jarManifest);
-            
+
+            //remove extracted jars to make agent lighter
+            if (!actualWeaverFile.delete()) {
+                System.err.println("(delete) Failed to delete weaver jar");
+                return;
+            }
+
+            if (!actualRTFile.delete()) {
+                System.err.println("(delete) Failed to delete rvmonitorrt jar");
+                return;
+            }
+
             // # Step 15: Stepmake the java agent jar
             final int jarReturn = runCommandDir(new File("."), "jar", "cmf", jarManifest.toString(), 
                 aspectname + ".jar", "-C", agentDir.toString(), ".");
