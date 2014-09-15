@@ -63,6 +63,17 @@ public final class GenerateAgent {
         
         final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
+
+//        System.out.println("***CLASSPATH:***");
+//        System.out.println(baseClasspath);
+
+        String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
+        System.out.println("***WEAVER JAR***");
+        System.out.println(weaverJarPath);
+
+        String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
+        System.out.println("***RT JAR***");
+        System.out.println(rvMonitorRTJarPath);
         
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
@@ -130,6 +141,26 @@ public final class GenerateAgent {
                 return;
             }
             copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
+
+            // copy in the needed jar files
+            File ajWeaverJar = new File(weaverJarPath);
+            File rvmRTJar = new File(rvMonitorRTJarPath);
+            String weaverJarName = getJarName(weaverJarPath);
+            System.out.println("WVJARNAME: "+weaverJarName);
+            String rvmRTJarName = getJarName(rvMonitorRTJarPath);
+            copyFile(ajWeaverJar, new File(agentDir,weaverJarName));
+            copyFile(rvmRTJar, new File(agentDir,rvmRTJarName));
+            int extractReturn = runCommandDir(agentDir, "jar", "xvf", weaverJarName);
+            if (extractReturn != 0){
+                System.err.println("(jar) Failed to extract the AspectJ weaver jar");
+                return;
+            }
+
+            extractReturn = runCommandDir(agentDir, "jar", "xvf", rvmRTJarName);
+            if (extractReturn != 0){
+                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
+                return;
+            }
             
             // directory to hold compiled library files
             // Copy in all the .class files for all the monitor libraries
@@ -151,6 +182,28 @@ public final class GenerateAgent {
         } finally {
             deleteDirectory(agentDir.toPath());
         }
+    }
+
+    private static String getJarName(String pathToJar) {
+        String name;
+        String[] parts = pathToJar.split("/");
+        name = parts[parts.length -1];
+        return name;
+    }
+
+    private static String getJarLocation(String baseClasspath, String key) {
+        String[] jars = baseClasspath.split(":");
+        String value = null;
+        for (int i = 0; i < jars.length; i++) {
+           if (jars[i].contains(key)){
+               // assuming the jar occurs only once. This may be a problem if the user has some jar
+               // with similar name in their classpath already
+               value = jars[i];
+               break;
+           }
+        }
+
+        return value;
     }
 
     private static void suppress_warnings(File aopAjc) {
