@@ -64,17 +64,11 @@ public final class GenerateAgent {
         final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
 
-//        System.out.println("***CLASSPATH:***");
-//        System.out.println(baseClasspath);
-
+        //extract the absolute paths for these two jars from java classpath
+        //running "mvn package", or similar, would set this java classpath appropriately
         String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
-        System.out.println("***WEAVER JAR***");
-        System.out.println(weaverJarPath);
-
         String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
-        System.out.println("***RT JAR***");
-        System.out.println(rvMonitorRTJarPath);
-        
+
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
         if (JavaMOPMain.options.usedb){
@@ -172,7 +166,7 @@ public final class GenerateAgent {
             final File jarManifest = new File(metaInf, manifest);
             writeAgentManifest(jarManifest);
 
-            //remove extracted jars to make agent lighter
+            //remove extracted jars to make agent lighter weight
             if (!actualWeaverFile.delete()) {
                 System.err.println("(delete) Failed to delete weaver jar");
                 return;
