@@ -161,14 +161,10 @@ public final class GenerateAgent {
                 System.err.println("(jar) Failed to extract the rvmonitorrt jar");
                 return;
             }
-            
+
             // directory to hold compiled library files
             // Copy in all the .class files for all the monitor libraries
             new File(outputDir, "mop").renameTo(new File(agentDir, "mop"));
-            
-            // # Step 14: copy in the correct MANIFEST FILE
-            final File jarManifest = new File(metaInf, manifest);
-            writeAgentManifest(jarManifest);
 
             //remove extracted jars to make agent lighter weight
             if (!actualWeaverFile.delete()) {
@@ -180,6 +176,11 @@ public final class GenerateAgent {
                 System.err.println("(delete) Failed to delete rvmonitorrt jar");
                 return;
             }
+
+            // # Step 14: copy in the correct MANIFEST FILE
+            final File jarManifest = new File(metaInf, manifest);
+            writeAgentManifest(jarManifest);
+
 
             // # Step 15: Stepmake the java agent jar
             final int jarReturn = runCommandDir(new File("."), "jar", "cmf", jarManifest.toString(), 
