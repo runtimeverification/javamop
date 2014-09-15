@@ -64,11 +64,6 @@ public final class GenerateAgent {
         final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
 
-        //extract the absolute paths for these two jars from java classpath
-        //running "mvn package", or similar, would set this java classpath appropriately
-        String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
-        String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
-
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
         if (JavaMOPMain.options.usedb){
@@ -136,6 +131,11 @@ public final class GenerateAgent {
             }
             copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
 
+            //extract the absolute paths for these two jars from java classpath
+            //running "mvn package", or similar, would set this java classpath appropriately
+            String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
+            String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
+
             //get the actual jar name from the absolute path
             String weaverJarName = getJarName(weaverJarPath);
             String rvmRTJarName = getJarName(rvMonitorRTJarPath);
@@ -149,7 +149,7 @@ public final class GenerateAgent {
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
-            // be packaged with the agent.jar
+            //be packaged with the agent.jar)
             int extractReturn = runCommandDir(agentDir, "jar", "xvf", weaverJarName);
             if (extractReturn != 0){
                 System.err.println("(jar) Failed to extract the AspectJ weaver jar");
