@@ -136,16 +136,20 @@ public final class GenerateAgent {
             }
             copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
 
-            // copy in the needed jar files
-            File ajWeaverJar = new File(weaverJarPath);
-            File rvmRTJar = new File(rvMonitorRTJarPath);
+            //get the actual jar name from the absolute path
             String weaverJarName = getJarName(weaverJarPath);
-            System.out.println("WVJARNAME: "+weaverJarName);
             String rvmRTJarName = getJarName(rvMonitorRTJarPath);
+
+            //make references so that these files can be referred to later
             File actualWeaverFile = new File(agentDir, weaverJarName);
-            copyFile(ajWeaverJar, actualWeaverFile);
             File actualRTFile = new File(agentDir, rvmRTJarName);
-            copyFile(rvmRTJar, actualRTFile);
+
+            // copy in the needed jar files
+            copyFile(new File(weaverJarPath), actualWeaverFile);
+            copyFile(new File(rvMonitorRTJarPath), actualRTFile);
+
+            //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
+            // be packaged with the agent.jar
             int extractReturn = runCommandDir(agentDir, "jar", "xvf", weaverJarName);
             if (extractReturn != 0){
                 System.err.println("(jar) Failed to extract the AspectJ weaver jar");
