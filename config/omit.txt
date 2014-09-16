@@ -1,6 +1,4 @@
-NavigableMap_Modification.mop
-NavigableMap_UnsafeIterator.mop
-NavigableSet_Modification.mop
 ShutdownHook_UnsafeAWTCall.mop
 BufferedInputStream_SynchronizedFill.mop
+Object_NoClone.mop
 Comparable_CompareToNullException.mop
