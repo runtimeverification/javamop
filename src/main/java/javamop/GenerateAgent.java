@@ -137,8 +137,15 @@ public final class GenerateAgent {
             String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
 
             //get the actual jar name from the absolute path
-            String weaverJarName = getJarName(weaverJarPath);
-            String rvmRTJarName = getJarName(rvMonitorRTJarPath);
+            String weaverJarName = null;
+            String rvmRTJarName = null;
+            if (rvMonitorRTJarPath != null && weaverJarPath != null) {
+                weaverJarName = getJarName(weaverJarPath);
+                rvmRTJarName = getJarName(rvMonitorRTJarPath);
+            } else {
+                System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt " +
+                        "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
+            }
 
             //make references so that these files can be referred to later
             File actualWeaverFile = new File(agentDir, weaverJarName);
