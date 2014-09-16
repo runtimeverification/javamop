@@ -10,13 +10,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.nio.channels.FileChannel;
-
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-
 import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.Arrays;
@@ -25,72 +23,75 @@ import java.util.List;
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
  * and .rvm files have been processed into .java files. Based on Owolabi's build-agent.sh.
+ *
  * @author A. Cody Schuffelen
  */
 public final class GenerateAgent {
-    
+
     private static final String manifest = "MANIFEST.MF";
-    
+
     /**
      * Private to avoid instantiation.
      */
     private GenerateAgent() {
-        
+
     }
-    
+
     /**
      * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
-     * @param outputDir The place to put all the intermediate generated files in.
+     *
+     * @param outputDir  The place to put all the intermediate generated files in.
      * @param aspectname Generates {@code aspectname}.jar.
      * @param baseAspect The aspect file to combine with the generated aspects.
      * @throws IOException If something goes wrong in the many filesystem operations.
      */
     public static void generate(final File outputDir, final String aspectname,
-            File baseAspect) throws IOException {
-        
-        if(!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
+                                File baseAspect) throws IOException {
+
+        if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
             System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
             return;
         }
-        if(!classOnClasspath("org.aspectj.tools.ajc.Main")) {
+        if (!classOnClasspath("org.aspectj.tools.ajc.Main")) {
             System.err.println("aspectjtools.jar is missing from the classpath. Halting.");
             return;
         }
-        if(!classOnClasspath("org.aspectj.weaver.Advice")) {
+        if (!classOnClasspath("org.aspectj.weaver.Advice")) {
             System.err.println("aspectjweaver.jar is missing from the classpath. Halting.");
             return;
         }
-        
+
         final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
 
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
-        if (JavaMOPMain.options.usedb){
+        if (JavaMOPMain.options.usedb) {
             //sed -i 's/javamoprt/com\.runtimeverification\.rvmonitor\.java\.rt/g' $GENERATED_AJ
-            File generatedJava = new File(outputDir.getName()+ File.separator + generatedJavaFileName);
+            File generatedJava = new File(outputDir.getName() + File.separator
+                    + generatedJavaFileName);
             String lines = FileUtils.readFileToString(generatedJava, Charset.defaultCharset());
-            lines = lines.replaceAll("javamoprt","com.runtimeverification.rvmonitor.java.rt");
-            lines = lines.replaceAll("MOPLogging","RVMLogging");
-            FileUtils.write(generatedJava,lines);
+            lines = lines.replaceAll("javamoprt", "com.runtimeverification.rvmonitor.java.rt");
+            lines = lines.replaceAll("MOPLogging", "RVMLogging");
+            FileUtils.write(generatedJava, lines);
         }
 
         final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
-            "-cp", baseClasspath, generatedJavaFileName);
-        if(javacReturn != 0) {
+                "-cp", baseClasspath, generatedJavaFileName);
+        if (javacReturn != 0) {
             System.err.println("(javac) Failed to compile agent.");
             return;
         }
 
-        if(baseAspect == null) {
+        if (baseAspect == null) {
             baseAspect = new File(outputDir, "BaseAspect.aj");
         }
-        if(!"BaseAspect.aj".equals(baseAspect.getName())) {
+        if (!"BaseAspect.aj".equals(baseAspect.getName())) {
             throw new IOException("For now, --baseaspect files should be called BaseAspect.aj");
         }
-        if(!baseAspect.exists()) {
+        if (!baseAspect.exists()) {
             final boolean success = baseAspect.createNewFile();
-            if(success) {
+            if (success) {
                 writeBaseAspect(baseAspect);
             } else {
                 System.err.println("Unable to write BaseAspect.aj.");
@@ -100,16 +101,16 @@ public final class GenerateAgent {
 
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
         final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
-            "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
-            baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
+                baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
             System.exit(ajcReturn);
         }*/
         final File aopAjc = new File(ajOutDir + File.separator + "META-INF" + File.separator +
-            "aop-ajc.xml");
-        if(!aopAjc.exists()) {
+                "aop-ajc.xml");
+        if (!aopAjc.exists()) {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
         }
@@ -124,8 +125,8 @@ public final class GenerateAgent {
             // Copy in the postprocessed xml file
             final File metaInf = new File(agentDir, "META-INF");
             final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) ||
-                metaInf.mkdir();
-            if(!mkdirMetaInfReturn) {
+                    metaInf.mkdir();
+            if (!mkdirMetaInfReturn) {
                 System.err.println("(mkdir) Failed to create META-INF");
                 return;
             }
@@ -158,13 +159,13 @@ public final class GenerateAgent {
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
             int extractReturn = runCommandDir(agentDir, "jar", "xvf", weaverJarName);
-            if (extractReturn != 0){
+            if (extractReturn != 0) {
                 System.err.println("(jar) Failed to extract the AspectJ weaver jar");
                 return;
             }
 
             extractReturn = runCommandDir(agentDir, "jar", "xvf", rvmRTJarName);
-            if (extractReturn != 0){
+            if (extractReturn != 0) {
                 System.err.println("(jar) Failed to extract the rvmonitorrt jar");
                 return;
             }
@@ -190,13 +191,13 @@ public final class GenerateAgent {
 
 
             // # Step 15: Stepmake the java agent jar
-            final int jarReturn = runCommandDir(new File("."), "jar", "cmf", jarManifest.toString(), 
-                aspectname + ".jar", "-C", agentDir.toString(), ".");
-            if(jarReturn != 0) {
+            final int jarReturn = runCommandDir(new File("."), "jar", "cmf", jarManifest.toString(),
+                    aspectname + ".jar", "-C", agentDir.toString(), ".");
+            if (jarReturn != 0) {
                 System.err.println("(jar) Failed to produce final jar");
                 return;
             }
-            
+
             System.out.println(aspectname + ".jar is generated.");
         } finally {
             deleteDirectory(agentDir.toPath());
@@ -205,20 +206,22 @@ public final class GenerateAgent {
 
     /**
      * Takes an absolute path to a jar file and returns only the filename of the jar file
+     *
      * @param pathToJar An absolute path to the jar file
      * @return Filename of the jar
      */
     private static String getJarName(String pathToJar) {
         String name;
         String[] parts = pathToJar.split(File.separator);
-        name = parts[parts.length -1];
+        name = parts[parts.length - 1];
         return name;
     }
 
     /**
      * Takes the entire "java.class.path" system property and extracts one of the jars in the path
-     * @param baseClasspath  A string representation of the "java.class.path" system property
-     * @param key A partial or complete name for the jar to be extracted from the path
+     *
+     * @param baseClasspath A string representation of the "java.class.path" system property
+     * @param key           A partial or complete name for the jar to be extracted from the path
      * @return Absolute path to a jar whose name (partially) matches the key, or null if no
      *         match is found
      */
@@ -226,12 +229,12 @@ public final class GenerateAgent {
         String[] jars = baseClasspath.split(":");
         String value = null;
         for (int i = 0; i < jars.length; i++) {
-           if (jars[i].contains(key)){
-               // assuming the jar occurs only once. This may be a problem if the user has some jar
-               // with similar name in their classpath already
-               value = jars[i];
-               break;
-           }
+            if (jars[i].contains(key)) {
+                // assuming the jar occurs only once. This may be a problem if the user has some jar
+                // with similar name in their classpath already
+                value = jars[i];
+                break;
+            }
         }
 
         return value;
@@ -239,6 +242,7 @@ public final class GenerateAgent {
 
     /**
      * Add a line to the aop-ajc.xml file in order to suppress warnings from the AspectJ compiler
+     *
      * @param aopAjc A reference to the aop-ajc.xml file
      */
     private static void suppress_warnings(File aopAjc) {
@@ -246,7 +250,7 @@ public final class GenerateAgent {
             List<String> lines = FileUtils.readLines(aopAjc, Charsets.UTF_8);
             int index = lines.indexOf("</aspects>") + 1;
             lines.add(index, "<weaver options=\"-nowarn -Xlint:ignore\"></weaver>");
-            FileUtils.writeLines(aopAjc,lines);
+            FileUtils.writeLines(aopAjc, lines);
         } catch (IOException e) {
             System.err.println("(ajc) There was a problem reading aop-ajc.xml");
             e.printStackTrace();
@@ -256,62 +260,64 @@ public final class GenerateAgent {
     /**
      * Run a command in a directory. Passes the output of the run commands through if the program
      * is in verbose mode. Blocks until the command finishes, then gives the return code.
-     * @param dir The directory to run the command in.
+     *
+     * @param dir  The directory to run the command in.
      * @param args The program to run and its arguments.
      * @return The return code of the program.
      */
     private static int runCommandDir(final File dir, final String... args) throws IOException {
         try {
-            if(MOPProcessor.verbose) { // -v
+            if (MOPProcessor.verbose) { // -v
                 System.out.println(dir.toString() + ": " + Arrays.asList(args).toString());
             }
             final ProcessBuilder builder = new ProcessBuilder();
             builder.command(args).directory(dir);
-            if(MOPProcessor.verbose) { // -v
+            if (MOPProcessor.verbose) { // -v
                 builder.inheritIO();
             }
             final Process proc = builder.start();
             return proc.waitFor();
-        } catch(InterruptedException ie) {
+        } catch (InterruptedException ie) {
             ie.printStackTrace();
             return -1;
         }
     }
-    
+
     /**
      * Copy the contents of one file to another.
+     *
      * @param sourceFile The file to take the contents from.
-     * @param destFile The file to output to. Created if it does not already exist.
+     * @param destFile   The file to output to. Created if it does not already exist.
      * @throws IOException If something goes wrong copying the file.
      */
     private static void copyFile(final File sourceFile, final File destFile) throws IOException {
         // http://www.javalobby.org/java/forums/t17036.html
-        if(!destFile.exists()) {
+        if (!destFile.exists()) {
             destFile.createNewFile();
         }
-        
+
         FileChannel source = null;
         FileChannel destination = null;
         try {
             source = new FileInputStream(sourceFile).getChannel();
             destination = new FileOutputStream(destFile).getChannel();
             destination.transferFrom(source, 0, source.size());
-        }
-        finally {
-            
-            if(source != null) {
+        } finally {
+
+            if (source != null) {
                 source.close();
             }
-            if(destination != null) {
+            if (destination != null) {
                 destination.close();
             }
         }
     }
-    
+
     /**
      * Delete a directory and all its contents. Every file has to be individually deleted, since
      * there is no built-in java function to delete an entire directory and its contents
      * recursively.
+     *
      * @param path The path of the directory to delete.
      * @throws IOException If it cannot traverse the directories or the files cannot be deleted.
      */
@@ -324,9 +330,9 @@ public final class GenerateAgent {
                 Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
-            
+
             @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) 
+            public FileVisitResult visitFileFailed(Path file, IOException exc)
                     throws IOException {
                 // try to delete the file anyway, even if its attributes
                 // could not be read, since delete-only access is
@@ -334,9 +340,9 @@ public final class GenerateAgent {
                 Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
-            
+
             @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) 
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                     throws IOException {
                 if (exc == null) {
                     Files.delete(dir);
@@ -348,17 +354,19 @@ public final class GenerateAgent {
             }
         });
     }
-    
+
     /**
      * The system classpath.
+     *
      * @return The classpath, separated in a platform-dependent manner.
      */
     private static String getClasspath() {
         return System.getProperty("java.class.path") + File.pathSeparator + ".";
     }
-    
+
     /**
      * Test if a class is present on the system classpath.
+     *
      * @param name The full class name, including packages.
      * @return If the class {@code name} is on the classpath.
      */
@@ -366,20 +374,21 @@ public final class GenerateAgent {
         try {
             Class.forName(name, false, GenerateAgent.class.getClassLoader());
             return true;
-        } catch(ExceptionInInitializerError eiie) {
+        } catch (ExceptionInInitializerError eiie) {
             throw new RuntimeException(
-                "Class initializer for " + name + " should not have run.", eiie);
-        } catch(ClassNotFoundException cnfe) {
+                    "Class initializer for " + name + " should not have run.", eiie);
+        } catch (ClassNotFoundException cnfe) {
             return false;
-        } catch(LinkageError le) {
+        } catch (LinkageError le) {
             throw new RuntimeException(
-                "Class " + name + " is on the classpath, but is outdated.", le);
+                    "Class " + name + " is on the classpath, but is outdated.", le);
         }
     }
 
     /**
      * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
      * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
+     *
      * @param f The file to write the manifest to.
      * @throws IOException If something goes wrong in writing the file.
      */
@@ -408,9 +417,10 @@ public final class GenerateAgent {
             writer.close();
         }
     }
-    
+
     /**
      * Write the base aspect to a file.
+     *
      * @param f The file to write to.
      * @throws IOException If something goes wrong in writing the file.
      */
