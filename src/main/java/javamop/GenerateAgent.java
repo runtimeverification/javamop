@@ -168,13 +168,13 @@ public final class GenerateAgent {
 
             //remove extracted jars to make agent lighter weight
             if (!actualWeaverFile.delete()) {
-                System.err.println("(delete) Failed to delete weaver jar");
-                return;
+                System.err.println("(delete) Failed to delete weaver jar; generated jar will " +
+                        "have a bigger size than normal");
             }
 
             if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar");
-                return;
+                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will" +
+                        " have a bigger size than normal");
             }
 
             // # Step 14: copy in the correct MANIFEST FILE
