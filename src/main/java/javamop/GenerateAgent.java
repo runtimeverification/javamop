@@ -196,6 +196,11 @@ public final class GenerateAgent {
         }
     }
 
+    /**
+     * Takes an absolute path to a jar file and returns only the filename of the jar file
+     * @param pathToJar An absolute path to the jar file
+     * @return Filename of the jar
+     */
     private static String getJarName(String pathToJar) {
         String name;
         String[] parts = pathToJar.split(File.separator);
@@ -203,6 +208,13 @@ public final class GenerateAgent {
         return name;
     }
 
+    /**
+     * Takes the entire "java.class.path" system property and extracts one of the jars in the path
+     * @param baseClasspath  A string representation of the "java.class.path" system property
+     * @param key A partial or complete name for the jar to be extracted from the path
+     * @return Absolute path to a jar whose name (partially) matches the key, or null if no
+     *         match is found
+     */
     private static String getJarLocation(String baseClasspath, String key) {
         String[] jars = baseClasspath.split(":");
         String value = null;
@@ -218,6 +230,10 @@ public final class GenerateAgent {
         return value;
     }
 
+    /**
+     * Add a line to the aop-ajc.xml file in order to suppress warnings from the AspectJ compiler
+     * @param aopAjc A reference to the aop-ajc.xml file
+     */
     private static void suppress_warnings(File aopAjc) {
         try {
             List<String> lines = FileUtils.readLines(aopAjc, Charsets.UTF_8);
