@@ -3,13 +3,4 @@ NavigableMap_UnsafeIterator.mop
 NavigableSet_Modification.mop
 ShutdownHook_UnsafeAWTCall.mop
 BufferedInputStream_SynchronizedFill.mop
-Object_NoClone.mop
 Comparable_CompareToNullException.mop
-Serializable_UID.mop
-Dictionary_Obsolete.mop
-Collection_StandardConstructors.mop
-SortedSet_StandardConstructors.mop
-Enumeration_Obsolete.mop
-Map_StandardConstructors.mop
-Enum_UserFriendlyName.mop
-Enum_NoOrdinal.mop
