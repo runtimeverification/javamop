@@ -279,7 +279,9 @@ public final class GenerateAgent {
                 builder.redirectErrorStream(true);
             }
             final Process proc = builder.start();
-
+			
+			// If the output stream does not get consumed, when the buffer of the subprocess
+            // is full it will get blocked. This fixed issue #37
             if (!MOPProcessor.verbose) {
                 // Consume output/error stream
                 final StringWriter writer = new StringWriter();
