@@ -2,21 +2,21 @@ package javamop;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.io.StringWriter;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -274,8 +274,28 @@ public final class GenerateAgent {
             builder.command(args).directory(dir);
             if (MOPProcessor.verbose) { // -v
                 builder.inheritIO();
+            } else {
+                builder.redirectErrorStream(true);
             }
             final Process proc = builder.start();
+
+            // If the output stream does not get consumed, when the buffer of the subprocess
+            // is full it will get blocked. This fixed issue #37
+            if (!MOPProcessor.verbose) {
+                // Consume output/error stream
+                final StringWriter writer = new StringWriter();
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            IOUtils.copy(proc.getInputStream(), writer);
+                        } catch (IOException e) {
+                            System.err.println("Exception in reading subprocess output: "
+                                    + e.getMessage());
+                        }
+                    }
+                }).start();
+            }
+
             return proc.waitFor();
         } catch (InterruptedException ie) {
             ie.printStackTrace();
