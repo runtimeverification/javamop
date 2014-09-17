@@ -2,12 +2,9 @@ package javamop;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -274,8 +271,25 @@ public final class GenerateAgent {
             builder.command(args).directory(dir);
             if (MOPProcessor.verbose) { // -v
                 builder.inheritIO();
+            } else {
+                builder.redirectErrorStream(true);
             }
             final Process proc = builder.start();
+
+            if (!MOPProcessor.verbose) {
+                // Consume output/error stream
+                final StringWriter writer = new StringWriter();
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            IOUtils.copy(proc.getInputStream(), writer);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+
             return proc.waitFor();
         } catch (InterruptedException ie) {
             ie.printStackTrace();
