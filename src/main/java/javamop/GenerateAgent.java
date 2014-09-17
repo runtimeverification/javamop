@@ -279,9 +279,10 @@ public final class GenerateAgent {
                 builder.redirectErrorStream(true);
             }
             final Process proc = builder.start();
-			
-			// If the output stream does not get consumed, when the buffer of the subprocess
-            // is full it will get blocked. This fixed issue #37
+
+            // If the output stream does not get consumed, when the buffer of the subprocess
+            // is full it will get blocked. This fixed issue #37:
+            // https://github.com/runtimeverification/javamop/issues/37
             if (!MOPProcessor.verbose) {
                 // Consume output/error stream
                 final StringWriter writer = new StringWriter();
@@ -429,10 +430,10 @@ public final class GenerateAgent {
             /*
              * Jar files can have at most 72 characters per line, so this splits it by jar file
              * into many lines.
-             
-            writer.println("Boot-Class-Path: " + 
+
+            writer.println("Boot-Class-Path: " +
                 getClasspath().replace(File.pathSeparator, System.lineSeparator() + " "));
-			*/
+                        */
             writer.flush();
         } finally {
             writer.close();
