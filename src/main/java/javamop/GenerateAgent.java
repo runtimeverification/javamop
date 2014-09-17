@@ -212,8 +212,7 @@ public final class GenerateAgent {
      */
     private static String getJarName(String pathToJar) {
         File file = new File(pathToJar);
-        String name = file.getName();
-        return name;
+        return file.getName();
     }
 
     /**
