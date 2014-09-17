@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
 import javamop.commandline.SpecFilter;
@@ -401,7 +402,13 @@ public final class JavaMOPMain {
      */
     public static void main(String[] args) {
         options = new JavaMOPOptions();
-        JCommander jc = new JCommander(options,args);
+        JCommander jc;
+        try {
+            jc = new JCommander(options, args);
+        } catch (ParameterException pe) {
+            System.out.println(pe.getMessage());
+            return;
+        }
         jc.setProgramName("javamop");
 
         handleOptions(options, args, jc);
