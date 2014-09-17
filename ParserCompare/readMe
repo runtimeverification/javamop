@@ -1,0 +1,10 @@
+This two files record the method calls from javamop's parser and rv-monitor's parser during analyzing spec files respectively.
+It is easy to notice that there exists a large amount of overlap. Well, they almost overlap with each other entirely in the first ten method calls, the only difference is their package names!
+ 
+Given the fact that the rv-monitor's parser are extracted from javamop's by copy and paste, we can guess that the functionality performed by them are exactly the same.
+In the next few days, I'll try to test whether replacing the function calls in javamop by the lib in rv-monitor will break the integrity and cause bugs.
+
+If there is no evidence showing my hypothesis is wrong, I'll write a simple program to replace all the function calls within javamop's parser with lib calls to rv-monitor. It will be a large amount of work and I do not think it is a good idea to replace them line by line manually.
+
+Regards,
+He
