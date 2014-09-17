@@ -19,6 +19,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
@@ -212,7 +213,7 @@ public final class GenerateAgent {
      */
     private static String getJarName(String pathToJar) {
         String name;
-        String[] parts = pathToJar.split(File.separator);
+        String[] parts = pathToJar.split(Pattern.quote(File.separator));
         name = parts[parts.length - 1];
         return name;
     }
@@ -226,7 +227,7 @@ public final class GenerateAgent {
      *         match is found
      */
     private static String getJarLocation(String baseClasspath, String key) {
-        String[] jars = baseClasspath.split(":");
+        String[] jars = baseClasspath.split(File.pathSeparator);
         String value = null;
         for (int i = 0; i < jars.length; i++) {
             if (jars[i].contains(key)) {
@@ -279,8 +280,6 @@ public final class GenerateAgent {
             }
             final Process proc = builder.start();
 
-            // If the output stream does not get consumed, when the buffer of the subprocess
-            // is full it will get blocked. This fixed issue #37
             if (!MOPProcessor.verbose) {
                 // Consume output/error stream
                 final StringWriter writer = new StringWriter();
