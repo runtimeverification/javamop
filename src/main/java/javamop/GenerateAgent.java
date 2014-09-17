@@ -19,7 +19,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
@@ -212,11 +211,8 @@ public final class GenerateAgent {
      * @return Filename of the jar
      */
     private static String getJarName(String pathToJar) {
-        String name;
-        // String[] parts = pathToJar.split(Pattern.quote(File.separator));
-        // name = parts[parts.length - 1];
         File file = new File(pathToJar);
-        name = file.getName();
+        String name = file.getName();
         return name;
     }
 
