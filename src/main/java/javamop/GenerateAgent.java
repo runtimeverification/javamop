@@ -282,7 +282,8 @@ public final class GenerateAgent {
                         try {
                             IOUtils.copy(proc.getInputStream(), writer);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            System.err.println("Exception in reading subprocess output: "
+                                    + e.getMessage());
                         }
                     }
                 }).start();
