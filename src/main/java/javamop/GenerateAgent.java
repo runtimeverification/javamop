@@ -213,8 +213,10 @@ public final class GenerateAgent {
      */
     private static String getJarName(String pathToJar) {
         String name;
-        String[] parts = pathToJar.split(Pattern.quote(File.separator));
-        name = parts[parts.length - 1];
+        // String[] parts = pathToJar.split(Pattern.quote(File.separator));
+        // name = parts[parts.length - 1];
+        File file = new File(pathToJar);
+        name = file.getName();
         return name;
     }
 
