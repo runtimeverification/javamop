@@ -44,8 +44,7 @@ public class SpecFilter {
         filterConfig = Configuration.getServerSetting("FilterConf");
         omitFile = Configuration.getServerSetting("OmitFile");
         configPath = Tool.getConfigPath()+File.separator;
-        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "properties" +
-                File.separator + "java";
+        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "java";
         specsToOmit = getFilesToOmit();
         String cleanupOption = Configuration.getServerSetting("PropertyDBCleanup");
         if (cleanupOption.equals("true")){
