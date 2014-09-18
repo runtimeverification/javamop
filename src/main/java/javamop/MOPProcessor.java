@@ -1,3 +1,4 @@
+// Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 /**
  * @author Feng Chen, Dongyun Jin
  * The class handling the mop specification tree
