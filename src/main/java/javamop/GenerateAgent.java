@@ -68,12 +68,9 @@ public final class GenerateAgent {
         // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
         String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
         if (JavaMOPMain.options.usedb) {
-            //sed -i 's/javamoprt/com\.runtimeverification\.rvmonitor\.java\.rt/g' $GENERATED_AJ
             File generatedJava = new File(outputDir.getName() + File.separator
                     + generatedJavaFileName);
             String lines = FileUtils.readFileToString(generatedJava, Charset.defaultCharset());
-            lines = lines.replaceAll("javamoprt", "com.runtimeverification.rvmonitor.java.rt");
-            lines = lines.replaceAll("MOPLogging", "RVMLogging");
             FileUtils.write(generatedJava, lines);
         }
 
