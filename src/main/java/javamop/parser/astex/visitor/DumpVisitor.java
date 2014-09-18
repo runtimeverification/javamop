@@ -1,3 +1,4 @@
+// Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 /*
  * Copyright (C) 2008 Feng Chen.
  * 
