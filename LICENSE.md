@@ -63,5 +63,5 @@ The following pieces of software have additional or alternate copyrights,
 licenses, and/or restrictions:
 
 ---------------------------------------
-RVMonitor (http://runtimeverification.com/monitor/) is licensed under a proprietary license.
+RV-Monitor (http://runtimeverification.com/monitor/) is licensed under a proprietary license.
 
