@@ -15,7 +15,7 @@ Developed by:
     University of Illinois at Urbana-Champaign
     Runtime Verification, Inc.
 
-    http://kframework.org
+    https://github.com/runtimeverification/javamop
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal with
