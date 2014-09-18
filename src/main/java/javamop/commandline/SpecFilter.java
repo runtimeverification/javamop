@@ -26,8 +26,8 @@ import java.util.Properties;
  */
 public class SpecFilter {
 
-    private static final String SPEC_DIRECTORY = "annotated-java-api";
-    private static final String SPEC_DIRECTORY_COPY = "annotated-java-api-copy";
+    private static final String SPEC_DIRECTORY = "properties";
+    private static final String SPEC_DIRECTORY_COPY = "properties-copy";
     private static final String SEVERITY_PREFIX = " * @severity ";
     private final String url;
     private final String vcs;
@@ -44,7 +44,7 @@ public class SpecFilter {
         filterConfig = Configuration.getServerSetting("FilterConf");
         omitFile = Configuration.getServerSetting("OmitFile");
         configPath = Tool.getConfigPath()+File.separator;
-        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "properties" +
+        specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "annotated-java-api" +
                 File.separator + "java";
         specsToOmit = getFilesToOmit();
         String cleanupOption = Configuration.getServerSetting("PropertyDBCleanup");

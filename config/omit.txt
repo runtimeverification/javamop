@@ -1,3 +1,1 @@
-ShutdownHook_UnsafeAWTCall.mop
-BufferedInputStream_SynchronizedFill.mop
 Comparable_CompareToNullException.mop
