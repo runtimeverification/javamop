@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * Command-line options available for controlling JavaMOP, and through it RV-Monitor.
- * TODO(OwolabiL): Add correct/better descriptions of options after consulting with others
  */
 public class JavaMOPOptions {
     @Parameter(description = "Files")
