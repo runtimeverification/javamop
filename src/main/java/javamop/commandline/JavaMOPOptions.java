@@ -15,34 +15,34 @@ public class JavaMOPOptions {
     @Parameter(description = "Files")
     public List<String> files = new ArrayList<String>();
 
-    @Parameter(names="-d",description = "Directory in which to store the output",
+    @Parameter(names="-d",description = "Directory in which to store the output.",
             converter = FileConverter.class)
     public File outputDir;
 
-    @Parameter(names="-debug",description = "Print verbose error messages")
+    @Parameter(names="-debug",description = "Print verbose error messages.")
     public boolean debug = false;
 
-    @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file")
+    @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file.")
     public boolean toJavaLib = false;
 
     @Parameter(names={"-s","-statistics"},description = "This is for counting events and/or " +
             "monitors.")
     public boolean statistics = false;
 
-    @Parameter(names={"-v","-verbose"}, description = "Enable verbose output")
+    @Parameter(names={"-v","-verbose"}, description = "Enable verbose output.")
     public boolean verbose = false;
 
     @Parameter(names={"-s2","statistics2"},description = "This is for counting events and/or " +
-            "monitors")
+            "monitors.")
     public boolean statistics2 = false;
 
     @Parameter(names={"-n","-aspectname"},description = "Use the gievn aspect name instead of " +
-            "source code name")
+            "source code name.")
     public String aspectname;
 
     @Parameter(names="-dacapo",description = "is for adding pointcuts, such as," +
-            " !within(dacapo.test.*) -- automatically.\n" +
-            "Otherwise, will have to add these pointcuts manually for each specification")
+            " !within(dacapo.test.*) -- automatically. Otherwise, user will have to add these " +
+            "pointcuts manually for each specification.")
     public boolean dacapo = false;
 
     @Parameter(names="-noadvicebody",description = "Enabling this causes JavaMOP not to put " +
@@ -69,22 +69,22 @@ public class JavaMOPOptions {
     @Parameter(names="-keepRVFiles",description = "By default, JavaMOP deletes the generated" +
             " .java file after creating the binary form. This is because the user should not " +
             "have to care about this intermediate file. If this option is enabled, however, " +
-            "the file is preserved")
+            "the file is preserved.")
     public boolean keepRVFiles = false;
 
-    @Parameter(names="-agent",description = "Generate an agent from the given .mop files")
+    @Parameter(names="-agent",description = "Generate an agent from the given .mop files.")
     public boolean generateAgent = false;
 
     @Parameter(names="-baseaspect",description = "Optionally provide a BaseAspect.aj file " +
-            "for use in generating an agent", converter = FileConverter.class)
+            "for use in generating an agent.", converter = FileConverter.class)
     public File baseAspect;
 
-    @Parameter(names={"-h","-help"}, description = "Show this help message", help = true)
+    @Parameter(names={"-h","-help"}, description = "Show this help message.", help = true)
     private boolean help = false;
 
     @Parameter(names = "-usedb", description = "Use only the property database for building " +
             "an Agent. Setting this option without setting the '-agent' option will result in " +
             "an Exception. For a list config files used with this option, please see the " +
-            "javamop/config/remote_server_addr.properties file")
+            "javamop/config/remote_server_addr.properties file.")
     public boolean usedb = false;
 }
