@@ -22,9 +22,6 @@ public class JavaMOPOptions {
     @Parameter(names="-debug",description = "Print verbose error messages")
     public boolean debug = false;
 
-    @Parameter(names="-noopt1",description = "Disable set optimization")
-    public boolean noopt1 = false;
-
     @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file")
     public boolean toJavaLib = false;
 
@@ -34,14 +31,12 @@ public class JavaMOPOptions {
     @Parameter(names={"-v","-verbose"}, description = "Enable verbose output")
     public boolean verbose = false;
 
-
     @Parameter(names={"-s2","statistics2"},description = "generate monitor with statistics")
     public boolean statistics2 = false;
 
     @Parameter(names={"-n","-aspectname"},description = "Use the gievn aspect name instead of " +
             "source code name")
     public String aspectname;
-
 
     @Parameter(names="-dacapo",description = "A Good description is needed here")
     public boolean dacapo = false;
@@ -51,12 +46,6 @@ public class JavaMOPOptions {
 
     @Parameter(names="-silent",description = "A Good description is needed here")
     public boolean silent = false;
-
-    @Parameter(names="-showevents",description = "show every event/handler occurrence")
-    public boolean showevents = false;
-
-    @Parameter(names="-showhandlers",description = "show every handler occurrence")
-    public boolean showhandlers = false;
 
     @Parameter(names="-noadvicebody",description = "A Good description is needed here")
     public boolean noadvicebody = false;
@@ -69,10 +58,6 @@ public class JavaMOPOptions {
 
     @Parameter(names="-inline",description = "A Good description is needed here")
     public boolean inline = false;
-
-
-    @Parameter(names="-scalable",description = "A Good description is needed here")
-    public boolean scalable = false;
 
     @Parameter(names="-keepRVFiles",description = "A Good description is needed here")
     public boolean keepRVFiles = false;

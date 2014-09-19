@@ -570,16 +570,6 @@ public final class JavaMOPMain {
             JavaMOPMain.specifiedAJName = true;
         }
 
-        if (options.showhandlers) {
-            if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
-                JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
-        }
-
-        if (options.showevents) {
-            if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
-                JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
-        }
-
         if (options.generateAgent) {
             options.merge = true;
             options.keepRVFiles = true;
