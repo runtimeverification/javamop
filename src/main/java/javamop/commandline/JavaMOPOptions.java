@@ -47,19 +47,30 @@ public class JavaMOPOptions {
     @Parameter(names="-silent",description = "A Good description is needed here")
     public boolean silent = false;
 
-    @Parameter(names="-noadvicebody",description = "A Good description is needed here")
+    @Parameter(names="-noadvicebody",description = "Enabling this causes JavaMOP not to put " +
+            "the monitoring-related routine inside the corresponding advice body. This can be " +
+            "used count the number of fired events for each event.")
     public boolean noadvicebody = false;
 
     @Parameter(names="-translate2RV",description = "A Good description is needed here")
     public boolean translate2RV = true;
 
-    @Parameter(names="-merge",description = "A Good description is needed here")
+    @Parameter(names="-merge",description = "By default, one .aj file is generated for each " +
+            "JavaMOP specification. This option enables JavaMOP to generate a combined .aj file" +
+            " for monitoring multiple specifications simultaneously. This should be used with" +
+            " -n, so that the merged monitor has a name specified by the user.")
     public boolean merge = false;
 
-    @Parameter(names="-inline",description = "A Good description is needed here")
+    @Parameter(names="-inline",description = "If -inline is disabled, the monitoring-related " +
+            "routine (which is printed in adviceBody()) is put inside of the corresponding " +
+            "advice. If it's enabled, the routine is promoted to a Java method and this method " +
+            "is invoked by the corresponding advice.")
     public boolean inline = false;
 
-    @Parameter(names="-keepRVFiles",description = "A Good description is needed here")
+    @Parameter(names="-keepRVFiles",description = "By default, JavaMOP deletes the generated" +
+            " .java file after creating the binary form. This is because the user should not " +
+            "have to care about this intermediate file. If this option is enabled, however, " +
+            "the file is preserved")
     public boolean keepRVFiles = false;
 
     @Parameter(names="-agent",description = "Generate an agent from the given .mop files")
