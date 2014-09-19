@@ -45,9 +45,6 @@ public final class JavaMOPMain {
     public static String jarFilePath = null;
     
     public static final int NONE = 0;
-    public static final int HANDLERS = 1;
-    public static final int EVENTS = 2;
-    public static int logLevel = NONE;
 
     public static boolean empty_advicebody = false;
 
