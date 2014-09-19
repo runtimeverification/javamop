@@ -45,9 +45,6 @@ public final class JavaMOPMain {
     public static String jarFilePath = null;
     
     public static final int NONE = 0;
-    public static final int HANDLERS = 1;
-    public static final int EVENTS = 2;
-    public static int logLevel = NONE;
 
     public static boolean empty_advicebody = false;
 
@@ -568,16 +565,6 @@ public final class JavaMOPMain {
 
         if (options.aspectname != null) {
             JavaMOPMain.specifiedAJName = true;
-        }
-
-        if (options.showhandlers) {
-            if (JavaMOPMain.logLevel < JavaMOPMain.HANDLERS)
-                JavaMOPMain.logLevel = JavaMOPMain.HANDLERS;
-        }
-
-        if (options.showevents) {
-            if (JavaMOPMain.logLevel < JavaMOPMain.EVENTS)
-                JavaMOPMain.logLevel = JavaMOPMain.EVENTS;
         }
 
         if (options.generateAgent) {
