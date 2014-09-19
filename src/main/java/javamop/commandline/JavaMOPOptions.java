@@ -41,9 +41,6 @@ public class JavaMOPOptions {
     @Parameter(names="-dacapo",description = "A Good description is needed here")
     public boolean dacapo = false;
 
-    @Parameter(names="-dacapo2",description = "A Good description is needed here")
-    public boolean dacapo2 = false;
-
     @Parameter(names="-silent",description = "A Good description is needed here")
     public boolean silent = false;
 
