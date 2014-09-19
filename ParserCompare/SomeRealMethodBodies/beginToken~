@@ -1,0 +1,41 @@
+javamop:
+
+public char BeginToken() throws java.io.IOException
+  {
+    if (inBuf > 0)
+    {
+      --inBuf;
+
+      if (++bufpos == bufsize)
+        bufpos = 0;
+
+      tokenBegin = bufpos;
+      return buffer[bufpos];
+    }
+
+    tokenBegin = 0;
+    bufpos = -1;
+
+    return readChar();
+  }
+
+
+rv-monitor:
+public char BeginToken() throws java.io.IOException
+  {
+    if (inBuf > 0)
+    {
+      --inBuf;
+
+      if (++bufpos == bufsize)
+        bufpos = 0;
+
+      tokenBegin = bufpos;
+      return buffer[bufpos];
+    }
+
+    tokenBegin = 0;
+    bufpos = -1;
+
+    return readChar();
+  }
