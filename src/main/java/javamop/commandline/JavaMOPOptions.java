@@ -35,7 +35,7 @@ public class JavaMOPOptions {
             "monitors.")
     public boolean statistics2 = false;
 
-    @Parameter(names={"-n","-aspectname"},description = "Use the gievn aspect name instead of " +
+    @Parameter(names={"-n","-aspectname"},description = "Use the given aspect name instead of " +
             "source code name.")
     public String aspectname;
 
