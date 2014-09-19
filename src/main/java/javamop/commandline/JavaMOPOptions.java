@@ -66,9 +66,9 @@ public class JavaMOPOptions {
     public boolean inline = false;
 
     @Parameter(names="-keepRVFiles",description = "By default, JavaMOP deletes the generated" +
-            " .java file after creating the binary form. This is because the user should not " +
-            "have to care about this intermediate file. If this option is enabled, however, " +
-            "the file is preserved.")
+            " .java file after combining the generated libraries with the associated pointcuts. " +
+            "This is because the user should not have to care about this intermediate file. " +
+            "If this option is enabled, however, the file is preserved.")
     public boolean keepRVFiles = false;
 
     @Parameter(names="-agent",description = "Generate an agent from the given .mop files.")
