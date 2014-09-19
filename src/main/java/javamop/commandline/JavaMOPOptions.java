@@ -25,20 +25,24 @@ public class JavaMOPOptions {
     @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file")
     public boolean toJavaLib = false;
 
-    @Parameter(names={"-s","-statistics"},description = "generate monitor with statistics")
+    @Parameter(names={"-s","-statistics"},description = "This is for counting events and/or " +
+            "monitors.")
     public boolean statistics = false;
 
     @Parameter(names={"-v","-verbose"}, description = "Enable verbose output")
     public boolean verbose = false;
 
-    @Parameter(names={"-s2","statistics2"},description = "generate monitor with statistics")
+    @Parameter(names={"-s2","statistics2"},description = "This is for counting events and/or " +
+            "monitors")
     public boolean statistics2 = false;
 
     @Parameter(names={"-n","-aspectname"},description = "Use the gievn aspect name instead of " +
             "source code name")
     public String aspectname;
 
-    @Parameter(names="-dacapo",description = "A Good description is needed here")
+    @Parameter(names="-dacapo",description = "is for adding pointcuts, such as," +
+            " !within(dacapo.test.*) -- automatically.\n" +
+            "Otherwise, will have to add these pointcuts manually for each specification")
     public boolean dacapo = false;
 
     @Parameter(names="-noadvicebody",description = "Enabling this causes JavaMOP not to put " +
@@ -46,7 +50,8 @@ public class JavaMOPOptions {
             "used count the number of fired events for each event.")
     public boolean noadvicebody = false;
 
-    @Parameter(names="-translate2RV",description = "A Good description is needed here")
+    @Parameter(names="-translate2RV",description = "When this is enabled, JavaMOP generates a " +
+            ".rvm file from an .mop file, and invokes RV-Monitor to process the .rvm file.")
     public boolean translate2RV = true;
 
     @Parameter(names="-merge",description = "By default, one .aj file is generated for each " +
