@@ -41,9 +41,6 @@ public class JavaMOPOptions {
     @Parameter(names="-dacapo",description = "A Good description is needed here")
     public boolean dacapo = false;
 
-    @Parameter(names="-silent",description = "A Good description is needed here")
-    public boolean silent = false;
-
     @Parameter(names="-noadvicebody",description = "Enabling this causes JavaMOP not to put " +
             "the monitoring-related routine inside the corresponding advice body. This can be " +
             "used count the number of fired events for each event.")
