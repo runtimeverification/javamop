@@ -145,7 +145,7 @@ public class EventManager {
                 ret += "// " + numAdvice++ + "\n";
             }
             
-            ret += advice.toRVString();
+            ret += advice.toString();
 
             ret += "\n";
             if (advice.beCounted) {

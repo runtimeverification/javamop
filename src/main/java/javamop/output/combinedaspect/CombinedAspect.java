@@ -60,55 +60,11 @@ public class CombinedAspect {
     }
     
     /**
-     * Code to use the combined aspect stand-alone without RV-Monitor.
+     * Code to use the combined aspect with the backing of RV-Montior.
      * @return The generated code.
      */
     @Override
     public String toString() {
-        String ret = "";
-        
-        ret += this.statManager.statClass();
-        
-        ret += "public aspect " + this.name + " implements javamoprt.MOPObject {\n";
-        
-        ret += "javamoprt.map.MOPMapManager " + mapManager + ";\n";
-        
-        ret += this.statManager.fieldDecl2();
-        
-        // constructor
-        ret += "public " + this.name + "(){\n";
-        
-        ret += this.eventManager.printConstructor();
-        
-        ret += mapManager + " = " + "new javamoprt.map.MOPMapManager();\n";
-        ret += mapManager + ".start();\n";
-        
-        ret += this.statManager.constructor();
-        
-        //ret += constructor();
-        //ret += initCache();
-        
-        ret += "}\n";
-        ret += "\n";
-        
-        ret += this.statManager.fieldDecl();
-        
-        ret += this.lockManager.decl();
-        
-        ret += this.eventManager.advices();
-        
-        ret += this.statManager.advice();
-        
-        ret += "}\n";
-        
-        return ret;
-    }
-    
-    /**
-     * Code to use the combined aspect with the backing of RV-Montior.
-     * @return The generated code.
-     */
-    public String toRVString() {
         String ret = "";
         ret += this.statManager.statClass();
         ret += "public aspect " + this.name +

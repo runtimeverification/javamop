@@ -300,90 +300,12 @@ public class AdviceAndPointCut {
     }
     
     /**
-     * Generated Java/AspectJ complete source code for this advice and pointcut as standalone code.
-     * @return Java/AspectJ source code.
-     */
-    @Override
-    public String toString() {
-        String ret = "";
-        String pointcutStr = pointcut.toString();
-        
-        if(JavaMOPMain.inline && !isAround){
-            ret += "void " + inlineFuncName + "(" + inlineParameters.parameterDeclString();
-            if(hasThisJoinPoint){
-                if(inlineParameters.size() > 0) 
-                    ret += ", ";
-                ret += "JoinPoint thisJoinPoint";
-            }
-            ret += ") {\n";
-            
-            ret += adviceBody();
-            
-            ret += "}\n";
-        }
-        
-        
-        ret += "pointcut " + pointcutName;
-        ret += "(";
-        ret += parameters.parameterDeclString();
-        ret += ")";
-        ret += " : ";
-        if (pointcutStr != null && pointcutStr.length() != 0) {
-            ret += "(";
-            ret += pointcutStr;
-            ret += ")";
-            ret += " && ";
-        }
-        ret += commonPointcut + "();\n";
-        
-        if (isAround)
-            ret += retType + " ";
-        
-        ret += pos + " (" + parameters.parameterDeclString() + ") ";
-        
-        if (retVal != null && retVal.size() > 0) {
-            ret += "returning (";
-            ret += retVal.parameterDeclString();
-            ret += ") ";
-        }
-        
-        if (throwVal != null && throwVal.size() > 0) {
-            ret += "throwing (";
-            ret += throwVal.parameterDeclString();
-            ret += ") ";
-        }
-        
-        ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
-        
-        if (aroundLocalDecl != null)
-            ret += aroundLocalDecl;
-        
-        if(JavaMOPMain.inline && !isAround){
-            ret += inlineFuncName + "(" + inlineParameters.parameterString();
-            if(hasThisJoinPoint){
-                if(inlineParameters.size() > 0) 
-                    ret += ", ";
-                ret += "thisJoinPoint";
-            }
-            ret += ");\n";
-        } else {
-            ret += adviceBody();
-        }
-        
-        if (aroundAdviceReturn != null)
-            ret += aroundAdviceReturn;
-        
-        ret += "}\n";
-        
-        return ret;
-    }
-    
-    /**
      * Generated Java/AspectJ complete source code for this advice and pointcut as code that works
      * together with RV-Monitor generated code.
      * @return Java/AspectJ source code.
      */
-    public String toRVString() {
+    @Override
+    public String toString() {
         String ret = "";
         String pointcutStr = pointcut.toString();
         

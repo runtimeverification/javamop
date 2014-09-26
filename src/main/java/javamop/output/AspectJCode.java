@@ -51,7 +51,8 @@ public class AspectJCode {
      * Generate the AspectJ code that complements the generated RV-Monitor monitoring code.
      * @return The AspectJ/Java source code.
      */
-    public String toRVString() {
+    @Override
+    public String toString() {
         String ret = "";
         ret += packageDecl;
         ret += imports.toString().replaceAll("import javamoprt.*", "");
@@ -73,7 +74,7 @@ public class AspectJCode {
             ret += "\n";
         }
         
-        ret += aspect.toRVString();
+        ret += aspect.toString();
         
         if(systemAspect != null)
             ret += "\n" + systemAspect;
