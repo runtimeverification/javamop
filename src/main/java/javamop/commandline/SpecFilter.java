@@ -200,7 +200,7 @@ public class SpecFilter {
      * This method creates a new process and executes the command represented by
      * the <code>args</code> parameter.
      *
-     * @param args a comma seperated list of strings which represent
+     * @param args a comma separated list of strings which represent
      *             the command to be executed.
      * @return a boolean value indicating whether the command was successfully
      *         run or not. Although process.waitfor() will return a non-zero
