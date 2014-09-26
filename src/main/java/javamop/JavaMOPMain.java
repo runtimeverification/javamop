@@ -137,10 +137,8 @@ public final class JavaMOPMain {
         
         String output = processor.process(spec);
         
-        if (options.translate2RV) {
-            writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
-        }
-        
+        writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
+
         if (options.toJavaLib) {
             writeFile(output, location, "JavaLibMonitor.java");
         } else {
@@ -186,9 +184,7 @@ public final class JavaMOPMain {
             //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            if (options.translate2RV) {
-                writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
-            }
+            writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
             specs.add(spec);
         }
         MOPSpecFile combinedSpec = SpecCombiner.process(specs);

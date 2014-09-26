@@ -49,10 +49,6 @@ public class JavaMOPOptions {
             "used count the number of fired events for each event.")
     public boolean noadvicebody = false;
 
-    @Parameter(names="-translate2RV",description = "When this is enabled, JavaMOP generates a " +
-            ".rvm file from an .mop file, and invokes RV-Monitor to process the .rvm file.")
-    public boolean translate2RV = true;
-
     @Parameter(names="-merge",description = "By default, one .aj file is generated for each " +
             "JavaMOP specification. This option enables JavaMOP to generate a combined .aj file" +
             " for monitoring multiple specifications simultaneously. This should be used with" +

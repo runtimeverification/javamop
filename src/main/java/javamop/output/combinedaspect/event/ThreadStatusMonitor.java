@@ -266,29 +266,23 @@ public class ThreadStatusMonitor extends EndThread{
     @Override
     public String printAdvices() {
         String ret = "";
-        if (!JavaMOPMain.options.translate2RV) {
-            ret += printDataStructures();
-            ret += "\n";
-            ret += printContainsBlockedThread();
-            ret += "\n";
-            ret += printContainsThread();
-            ret += "\n";
-            ret += printAdviceForThreadWithRunnable();
-            ret += "\n";
-            ret += printAdviceForEndThread();
-            ret += "\n";
-            ret += printAdviceForEndRunnable();
-            ret += "\n";
-            ret += printAdviceForMainEnd();
-            ret += "\n";
-            ret += printAdviceForNewThread();
-            ret += "\n";
-        }
-        else {
-            ret += printMethodCallForMainStart();
-            ret += printMethodCallForNewThread();
-            ret += "\n";
-        }
+        ret += printDataStructures();
+        ret += "\n";
+        ret += printContainsBlockedThread();
+        ret += "\n";
+        ret += printContainsThread();
+        ret += "\n";
+        ret += printAdviceForThreadWithRunnable();
+        ret += "\n";
+        ret += printAdviceForEndThread();
+        ret += "\n";
+        ret += printAdviceForEndRunnable();
+        ret += "\n";
+        ret += printAdviceForMainEnd();
+        ret += "\n";
+        ret += printAdviceForNewThread();
+        ret += "\n";
+
         return ret;
     }
     

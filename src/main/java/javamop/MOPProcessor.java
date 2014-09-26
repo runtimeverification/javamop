@@ -78,9 +78,7 @@ public class MOPProcessor {
             }
         }
         for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-            if(JavaMOPMain.options.translate2RV) {
-                rvresult += mopSpec.toRVString();
-            }
+            rvresult += mopSpec.toRVString();
         }
         rvresult = Tool.changeIndentation(rvresult, "", "\t");
         return rvresult;
@@ -106,11 +104,9 @@ public class MOPProcessor {
         }
         
         // Generate output code
-        
-        if (JavaMOPMain.options.translate2RV) {
-            result = (new AspectJCode(name, mopSpecFile)).toRVString();
-        }
-        
+
+        result = (new AspectJCode(name, mopSpecFile)).toRVString();
+
         // Do indentation
         result = Tool.changeIndentation(result, "", "\t");
         
