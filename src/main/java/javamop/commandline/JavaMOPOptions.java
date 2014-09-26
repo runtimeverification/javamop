@@ -21,9 +21,6 @@ public class JavaMOPOptions {
     @Parameter(names="-debug",description = "Print verbose error messages.")
     public boolean debug = false;
 
-    @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file.")
-    public boolean toJavaLib = false;
-
     @Parameter(names={"-s","-statistics"},description = "This is for counting events and/or " +
             "monitors.")
     public boolean statistics = false;

@@ -139,11 +139,7 @@ public final class JavaMOPMain {
         
         writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
 
-        if (options.toJavaLib) {
-            writeFile(output, location, "JavaLibMonitor.java");
-        } else {
-            writeFile(output, location, "MonitorAspect.aj");
-        }
+        writeFile(output, location, "MonitorAspect.aj");
     }
     
     /**
