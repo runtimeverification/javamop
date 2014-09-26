@@ -27,14 +27,14 @@ import java.util.List;
  *
  * @author A. Cody Schuffelen
  */
-public final class GenerateAgent {
+public final class AgentGenerator {
 
     private static final String manifest = "MANIFEST.MF";
 
     /**
      * Private to avoid instantiation.
      */
-    private GenerateAgent() {
+    private AgentGenerator() {
 
     }
 
@@ -389,7 +389,7 @@ public final class GenerateAgent {
      */
     private static boolean classOnClasspath(String name) {
         try {
-            Class.forName(name, false, GenerateAgent.class.getClassLoader());
+            Class.forName(name, false, AgentGenerator.class.getClassLoader());
             return true;
         } catch (ExceptionInInitializerError eiie) {
             throw new RuntimeException(
