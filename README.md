@@ -60,41 +60,41 @@ of the commands from the previous section, such an agent may be run as
 follows:
 
 1. For projects with a well-defined entry point such as a Main class,
-first compile the source code and run the following command:
+   first compile the source code and run the following command:
+  
+   ```java -javaagent:agent.jar -cp .:[other dependencies] Main```
 
-```java -javaagent:agent.jar -cp .:[other dependencies] Main```
-
-In order words, you will need to run same command as you would
-normally use for running your java application, but with the addition
-of the ```-javaagent:agent.jar```, as shown above.
+   In order words, you will need to run same command as you would
+   normally use for running your java application, but with the addition
+   of the ```-javaagent:agent.jar```, as shown above.
 
 
 2. For Maven-based projects which have tests, can simply run ```mvn
-test```, after modifying the individual projects ```pom.xml``` to have
-an element like the following:
+   test```, after modifying the individual projects ```pom.xml``` to have
+   an element like the following:
 
-```
-  <build>
-    <plugins>
-        ...           
-      <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-surefire-plugin</artifactId>
-	<version>${surefire-version}</version>
-	<configuration>
-          <argLine>-javaagent:agent.jar</argLine>
-	</configuration>
-      </plugin>
+  ```
+    <build>
+      <plugins>
+          ...           
+        <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-surefire-plugin</artifactId>
+	  <version>${surefire-version}</version>
+	  <configuration>
+            <argLine>-javaagent:agent.jar</argLine>
+	  </configuration>
+        </plugin>
          ...
-  </plugins>
-  </build>
-```
+      </plugins>
+    </build>
+   ```
 
-Replace ```${surefire-version}``` with the exact surefire plugin
-version used by the project (e.g., 2.16).
+   Replace ```${surefire-version}``` with the exact surefire plugin
+   version used by the project (e.g., 2.16).
 
-The two use-cases above are the ones supported at this time. We will
-update this page as more use cases are supported. 
+   The two use-cases above are the ones supported at this time. We will
+   update this page as more use cases are supported. 
 
 #### Putting it all together
 
