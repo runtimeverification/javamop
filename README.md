@@ -36,7 +36,15 @@ instrumentation of their applications. Once JavaMOP is correctly
 installed (see the INSTALL.md file in this directory), this may be
 achieved by running the following command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>] <specification file or dir>```
+```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```
+
+The optional ```[-n agentName]``` specifies "agentName" as the name of
+the agent generated, ```[-v]``` generates the agent in verbose mode
+and ```[-d <target directory>]``` will store all intermediate files
+from agent generation in a user specified directory which must exist
+before prior to issuing the command above. ```<properties>``` refers
+to one or more property (i.e. *.mop) files, or a directory containing
+such property files.
 
 If the user specifies the [-n agentName], the above command will
 create <agentName>.jar in the same directory as that from which the
@@ -51,12 +59,6 @@ interested to build a java agent to monitor all these properties,
 please run the following command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>] -usedb```
-
-The optional ```[-n agentName]``` specifies "agentName" as the name of
-the agent generated, ```[-v]``` generates the agent in verbose mode
-and ```[-d <target directory>]``` will store all intermediate files
-from agent generation in a user specified directory which must exist
-before prior to issuing the command above.
 
 The ```-usedb``` option fetches the latest [set of
 properties](https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java)
