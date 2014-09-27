@@ -5,30 +5,15 @@ This file contains instructions for installing JavaMOP.
   1. JDK
 
      We expect java 1.7. If you already have an installed JDK check
-     the version with javac -version. If you already have the correct
-     JDK installed make sure your environment variables are properly
-     defined as outlined below.
+     the version with javac -version. If you need to install this
+     version of JDK, please follow the instrcutions found on [this
+     page](http://docs.oracle.com/javase/7/docs/webnotes/install/)
 
-     You may download JDK 7 from this following
-     [URL](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
-
-     Download the right JDK file for your platform (you may be required to
-     accept the Oracle License Agreement).
-
-     To install JDK 7, follow the instructions found
-     [here](http://docs.oracle.com/javase/7/docs/webnotes/install/)
-
-     In UNIX-based Operating systems like Linux, set the PATH
-     environment variable to include the path to your newly installed
-     JDK 7. Depending on your operating system, the command may
-     differ. For example, here is a typical examples for Linux:
+     Set the PATH or Path enviroment variable to include the path to
+     your newly installed JDK 7. For example, here is a typical
+     command for doing so in Linux:
 
      ```$ export PATH=$PATH:/usr/bin/java```
-
-     In Windows, add the JDK 7 directory to your Path environment variable.
-
-     To test: run 'javac' from the command line, this should display
-     usage information for javac.
 
   2. Maven 3
 
@@ -44,20 +29,13 @@ This file contains instructions for installing JavaMOP.
 
 2. Build JavaMOP from Source
 
-Building JavaMOP is necessary only if you need to make modifications
-to JavaMOP.  We are working on building a binary installer for
-JavaMOP. When that becomes available, it is recommended that end users
-use the JavaMOP binary installer and skip this section.
-
   1. Download the JavaMOP source code
 
-     As the tool is under active development, it is recommended that
-     you download JavaMOP directly from the Github repository:
+     From the Github repository:
 
      ```git clone https://github.com/runtimeverification/javamop.git```
 
-     Alternatively, you may also download the latest version of the
-     code as a "zip" or "tar.gz" archive from
+     As a "zip" or "tar.gz":
      [here](https://github.com/runtimeverification/javamop/releases)
 
   2. Build JavaMOP
@@ -67,15 +45,7 @@ use the JavaMOP binary installer and skip this section.
 
       ```mvn package```
 
-      This will download many dependencies the first time you run it. Note
-      that we are working on adding unit tests to JavaMOP at this time.
-
-      If you would like to build JavaMOP, run the integration tests
-      and put the javamop jar to be one of the jars that Maven knows
-      about (typically stored in a directory called .m2, which may be
-      found in the user's home directory), run the following command:
-
-      ```mvn install```
+      This will download many dependencies the first time you run it.
 
 3. JavaMOP Setup
 
