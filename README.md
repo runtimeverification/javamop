@@ -1,4 +1,4 @@
-# JavaMOP 2.3.1 README
+# JavaMOP README
 
 ## Overview
 
