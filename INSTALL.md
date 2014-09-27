@@ -2,7 +2,7 @@ This file contains instructions for installing JavaMOP.
 
 1. Prerequisites
 
-  i. JDK
+  1. JDK
 
      We expect java 1.7. If you already have an installed JDK check
      the version with javac -version. If you already have the correct
@@ -30,13 +30,13 @@ This file contains instructions for installing JavaMOP.
      To test: run 'javac' from the command line, this should display
      usage information for javac.
 
-  ii. Maven 3
+  2. Maven 3
 
       JavaMOP requires Maven 3.0 or higher to build. To download and
-      install Maven 3.0, please follow the instructions on [this
-      page](http://maven.apache.org/download.cgi)
+      install Maven 3.0, please follow the instructions on 
+      [this page](http://maven.apache.org/download.cgi)
 
-  iii. Git 1.8 or higher
+  3. Git 1.8 or higher
 
        Git is required to download the sources for JavaMOP. To
        download and install Git, please follow the instructions found
