@@ -84,13 +84,13 @@ use the JavaMOP binary installer and skip this section.
      Set the PATH (in UNIX-based systems) or Path (In Windows)
      environment to include the following JavaMOP binary directory:
 
-     path-to-JavaMOP/target/release/javamop/bin (in UNIX-based systems)
+     ```path-to-JavaMOP/target/release/javamop/bin``` (in UNIX-based systems)
 
      or
 
-     path-to-JavaMOP/target/release/javamop/bin (in Windows)
+     ```path-to-JavaMOP\target\release\javamop\bin (in Windows)
 
-     --- To test: type 'javamop' on the command line, this should
+     To test: type 'javamop' on the command line, this should
      display usage information for javamop.
 
 4. Contact Information
