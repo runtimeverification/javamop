@@ -1,5 +1,4 @@
 # JavaMOP README
-
 ## Overview
 
 Monitoring-Oriented Programming, abbreviated MOP, is a software
@@ -47,11 +46,26 @@ specification will be generated. Finally, if [-n agentName] is not
 specified and there are multiple specification files, then an agent
 called "MultiSpec_1.jar" is generated.
 
-We have formalized 182 properties from the Java API. If you are
+We have formalized some properties from the Java API. If you are
 interested to build a java agent to monitor all these properties,
 please run the following command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>] -usedb```
+
+The optional ```[-n agentName]``` specifies "agentName" as the name of
+the agent generated, ```[-v]``` generates the agent in verbose mode
+and ```[-d <target directory>]``` will store all intermediate files
+from agent generation in a user specified directory which must exist
+before prior to issuing the command above.
+
+The ```-usedb``` option fetches the latest [set of
+properties](https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java)
+which we formalized from the Java API and requires an internet
+connection. That way you will get the latest version of these
+properties at any point in time. The first time the above command is
+run, it makes a copy of the properties directory. That way, subsequent
+runs from the same directory does not require an online connection,
+unless the properties directory is deleted.
 
 #### Using A Java Agent
 
@@ -91,10 +105,10 @@ follows:
    ```
 
    Replace ```${surefire-version}``` with the exact surefire plugin
-   version used by the project (e.g., 2.16).
+   version used by the project (e.g., 2.16). 
 
-   The two use-cases above are the ones supported at this time. We will
-   update this page as more use cases are supported. 
+   Adding the javaagent is the only change needed to an existing
+   project and tests can still be run with ```mvn test```, as usual.
 
 #### Putting it all together
 
