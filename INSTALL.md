@@ -49,7 +49,7 @@ to JavaMOP.  We are working on building a binary installer for
 JavaMOP. When that becomes available, it is recommended that end users
 use the JavaMOP binary installer and skip this section.
 
-  i. Download the JavaMOP source code
+  1. Download the JavaMOP source code
 
      As the tool is under active development, it is recommended that
      you download JavaMOP directly from the Github repository:
@@ -60,7 +60,7 @@ use the JavaMOP binary installer and skip this section.
      code as a "zip" or "tar.gz" archive from
      [here](https://github.com/runtimeverification/javamop/releases)
 
-  ii. Build JavaMOP
+  2. Build JavaMOP
 
       From the top level directory of JavaMOP (i.e. the directory this
       file is in) run the following commands:
@@ -79,7 +79,7 @@ use the JavaMOP binary installer and skip this section.
 
 3. JavaMOP Setup
 
-  i. Setting Environment Variables
+  1. Setting Environment Variables
 
      Set the PATH (in UNIX-based systems) or Path (In Windows)
      environment to include the following JavaMOP binary directory:
