@@ -73,21 +73,21 @@ follows:
    test```, after modifying the individual projects ```pom.xml``` to have
    an element like the following:
 
-  ```
+  ```xml
     <build>
-      <plugins>
-          ...           
-        <plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-surefire-plugin</artifactId>
-	  <version>${surefire-version}</version>
-	  <configuration>
-            <argLine>-javaagent:agent.jar</argLine>
-	  </configuration>
-        </plugin>
-         ...
-      </plugins>
-    </build>
+    	<plugins>
+    		...
+        	<plugin>
+	  		<groupId>org.apache.maven.plugins</groupId>
+	  		<artifactId>maven-surefire-plugin</artifactId>
+	  		<version>${surefire-version}</version>
+	  		<configuration>
+        			<argLine>-javaagent:agent.jar</argLine>
+	  		</configuration>
+        	</plugin>
+		...       
+      	</plugins>
+     </build>
    ```
 
    Replace ```${surefire-version}``` with the exact surefire plugin
