@@ -9,21 +9,21 @@ version with javac -version. If you already have the correct JDK
 installed make sure your environment variables are properly defined as
 outlined below.
 
-To download JDK 7, go to the following URL:
+You may download JDK 7 from the following URL:
 
 http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
 
 Download the right JDK file for your platform (you may be required to
-accept the Oracle Licence Agreement).
+accept the Oracle License Agreement).
 
 To install JDK 7, follow the instructions found here:
 
 http://docs.oracle.com/javase/7/docs/webnotes/install/
 
-In UNIX-based Operating systems like Linux, set the PATH enviroment
+In UNIX-based Operating systems like Linux, set the PATH environment
 variable to include the path to your newly installed JDK 7. Depending
 on your operating system, the command may differ. For example, here is
-a typical exampls for Linux:
+a typical examples for Linux:
 
 $ export PATH=$PATH:/usr/bin/java
 
@@ -31,7 +31,6 @@ In Windows, add the JDK 7 directory to your Path environment variable.
 
 To test: run 'javac' from the command line, this should display usage
 information for javac.
-
 
 = Maven 3 =
 
@@ -47,7 +46,6 @@ install Git, please follow the instructions found on the following
 page:
 
 http://git-scm.com/book/en/Getting-Started-Installing-Git
-
 
 ===2. Build JavaMOP from Source===
 
@@ -78,7 +76,7 @@ mvn package
 This will download many dependencies the first time you run it. Note
 that we are working on adding unit tests to JavaMOP at this time.
 
-If you would like to build JavaMOP, run the intergration tests and put
+If you would like to build JavaMOP, run the integration tests and put
 the javamop jar to be one of the jars that Maven knows about
 (typically stored in a directory called .m2, which may be found in the
 user's home directory), run the following command:
@@ -98,8 +96,8 @@ or
 
 path-to-JavaMOP/target/release/javamop/bin (in Windows)
 
---- To test: run 'javamop' from the command line, this should display usage
-information for javamop.
+--- To test: type 'javamop' on the command line, this should display
+usage information for javamop.
 
 4. Contact Information
 
