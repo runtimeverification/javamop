@@ -173,7 +173,7 @@ achieved by running the following command:
 
 ```javamop [-v] [-d <target directory>] [-merge] [-n aspectName] <properties>```
 
-The optional ```[-v]``` generates the agent in verbose mode and ```[-d <target directory>]``` will store 
+The optional ```[-v]``` generates the file and library in verbose mode and ```[-d <target directory>]``` will store 
 all output files to the user specified directory which must exist before prior to issuing the command above.
  ```<properties>``` refers to one or more property (i.e. *.mop) files, or a directory containing
 such property files. By default, one .aj file is generated for each JavaMOP specification. When
@@ -183,23 +183,27 @@ simultaneously. This should be used with -n, so that the merged monitor has a na
 #### Weave the code using Ajc Compiler
 
 Before weaving, make sure that you have already installed ajc compiler and put "aspectjrt.jar" and 
-"rvmonitorrt.jar" in the CLASSPATH. To weave the original program with monitoring library, run the
-following command:
+"rvmonitorrt.jar" in the CLASSPATH. The ajc compiler can be downloaded at ```http://www.eclipse.org/aspectj/downloads.php```.
+Please download the version which is higher or equal to 1.7.*. The two jar files can be found under
+```$aspectj-*.*.*.jar/lib``` and ```$javamop/target/release/javamop/lib``` respectively.
+To weave the original program with monitoring library, run the following command:
 
 ```ajc -1.6 -cp .:[other dependencies] [-d <target directory>] $path-to-aj-file $path-to-java-file```
 
 ```-1.6```indicates the compliance level. ```[-d <target directory>]```specifies the directory to put the weaved
 code. The last two parameters refer to the path to the generated instrumentation file and the path to the original
-program (i.e the program to be weaved) respectively.
+program (i.e the program to be weaved) respectively. Then the ajc compiler will instrument/compile the original
+java file and put the generated .class file in the ```<target directory>```. If there's no error reported, 
+you can directly run the weaved code in the ```<target directory>```.
 
-(For more information, please type ```ajc -help``` for help)
+(For more information on ajc compiler options, please type ```ajc -help``` for help)
 
 #### Run the Weaved Code
 To run the weaved program, simply type:
 
 ```java -cp .:[other dependencies] Main```
 
-Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH. Otherwise, you have to put them 
+Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" are in the CLASSPATH. Otherwise, you have to put them 
 in the ```-cp``` option when you run the program.  
 
 
