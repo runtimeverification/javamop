@@ -27,8 +27,7 @@ This file contains instructions for installing JavaMOP.
 
      ```git clone https://github.com/runtimeverification/javamop.git```
 
-     As a "zip" or "tar.gz":
-     [Here](https://github.com/runtimeverification/javamop/releases)
+     You can also download a "zip" or "tar.gz" from [here](https://github.com/runtimeverification/javamop/releases)      and unzip to your favorite location.
 
   2. Build JavaMOP
 
