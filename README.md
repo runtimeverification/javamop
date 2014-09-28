@@ -69,7 +69,9 @@ please run the following command:
 
 The ```-usedb``` option fetches our properties (formalized from the
 Java API) from this URL:
-```https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java```
+
+`https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java`
+
 Using ```-usedb``` requires an internet connection and will ensure
 that you get the latest version of these properties at any point. The
 first time the above command is run, it makes a copy of the properties
