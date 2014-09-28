@@ -40,7 +40,7 @@ This file contains instructions for installing JavaMOP.
 
 3. JavaMOP Setup
 
-     For convenient usage, update your $PATH environment variable with <path-to-javamop>/bin/javamop
+     For convenient usage, update your $PATH environment variable with `<path-to-javamop>/bin/javamop`
 
 4. Contact Information
 
