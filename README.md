@@ -24,12 +24,14 @@ JavaMOP is an instance of MOP for Java.
 ## Usage
 
 JavaMOP currently supports two modes of use:
-1)Java Agent. It is easy to use and the user doesn't need to have the knowledge of 
-the ajc compiler and java program dependencies. However, Java Agent may incur more 
-runtime overhead since it weaves the code at runtime.
-2)Static Weaving. Compared to Java Agent, Static Weaving has a better performance,
-but it requires the user to know the dependencies of the target program and how to use
-the ajc compiler.  
+
+1. Java Agent
+
+   It is easier to use than the second option. Moreso, the user does not need AspectJ compiler (ajc) know-how nor    a knowledge of dependencies in the target program. However, using this option may incur more runtime overhead,    since it weaves the code at runtime.
+   
+2. Static Weaving
+
+   Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know      the dependencies of the target program and how to use ajc.  
 
 (For a description of all JavaMOP options, please type the following at
 any time: ```javamop -h```)
