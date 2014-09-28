@@ -1,4 +1,5 @@
 # JavaMOP README
+
 ## Overview
 
 Monitoring-Oriented Programming, abbreviated MOP, is a software
@@ -60,14 +61,25 @@ please run the following command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>] -usedb```
 
-The ```-usedb``` option fetches the latest [set of
-properties](https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java)
-which we formalized from the Java API and requires an internet
-connection. That way you will get the latest version of these
-properties at any point in time. The first time the above command is
-run, it makes a copy of the properties directory. That way, subsequent
-runs from the same directory does not require an online connection,
-unless the properties directory is deleted.
+The ```-usedb``` option fetches our properties (formalized from the
+Java API) from this URL:
+```https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java```
+Using ```-usedb``` requires an internet connection and will ensure
+that you get the latest version of these properties at any point. The
+first time the above command is run, it makes a copy of the properties
+directory. That way, subsequent runs from the same directory do not
+require an internet connection, unless the properties directory is
+deleted.
+
+As a separate step, we encourage the reader to manually download the
+properties from the given above, place them in folder and generate an
+agent with the command:
+
+```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```,
+
+where ```<properties>``` is replaced with the directory where the reader
+stored the properties. It may also be educational to open one or two
+of the ```.mop``` files to learn how the properties are written.
 
 #### Using A Java Agent
 
@@ -80,9 +92,9 @@ follows:
   
    ```java -javaagent:agent.jar -cp .:[other dependencies] Main```
 
-   In order words, you will need to run same command as you would
-   normally use for running your java application, but with the addition
-   of the ```-javaagent:agent.jar```, as shown above.
+   In other words, you will need to run same command as you would
+   normally use for running your java application, but with the
+   addition of the ```-javaagent:agent.jar```, as shown above.
 
 
 2. For Maven-based projects which have tests, can simply run ```mvn
