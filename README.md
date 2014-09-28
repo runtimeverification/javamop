@@ -24,6 +24,12 @@ JavaMOP is an instance of MOP for Java.
 ## Usage
 
 JavaMOP currently supports two modes of use:
+1)Java Agent. It is easy to use and the user doesn't need to have the knowledge of 
+the ajc compiler and java program dependencies. However, Java Agent may incur more 
+runtime overhead since it weaves the code at runtime.
+2)Static Weaving. Compared to Java Agent, Static Weaving has a better performance,
+but it requires the user to know the dependencies of the target program and how to use
+the ajc compiler.  
 
 (For a description of all JavaMOP options, please type the following at
 any time: ```javamop -h```)
@@ -154,7 +160,48 @@ java found the problem too
 
 ### Static Weaving Using AspectJ
 
-(We will update this Section soon)
+#### Generate Instrumentation File and Java Library
+
+In this mode, the user can generate a instrumentation file(.aj) and 
+a java library(.java) to be weaved into the original program. The instrumentation
+file includes the pointcuts and advices which will be used by ajc compiler to
+do the instrumentation. The advices in the instrumentation file will call the functions
+provided in the java library. For simpilcity, we append the java library to the
+instrumentation file so that JavaMop generates a single .aj file in the end.
+Once JavaMOP is correctly installed (see the INSTALL.md file in this directory), this can be
+achieved by running the following command: 
+
+```javamop [-v] [-d <target directory>] [-merge] [-n aspectName] <properties>```
+
+The optional ```[-v]``` generates the agent in verbose mode and ```[-d <target directory>]``` will store 
+all output files to the user specified directory which must exist before prior to issuing the command above.
+ ```<properties>``` refers to one or more property (i.e. *.mop) files, or a directory containing
+such property files. By default, one .aj file is generated for each JavaMOP specification. When
+```[-merge]``` is set, JavaMOP will generate a combined .aj file for monitoring multiple properties 
+simultaneously. This should be used with -n, so that the merged monitor has a name $aspectNameMontiorAspect.aj.
+
+#### Weave the code using Ajc Compiler
+
+Before weaving, make sure that you have already installed ajc compiler and put "aspectjrt.jar" and 
+"rvmonitorrt.jar" in the CLASSPATH. To weave the original program with monitoring library, run the
+following command:
+
+```ajc -1.6 -cp .:[other dependencies] [-d <target directory>] $path-to-aj-file $path-to-java-file```
+
+```-1.6```indicates the compliance level. ```[-d <target directory>]```specifies the directory to put the weaved
+code. The last two parameters refer to the path to the generated instrumentation file and the path to the original
+program (i.e the program to be weaved) respectively.
+
+(For more information, please type ```ajc -help``` for help)
+
+#### Run the Weaved Code
+To run the weaved program, simply type:
+
+```java -cp .:[other dependencies] Main```
+
+Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH. Otherwise, you have to put them 
+in the ```-cp``` option when you run the program.  
+
 
 ## Contact Information
 
