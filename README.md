@@ -27,12 +27,11 @@ JavaMOP currently supports two modes of use:
 
 1. Java Agent
 
-Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it possible to instrument programs running on the JVM. This option is the easiest to use. Moreso, the user does not need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this option may incur more runtime overhead, since it weaves the code at runtime.
+  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest to use. Moreso, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
    
 2. Static Weaving
 
-Compared to the Java Agent option, Static Weaving has better performance, 
-but it requires the user to know the dependencies of the target program and how to use ajc.  
+  Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know the    dependencies of the target program and how to use ajc.  
 
 (For a description of all JavaMOP options, please type the following at
 any time: ```javamop -h```)
