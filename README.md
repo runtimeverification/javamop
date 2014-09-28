@@ -179,7 +179,7 @@ instrumentation file so that JavaMop generates a single .aj file. Once JavaMOP i
 
 ```javamop [-v] [-d <target directory>] [-merge] [-n aspectName] <properties>```
 
-The optional ```[-v]``` generates the agent in verbose mode and ```[-d <target directory>]``` will store 
+The optional ```[-v]``` generates the file and the library in verbose mode and ```[-d <target directory>]``` will store 
 all output files to the user specified directory which must exist prior to issuing the command above.
  ```<properties>``` refers to one or more property (i.e. *.mop) files, or a directory containing
 such property files. By default, one .aj file is generated for each JavaMOP specification. When
