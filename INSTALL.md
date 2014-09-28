@@ -4,16 +4,8 @@ This file contains instructions for installing JavaMOP.
 
   1. JDK
 
-     We expect java 1.7. If you already have an installed JDK check
-     the version with javac -version. If you need to install this
-     version of JDK, please follow the instrcutions found on [this
-     page](http://docs.oracle.com/javase/7/docs/webnotes/install/)
-
-     Set the PATH or Path enviroment variable to include the path to
-     your newly installed JDK 7. For example, here is a typical
-     command for doing so in Linux:
-
-     ```$ export PATH=$PATH:/usr/bin/java```
+     Java Runtime Edition version 7 (http://java.com/en/download/index.jsp)
+     * To make sure java is installed properly, call `java -version` in a terminal.
 
   2. Maven 3
 
@@ -36,7 +28,7 @@ This file contains instructions for installing JavaMOP.
      ```git clone https://github.com/runtimeverification/javamop.git```
 
      As a "zip" or "tar.gz":
-     [here](https://github.com/runtimeverification/javamop/releases)
+     [Here](https://github.com/runtimeverification/javamop/releases)
 
   2. Build JavaMOP
 
@@ -49,19 +41,7 @@ This file contains instructions for installing JavaMOP.
 
 3. JavaMOP Setup
 
-  1. Setting Environment Variables
-
-     Set the PATH (in UNIX-based systems) or Path (In Windows)
-     environment to include the following JavaMOP binary directory:
-
-     ```path-to-JavaMOP/target/release/javamop/bin``` (on UNIX-based systems)
-
-     or
-
-     ```path-to-JavaMOP\target\release\javamop\bin``` (on Windows)
-
-     To test: type 'javamop' on the command line, this should
-     display usage information for javamop.
+     For convenient usage, update your $PATH environment variable with <path-to-javamop>/bin/javamop
 
 4. Contact Information
 
