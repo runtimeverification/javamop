@@ -23,8 +23,8 @@ import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
 import javamop.commandline.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
+import javamop.util.FileCombiner;
 import javamop.util.Tool;
-import javamop.util.AJFileCombiner;
 
 /**
  * Entry point class for the JavaMOP program.
@@ -52,6 +52,9 @@ public final class JavaMOPMain {
 
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
+
+    private static final String RVM_FILE_SUFFIX = ".rvm";
+    private static final String AJ_FILE_SUFFIX = "MonitorAspect.aj";
     
     /**
      * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all
@@ -110,8 +113,7 @@ public final class JavaMOPMain {
         }
         MOPProcessor processor = new MOPProcessor(options.aspectname);
         
-        String aspect = processor.process(spec);
-        writeFile(aspect, location, "MonitorAspect.aj");
+        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -135,11 +137,9 @@ public final class JavaMOPMain {
         
         MOPProcessor processor = new MOPProcessor(options.aspectname);
         
-        String output = processor.process(spec);
-        
-        writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
+        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
 
-        writeFile(output, location, "MonitorAspect.aj");
+        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -167,7 +167,7 @@ public final class JavaMOPMain {
                 do{
                     suffixNumber++;
                     aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
-                        "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
+                        "MultiSpec_" + suffixNumber + AJ_FILE_SUFFIX);
                 } while(aspectFile.exists());
                 aspectName = "MultiSpec_" + suffixNumber;
             }
@@ -180,41 +180,11 @@ public final class JavaMOPMain {
             //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
+            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
             specs.add(spec);
         }
-        MOPSpecFile combinedSpec = SpecCombiner.process(specs);
-        String output = processor.process(combinedSpec);
-        writeCombinedAspectFile(output, aspectName);
-    }
-    
-    /**
-     * Write Java source code to a file.
-     * @param javaContent The Java source.
-     * @param location The location of the file to write it to.
-     * @throws MOPException If something goes wrong writing the file.
-     */
-    protected static void writeJavaFile(String javaContent, String location) throws MOPException {
-        if ((javaContent == null) || (javaContent.length() == 0))
-            throw new MOPException("Nothing to write as a java file");
-        if (!Tool.isJavaFile(location))
-            throw new MOPException(location + "should be a Java file!");
-
-        FileWriter f = null;
-        try {
-            f = new FileWriter(location);
-            f.write(javaContent);
-        } catch (Exception e) {
-            throw new MOPException("Failed to write Java file", e);
-        } finally {
-            if(f != null) {
-                try {
-                    f.close();
-                } catch(IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
-        }
+        MOPSpecFile combinedSpec = FileCombiner.combineSpecFiles(specs);
+        writeCombinedAspectFile(processor.generateAJFile(combinedSpec), aspectName);
     }
 
     /**
@@ -229,7 +199,7 @@ public final class JavaMOPMain {
             return;
         
         final String path = options.outputDir.getAbsolutePath() + File.separator +
-                aspectName + "MonitorAspect.aj";
+                aspectName + AJ_FILE_SUFFIX;
         FileWriter f = null;
         try {
             f = new FileWriter(path);
@@ -245,7 +215,7 @@ public final class JavaMOPMain {
                 }
             }
         }
-        System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
+        System.out.println(" " + aspectName + AJ_FILE_SUFFIX+ " is generated");
     }
     
     /**
@@ -277,7 +247,7 @@ public final class JavaMOPMain {
                 }
             }
         }
-        if (suffix.equals(".rvm")) {
+        if (suffix.equals(RVM_FILE_SUFFIX)) {
             listRVMFiles.add(filePath);
         }
         System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
@@ -334,7 +304,7 @@ public final class JavaMOPMain {
             String javaFile = options.outputDir.getAbsolutePath() + File.separator
             + options.aspectname + "RuntimeMonitor.java";
             String ajFile = options.outputDir.getAbsolutePath() + File.separator
-            + options.aspectname + "MonitorAspect.aj";
+            + options.aspectname + AJ_FILE_SUFFIX;
             String combinerArgs[] = new String[2];
             combinerArgs[0] = javaFile;
             combinerArgs[1] = ajFile;
@@ -359,7 +329,7 @@ public final class JavaMOPMain {
                 String javaFile = combineDir.getAbsolutePath() + File.separator
                 + options.aspectname + "RuntimeMonitor.java";
                 String ajFile = combineDir.getAbsolutePath() + File.separator
-                + options.aspectname + "MonitorAspect.aj";
+                + options.aspectname + AJ_FILE_SUFFIX;
                 String combinerArgs[] = new String[2];
                 combinerArgs[0] = javaFile;
                 combinerArgs[1] = ajFile;
@@ -482,9 +452,9 @@ public final class JavaMOPMain {
             }
         }
 
-        // Call AJFileCombiner here to combine these two
+        // Call FileCombiner here to combine these two
         for (String[] filePair : listFilePairs) {
-            AJFileCombiner.main(filePair);
+            FileCombiner.combineAJFiles(filePair);
             File javaFile = new File(filePair[0]);
             try {
                 if (!options.keepRVFiles) {
