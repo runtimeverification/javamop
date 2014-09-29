@@ -1,83 +1,217 @@
+# JavaMOP README
 
-                          JavaMOP 2.3.1 README
+## Overview
 
-==1. Overview==
-Monitoring-Oriented Programming, abbreviated MOP, is a software development and
-analysis framework aiming at reducing the gap between formal specification and
-implementation by allowing them together to form a system. In MOP, runtime
-monitoring is supported and encouraged as a fundamental principle for building
-reliable software: monitors are automatically synthesized from specified
-properties and integrated into the original system to check its dynamic
-behaviors during execution. When a specification is violated or validated at
-runtime, user-defined actions will be triggered, which can be any code from
-information logging to runtime recovery. One can understand MOP from at least
-three perspectives: as a discipline allowing one to improve safety, reliability
-and dependability of a system by monitoring its requirements against its
-implementation at runtime; as an extension of programming languages with logics
-(one can add logical statements anywhere in the program, referring to past or
-future states); and as a lightweight formal method. 
+Monitoring-Oriented Programming, abbreviated MOP, is a software
+development and analysis framework aiming at reducing the gap between
+formal specification and implementation by allowing them together to
+form a system. In MOP, runtime monitoring is supported and encouraged
+as a fundamental principle for building reliable software: monitors
+are automatically synthesized from specified properties and integrated
+into the original system to check its dynamic behaviors during
+execution. When a specification is violated or validated at runtime,
+user-defined actions will be triggered, which can be any code: from
+information logging to runtime recovery.  MOP may be understood from
+at least three perspectives: (a) as a discipline allowing one to
+improve safety, reliability and dependability of a system by
+monitoring its requirements against its implementation at runtime; (b)
+as an extension of programming languages with logics (one can add
+logical statements anywhere in the program, referring to past or
+future states); and (c) as a lightweight formal method.
 
 JavaMOP is an instance of MOP for Java.
 
-==2. Usage==
+## Usage
 
-If you want to use the Logic Repository Server provided by UIUC, use the
--remote option when using the 'javamop' script.
+JavaMOP currently supports two modes of use:
 
-If you want to use the Logic Repository included in this package, use the
--local option when using the 'javamop' script.
+1. Java Agent
 
-Using the remote repository is the preferred method for computers with viable
-Internet connections as it allows us to collect usage statistics used to improve
-JavaMOP.
+  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest to use. Moreso, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
+   
+2. Static Weaving
 
-The 'javamop' script has the following usage:
+  Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know the    dependencies of the target program and how to use ajc.  
 
-Usage) javamop [-v] [-d <target directory>] <specification file or dir>
+(For a description of all JavaMOP options, please type the following at
+any time: ```javamop -h```)
 
--v option is verbose mode -d option is used to specify the target directory
-where the resulting aspectj code will be saved. Specification files must have
-The .mop file extension.
+### Building and using a Java Agent
 
-Example) javamop -d examples/FSM/ examples/FSM/HasNext.mop
+#### Building a Java Agent
 
-For more options, type 'javamop' or 'javamop -h'
+In this mode, the user may build a Java agent for runtime
+instrumentation of their applications. Once JavaMOP is correctly
+installed (see the INSTALL.md file in this directory), this may be
+achieved by running the following command:
 
-==3. Additional Features of the JavaMOP Distribution==
+```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```
 
-=3.1 Executing a Monitored Program
+The optional ```[-n agentName]``` specifies "agentName" as the name of
+the agent generated, ```[-v]``` generates the agent in verbose mode
+and ```[-d <target directory>]``` stores all intermediate files
+from agent generation in a user specified directory which must exist
+prior to issuing the command above. ```<properties>``` refers
+to one or more property (i.e. *.mop) files, or a directory containing
+such property files.
 
-When you execute a monitored program, you need to include the AspectJ library
-and RV-Monitor Runtime Library in your class path. 
+If the user specifies the [-n agentName], the above command will
+create <agentName>.jar in the same directory as that from which the
+command is run. If a [-n agentName] is not specified and there is just
+one specification, then an agent with the same name as the
+specification will be generated. Finally, if [-n agentName] is not
+specified and there are multiple specification files, then an agent
+called "MultiSpec_1.jar" is generated.
 
-For more information, see the web documentation here: 
-http://runtimeverification.com/monitor/docs/runningexamples.html#preparation
+We have formalized some properties from the Java API. If you are
+interested to build a java agent to monitor all these properties,
+please run the following command:
+
+```javamop -agent [-n agentName] [-v] [-d <target directory>] -usedb```
+
+The ```-usedb``` option fetches our properties (formalized from the
+Java API) from this URL:
+
+`https://github.com/runtimeverification/property-db/tree/master/annotated-java-api/java`
+
+Using ```-usedb``` requires an internet connection and will ensure
+that you get the latest version of these properties at any point. The
+first time the above command is run, it makes a copy of the properties
+directory. That way, subsequent runs from the same directory do not
+require an internet connection, unless the properties directory is
+deleted.
+
+As a separate step, we encourage the reader to manually download the
+properties from the given above, place them in folder and generate an
+agent with the command:
+
+```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```,
+
+where ```<properties>``` is replaced with the directory where the reader
+stored the properties. It may also be educational to open one or two
+of the ```.mop``` files to learn how the properties are written.
+
+#### Using A Java Agent
+
+Assuming that an agent called "agent.jar" has been built following any
+of the commands from the previous section, such an agent may be run as
+follows:
+
+1. For projects with a well-defined entry point such as a Main class,
+   first compile the source code and run the following command:
+  
+   ```java -javaagent:agent.jar -cp .:[other dependencies] Main```
+
+   In other words, you will need to run same command as you would
+   normally use for running your java application, but with the
+   addition of the ```-javaagent:agent.jar```, as shown above.
 
 
-=3.2 Running the Logic Repository Tool
+2. For Maven-based projects which have tests, can simply run ```mvn
+   test```, after modifying the individual projects ```pom.xml``` to have
+   an element like the following:
 
-JavaMOP uses the Logic Repository automatically. Therefore, you do not need to
-invoke the Logic Repository explicitly. JavaMOP will connect to the Logic
-Repository automatically and retrieve a monitor for the given specification.
-However, it is possible to use the Logic Repository directly for other uses.
+  ```xml
+    <build>
+    	<plugins>
+    		...
+        	<plugin>
+	  		<groupId>org.apache.maven.plugins</groupId>
+	  		<artifactId>maven-surefire-plugin</artifactId>
+	  		<version>${surefire-version}</version>
+	  		<configuration>
+        			<argLine>-javaagent:agent.jar</argLine>
+	  		</configuration>
+        	</plugin>
+		...       
+      	</plugins>
+     </build>
+   ```
 
-To use the LogicRepository, type 
+   Replace ```${surefire-version}``` with the exact surefire plugin
+   version used by the project (e.g., 2.16). 
 
-  'logicrepository'
+   Adding the javaagent is the only change needed to an existing
+   project and tests can still be run with ```mvn test```, as usual.
 
-And provide input through the standard input. For the XML syntax of input, refer
-to the following pages:
+#### Putting it all together
 
-  http://fsl.cs.uiuc.edu/index.php/Special:LogicRepository2.3
+To build a java agent and run it using some of the examples that ship
+with JavaMOP, run the following commands from the same directory as
+this file:
 
-The resulting monitoring code is piped to standard output, in XML format.
+```
+cd examples/agent/many
+javamop -agent -n agent rvm 
+javac SafeMapIterator_1.java 
+java -javaagent:agent.jar -cp . SafeMapIterator_1
+```
 
-=4. Contact Information
+Note that running ```javamop -agent -n agent rvm``` as above will
+print the specifications used in building the agent, and give a
+"agent.jar is generated." message at the end, if everything goes well.
 
-We welcome your interest in JavaMOP. Your feedback, comments and bug reports are
-highly appreciated. Please feel free to contact us by sending email to
-mop@cs.uiuc.edu. Bugs and feature requests may be submitted at the project
-website at javamop.googlecode.com.
+Also, running ```java -javaagent:agent.jar -cp . SafeMapIterator_1```
+as above will run the specified java program and, if everything works,
+will print out the following violation messages:
+
+```
+unsafe iterator usage!
+unsafe iterator usage!
+! hasNext() has not been called before calling next() for an iterator
+java found the problem too
+```
+
+### Static Weaving Using AspectJ
+
+#### Generating Instrumentation File and Java Library
+
+In this mode, the user can generate a instrumentation (.aj) file and 
+a java library(.java) file to be weaved into the original program. The instrumentation
+file includes the pointcuts and advice which will be used by the AspectJ compiler (ajc) to
+instrument the code. The advice in the instrumentation file will call the functions
+provided in the java library. For simplicity, we append the java library to the
+instrumentation file so that JavaMop generates a single .aj file. Once JavaMOP is correctly installed (see the INSTALL.md file in this directory), this can be achieved by running the following command: 
+
+```javamop [-v] [-d <target directory>] [-merge] <properties>```
+
+The option ```[-v]``` generates the file and the library in verbose mode and ```[-d <target directory>]``` stores 
+all output files to the user specified directory which must exist prior to issuing the command above.
+ ```<properties>``` refers to one or more property (i.e. *.mop) files, or a directory containing
+such property files. By default, one .aj file is generated for each JavaMOP specification. When
+```[-merge]``` is set, JavaMOP will generate a combined .aj file for monitoring multiple properties 
+simultaneously.
+
+#### Weaving the code using Ajc Compiler
+
+Before weaving, make sure that you have already installed ajc compiler and put "aspectjrt.jar" and 
+"rvmonitorrt.jar" in the CLASSPATH. The ajc compiler can be downloaded at ```http://www.eclipse.org/aspectj/downloads.php```.
+Please download the version which is higher or equal to 1.7.*. The two jar files can be found under
+```$aspectj-*.*.*.jar/lib``` and ```$javamop/target/release/javamop/lib``` respectively.
+To weave the original program with monitoring library, run the following command:
+
+```ajc -1.6 -cp .:[other dependencies] [-d <target directory>] $path-to-aj-file $path-to-java-file```
+
+```-1.6```indicates the compliance level. ```[-d <target directory>]```specifies the directory to put the weaved
+code. The last two parameters refer to the path to the generated instrumentation file and the path to the original
+program (i.e the program to be weaved) respectively. Then the ajc compiler will instrument/compile the original
+java file and put the generated .class file in the ```<target directory>```. If there's no error reported, 
+you can directly run the weaved code in the ```<target directory>```.
+
+(For more information on ajc compiler options, please type ```ajc -help``` for help)
+
+#### Runing the Weaved Code
+To run the weaved program, simply type:
+
+```java -cp .:[other dependencies] Main```,
+
+where `Main` is the entry point to the application. Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH.
+Alternatively, you could also attach them as part of the ```-cp``` option when you run the program.
 
 
-For more information, please see http://fsl.cs.illinois.edu/index.php/Special:JavaMOP3
+## Contact Information
+
+We welcome your interest in JavaMOP. Your feedback, comments and bug
+reports are highly appreciated. Please feel free to contact us by
+opening new issues on
+[Github](https://github.com/runtimeverification/javamop/issues)
