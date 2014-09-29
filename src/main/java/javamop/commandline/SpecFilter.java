@@ -59,7 +59,7 @@ public class SpecFilter {
      * Reads a list of .mop filenames which are to be excluded from agent generation.
      * This allows the user to omit some files even after filtering by severity level.
      *
-     * @return List of .mop files to be omitted from the agent building process
+     * @return List of .mop files to be omitted from the agent building combineSpecFiles
      */
     private List<String> getFilesToOmit() {
         List<String> omitFiles = null;
@@ -197,13 +197,13 @@ public class SpecFilter {
     }
 
     /**
-     * This method creates a new process and executes the command represented by
+     * This method creates a new combineSpecFiles and executes the command represented by
      * the <code>args</code> parameter.
      *
      * @param args a comma separated list of strings which represent
      *             the command to be executed.
      * @return a boolean value indicating whether the command was successfully
-     *         run or not. Although process.waitfor() will return a non-zero
+     *         run or not. Although combineSpecFiles.waitfor() will return a non-zero
      *         integer value on failure, this method  "overrides" that and
      *         returns a boolean in order to make checks in client code simpler.
      */

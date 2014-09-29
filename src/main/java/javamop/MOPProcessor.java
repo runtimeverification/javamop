@@ -61,13 +61,12 @@ public class MOPProcessor {
     }
     
     /**
-     * Convert a MOPSpecFile into program source with the JavaMOP additions to the specification,
-     * assuming RV-Monitor is run together with JavaMOP to complete the output.
+     * Convert a MOPSpecFile into .rvm file and remove all the aspectJ related parts
      * @param mopSpecFile The parameter to convert.
-     * @return The Java code for the additions.
+     * @return The generated .rvm file string
      * @throws MOPException If there is a logic error in conversion.
      */
-    public String translate2RV(MOPSpecFile mopSpecFile) throws MOPException {
+    public String generateRVFile(MOPSpecFile mopSpecFile) throws MOPException {
         String rvresult = "";
         if (mopSpecFile.getPakage() != null) {
             rvresult += mopSpecFile.getPakage().toString();
@@ -85,13 +84,12 @@ public class MOPProcessor {
     }
     
     /**
-     * Convert a MOPSpecFile into program source with the JavaMOP additions to the specification,
-     * assuming RV-Monitor is run together with JavaMOP to complete the output.
+     * Convert a MOPSpecFile into aspectJ file.
      * @param mopSpecFile The parameter to convert.
-     * @return The Java code for the additions.
+     * @return The generated aspectJ file.
      * @throws MOPException If there is a logic error in conversion.
      */
-    public String process(MOPSpecFile mopSpecFile) throws MOPException {
+    public String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException {
         String result = "";
         
         // register all user variables to MOPNameSpace to avoid conflicts
@@ -112,6 +110,4 @@ public class MOPProcessor {
         
         return result;
     }
-    
-    
 }
