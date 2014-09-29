@@ -18,7 +18,6 @@ import java.util.Scanner;
 /**
  * 
  * Helper class to combine generated intermediate AspectJ files and Processed MOP specifications.
- * @see
  * 
  * @author Qingzhou Luo
  * */
