@@ -52,6 +52,9 @@ public final class JavaMOPMain {
 
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
+
+    private static final String RVM_FILE_SUFFIX = ".rvm";
+    private static final String AJ_FILE_SUFFIX = "MonitorAspect.aj";
     
     /**
      * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all
@@ -110,7 +113,7 @@ public final class JavaMOPMain {
         }
         MOPProcessor processor = new MOPProcessor(options.aspectname);
         
-        writeFile(processor.generateAJFile(spec), location, "MonitorAspect.aj");
+        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -134,9 +137,9 @@ public final class JavaMOPMain {
         
         MOPProcessor processor = new MOPProcessor(options.aspectname);
         
-        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), ".rvm");
+        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
 
-        writeFile(processor.generateAJFile(spec), location, "MonitorAspect.aj");
+        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -164,7 +167,7 @@ public final class JavaMOPMain {
                 do{
                     suffixNumber++;
                     aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
-                        "MultiSpec_" + suffixNumber + "MonitorAspect.aj");
+                        "MultiSpec_" + suffixNumber + AJ_FILE_SUFFIX);
                 } while(aspectFile.exists());
                 aspectName = "MultiSpec_" + suffixNumber;
             }
@@ -177,7 +180,7 @@ public final class JavaMOPMain {
             //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), ".rvm");
+            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
             specs.add(spec);
         }
         MOPSpecFile combinedSpec = FileCombiner.combineSpecFiles(specs);
@@ -196,7 +199,7 @@ public final class JavaMOPMain {
             return;
         
         final String path = options.outputDir.getAbsolutePath() + File.separator +
-                aspectName + "MonitorAspect.aj";
+                aspectName + AJ_FILE_SUFFIX;
         FileWriter f = null;
         try {
             f = new FileWriter(path);
@@ -212,7 +215,7 @@ public final class JavaMOPMain {
                 }
             }
         }
-        System.out.println(" " + aspectName + "MonitorAspect.aj is generated");
+        System.out.println(" " + aspectName + AJ_FILE_SUFFIX+ " is generated");
     }
     
     /**
@@ -244,7 +247,7 @@ public final class JavaMOPMain {
                 }
             }
         }
-        if (suffix.equals(".rvm")) {
+        if (suffix.equals(RVM_FILE_SUFFIX)) {
             listRVMFiles.add(filePath);
         }
         System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
@@ -301,7 +304,7 @@ public final class JavaMOPMain {
             String javaFile = options.outputDir.getAbsolutePath() + File.separator
             + options.aspectname + "RuntimeMonitor.java";
             String ajFile = options.outputDir.getAbsolutePath() + File.separator
-            + options.aspectname + "MonitorAspect.aj";
+            + options.aspectname + AJ_FILE_SUFFIX;
             String combinerArgs[] = new String[2];
             combinerArgs[0] = javaFile;
             combinerArgs[1] = ajFile;
@@ -326,7 +329,7 @@ public final class JavaMOPMain {
                 String javaFile = combineDir.getAbsolutePath() + File.separator
                 + options.aspectname + "RuntimeMonitor.java";
                 String ajFile = combineDir.getAbsolutePath() + File.separator
-                + options.aspectname + "MonitorAspect.aj";
+                + options.aspectname + AJ_FILE_SUFFIX;
                 String combinerArgs[] = new String[2];
                 combinerArgs[0] = javaFile;
                 combinerArgs[1] = ajFile;
