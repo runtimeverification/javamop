@@ -21,9 +21,6 @@ public class JavaMOPOptions {
     @Parameter(names="-debug",description = "Print verbose error messages.")
     public boolean debug = false;
 
-    @Parameter(names="-javalib",description = "Generate a Java library instead of an AspectJ file.")
-    public boolean toJavaLib = false;
-
     @Parameter(names={"-s","-statistics"},description = "This is for counting events and/or " +
             "monitors.")
     public boolean statistics = false;
@@ -48,10 +45,6 @@ public class JavaMOPOptions {
             "the monitoring-related routine inside the corresponding advice body. This can be " +
             "used count the number of fired events for each event.")
     public boolean noadvicebody = false;
-
-    @Parameter(names="-translate2RV",description = "When this is enabled, JavaMOP generates a " +
-            ".rvm file from an .mop file, and invokes RV-Monitor to process the .rvm file.")
-    public boolean translate2RV = true;
 
     @Parameter(names="-merge",description = "By default, one .aj file is generated for each " +
             "JavaMOP specification. This option enables JavaMOP to generate a combined .aj file" +

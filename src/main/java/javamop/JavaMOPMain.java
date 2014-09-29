@@ -137,15 +137,9 @@ public final class JavaMOPMain {
         
         String output = processor.process(spec);
         
-        if (options.translate2RV) {
-            writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
-        }
-        
-        if (options.toJavaLib) {
-            writeFile(output, location, "JavaLibMonitor.java");
-        } else {
-            writeFile(output, location, "MonitorAspect.aj");
-        }
+        writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
+
+        writeFile(output, location, "MonitorAspect.aj");
     }
     
     /**
@@ -186,9 +180,7 @@ public final class JavaMOPMain {
             //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            if (options.translate2RV) {
-                writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
-            }
+            writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
             specs.add(spec);
         }
         MOPSpecFile combinedSpec = SpecCombiner.process(specs);
@@ -483,8 +475,8 @@ public final class JavaMOPMain {
 
         if(options.generateAgent) {
             try {
-                GenerateAgent.generate(options.outputDir, options.aspectname,
-                    options.baseAspect);
+                AgentGenerator.generate(options.outputDir, options.aspectname,
+                        options.baseAspect);
             } catch(IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -534,7 +526,7 @@ public final class JavaMOPMain {
     private static void cleanup(boolean tempOutput, SpecFilter filter) {
         if(tempOutput) {
             try {
-                GenerateAgent.deleteDirectory(options.outputDir.toPath());
+                AgentGenerator.deleteDirectory(options.outputDir.toPath());
             } catch(IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");

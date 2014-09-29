@@ -1,8 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.commandline;
 
+import javamop.AgentGenerator;
 import javamop.Configuration;
-import javamop.GenerateAgent;
 import javamop.util.Tool;
 import org.apache.commons.io.FileUtils;
 
@@ -93,7 +93,7 @@ public class SpecFilter {
         //make a copy of the specDirectory
         if (Files.exists(specCopyPath)) {
             try {
-                GenerateAgent.deleteDirectory(specCopyPath);
+                AgentGenerator.deleteDirectory(specCopyPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -131,7 +131,7 @@ public class SpecFilter {
             for (File file : specDirs){
                 if (!filters.stringPropertyNames().contains(file.getName())){
                     try {
-                        GenerateAgent.deleteDirectory(file.toPath());
+                        AgentGenerator.deleteDirectory(file.toPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -200,7 +200,7 @@ public class SpecFilter {
      * This method creates a new process and executes the command represented by
      * the <code>args</code> parameter.
      *
-     * @param args a comma seperated list of strings which represent
+     * @param args a comma separated list of strings which represent
      *             the command to be executed.
      * @return a boolean value indicating whether the command was successfully
      *         run or not. Although process.waitfor() will return a non-zero
@@ -233,8 +233,8 @@ public class SpecFilter {
      */
     public void cleanup() {
         try {
-            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
-            GenerateAgent.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
+            AgentGenerator.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+            AgentGenerator.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
         } catch (IOException e) {
             System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
             e.printStackTrace();

@@ -97,7 +97,7 @@ public final class JavaParserAdapter {
 
     /**
      * Convert a language-independent specification into one with Java-specific information.
-     * @param spec The specification to convert.
+     * @param file The specification to convert.
      * @return The Java-specific specification.
      */
     private static MOPSpecFileExt convert(MonitorFile file) throws ParseException {

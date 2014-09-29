@@ -145,11 +145,8 @@ public class EventManager {
                 ret += "// " + numAdvice++ + "\n";
             }
             
-            if (JavaMOPMain.options.translate2RV) {
-                ret += advice.toRVString();
-            } else {
-                ret += advice;
-            }
+            ret += advice.toString();
+
             ret += "\n";
             if (advice.beCounted) {
                 ret += "\n";
