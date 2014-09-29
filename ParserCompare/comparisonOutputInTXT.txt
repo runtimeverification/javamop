@@ -1,0 +1,1268 @@
+No.0 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_la1_init_0(); at line 9212
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_la1_init_0(); at line 9054
+
+No.1 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_la1_init_1(); at line 9215
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_la1_init_1(); at line 9057
+
+No.2 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_la1_init_2(); at line 9218
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_la1_init_2(); at line 9060
+
+No.3 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_la1_init_3(); at line 9221
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_la1_init_3(); at line 9063
+
+No.4 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_la1_init_4(); at line 9224
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_la1_init_4(); at line 9066
+
+No.5 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_la1_init_5(); at line 9227
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_la1_init_5(); at line 9069
+
+No.6 pair of similar methods:
+Token javamop.parser.main_parser.JavaMOPParserTokenManager.getNextToken(); at line 2393
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.getNextToken(); at line 2393
+
+No.7 pair of similar methods:
+char javamop.parser.main_parser.JavaCharStream.BeginToken(); at line 179
+char com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.BeginToken(); at line 179
+
+No.8 pair of similar methods:
+char javamop.parser.main_parser.JavaCharStream.readChar(); at line 259
+char com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.readChar(); at line 259
+
+No.9 pair of similar methods:
+char javamop.parser.main_parser.JavaCharStream.ReadByte(); at line 170
+char com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.ReadByte(); at line 170
+
+No.10 pair of similar methods:
+void javamop.parser.main_parser.JavaCharStream.FillBuff(); at line 139
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.FillBuff(); at line 139
+
+No.11 pair of similar methods:
+void javamop.parser.main_parser.JavaCharStream.UpdateLineColumn(char); at line 218
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.UpdateLineColumn(char); at line 218
+
+No.12 pair of similar methods:
+void javamop.parser.main_parser.JavaCharStream.backup(int); at line 391
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.backup(int); at line 391
+
+No.13 pair of similar methods:
+int javamop.parser.main_parser.JavaMOPParserTokenManager.jjMoveStringLiteralDfa0_0(); at line 258
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.jjMoveStringLiteralDfa0_0(); at line 258
+
+No.14 pair of similar methods:
+Token javamop.parser.main_parser.JavaMOPParserTokenManager.jjFillToken(); at line 2367
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.jjFillToken(); at line 2367
+
+No.15 pair of similar methods:
+int javamop.parser.main_parser.JavaCharStream.getBeginLine(); at line 385
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.getBeginLine(); at line 385
+
+No.16 pair of similar methods:
+int javamop.parser.main_parser.JavaCharStream.getBeginColumn(); at line 380
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.getBeginColumn(); at line 380
+
+No.17 pair of similar methods:
+int javamop.parser.main_parser.JavaCharStream.getEndLine(); at line 375
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.getEndLine(); at line 375
+
+No.18 pair of similar methods:
+int javamop.parser.main_parser.JavaCharStream.getEndColumn(); at line 370
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.getEndColumn(); at line 370
+
+No.19 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParserTokenManager.TokenLexicalActions(Token); at line 2540
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.TokenLexicalActions(Token); at line 2540
+
+No.20 pair of similar methods:
+PackageDeclaration javamop.parser.main_parser.JavaMOPParser.PackageDeclaration(); at line 1396
+PackageDeclaration com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.PackageDeclaration(); at line 1238
+
+No.21 pair of similar methods:
+Token javamop.parser.main_parser.JavaMOPParser.jj_consume_token(int); at line 9306
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_consume_token(int); at line 9148
+
+No.22 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParserTokenManager.jjCheckNAdd(int); at line 2562
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.jjCheckNAdd(int); at line 2562
+
+No.23 pair of similar methods:
+String javamop.parser.main_parser.JavaCharStream.GetImage(); at line 536
+String com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.GetImage(); at line 536
+
+No.24 pair of similar methods:
+NameExpr javamop.parser.main_parser.JavaMOPParser.Name(); at line 2960
+NameExpr com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Name(); at line 2802
+
+No.25 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_21(int); at line 5789
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_21(int); at line 5631
+
+No.26 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_21(); at line 6312
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_21(); at line 6212
+
+No.27 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_scan_token(int); at line 9332
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_scan_token(int); at line 9174
+
+No.28 pair of similar methods:
+ImportDeclaration javamop.parser.main_parser.JavaMOPParser.ImportDeclaration(); at line 1424
+ImportDeclaration com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ImportDeclaration(); at line 1266
+
+No.29 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParserTokenManager.SkipLexicalActions(Token); at line 2518
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.SkipLexicalActions(Token); at line 2518
+
+No.30 pair of similar methods:
+ParseException javamop.parser.main_parser.JavaMOPParser.generateParseException(); at line 9404
+ParseException com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.generateParseException(); at line 9246
+
+No.31 pair of similar methods:
+void javamop.parser.main_parser.JavaMOPParser.jj_rescan_token(); at line 9460
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_rescan_token(); at line 9302
+
+No.32 pair of similar methods:
+BaseTypePattern javamop.parser.main_parser.JavaMOPParser.SimpleTypePattern(); at line 937
+BaseTypePattern com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.SimpleTypePattern(); at line 779
+
+No.33 pair of similar methods:
+int javamop.parser.ast.Node.getBeginLine(); at line 76
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.Node.getBeginLine(); at line 75
+
+No.34 pair of similar methods:
+int javamop.parser.ast.Node.getBeginColumn(); at line 80
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.Node.getBeginColumn(); at line 79
+
+No.35 pair of similar methods:
+List javamop.parser.main_parser.JavaMOPParser.ClassOrInterfaceBody(boolean); at line 1972
+List com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ClassOrInterfaceBody(boolean); at line 1814
+
+No.36 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_7(int); at line 5691
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_7(int); at line 5533
+
+No.37 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_7(); at line 7786
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_7(); at line 7686
+
+No.38 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_76(); at line 7774
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_76(); at line 7674
+
+No.39 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_10(); at line 7706
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_10(); at line 7606
+
+No.40 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_80(); at line 6840
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_80(); at line 6740
+
+No.41 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_114(); at line 6829
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_114(); at line 6729
+
+No.42 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_115(); at line 6697
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_115(); at line 6597
+
+No.43 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_109(); at line 7678
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_109(); at line 7578
+
+No.44 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_101(); at line 8859
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_101(); at line 8759
+
+No.45 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_5(); at line 8818
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_5(); at line 8718
+
+No.46 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_63(); at line 8800
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_63(); at line 8700
+
+No.47 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_64(); at line 8795
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_64(); at line 8695
+
+No.48 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_65(); at line 8779
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_65(); at line 8679
+
+No.49 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_66(); at line 8751
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_66(); at line 8651
+
+No.50 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_67(); at line 8746
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_67(); at line 8646
+
+No.51 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_68(); at line 8741
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_68(); at line 8641
+
+No.52 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_69(); at line 8726
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_69(); at line 8626
+
+No.53 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_70(); at line 8709
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_70(); at line 8609
+
+No.54 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_71(); at line 8699
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_71(); at line 8599
+
+No.55 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_72(); at line 8694
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_72(); at line 8594
+
+No.56 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_73(); at line 8663
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_73(); at line 8563
+
+No.57 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_74(); at line 8636
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_74(); at line 8536
+
+No.58 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_107(); at line 8554
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_107(); at line 8454
+
+No.59 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_150(); at line 8548
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_150(); at line 8448
+
+No.60 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_187(); at line 8506
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_187(); at line 8406
+
+No.61 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_151(); at line 8538
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_151(); at line 8438
+
+No.62 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_188(); at line 8393
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_188(); at line 8293
+
+No.63 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_152(); at line 8528
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_152(); at line 8428
+
+No.64 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_189(); at line 8438
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_189(); at line 8338
+
+No.65 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_153(); at line 7667
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_153(); at line 7567
+
+No.66 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_190(); at line 8467
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_190(); at line 8367
+
+No.67 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_221(); at line 8427
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_221(); at line 8327
+
+No.68 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_154(); at line 7662
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_154(); at line 7562
+
+No.69 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_191(); at line 8218
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_191(); at line 8118
+
+No.70 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_155(); at line 7647
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_155(); at line 7547
+
+No.71 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_192(); at line 8061
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_192(); at line 7961
+
+No.72 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_156(); at line 7642
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_156(); at line 7542
+
+No.73 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_193(); at line 7145
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_193(); at line 7045
+
+No.74 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_222(); at line 7139
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_222(); at line 7039
+
+No.75 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_111(); at line 8039
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_111(); at line 7939
+
+No.76 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_157(); at line 7637
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_157(); at line 7537
+
+No.77 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_194(); at line 7601
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_194(); at line 7501
+
+No.78 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_78(); at line 6787
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_78(); at line 6687
+
+No.79 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_15(); at line 6776
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_15(); at line 6676
+
+No.80 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_85(); at line 6747
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_85(); at line 6647
+
+No.81 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_122(); at line 6735
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_122(); at line 6635
+
+No.82 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_161(); at line 6504
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_161(); at line 6404
+
+No.83 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_197(); at line 6498
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_197(); at line 6398
+
+No.84 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_198(); at line 6471
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_198(); at line 6371
+
+No.85 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_199(); at line 6460
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_199(); at line 6360
+
+No.86 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_200(); at line 6441
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_200(); at line 6341
+
+No.87 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_201(); at line 6436
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_201(); at line 6336
+
+No.88 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_202(); at line 6425
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_202(); at line 6325
+
+No.89 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_203(); at line 6420
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_203(); at line 6320
+
+No.90 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_204(); at line 6415
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_204(); at line 6315
+
+No.91 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_123(); at line 6710
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_123(); at line 6610
+
+No.92 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_176(); at line 6679
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_176(); at line 6579
+
+No.93 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_112(); at line 6771
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_112(); at line 6671
+
+No.94 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_113(); at line 6766
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_113(); at line 6666
+
+No.95 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_158(); at line 7613
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_158(); at line 7513
+
+No.96 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_195(); at line 7282
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_195(); at line 7182
+
+No.97 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_224(); at line 7267
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_224(); at line 7167
+
+No.98 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_97(); at line 6374
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_97(); at line 6274
+
+No.99 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_110(); at line 7618
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_110(); at line 7518
+
+No.100 pair of similar methods:
+List javamop.parser.main_parser.JavaMOPParser.AdviceParameters(); at line 576
+List com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.AdviceParameters(); at line 575
+
+No.101 pair of similar methods:
+BaseTypePattern javamop.parser.main_parser.JavaMOPParser.TypePattern(); at line 1013
+BaseTypePattern com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.TypePattern(); at line 855
+
+No.102 pair of similar methods:
+String javamop.parser.main_parser.Token.toString(); at line 108
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.Node.toString(); at line 100
+
+No.103 pair of similar methods:
+BlockStmt javamop.parser.main_parser.JavaMOPParser.Block(); at line 4377
+BlockStmt com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Block(); at line 4219
+
+No.104 pair of similar methods:
+List javamop.parser.main_parser.JavaMOPParser.Statements(); at line 2584
+List com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Statements(); at line 2426
+
+No.105 pair of similar methods:
+String javamop.parser.ast.mopspec.MOPParameter.getName(); at line 19
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getName(); at line 19
+
+No.106 pair of similar methods:
+TypePattern javamop.parser.ast.mopspec.MOPParameter.getType(); at line 18
+TypePattern com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getType(); at line 18
+
+No.107 pair of similar methods:
+String javamop.parser.ast.aspectj.TypePattern.getOp(); at line 14
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.aspectj.TypePattern.getOp(); at line 14
+
+No.108 pair of similar methods:
+Token javamop.parser.aspectj_parser.AspectJParserTokenManager.getNextToken(); at line 2162
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.getNextToken(); at line 2393
+
+No.109 pair of similar methods:
+char javamop.parser.aspectj_parser.JavaCharStream.BeginToken(); at line 179
+char com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.BeginToken(); at line 179
+
+No.110 pair of similar methods:
+void javamop.parser.aspectj_parser.JavaCharStream.FillBuff(); at line 139
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.FillBuff(); at line 139
+
+No.111 pair of similar methods:
+void javamop.parser.aspectj_parser.JavaCharStream.backup(int); at line 391
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.backup(int); at line 391
+
+No.112 pair of similar methods:
+int javamop.parser.aspectj_parser.AspectJParserTokenManager.jjMoveStringLiteralDfa0_0(); at line 182
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.jjMoveStringLiteralDfa0_0(); at line 258
+
+No.113 pair of similar methods:
+Token javamop.parser.aspectj_parser.AspectJParserTokenManager.jjFillToken(); at line 2135
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.jjFillToken(); at line 2367
+
+No.114 pair of similar methods:
+int javamop.parser.aspectj_parser.JavaCharStream.getBeginLine(); at line 385
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.Node.getBeginLine(); at line 75
+
+No.115 pair of similar methods:
+int javamop.parser.aspectj_parser.JavaCharStream.getBeginColumn(); at line 380
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.Node.getBeginColumn(); at line 79
+
+No.116 pair of similar methods:
+int javamop.parser.aspectj_parser.JavaCharStream.getEndLine(); at line 375
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.getEndLine(); at line 375
+
+No.117 pair of similar methods:
+int javamop.parser.aspectj_parser.JavaCharStream.getEndColumn(); at line 370
+int com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.getEndColumn(); at line 370
+
+No.118 pair of similar methods:
+void javamop.parser.aspectj_parser.AspectJParserTokenManager.TokenLexicalActions(Token); at line 2229
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.TokenLexicalActions(Token); at line 2540
+
+No.119 pair of similar methods:
+Token javamop.parser.aspectj_parser.AspectJParser.jj_consume_token(int); at line 5911
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_consume_token(int); at line 9148
+
+No.120 pair of similar methods:
+String javamop.parser.aspectj_parser.JavaCharStream.GetImage(); at line 536
+String com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.JavaCharStream.GetImage(); at line 536
+
+No.121 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_scan_token(int); at line 5937
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_scan_token(int); at line 9174
+
+No.122 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_131(); at line 5300
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_131(); at line 6046
+
+No.123 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_132(); at line 5193
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_132(); at line 6041
+
+No.124 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_125(); at line 5715
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_125(); at line 6087
+
+No.125 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_140(); at line 5692
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_140(); at line 8198
+
+No.126 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_141(); at line 5655
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_141(); at line 8190
+
+No.127 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_142(); at line 5628
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_142(); at line 7572
+
+No.128 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_143(); at line 5606
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_143(); at line 7523
+
+No.129 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_144(); at line 5584
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_144(); at line 7391
+
+No.130 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_145(); at line 5574
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_145(); at line 7403
+
+No.131 pair of similar methods:
+void javamop.parser.aspectj_parser.AspectJParserTokenManager.jjCheckNAdd(int); at line 2251
+void com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParserTokenManager.jjCheckNAdd(int); at line 2562
+
+No.132 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_78(); at line 5485
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_78(); at line 6687
+
+No.133 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3_5(); at line 4731
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_5(); at line 8718
+
+No.134 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_133(); at line 5782
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_133(); at line 6036
+
+No.135 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_181(); at line 5621
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_181(); at line 7443
+
+No.136 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_182(); at line 5589
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_182(); at line 7438
+
+No.137 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_210(); at line 5470
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_210(); at line 7111
+
+No.138 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_197(); at line 5568
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_197(); at line 6398
+
+No.139 pair of similar methods:
+boolean javamop.parser.aspectj_parser.AspectJParser.jj_3R_134(); at line 3825
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_134(); at line 6031
+
+No.140 pair of similar methods:
+String javamop.parser.ast.Node.toString(); at line 101
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.Node.toString(); at line 100
+
+No.141 pair of similar methods:
+void javamop.parser.ast.visitor.SourcePrinter.print(String); at line 50
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.print(String); at line 50
+
+No.142 pair of similar methods:
+void javamop.parser.ast.visitor.SourcePrinter.makeIndent(); at line 44
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.makeIndent(); at line 44
+
+No.143 pair of similar methods:
+String javamop.parser.ast.aspectj.PointCut.getType(); at line 17
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.PropertyExt.getType(); at line 18
+
+No.144 pair of similar methods:
+int javamop.parser.ast.aspectj.FieldPattern.getModifiers(); at line 28
+int com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.getModifiers(); at line 112
+
+No.145 pair of similar methods:
+TypePattern javamop.parser.ast.aspectj.FieldPattern.getType(); at line 30
+TypePattern com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getType(); at line 18
+
+No.146 pair of similar methods:
+String javamop.parser.ast.visitor.DumpVisitor.getSource(); at line 156
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.DumpVisitor.getSource(); at line 42
+
+No.147 pair of similar methods:
+String javamop.parser.ast.visitor.SourcePrinter.getSource(); at line 68
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.getSource(); at line 68
+
+No.148 pair of similar methods:
+Statement javamop.parser.main_parser.JavaMOPParser.BlockStatement(); at line 4394
+Statement com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.BlockStatement(); at line 4236
+
+No.149 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_39(int); at line 5915
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_39(int); at line 5757
+
+No.150 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_39(); at line 6567
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_39(); at line 6467
+
+No.151 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_40(int); at line 5922
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_40(int); at line 5764
+
+No.152 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_40(); at line 6550
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_40(); at line 6450
+
+No.153 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_102(); at line 6555
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_102(); at line 6455
+
+No.154 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_18(); at line 6673
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_18(); at line 6573
+
+No.155 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_86(); at line 6621
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_86(); at line 6521
+
+No.156 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_19(); at line 6651
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_19(); at line 6551
+
+No.157 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_20(); at line 6646
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_20(); at line 6546
+
+No.158 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_17(); at line 6615
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_17(); at line 6515
+
+No.159 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_184(); at line 7425
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_184(); at line 7325
+
+No.160 pair of similar methods:
+Statement javamop.parser.main_parser.JavaMOPParser.Statement(); at line 4237
+Statement com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Statement(); at line 4079
+
+No.161 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_38(int); at line 5908
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_38(int); at line 5750
+
+No.162 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_38(); at line 6927
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_38(); at line 6832
+
+No.163 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_100(); at line 6721
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_100(); at line 6621
+
+No.164 pair of similar methods:
+ExpressionStmt javamop.parser.main_parser.JavaMOPParser.StatementExpression(); at line 4493
+ExpressionStmt com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.StatementExpression(); at line 4335
+
+No.165 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.PrimaryExpression(); at line 3698
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.PrimaryExpression(); at line 3540
+
+No.166 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.PrimaryPrefix(); at line 3732
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.PrimaryPrefix(); at line 3574
+
+No.167 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_31(int); at line 5859
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_31(int); at line 5701
+
+No.168 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_31(); at line 7726
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_31(); at line 7626
+
+No.169 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_29(int); at line 5845
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_29(int); at line 5687
+
+No.170 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_29(); at line 8012
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_29(); at line 7912
+
+No.171 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_95(); at line 7717
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_95(); at line 7617
+
+No.172 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_32(); at line 7701
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_32(); at line 7601
+
+No.173 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_96(); at line 7653
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_96(); at line 7553
+
+No.174 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_183(); at line 7517
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_183(); at line 7417
+
+No.175 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_218(); at line 7511
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_218(); at line 7411
+
+No.176 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.PrimarySuffix(Expression); at line 3859
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.PrimarySuffix(Expression); at line 3701
+
+No.177 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_32(int); at line 5866
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_32(int); at line 5708
+
+No.178 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.PrimarySuffixWithoutSuper(Expression); at line 3880
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.PrimarySuffixWithoutSuper(Expression); at line 3722
+
+No.179 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_33(int); at line 5873
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_33(int); at line 5715
+
+No.180 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_33(); at line 7452
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_33(); at line 7352
+
+No.181 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_98(); at line 7446
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_98(); at line 7346
+
+No.182 pair of similar methods:
+List javamop.parser.main_parser.JavaMOPParser.Arguments(); at line 4025
+List com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Arguments(); at line 3867
+
+No.183 pair of similar methods:
+List javamop.parser.main_parser.JavaMOPParser.ArgumentList(); at line 4070
+List com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ArgumentList(); at line 3912
+
+No.184 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.Expression(); at line 3035
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Expression(); at line 2877
+
+No.185 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.ConditionalExpression(); at line 3111
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ConditionalExpression(); at line 2953
+
+No.186 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.ConditionalOrExpression(); at line 3131
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ConditionalOrExpression(); at line 2973
+
+No.187 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.ConditionalAndExpression(); at line 3153
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ConditionalAndExpression(); at line 2995
+
+No.188 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.InclusiveOrExpression(); at line 3175
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.InclusiveOrExpression(); at line 3017
+
+No.189 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.ExclusiveOrExpression(); at line 3197
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ExclusiveOrExpression(); at line 3039
+
+No.190 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.AndExpression(); at line 3219
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.AndExpression(); at line 3061
+
+No.191 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.EqualityExpression(); at line 3242
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.EqualityExpression(); at line 3084
+
+No.192 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.InstanceOfExpression(); at line 3278
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.InstanceOfExpression(); at line 3120
+
+No.193 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.RelationalExpression(); at line 3297
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.RelationalExpression(); at line 3139
+
+No.194 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.ShiftExpression(); at line 3344
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.ShiftExpression(); at line 3186
+
+No.195 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.AdditiveExpression(); at line 3381
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.AdditiveExpression(); at line 3223
+
+No.196 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.MultiplicativeExpression(); at line 3418
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.MultiplicativeExpression(); at line 3260
+
+No.197 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.UnaryExpression(); at line 3459
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.UnaryExpression(); at line 3301
+
+No.198 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.UnaryExpressionNotPlusMinus(); at line 3561
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.UnaryExpressionNotPlusMinus(); at line 3403
+
+No.199 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_26(int); at line 5824
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_26(int); at line 5666
+
+No.200 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_26(); at line 8270
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_26(); at line 8170
+
+No.201 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_92(); at line 8307
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_92(); at line 8207
+
+No.202 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.PostfixExpression(); at line 3654
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.PostfixExpression(); at line 3496
+
+No.203 pair of similar methods:
+Expression javamop.parser.main_parser.JavaMOPParser.Literal(); at line 3961
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.Literal(); at line 3803
+
+No.204 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_28(int); at line 5838
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_28(int); at line 5680
+
+No.205 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_28(); at line 8194
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_28(); at line 8094
+
+No.206 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_93(); at line 8208
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_93(); at line 8108
+
+No.207 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_94(); at line 8188
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_94(); at line 8088
+
+No.208 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_23(int); at line 5803
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_23(int); at line 5645
+
+No.209 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_23(); at line 8905
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_23(); at line 8805
+
+No.210 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_89(); at line 8899
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_89(); at line 8799
+
+No.211 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_24(); at line 8894
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_24(); at line 8794
+
+No.212 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_90(); at line 8595
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_90(); at line 8495
+
+No.213 pair of similar methods:
+Token javamop.parser.main_parser.JavaMOPParser.getToken(int); at line 9363
+Token com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.getToken(int); at line 9205
+
+No.214 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_25(); at line 8889
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_25(); at line 8789
+
+No.215 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_91(); at line 8668
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_91(); at line 8568
+
+No.216 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_2_22(int); at line 5796
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_2_22(int); at line 5638
+
+No.217 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3_22(); at line 6247
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3_22(); at line 6147
+
+No.218 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_87(); at line 6193
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_87(); at line 6093
+
+No.219 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_126(); at line 6182
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_126(); at line 6082
+
+No.220 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_127(); at line 6166
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_127(); at line 6066
+
+No.221 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_128(); at line 6161
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_128(); at line 6061
+
+No.222 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_129(); at line 6156
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_129(); at line 6056
+
+No.223 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_130(); at line 6151
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_130(); at line 6051
+
+No.224 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_135(); at line 6126
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_135(); at line 6026
+
+No.225 pair of similar methods:
+boolean javamop.parser.main_parser.JavaMOPParser.jj_3R_136(); at line 6121
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.main_parser.RVMonitorParser.jj_3R_136(); at line 6021
+
+No.226 pair of similar methods:
+BlockStmt javamop.parser.astex.mopspec.HandlerExt.getBlockStmt(); at line 26
+BlockStmt com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.HandlerExt.getBlockStmt(); at line 26
+
+No.227 pair of similar methods:
+String javamop.parser.astex.mopspec.EventDefinitionExt.getId(); at line 156
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.EventDefinitionExt.getId(); at line 114
+
+No.228 pair of similar methods:
+void javamop.parser.astex.mopspec.JavaMOPSpecExt.setVarsInEvents(); at line 65
+void com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.setVarsInEvents(); at line 65
+
+No.229 pair of similar methods:
+boolean javamop.parser.astex.mopspec.EventDefinitionExt.isStartEvent(); at line 271
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.EventDefinitionExt.isStartEvent(); at line 197
+
+No.230 pair of similar methods:
+Iterator javamop.parser.ast.mopspec.MOPParameters.iterator(); at line 215
+Iterator com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameters.iterator(); at line 218
+
+No.231 pair of similar methods:
+List javamop.parser.astex.MOPSpecFileExt.getSpecs(); at line 35
+List com.runtimeverification.rvmonitor.java.rvj.parser.astex.RVMSpecFileExt.getSpecs(); at line 33
+
+No.232 pair of similar methods:
+boolean javamop.parser.astex.mopspec.JavaMOPSpecExt.hasExtend(); at line 234
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.hasExtend(); at line 291
+
+No.233 pair of similar methods:
+List javamop.parser.astex.mopspec.JavaMOPSpecExt.getDeclarations(); at line 132
+List com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.getDeclarations(); at line 132
+
+No.234 pair of similar methods:
+List javamop.parser.astex.mopspec.JavaMOPSpecExt.getEvents(); at line 148
+List com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.getEvents(); at line 148
+
+No.235 pair of similar methods:
+List javamop.parser.JavaMOPExtender.collectAndTranslateEvents(SpecContext); at line 120
+List com.runtimeverification.rvmonitor.java.rvj.parser.RVMonitorExtender.collectAndTranslateEvents(SpecContext); at line 96
+
+No.236 pair of similar methods:
+List javamop.parser.ast.mopspec.MOPParameters.toList(); at line 298
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameters.toList(); at line 318
+
+No.237 pair of similar methods:
+BlockStmt javamop.parser.astex.mopspec.EventDefinitionExt.getBlock(); at line 305
+BlockStmt com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.EventDefinitionExt.getBlock(); at line 259
+
+No.238 pair of similar methods:
+boolean javamop.parser.astex.mopspec.EventDefinitionExt.isBlockingEvent(); at line 275
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.EventDefinitionExt.isBlockingEvent(); at line 201
+
+No.239 pair of similar methods:
+List javamop.parser.JavaMOPExtender.collectAndTranslateProps(SpecContext); at line 147
+List com.runtimeverification.rvmonitor.java.rvj.parser.RVMonitorExtender.collectAndTranslateProps(SpecContext); at line 121
+
+No.240 pair of similar methods:
+HashMap javamop.parser.JavaMOPExtender.collectProps(SpecContext); at line 175
+HashMap com.runtimeverification.rvmonitor.java.rvj.parser.RVMonitorExtender.collectProps(SpecContext); at line 149
+
+No.241 pair of similar methods:
+Set javamop.parser.JavaMOPExtender.collectAllPropNames(Set); at line 567
+Set com.runtimeverification.rvmonitor.java.rvj.parser.RVMonitorExtender.collectAllPropNames(Set); at line 396
+
+No.242 pair of similar methods:
+List javamop.parser.astex.mopspec.JavaMOPSpecExt.getPropertiesAndHandlers(); at line 170
+List com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.getPropertiesAndHandlers(); at line 170
+
+No.243 pair of similar methods:
+PropertyExt javamop.parser.astex.mopspec.PropertyAndHandlersExt.getProperty(); at line 53
+PropertyExt com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.PropertyAndHandlersExt.getProperty(); at line 55
+
+No.244 pair of similar methods:
+String javamop.parser.astex.mopspec.PropertyExt.getName(); at line 23
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getName(); at line 19
+
+No.245 pair of similar methods:
+List javamop.parser.astex.mopspec.PropertyAndHandlersExt.getHandlerList(); at line 49
+List com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.PropertyAndHandlersExt.getHandlerList(); at line 51
+
+No.246 pair of similar methods:
+ReferenceSpec javamop.parser.astex.mopspec.HandlerExt.getReferenceSpec(); at line 30
+ReferenceSpec com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.HandlerExt.getReferenceSpec(); at line 30
+
+No.247 pair of similar methods:
+String javamop.parser.astex.mopspec.ReferenceSpec.getSpecName(); at line 24
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.ReferenceSpec.getSpecName(); at line 26
+
+No.248 pair of similar methods:
+String javamop.parser.astex.mopspec.ReferenceSpec.getReferenceElement(); at line 28
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.ReferenceSpec.getReferenceElement(); at line 30
+
+No.249 pair of similar methods:
+String javamop.parser.astex.mopspec.HandlerExt.getState(); at line 22
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.HandlerExt.getState(); at line 22
+
+No.250 pair of similar methods:
+String javamop.parser.astex.mopspec.FormulaExt.getFormula(); at line 15
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.FormulaExt.getFormula(); at line 15
+
+No.251 pair of similar methods:
+PackageDeclaration javamop.parser.astex.MOPSpecFileExt.getPakage(); at line 27
+PackageDeclaration com.runtimeverification.rvmonitor.java.rvj.parser.astex.RVMSpecFileExt.getPakage(); at line 24
+
+No.252 pair of similar methods:
+String javamop.parser.astex.mopspec.JavaMOPSpecExt.getName(); at line 116
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getName(); at line 19
+
+No.253 pair of similar methods:
+String javamop.parser.astex.mopspec.JavaMOPSpecExt.getInMethod(); at line 128
+String com.runtimeverification.rvmonitor.java.rvj.parser.astex.mopspec.RVMonitorSpecExt.getInMethod(); at line 128
+
+No.254 pair of similar methods:
+String javamop.parser.ast.mopspec.EventDefinition.getId(); at line 242
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.getId(); at line 164
+
+No.255 pair of similar methods:
+void javamop.parser.ast.mopspec.JavaMOPSpec.setVarsInEvents(); at line 97
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.setVarsInEvents(); at line 98
+
+No.256 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.isStartEvent(); at line 377
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.isStartEvent(); at line 266
+
+No.257 pair of similar methods:
+HashMap javamop.parser.ast.mopspec.PropertyAndHandlers.getHandlers(); at line 48
+HashMap com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.PropertyAndHandlers.getHandlers(); at line 49
+
+No.258 pair of similar methods:
+List javamop.parser.ast.stmt.BlockStmt.getStmts(); at line 43
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.stmt.BlockStmt.getStmts(); at line 43
+
+No.259 pair of similar methods:
+Expression javamop.parser.ast.stmt.ExpressionStmt.getExpression(); at line 41
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.ast.stmt.ExpressionStmt.getExpression(); at line 41
+
+No.260 pair of similar methods:
+List javamop.parser.ast.expr.MethodCallExpr.getArgs(); at line 64
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.MethodCallExpr.getArgs(); at line 65
+
+No.261 pair of similar methods:
+List javamop.parser.astex.MOPSpecFileExt.getImports(); at line 31
+List com.runtimeverification.rvmonitor.java.rvj.parser.astex.RVMSpecFileExt.getImports(); at line 29
+
+No.262 pair of similar methods:
+List javamop.parser.ast.MOPSpecFile.getSpecs(); at line 32
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.RVMSpecFile.getSpecs(); at line 29
+
+No.263 pair of similar methods:
+List javamop.parser.ast.mopspec.JavaMOPSpec.getEvents(); at line 188
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.getEvents(); at line 189
+
+No.264 pair of similar methods:
+String javamop.parser.ast.mopspec.JavaMOPSpec.getName(); at line 148
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getName(); at line 19
+
+No.265 pair of similar methods:
+List javamop.parser.ast.mopspec.JavaMOPSpec.getDeclarations(); at line 172
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.getDeclarations(); at line 173
+
+No.266 pair of similar methods:
+String javamop.parser.ast.mopspec.EventDefinition.getThreadVar(); at line 343
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.getThreadVar(); at line 232
+
+No.267 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.isEndProgram(); at line 390
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.isEndProgram(); at line 274
+
+No.268 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.isEndThread(); at line 394
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.isEndThread(); at line 278
+
+No.269 pair of similar methods:
+boolean javamop.parser.ast.mopspec.JavaMOPSpec.isGeneral(); at line 230
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.isGeneral(); at line 231
+
+No.270 pair of similar methods:
+int javamop.parser.ast.mopspec.MOPParameters.size(); at line 147
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameters.size(); at line 150
+
+No.271 pair of similar methods:
+PackageDeclaration javamop.parser.ast.MOPSpecFile.getPakage(); at line 24
+PackageDeclaration com.runtimeverification.rvmonitor.java.rvj.parser.ast.RVMSpecFile.getPakage(); at line 21
+
+No.272 pair of similar methods:
+List javamop.parser.ast.PackageDeclaration.getAnnotations(); at line 48
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.PackageDeclaration.getAnnotations(); at line 48
+
+No.273 pair of similar methods:
+NameExpr javamop.parser.ast.PackageDeclaration.getName(); at line 52
+NameExpr com.runtimeverification.rvmonitor.java.rvj.parser.ast.PackageDeclaration.getName(); at line 52
+
+No.274 pair of similar methods:
+String javamop.parser.ast.expr.NameExpr.getName(); at line 40
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getName(); at line 19
+
+No.275 pair of similar methods:
+void javamop.parser.ast.visitor.SourcePrinter.printLn(String); at line 58
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.printLn(String); at line 58
+
+No.276 pair of similar methods:
+void javamop.parser.ast.visitor.SourcePrinter.printLn(); at line 63
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.printLn(); at line 63
+
+No.277 pair of similar methods:
+List javamop.parser.ast.MOPSpecFile.getImports(); at line 28
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.RVMSpecFile.getImports(); at line 25
+
+No.278 pair of similar methods:
+boolean javamop.parser.ast.ImportDeclaration.isStatic(); at line 51
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.ImportDeclaration.isStatic(); at line 51
+
+No.279 pair of similar methods:
+NameExpr javamop.parser.ast.ImportDeclaration.getName(); at line 47
+NameExpr com.runtimeverification.rvmonitor.java.rvj.parser.ast.ImportDeclaration.getName(); at line 47
+
+No.280 pair of similar methods:
+NameExpr javamop.parser.ast.expr.QualifiedNameExpr.getQualifier(); at line 40
+NameExpr com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr.getQualifier(); at line 40
+
+No.281 pair of similar methods:
+boolean javamop.parser.ast.ImportDeclaration.isAsterisk(); at line 55
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.ImportDeclaration.isAsterisk(); at line 55
+
+No.282 pair of similar methods:
+List javamop.parser.ast.mopspec.JavaMOPSpec.getPropertiesAndHandlers(); at line 206
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.getPropertiesAndHandlers(); at line 207
+
+No.283 pair of similar methods:
+boolean javamop.parser.ast.mopspec.PropertyAndHandlers.getVersionedStack(); at line 118
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.PropertyAndHandlers.getVersionedStack(); at line 129
+
+No.284 pair of similar methods:
+int javamop.parser.ast.mopspec.PropertyAndHandlers.getPropertyId(); at line 68
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.PropertyAndHandlers.getPropertyId(); at line 69
+
+No.285 pair of similar methods:
+int javamop.parser.ast.mopspec.MOPParameter.hashCode(); at line 27
+int com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.hashCode(); at line 27
+
+No.286 pair of similar methods:
+boolean javamop.parser.ast.mopspec.JavaMOPSpec.isEnforce(); at line 260
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.isEnforce(); at line 261
+
+No.287 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isEnforce(int); at line 55
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isEnforce(int); at line 55
+
+No.288 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.isEndObject(); at line 398
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.isEndObject(); at line 282
+
+No.289 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.isStartThread(); at line 402
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.isStartThread(); at line 286
+
+No.290 pair of similar methods:
+boolean javamop.parser.ast.mopspec.JavaMOPSpec.hasThisJoinPoint(); at line 316
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.hasThisJoinPoint(); at line 396
+
+No.291 pair of similar methods:
+BlockStmt javamop.parser.ast.mopspec.EventDefinition.getAction(); at line 312
+BlockStmt com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.getAction(); at line 218
+
+No.292 pair of similar methods:
+Expression javamop.parser.ast.expr.MethodCallExpr.getScope(); at line 52
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.MethodCallExpr.getScope(); at line 53
+
+No.293 pair of similar methods:
+String javamop.parser.ast.mopspec.EventDefinition.getUniqueId(); at line 250
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.getUniqueId(); at line 172
+
+No.294 pair of similar methods:
+boolean javamop.parser.ast.mopspec.JavaMOPSpec.isSync(); at line 214
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.isSync(); at line 215
+
+No.295 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isPerThread(int); at line 35
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isPerThread(int); at line 35
+
+No.296 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isUnSync(int); at line 27
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isUnSync(int); at line 27
+
+No.297 pair of similar methods:
+String javamop.parser.ast.mopspec.EventDefinition.getCountCond(); at line 355
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.getCountCond(); at line 244
+
+No.298 pair of similar methods:
+boolean javamop.parser.ast.mopspec.JavaMOPSpec.has__SKIP(); at line 310
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.has__SKIP(); at line 369
+
+No.299 pair of similar methods:
+void javamop.parser.ast.visitor.SourcePrinter.indent(); at line 36
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.indent(); at line 36
+
+No.300 pair of similar methods:
+Expression javamop.parser.ast.expr.FieldAccessExpr.getScope(); at line 50
+Expression com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.MethodCallExpr.getScope(); at line 53
+
+No.301 pair of similar methods:
+String javamop.parser.ast.expr.FieldAccessExpr.getField(); at line 58
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.FieldAccessExpr.getField(); at line 58
+
+No.302 pair of similar methods:
+List javamop.parser.ast.expr.MethodCallExpr.getTypeArgs(); at line 56
+List com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.MethodCallExpr.getTypeArgs(); at line 57
+
+No.303 pair of similar methods:
+String javamop.parser.ast.expr.MethodCallExpr.getName(); at line 60
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameter.getName(); at line 19
+
+No.304 pair of similar methods:
+String javamop.parser.ast.expr.StringLiteralExpr.getValue(); at line 40
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.StringLiteralExpr.getValue(); at line 40
+
+No.305 pair of similar methods:
+void javamop.parser.ast.visitor.SourcePrinter.unindent(); at line 40
+void com.runtimeverification.rvmonitor.java.rvj.parser.ast.visitor.SourcePrinter.unindent(); at line 40
+
+No.306 pair of similar methods:
+String javamop.parser.ast.mopspec.MOPParameters.parameterDeclString(); at line 248
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameters.parameterDeclString(); at line 256
+
+No.307 pair of similar methods:
+String javamop.parser.ast.mopspec.MOPParameters.parameterString(); at line 219
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMParameters.parameterString(); at line 226
+
+No.308 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.has__STATICSIG(); at line 418
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.RVMonitorSpec.has__STATICSIG(); at line 343
+
+No.309 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isConnected(int); at line 47
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isConnected(int); at line 47
+
+No.310 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isDecentralized(int); at line 31
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isDecentralized(int); at line 31
+
+No.311 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isFullBinding(int); at line 43
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isFullBinding(int); at line 43
+
+No.312 pair of similar methods:
+boolean javamop.parser.ast.mopspec.SpecModifierSet.isSuffix(int); at line 39
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.SpecModifierSet.isSuffix(int); at line 39
+
+No.313 pair of similar methods:
+boolean javamop.parser.ast.mopspec.EventDefinition.isBlockingEvent(); at line 381
+boolean com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.isBlockingEvent(); at line 270
+
+No.314 pair of similar methods:
+String javamop.parser.ast.mopspec.EventDefinition.getCondition(); at line 351
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.EventDefinition.getCondition(); at line 240
+
+No.315 pair of similar methods:
+Property javamop.parser.ast.mopspec.PropertyAndHandlers.getProperty(); at line 44
+Property com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.PropertyAndHandlers.getProperty(); at line 45
+
+No.316 pair of similar methods:
+String javamop.parser.ast.mopspec.Formula.getFormula(); at line 15
+String com.runtimeverification.rvmonitor.java.rvj.parser.ast.mopspec.Formula.getFormula(); at line 15
+
