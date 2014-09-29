@@ -353,7 +353,7 @@ public final class JavaMOPMain {
     }
     
     /**
-     * Initialize JavaMOP with the given command-line parameters, process the given MOP files
+     * Initialize JavaMOP with the given command-line parameters, combineSpecFiles the given MOP files
      * into RVM files, run RV-Monitor on the MOP files, and optionally postprocess the output.
      * @param args Configuration options and input files for JavaMOP.
      */
