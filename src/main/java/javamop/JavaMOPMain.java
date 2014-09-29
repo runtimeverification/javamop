@@ -23,8 +23,8 @@ import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
 import javamop.commandline.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
+import javamop.util.FileCombiner;
 import javamop.util.Tool;
-import javamop.util.AJFileCombiner;
 
 /**
  * Entry point class for the JavaMOP program.
@@ -110,8 +110,7 @@ public final class JavaMOPMain {
         }
         MOPProcessor processor = new MOPProcessor(options.aspectname);
         
-        String aspect = processor.process(spec);
-        writeFile(aspect, location, "MonitorAspect.aj");
+        writeFile(processor.generateAJFile(spec), location, "MonitorAspect.aj");
     }
     
     /**
@@ -135,11 +134,9 @@ public final class JavaMOPMain {
         
         MOPProcessor processor = new MOPProcessor(options.aspectname);
         
-        String output = processor.process(spec);
-        
-        writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
+        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), ".rvm");
 
-        writeFile(output, location, "MonitorAspect.aj");
+        writeFile(processor.generateAJFile(spec), location, "MonitorAspect.aj");
     }
     
     /**
@@ -180,41 +177,11 @@ public final class JavaMOPMain {
             //System.out.println(file);
             String specStr = SpecExtractor.process(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            writeFile(processor.translate2RV(spec), file.getAbsolutePath(), ".rvm");
+            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), ".rvm");
             specs.add(spec);
         }
-        MOPSpecFile combinedSpec = SpecCombiner.process(specs);
-        String output = processor.process(combinedSpec);
-        writeCombinedAspectFile(output, aspectName);
-    }
-    
-    /**
-     * Write Java source code to a file.
-     * @param javaContent The Java source.
-     * @param location The location of the file to write it to.
-     * @throws MOPException If something goes wrong writing the file.
-     */
-    protected static void writeJavaFile(String javaContent, String location) throws MOPException {
-        if ((javaContent == null) || (javaContent.length() == 0))
-            throw new MOPException("Nothing to write as a java file");
-        if (!Tool.isJavaFile(location))
-            throw new MOPException(location + "should be a Java file!");
-
-        FileWriter f = null;
-        try {
-            f = new FileWriter(location);
-            f.write(javaContent);
-        } catch (Exception e) {
-            throw new MOPException("Failed to write Java file", e);
-        } finally {
-            if(f != null) {
-                try {
-                    f.close();
-                } catch(IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
-        }
+        MOPSpecFile combinedSpec = FileCombiner.combineSpecFiles(specs);
+        writeCombinedAspectFile(processor.generateAJFile(combinedSpec), aspectName);
     }
 
     /**
@@ -482,9 +449,9 @@ public final class JavaMOPMain {
             }
         }
 
-        // Call AJFileCombiner here to combine these two
+        // Call FileCombiner here to combine these two
         for (String[] filePair : listFilePairs) {
-            AJFileCombiner.main(filePair);
+            FileCombiner.combineAJFiles(filePair);
             File javaFile = new File(filePair[0]);
             try {
                 if (!options.keepRVFiles) {
