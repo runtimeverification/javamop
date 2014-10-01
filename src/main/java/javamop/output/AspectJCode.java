@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output;
 
+import javamop.ParserService;
 import javamop.parser.MOPException;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.parser.ast.MOPSpecFile;
@@ -26,7 +27,7 @@ public class AspectJCode {
      * @param mopSpecFile The specification file that will be used to build aspects.
      * @throw MOPException If something goes wrong in generating the aspects.
      */
-    public AspectJCode(String name, MOPSpecFile mopSpecFile) throws MOPException {
+    public AspectJCode(String name, MOPSpecFile mopSpecFile) throws ParserService.MOPExceptionImpl {
         this.name = name;
         packageDecl = new Package(mopSpecFile);
         imports = new Imports(mopSpecFile);

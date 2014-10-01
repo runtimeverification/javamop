@@ -7,6 +7,7 @@
 package javamop.parser;
 
 import javamop.MOPNameSpace;
+import javamop.ParserService;
 import javamop.output.AspectJCode;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
@@ -50,7 +51,7 @@ class MOPProcessor {
      * @param mopSpec The specification to extract variables from.
      * @throws javamop.parser.MOPException If something goes wrong reading or registering the variables.
      */
-    private void registerUserVar(JavaMOPSpec mopSpec) throws MOPException {
+    private void registerUserVar(JavaMOPSpec mopSpec) throws ParserService.MOPExceptionImpl {
         for (EventDefinition event : mopSpec.getEvents()) {
             MOPNameSpace.addUserVariable(event.getId());
             for(MOPParameter param : event.getMOPParameters()){
@@ -98,7 +99,7 @@ class MOPProcessor {
      * @return The generated aspectJ file.
      * @throws MOPException If there is a logic error in conversion.
      */
-    protected String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException {
+    protected String generateAJFile(MOPSpecFile mopSpecFile) throws ParserService.MOPExceptionImpl {
         String result = "";
         
         // register all user variables to MOPNameSpace to avoid conflicts

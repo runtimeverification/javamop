@@ -36,15 +36,24 @@ public final class JavaMOPMain {
 
     public static JavaMOPOptions options;
 
-    private static ParserService PARSERSERVICE;
+    /**
+     * ParserService is the entry point for using methods provided by parser component.
+     * The parser service is started in the JavaMOPMain and
+     * then distributed to a component on request. In this manner,
+     * only one copy of ParserService will be created and every component in the project
+     * can share the same copy.
+     */
+    private static ParserService PARSER_SERVICE =new ParserServiceImpl();
 
+    public static ParserService getParserService(){
+        if(PARSER_SERVICE ==null)
+            PARSER_SERVICE =new ParserServiceImpl();
+        return PARSER_SERVICE;
+    }
     /**
      * Private to prevent instantiation.
      */
     private JavaMOPMain() {
-        //get an instance of ParserServiceImpl.
-        //that is the entry point for using the services provided by parser component.
-        PARSERSERVICE=new ParserServiceImpl();
     }
 
     public static boolean specifiedAJName = false;
@@ -112,16 +121,16 @@ public final class JavaMOPMain {
      */
     public static void processJavaFile(File file, String location) throws ParserService.MOPExceptionImpl {
         MOPNameSpace.init();
-        String specStr = PARSERSERVICE.process(file);
-        MOPSpecFile spec = PARSERSERVICE.parse2MOPSpecFile(specStr);
+        String specStr = PARSER_SERVICE.process(file);
+        MOPSpecFile spec = PARSER_SERVICE.parse2MOPSpecFile(specStr);
         
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
 
-        PARSERSERVICE.setUpMOPProcessor(options.aspectname);
+        PARSER_SERVICE.setUpMOPProcessor(options.aspectname);
         
-        writeFile(PARSERSERVICE.generateAJFile(spec), location, AJ_FILE_SUFFIX);
+        writeFile(PARSER_SERVICE.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -136,18 +145,18 @@ public final class JavaMOPMain {
      */
     public static void processSpecFile(File file, String location) throws ParserService.MOPExceptionImpl {
         MOPNameSpace.init();
-        String specStr = PARSERSERVICE.process(file);
-        MOPSpecFile spec =  PARSERSERVICE.parse2MOPSpecFile(specStr);
+        String specStr = PARSER_SERVICE.process(file);
+        MOPSpecFile spec =  PARSER_SERVICE.parse2MOPSpecFile(specStr);
         
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
 
-        PARSERSERVICE.setUpMOPProcessor(options.aspectname);
+        PARSER_SERVICE.setUpMOPProcessor(options.aspectname);
         
-        writeFile(PARSERSERVICE.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
+        writeFile(PARSER_SERVICE.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
 
-        writeFile(PARSERSERVICE.generateAJFile(spec), location, AJ_FILE_SUFFIX);
+        writeFile(PARSER_SERVICE.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -182,18 +191,18 @@ public final class JavaMOPMain {
             options.aspectname = aspectName;
         }
 
-        PARSERSERVICE.setUpMOPProcessor(aspectName);
+        PARSER_SERVICE.setUpMOPProcessor(aspectName);
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
             //System.out.println(file);
-            String specStr = PARSERSERVICE.process(file);
-            MOPSpecFile spec =  PARSERSERVICE.parse2MOPSpecFile(specStr);
-            writeFile(PARSERSERVICE.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
+            String specStr = PARSER_SERVICE.process(file);
+            MOPSpecFile spec =  PARSER_SERVICE.parse2MOPSpecFile(specStr);
+            writeFile(PARSER_SERVICE.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
             specs.add(spec);
         }
         MOPSpecFile combinedSpec = FileCombiner.combineSpecFiles(specs);
-        writeCombinedAspectFile(PARSERSERVICE.generateAJFile(combinedSpec), aspectName);
+        writeCombinedAspectFile(PARSER_SERVICE.generateAJFile(combinedSpec), aspectName);
     }
 
     /**
@@ -214,7 +223,7 @@ public final class JavaMOPMain {
             f = new FileWriter(path);
             f.write(aspectContent);
         } catch (Exception e) {
-            throw PARSERSERVICE.generateMOPException("Failed to write Combined Aspect", e);
+            throw PARSER_SERVICE.generateMOPException("Failed to write Combined Aspect", e);
         } finally {
             if(f != null) {
                 try {
@@ -246,7 +255,7 @@ public final class JavaMOPMain {
             f = new FileWriter(filePath);
             f.write(content);
         } catch (Exception e) {
-            throw PARSERSERVICE.generateMOPException(e);
+            throw PARSER_SERVICE.generateMOPException(e);
         } finally {
             if(f != null) {
                 try {
@@ -275,7 +284,7 @@ public final class JavaMOPMain {
             File f = new File(fPath);
             
             if (!f.exists()) {
-                throw PARSERSERVICE.generateMOPException("[Error] Target file, " + file + ", doesn't exsit!");
+                throw PARSER_SERVICE.generateMOPException("[Error] Target file, " + file + ", doesn't exsit!");
             } else if (f.isDirectory()) {
                 ret.addAll(collectFiles(f.list(), f.getAbsolutePath()));
             } else {
@@ -358,7 +367,7 @@ public final class JavaMOPMain {
      */
     public static void process(List<String> files) throws ParserService.MOPExceptionImpl {
         if(options.outputDir != null && !options.outputDir.exists())
-            throw PARSERSERVICE.generateMOPException("The output directory, " + options.outputDir.getPath() +
+            throw PARSER_SERVICE.generateMOPException("The output directory, " + options.outputDir.getPath() +
                 " does not exist.");
         
         process(files.toArray(new String[0]), "");
@@ -531,7 +540,7 @@ public final class JavaMOPMain {
         }
 
         if (options.verbose) {
-            PARSERSERVICE.setMOPProcessorToVerboseMode();
+            PARSER_SERVICE.setMOPProcessorToVerboseMode();
         }
 
         if (options.aspectname != null) {

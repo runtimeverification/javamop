@@ -2,8 +2,6 @@
 package javamop;
 
 
-import javamop.parser.ParserServiceImpl;
-
 import java.util.*;
 
 /**
@@ -11,13 +9,13 @@ import java.util.*;
  * variables with the same name.
  */
 public final class MOPNameSpace {
-    private static ParserService PARSERSERVICE;
+    private static ParserService PARSER_SERVICE;
     
     /**
      * Private to prevent instantiation.
      */
     private MOPNameSpace() {
-        PARSERSERVICE=new ParserServiceImpl();
+        PARSER_SERVICE =JavaMOPMain.getParserService();
     }
     
     static private boolean used = false;
@@ -50,10 +48,10 @@ public final class MOPNameSpace {
      */
     static public void addUserVariable(final String varName) throws ParserService.MOPExceptionImpl {
         if (used)
-            throw PARSERSERVICE.generateMOPException("Cannot update MOPNameSpace after once used");
+            throw PARSER_SERVICE.generateMOPException("Cannot update MOPNameSpace after once used");
         
         if(keywords.contains(varName))
-            throw PARSERSERVICE.generateMOPException(varName + " is reserved in JavaMOP/AspectJ. Please rename it.");
+            throw PARSER_SERVICE.generateMOPException(varName + " is reserved in JavaMOP/AspectJ. Please rename it.");
         
         if(!userVariables.contains(varName))
             userVariables.add(varName);

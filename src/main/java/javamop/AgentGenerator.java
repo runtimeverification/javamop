@@ -1,7 +1,6 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop;
 
-import javamop.parser.ParserServiceImpl;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,14 +25,16 @@ import java.util.List;
 public final class AgentGenerator {
 
     private static final String manifest = "MANIFEST.MF";
-    private static ParserService PARSERSERVICE;
+    private static ParserService PARSER_SERVICE;
 
     /**
      * Private to avoid instantiation.
      */
     private AgentGenerator() {
-        PARSERSERVICE=new ParserServiceImpl();
+        PARSER_SERVICE =JavaMOPMain.getParserService();
     }
+
+
 
     /**
      * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
@@ -260,12 +261,12 @@ public final class AgentGenerator {
      */
     private static int runCommandDir(final File dir, final String... args) throws IOException {
         try {
-            if (PARSERSERVICE.isMOPProcessorInVerboseMode()) { // -v
+            if (PARSER_SERVICE.isMOPProcessorInVerboseMode()) { // -v
                 System.out.println(dir.toString() + ": " + Arrays.asList(args).toString());
             }
             final ProcessBuilder builder = new ProcessBuilder();
             builder.command(args).directory(dir);
-            if (PARSERSERVICE.isMOPProcessorInVerboseMode()) { // -v
+            if (PARSER_SERVICE.isMOPProcessorInVerboseMode()) { // -v
                 builder.inheritIO();
             } else {
                 builder.redirectErrorStream(true);
@@ -275,7 +276,7 @@ public final class AgentGenerator {
             // If the output stream does not get consumed, when the buffer of the subprocess
             // is full it will get blocked. This fixed issue #37:
             // https://github.com/runtimeverification/javamop/issues/37
-            if (!PARSERSERVICE.isMOPProcessorInVerboseMode()) {
+            if (!PARSER_SERVICE.isMOPProcessorInVerboseMode()) {
                 // Consume output/error stream
                 final StringWriter writer = new StringWriter();
                 new Thread(new Runnable() {
