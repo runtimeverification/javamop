@@ -2,7 +2,7 @@
 package javamop.commandline;
 
 import javamop.AgentGenerator;
-import javamop.IConfiguration;
+import javamop.Configuration;
 import javamop.TextConfiguration;
 import javamop.util.Tool;
 import org.apache.commons.io.FileUtils;
@@ -39,8 +39,8 @@ public class SpecFilter {
     public static String specDirPath;
     private final List<String> specsToOmit;
     private boolean cleanup;
-    private IConfiguration serverConfig;
-    private IConfiguration filterConfig;
+    private Configuration serverConfig;
+    private Configuration filterConfig;
 
     public SpecFilter() {
         serverConfig = new TextConfiguration(SERVER_SETTING);

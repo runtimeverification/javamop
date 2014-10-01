@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  * Class for loading plain text configuration file.
  */
-public class TextConfiguration implements IConfiguration {
+public class TextConfiguration implements Configuration {
 
     private final Properties properties;
 
