@@ -1,16 +1,12 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop;
 
+import javamop.parser.ParserServiceImpl;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
@@ -30,12 +26,13 @@ import java.util.List;
 public final class AgentGenerator {
 
     private static final String manifest = "MANIFEST.MF";
+    private static ParserService PARSERSERVICE;
 
     /**
      * Private to avoid instantiation.
      */
     private AgentGenerator() {
-
+        PARSERSERVICE=new ParserServiceImpl();
     }
 
     /**
@@ -263,12 +260,12 @@ public final class AgentGenerator {
      */
     private static int runCommandDir(final File dir, final String... args) throws IOException {
         try {
-            if (MOPProcessor.verbose) { // -v
+            if (PARSERSERVICE.isMOPProcessorInVerboseMode()) { // -v
                 System.out.println(dir.toString() + ": " + Arrays.asList(args).toString());
             }
             final ProcessBuilder builder = new ProcessBuilder();
             builder.command(args).directory(dir);
-            if (MOPProcessor.verbose) { // -v
+            if (PARSERSERVICE.isMOPProcessorInVerboseMode()) { // -v
                 builder.inheritIO();
             } else {
                 builder.redirectErrorStream(true);
@@ -278,7 +275,7 @@ public final class AgentGenerator {
             // If the output stream does not get consumed, when the buffer of the subprocess
             // is full it will get blocked. This fixed issue #37:
             // https://github.com/runtimeverification/javamop/issues/37
-            if (!MOPProcessor.verbose) {
+            if (!PARSERSERVICE.isMOPProcessorInVerboseMode()) {
                 // Consume output/error stream
                 final StringWriter writer = new StringWriter();
                 new Thread(new Runnable() {

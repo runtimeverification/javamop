@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javamop.MOPException;
+import javamop.parser.MOPException;
 import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.ActivatorManager;

@@ -1,19 +1,16 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.parser;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-
-import javamop.parser.JavaMOPExtender;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.astex.MOPSpecFileExt;
-import javamop.parser.main_parser.JavaMOPParser;
 import javamop.util.Tool;
+
+import java.io.File;
 
 /**
  * Class for retrieving specifications from files.
  */
-public final class SpecExtractor {
+final class SpecExtractor {
     
     /**
      * Retrieve the text of the file at the given path.
@@ -61,7 +58,7 @@ public final class SpecExtractor {
      * @return The specification information in the file.
      * @throws MOPException If something goes wrong in reading the file.
      */
-    static public String process(final File file) throws MOPException {
+    static protected String process(final File file) throws MOPException {
         if (Tool.isSpecFile(file.getName())) {
             return convertFileToString(file.getAbsolutePath());
         } else if (Tool.isJavaFile(file.getName())) {
@@ -79,7 +76,7 @@ public final class SpecExtractor {
      * @return The specifications parsed into an object.
      * @throws MOPException If something goes wrong reading or parsing the specification.
      */
-    static public MOPSpecFile parse(final String input) throws MOPException {
+    static protected MOPSpecFile parse(final String input) throws MOPException {
         try {
             final MOPSpecFileExt mopSpecFileExt = JavaParserAdapter.parse(input);
             return JavaMOPExtender.translateMopSpecFile(mopSpecFileExt);

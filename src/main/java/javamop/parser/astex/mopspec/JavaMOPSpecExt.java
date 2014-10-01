@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javamop.MOPException;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.MOPNameSpace;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.SpecModifierSet;
-import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.astex.ExtNode;
 import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
@@ -57,12 +57,12 @@ public class JavaMOPSpecExt extends ExtNode {
         // set variables in each event
         try {
             setVarsInEvents();
-        } catch (MOPException e) {
+        } catch (ParserService.MOPExceptionImpl e) {
             throw new javamop.parser.main_parser.ParseException(e.getMessage());
         }
     }
     
-    public void setVarsInEvents() throws MOPException {
+    public void setVarsInEvents() throws ParserService.MOPExceptionImpl {
         int numStartEvent = 0;
         HashSet<String> duplicatedEventNames = new HashSet<String>();
         for (EventDefinitionExt event : this.events) {

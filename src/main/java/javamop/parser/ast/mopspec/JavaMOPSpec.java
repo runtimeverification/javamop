@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javamop.MOPException;
+import javamop.ParserService;
 import javamop.MOPNameSpace;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.PackageDeclaration;
@@ -32,8 +32,10 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     private MOPParameters commonParamInEvents;
     private final MOPParameters varsToSave;
     
-    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
-                       List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
+    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name,
+                       List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
+                       List<EventDefinition> events, List<PropertyAndHandlers> properties)
+            throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.packageDeclaration = packageDeclaration;
         this.modifiers = modifiers;
@@ -58,7 +60,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         // set variables in each event
         try {
             setVarsInEvents();
-        } catch (MOPException e) {
+        } catch (ParserService.MOPExceptionImpl e) {
             throw new javamop.parser.main_parser.ParseException(e.getMessage());
         }
         
@@ -94,7 +96,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         }
     }
     
-    public void setVarsInEvents() throws MOPException {
+    public void setVarsInEvents() throws ParserService.MOPExceptionImpl {
         int numStartEvent = 0;
         HashSet<String> duplicatedEventNames = new HashSet<String>();
         for (EventDefinition event : this.events) {

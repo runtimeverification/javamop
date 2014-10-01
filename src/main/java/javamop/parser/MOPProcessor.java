@@ -4,10 +4,9 @@
  * The class handling the mop specification tree
  */
 
-package javamop;
+package javamop.parser;
 
-import java.util.List;
-
+import javamop.MOPNameSpace;
 import javamop.output.AspectJCode;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
@@ -18,28 +17,38 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.visitor.CollectUserVarVisitor;
 import javamop.util.Tool;
 
+import java.util.List;
+
 /**
  * A class for taking in specification file objects and producing the JavaMOP additions to
  * RV-Monitor code.
  */
-public class MOPProcessor {
+class MOPProcessor {
     public static boolean verbose = false;
     
-    private final String name;
+    private String name;
 
     /**
      * Construct a MOPProcessor.
      * @param name The name of the processor.
      */
-    public MOPProcessor(String name) {
+    protected MOPProcessor(String name) {
         this.name = name;
+    }
+
+    /**
+     * Update the name of the MOPProcessor.
+     * @param newName
+     */
+    protected void updateName(String newName){
+        this.name=newName;
     }
 
     /**
      * Register user variables into the MOPNameSpace so that generated code does not clash with
      * them.
      * @param mopSpec The specification to extract variables from.
-     * @throws MOPException If something goes wrong reading or registering the variables.
+     * @throws javamop.parser.MOPException If something goes wrong reading or registering the variables.
      */
     private void registerUserVar(JavaMOPSpec mopSpec) throws MOPException {
         for (EventDefinition event : mopSpec.getEvents()) {
@@ -66,7 +75,7 @@ public class MOPProcessor {
      * @return The generated .rvm file string
      * @throws MOPException If there is a logic error in conversion.
      */
-    public String generateRVFile(MOPSpecFile mopSpecFile) throws MOPException {
+    protected String generateRVFile(MOPSpecFile mopSpecFile) throws MOPException {
         String rvresult = "";
         if (mopSpecFile.getPakage() != null) {
             rvresult += mopSpecFile.getPakage().toString();
@@ -89,7 +98,7 @@ public class MOPProcessor {
      * @return The generated aspectJ file.
      * @throws MOPException If there is a logic error in conversion.
      */
-    public String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException {
+    protected String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException {
         String result = "";
         
         // register all user variables to MOPNameSpace to avoid conflicts
