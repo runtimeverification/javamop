@@ -99,11 +99,14 @@ public abstract class Node {
 
     @Override
     public String toString() {
+        DumpVisitor visitor = new DumpVisitor();
+        accept(visitor, null);
+        return visitor.getSource();
+    }
+
+    public String toRVString() {
         RVDumpVisitor visitor = new RVDumpVisitor();
         accept(visitor, null);
         return visitor.getSource();
     }
-    
-    
-
 }
