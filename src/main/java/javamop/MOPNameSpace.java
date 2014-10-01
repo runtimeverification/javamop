@@ -9,13 +9,13 @@ import java.util.*;
  * variables with the same name.
  */
 public final class MOPNameSpace {
-    private static ParserService PARSER_SERVICE;
+    private static ParserService PARSER_SERVICE = JavaMOPMain.getParserService();;
     
     /**
      * Private to prevent instantiation.
      */
     private MOPNameSpace() {
-        PARSER_SERVICE =JavaMOPMain.getParserService();
+        PARSER_SERVICE = JavaMOPMain.getParserService();
     }
     
     static private boolean used = false;

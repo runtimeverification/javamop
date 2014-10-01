@@ -25,7 +25,7 @@ import java.util.List;
 public final class AgentGenerator {
 
     private static final String manifest = "MANIFEST.MF";
-    private static ParserService PARSER_SERVICE;
+    private static ParserService PARSER_SERVICE=JavaMOPMain.getParserService();;
 
     /**
      * Private to avoid instantiation.
