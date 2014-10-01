@@ -3,6 +3,7 @@ package javamop.commandline;
 
 import javamop.AgentGenerator;
 import javamop.Configuration;
+import javamop.TextConfiguration;
 import javamop.util.Tool;
 import org.apache.commons.io.FileUtils;
 
@@ -30,25 +31,28 @@ public class SpecFilter {
     private static final String SPEC_DIRECTORY = "properties";
     private static final String SPEC_DIRECTORY_COPY = "properties-copy";
     private static final String SEVERITY_PREFIX = " * @severity ";
+    private static final String SERVER_SETTING= "remote_server_addr.properties";
     private final String url;
     private final String vcs;
-    private final String filterConfig;
     private final String omitFile;
     private final String configPath;
     public static String specDirPath;
     private final List<String> specsToOmit;
     private boolean cleanup;
+    private Configuration serverConfig;
+    private Configuration filterConfig;
 
     public SpecFilter() {
-        url = Configuration.getServerSetting("PropertyDBURL");
-        vcs = Configuration.getServerSetting("PropertyDBVCS");
-        filterConfig = Configuration.getServerSetting("FilterConf");
-        omitFile = Configuration.getServerSetting("OmitFile");
+        serverConfig = new TextConfiguration(SERVER_SETTING);
+        url = serverConfig.getServerSetting("PropertyDBURL");
+        vcs = serverConfig.getServerSetting("PropertyDBVCS");
+        filterConfig = new TextConfiguration(serverConfig.getServerSetting("FilterConf"));
+        omitFile = serverConfig.getServerSetting("OmitFile");
         configPath = Tool.getConfigPath()+File.separator;
         specDirPath = SPEC_DIRECTORY_COPY+ File.separator + "annotated-java-api" +
                 File.separator + "java";
         specsToOmit = getFilesToOmit();
-        String cleanupOption = Configuration.getServerSetting("PropertyDBCleanup");
+        String cleanupOption = serverConfig.getServerSetting("PropertyDBCleanup");
         if (cleanupOption.equals("true")){
             this.cleanup = true;
         }
@@ -119,7 +123,7 @@ public class SpecFilter {
      *         .mop files
      */
     public String filter() {
-        Properties filters = Configuration.getSettingFile(filterConfig);
+        Properties filters = filterConfig.getAllSettings();
         //1. if a spec directory exists, but it has not been listed in the filter config,
         //   delete the entire contents of the directory
         File dir = new File(specDirPath);
