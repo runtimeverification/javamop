@@ -1,7 +1,9 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event;
 
-import javamop.MOPException;
+import javamop.JavaMOPMain;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -24,6 +26,7 @@ public class StartThread {
     
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
 
+    private final static ParserService PARSER_SERVICE= JavaMOPMain.getParserService();
     /**
      * Construct a StartThread hook for a particular event.
      * @param mopSpec The specification the event is part of.
@@ -31,9 +34,9 @@ public class StartThread {
      * @param combinedAspect The generated code that this will be part of.
      */
     public StartThread(final JavaMOPSpec mopSpec, final EventDefinition event, 
-            final CombinedAspect combinedAspect) throws MOPException {
+            final CombinedAspect combinedAspect) throws ParserService.MOPExceptionImpl {
         if (!event.isStartThread())
-            throw new MOPException("StartThread should be defined only " +
+            throw PARSER_SERVICE.generateMOPException("StartThread should be defined only " +
                 "for an startThread pointcut.");
         
         this.mopSpec = mopSpec;

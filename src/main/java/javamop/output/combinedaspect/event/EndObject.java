@@ -1,7 +1,9 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event;
 
-import javamop.MOPException;
+import javamop.JavaMOPMain;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
@@ -28,7 +30,11 @@ public class EndObject {
     private final AdviceBody eventBody;
     
     private final MOPVariable endObjectSupportType;
-    
+
+    /**
+     * Get the parser service from the JavaMOPMain.
+     */
+    private final static ParserService PARSER_SERVICE= JavaMOPMain.getParserService();
     /**
      * Construct an EndObject generator.
      * @param mopSpec The specification this is relevant for.
@@ -36,9 +42,10 @@ public class EndObject {
      * @param combinedAspect The combined aspect this is a part of.
      */
     public EndObject(final JavaMOPSpec mopSpec, final EventDefinition event,
-            final CombinedAspect combinedAspect) throws MOPException {
+            final CombinedAspect combinedAspect) throws ParserService.MOPExceptionImpl {
         if (!event.isEndObject())
-            throw new MOPException("EndObject should be defined only for endObject pointcut.");
+            throw PARSER_SERVICE.generateMOPException
+                    ("EndObject should be defined only for endObject pointcut.");
         
         this.mopSpec = mopSpec;
         this.event = event;
@@ -46,7 +53,8 @@ public class EndObject {
         this.endObjectType = event.getEndObjectType();
         this.endObjectVar = event.getEndObjectVar();
         if (this.endObjectVar == null || this.endObjectVar.length() == 0)
-            throw new MOPException("The variable for an endObject pointcut is not defined.");
+            throw PARSER_SERVICE.generateMOPException
+                    ("The variable for an endObject pointcut is not defined.");
         this.endObjectSupportType = new MOPVariable(endObjectType.toString() + "MOPFinalized"); 
         
         this.isStart = event.isStartEvent();

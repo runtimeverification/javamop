@@ -22,6 +22,9 @@ import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
 import javamop.commandline.SpecFilter;
+
+import javamop.parser.ParserServiceImpl;
+
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.FileCombiner;
 import javamop.util.Tool;
@@ -34,10 +37,23 @@ public final class JavaMOPMain {
     public static JavaMOPOptions options;
 
     /**
+     * ParserService is the entry point for using methods provided by parser component.
+     * The parser service is started in the JavaMOPMain and
+     * then distributed to a component on request. In this manner,
+     * only one copy of ParserService will be created and every component in the project
+     * can share the same copy.
+     */
+    private static ParserService PARSER_SERVICE =new ParserServiceImpl();
+
+    public static ParserService getParserService(){
+        if(PARSER_SERVICE ==null)
+            PARSER_SERVICE =new ParserServiceImpl();
+        return PARSER_SERVICE;
+    }
+    /**
      * Private to prevent instantiation.
      */
     private JavaMOPMain() {
-
     }
 
     public static boolean specifiedAJName = false;
@@ -62,9 +78,9 @@ public final class JavaMOPMain {
      * directory that JavaMOP is executing in.
      * @param specFiles The specifications the program is being run on.
      * @return The directory to place output files in.
-     * @throws MOPException If something goes wrong finding the file locations.
+     * @throws javamop.parser.MOPException If something goes wrong finding the file locations.
      */
-    static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
+    static private File getTargetDir(ArrayList<File> specFiles) throws ParserService.MOPExceptionImpl {
         if(options.outputDir != null){
             return options.outputDir;
         }
@@ -103,17 +119,18 @@ public final class JavaMOPMain {
      * @param location
      *            an absolute path for result file
      */
-    public static void processJavaFile(File file, String location) throws MOPException {
+    public static void processJavaFile(File file, String location) throws ParserService.MOPExceptionImpl {
         MOPNameSpace.init();
-        String specStr = SpecExtractor.process(file);
-        MOPSpecFile spec =  SpecExtractor.parse(specStr);
+        String specStr = PARSER_SERVICE.process(file);
+        MOPSpecFile spec = PARSER_SERVICE.parse2MOPSpecFile(specStr);
         
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
-        MOPProcessor processor = new MOPProcessor(options.aspectname);
+
+        PARSER_SERVICE.setUpMOPProcessor(options.aspectname);
         
-        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
+        writeFile(PARSER_SERVICE.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
@@ -126,29 +143,29 @@ public final class JavaMOPMain {
      * @param location
      *            an absolute path for result file
      */
-    public static void processSpecFile(File file, String location) throws MOPException {
+    public static void processSpecFile(File file, String location) throws ParserService.MOPExceptionImpl {
         MOPNameSpace.init();
-        String specStr = SpecExtractor.process(file);
-        MOPSpecFile spec =  SpecExtractor.parse(specStr);
+        String specStr = PARSER_SERVICE.process(file);
+        MOPSpecFile spec =  PARSER_SERVICE.parse2MOPSpecFile(specStr);
         
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
-        
-        MOPProcessor processor = new MOPProcessor(options.aspectname);
-        
-        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
 
-        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
+        PARSER_SERVICE.setUpMOPProcessor(options.aspectname);
+        
+        writeFile(PARSER_SERVICE.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
+
+        writeFile(PARSER_SERVICE.generateAJFile(spec), location, AJ_FILE_SUFFIX);
     }
     
     /**
      * Process multiple specification files, either each to a corresponding RVM/AJ file or merging
      * all of them together into two combined RVM/AJ files.
      * @param specFiles All the specifications to consider.
-     * @throws MOPException If something goes wrong in conversion.
+     * @throws javamop.ParserService.MOPExceptionImpl If something goes wrong in conversion.
      */
-    public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
+    public static void processMultipleFiles(ArrayList<File> specFiles) throws ParserService.MOPExceptionImpl {
         String aspectName;
 
         if(options.outputDir == null){
@@ -173,28 +190,29 @@ public final class JavaMOPMain {
             }
             options.aspectname = aspectName;
         }
-        MOPProcessor processor = new MOPProcessor(aspectName);
+
+        PARSER_SERVICE.setUpMOPProcessor(aspectName);
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
             //System.out.println(file);
-            String specStr = SpecExtractor.process(file);
-            MOPSpecFile spec =  SpecExtractor.parse(specStr);
-            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
+            String specStr = PARSER_SERVICE.process(file);
+            MOPSpecFile spec =  PARSER_SERVICE.parse2MOPSpecFile(specStr);
+            writeFile(PARSER_SERVICE.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
             specs.add(spec);
         }
         MOPSpecFile combinedSpec = FileCombiner.combineSpecFiles(specs);
-        writeCombinedAspectFile(processor.generateAJFile(combinedSpec), aspectName);
+        writeCombinedAspectFile(PARSER_SERVICE.generateAJFile(combinedSpec), aspectName);
     }
 
     /**
      * Write AspectJ code to a file.
      * @param aspectContent The AspectJ code to write.
      * @param aspectName The name of the aspect, used to determine the file.
-     * @throws MOPException If something goes wrong writing the file.
+     * @throws javamop.ParserService.MOPExceptionImpl If something goes wrong writing the file.
      */
     protected static void writeCombinedAspectFile(String aspectContent, String aspectName) 
-            throws MOPException {
+            throws ParserService.MOPExceptionImpl {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
         
@@ -205,7 +223,7 @@ public final class JavaMOPMain {
             f = new FileWriter(path);
             f.write(aspectContent);
         } catch (Exception e) {
-            throw new MOPException("Failed to write Combined Aspect", e);
+            throw PARSER_SERVICE.generateMOPException("Failed to write Combined Aspect", e);
         } finally {
             if(f != null) {
                 try {
@@ -223,10 +241,10 @@ public final class JavaMOPMain {
      * @param content The text to write into the file.
      * @param location The file to write into.
      * @param suffix The new file extension to use for the file.
-     * @throws MOPException If something goes wrong in generating the file.
+     * @throws javamop.ParserService.MOPExceptionImpl If something goes wrong in generating the file.
      */
     protected static void writeFile(String content, String location, String suffix)
-            throws MOPException {
+            throws ParserService.MOPExceptionImpl {
         if (content == null || content.length() == 0)
             return;
         
@@ -237,7 +255,7 @@ public final class JavaMOPMain {
             f = new FileWriter(filePath);
             f.write(content);
         } catch (Exception e) {
-            throw new MOPException(e);
+            throw PARSER_SERVICE.generateMOPException(e);
         } finally {
             if(f != null) {
                 try {
@@ -258,7 +276,7 @@ public final class JavaMOPMain {
      * @param files Path array. Files are added directly, directories are searched recursively.
      * @param path A common prefix for all the paths in {@code files}.
      */
-    public static ArrayList<File> collectFiles(String[] files, String path) throws MOPException {
+    public static ArrayList<File> collectFiles(String[] files, String path) throws ParserService.MOPExceptionImpl {
         ArrayList<File> ret = new ArrayList<File>();
         
         for (String file : files) {
@@ -266,7 +284,7 @@ public final class JavaMOPMain {
             File f = new File(fPath);
             
             if (!f.exists()) {
-                throw new MOPException("[Error] Target file, " + file + ", doesn't exsit!");
+                throw PARSER_SERVICE.generateMOPException("[Error] Target file, " + file + ", doesn't exsit!");
             } else if (f.isDirectory()) {
                 ret.addAll(collectFiles(f.list(), f.getAbsolutePath()));
             } else {
@@ -290,7 +308,7 @@ public final class JavaMOPMain {
      * @param files Array of MOP file and directory paths.
      * @param path Common prefix to all the paths in {@code files}.
      */
-    public static void process(String[] files, String path) throws MOPException {
+    public static void process(String[] files, String path) throws ParserService.MOPExceptionImpl {
         ArrayList<File> specFiles = collectFiles(files, path);
         
         if(options.aspectname != null && files.length > 1){
@@ -347,9 +365,9 @@ public final class JavaMOPMain {
      * Handle one or multiple input files and produce .rvm files.
      * @param files a list of file names.
      */
-    public static void process(List<String> files) throws MOPException {
+    public static void process(List<String> files) throws ParserService.MOPExceptionImpl {
         if(options.outputDir != null && !options.outputDir.exists())
-            throw new MOPException("The output directory, " + options.outputDir.getPath() +
+            throw PARSER_SERVICE.generateMOPException("The output directory, " + options.outputDir.getPath() +
                 " does not exist.");
         
         process(files.toArray(new String[0]), "");
@@ -522,7 +540,7 @@ public final class JavaMOPMain {
         }
 
         if (options.verbose) {
-            MOPProcessor.verbose = true;
+            PARSER_SERVICE.setMOPProcessorToVerboseMode();
         }
 
         if (options.aspectname != null) {

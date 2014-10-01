@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,19 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javamop.MOPException;
-
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.PackageDeclaration;
 
 import javamop.parser.ast.body.BodyDeclaration;
-import javamop.parser.ast.body.ModifierSet;
-
-import javamop.parser.ast.expr.NameExpr;
-import javamop.parser.ast.expr.QualifiedNameExpr;
 
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.SpecModifierSet;
@@ -56,7 +47,7 @@ import com.runtimeverification.rvmonitor.core.parser.RVParser;
  * MOPSpecFileExt objects.
  * @author A. Cody Schuffelen
  */
-public final class JavaParserAdapter {
+class JavaParserAdapter {
 
     /**
      * Private constructor to prevent instantiation.
@@ -70,7 +61,7 @@ public final class JavaParserAdapter {
      * @param file The file to read from.
      * @return A Java-specific MOP specification object.
      */
-    public static MOPSpecFileExt parse(File file) throws MOPException {
+    protected static MOPSpecFileExt parse(File file) throws MOPException {
         try {
             final Reader source = new InputStreamReader(new FileInputStream(file));
             final MonitorFile spec = RVParser.parse(source);
@@ -85,7 +76,7 @@ public final class JavaParserAdapter {
      * @param str The string to read from.
      * @return A Java-specific MOP specification object.
      */
-    public static MOPSpecFileExt parse(String str) throws MOPException {
+    protected static MOPSpecFileExt parse(String str) throws MOPException {
         try {
             final Reader source = new StringReader(str);
             final MonitorFile spec = RVParser.parse(source);

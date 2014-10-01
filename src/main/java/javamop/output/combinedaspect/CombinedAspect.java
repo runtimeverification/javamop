@@ -3,7 +3,8 @@ package javamop.output.combinedaspect;
 
 import java.util.List;
 
-import javamop.MOPException;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.event.EventManager;
 import javamop.parser.ast.MOPSpecFile;
@@ -29,7 +30,7 @@ public class CombinedAspect {
      * @param versionedStack Whether or not to maintain extra information about the call stack.
      */
     public CombinedAspect(final String name, final MOPSpecFile mopSpecFile,
-                          final boolean versionedStack) throws MOPException {
+                          final boolean versionedStack) throws ParserService.MOPExceptionImpl {
         this.name = name + "MonitorAspect";
         this.versionedStack = versionedStack;
         

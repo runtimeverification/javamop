@@ -1,11 +1,11 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.parser;
 
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 
-public final class MOPErrorChecker {
+final class MOPErrorChecker {
     
     /**
      * Private to prevent instantiation.
@@ -19,7 +19,7 @@ public final class MOPErrorChecker {
      * @param mopSpec The specification to verify the properties of.
      * @throws MOPException If some properties are not met.
      */
-    public static void verify(final JavaMOPSpec mopSpec) throws MOPException {
+    protected static void verify(final JavaMOPSpec mopSpec) throws MOPException {
         for (EventDefinition event : mopSpec.getEvents()) {
             verifyThreadPointCut(event);
             
@@ -43,7 +43,7 @@ public final class MOPErrorChecker {
      * @param event The event definition to verify.
      * @throws MOPException If the thread variable is used improperly.
      */
-    public static void verifyThreadPointCut(final EventDefinition event) throws MOPException {
+    protected static void verifyThreadPointCut(final EventDefinition event) throws MOPException {
         final String threadVar = event.getThreadVar();
         if (threadVar == null || threadVar.length() == 0)
             return;
@@ -66,7 +66,7 @@ public final class MOPErrorChecker {
      * @param mopSpec The specification to verify.
      * @throws MOPException if there is more than one endProgram event.
      */
-    public static void verifyUniqueEndProgram(JavaMOPSpec mopSpec) throws MOPException {
+    protected static void verifyUniqueEndProgram(JavaMOPSpec mopSpec) throws MOPException {
         boolean found = false;
         
         for(EventDefinition event : mopSpec.getEvents()){
@@ -84,7 +84,7 @@ public final class MOPErrorChecker {
      * @param mopSpec The specification to verify.
      * @throws MOPException If the specification has no parameters and is parametric.
      */
-    public static void verifyGeneralParametric(JavaMOPSpec mopSpec) throws MOPException {
+    protected static void verifyGeneralParametric(JavaMOPSpec mopSpec) throws MOPException {
         if(mopSpec.isGeneral() && mopSpec.getParameters().size() == 0)
             throw new MOPException("[Internal Error] It cannot use general parameteric " +
                 "algorithm when there is no parameter");
@@ -95,7 +95,7 @@ public final class MOPErrorChecker {
      * @param event The event to verify.
      * @throws MOPException If the event is an endProgram event and has parameters.
      */
-    public static void verifyEndProgramParam(EventDefinition event) throws MOPException {
+    protected static void verifyEndProgramParam(EventDefinition event) throws MOPException {
         if(event.isEndProgram() && event.getParameters().size() > 0)
             throw new MOPException("A endProgram pointcut cannot have any parameter.");
     }
@@ -105,7 +105,7 @@ public final class MOPErrorChecker {
      * @param event The event to verify.
      * @throws MOPException If the endThread event doesn't have only the thread parameter.
      */
-    public static void verifyEndThreadParam(EventDefinition event) throws MOPException {
+    protected static void verifyEndThreadParam(EventDefinition event) throws MOPException {
         if(event.isEndThread() && event.getParametersWithoutThreadVar().size() > 0)
             throw new MOPException("A endThread pointcut cannot have any parameter except " +
                 "one from thread pointcut.");

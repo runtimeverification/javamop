@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javamop.MOPException;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.ActivatorManager;
@@ -25,6 +26,7 @@ import javamop.parser.ast.mopspec.MOPParameters;
  * A pointcut for where to place code and advice code to place in it.
  */
 public class AdviceAndPointCut {
+    private static final ParserService PARSERSERVICE = JavaMOPMain.getParserService();
     private final MOPStatManager statManager;
     private final ActivatorManager activatorsManager = null;
     
@@ -67,7 +69,7 @@ public class AdviceAndPointCut {
      * @param combinedAspect The generated aspect that this is a part of.
      */
     public AdviceAndPointCut(final JavaMOPSpec mopSpec, final EventDefinition event, 
-            final CombinedAspect combinedAspect) throws MOPException {
+            final CombinedAspect combinedAspect) throws ParserService.MOPExceptionImpl {
         this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
         
         this.specName = mopSpec.getName();
@@ -89,7 +91,8 @@ public class AdviceAndPointCut {
         
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             if (event.getParameters().getParam(event.getThreadVar()) == null)
-                throw new MOPException("thread variable is not included in the event definition.");
+                throw PARSERSERVICE.generateMOPException
+                        ("thread variable is not included in the event definition.");
             
             this.threadVars.add(event.getParameters().getParam(event.getThreadVar()));
         }
@@ -145,7 +148,7 @@ public class AdviceAndPointCut {
      * @param combinedAspect The generated aspect that includes the event.
      */
     public boolean addEvent(final JavaMOPSpec mopSpec, final EventDefinition event, 
-            final CombinedAspect combinedAspect) throws MOPException {
+            final CombinedAspect combinedAspect) throws ParserService.MOPExceptionImpl {
         
         // Parameter Conflict Check
         for(MOPParameter param : event.getParametersWithoutThreadVar()){
@@ -163,7 +166,8 @@ public class AdviceAndPointCut {
         
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             if (event.getParameters().getParam(event.getThreadVar()) == null)
-                throw new MOPException("thread variable is not included in the event definition.");
+                throw PARSERSERVICE.generateMOPException
+                        ("thread variable is not included in the event definition.");
             
             this.threadVars.add(event.getParameters().getParam(event.getThreadVar()));
         }

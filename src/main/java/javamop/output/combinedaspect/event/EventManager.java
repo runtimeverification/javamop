@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javamop.JavaMOPMain;
-import javamop.MOPException;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
@@ -35,7 +36,7 @@ public class EventManager {
      * @param combinedAspect The AspectJ output for this program.
      */
     public EventManager(final String name, final List<JavaMOPSpec> specs,
-                        final CombinedAspect combinedAspect) throws MOPException {
+                        final CombinedAspect combinedAspect) throws ParserService.MOPExceptionImpl {
         
         this.endProgramEvent = new EndProgram(name);
 

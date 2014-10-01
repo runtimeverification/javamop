@@ -1,7 +1,9 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.util;
 
-import javamop.MOPException;
+import javamop.JavaMOPMain;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.PackageDeclaration;
@@ -22,7 +24,10 @@ import java.util.Scanner;
  * @author Qingzhou Luo
  * */
 public class FileCombiner {
-    
+    /**
+     * Get the parser service from the JavaMOPMain.
+     */
+     private final static ParserService PARSER_SERVICE= JavaMOPMain.getParserService();
     /**
      * 
      * First parameter: path to java file
@@ -109,9 +114,10 @@ public class FileCombiner {
      * package, or with some in one package and the rest with no package.
      * @param specFiles A list of specification files.
      * @return A single aggregate MOPSpecFile.
-     * @throws javamop.MOPException When the specification files are in conflicting packages.
+     * @throws javamop.parser.MOPException When the specification files are in conflicting packages.
      */
-    public static MOPSpecFile combineSpecFiles(ArrayList<MOPSpecFile> specFiles) throws MOPException {
+    public static MOPSpecFile combineSpecFiles(ArrayList<MOPSpecFile> specFiles)
+            throws ParserService.MOPExceptionImpl {
         PackageDeclaration pakage = null;
         List<ImportDeclaration> imports = new ArrayList<ImportDeclaration>();
         List<JavaMOPSpec> specList = new ArrayList<JavaMOPSpec>();
@@ -123,8 +129,8 @@ public class FileCombiner {
                 pakage = pakage2;
             else {
                 if(!pakage2.getName().getName().equals(pakage.getName().getName()))
-                    throw new MOPException("Specifications need to be in the same package to " +
-                            "be combined.");
+                    throw PARSER_SERVICE.generateMOPException
+                            ("Specifications need to be in the same package to be combined.");
             }
 
             //imports

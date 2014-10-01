@@ -2,24 +2,20 @@
 package javamop;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A namespace class to keep track of which variable names are being used to avoid duplicate
  * variables with the same name.
  */
 public final class MOPNameSpace {
+    private static ParserService PARSER_SERVICE = JavaMOPMain.getParserService();;
     
     /**
      * Private to prevent instantiation.
      */
     private MOPNameSpace() {
-        
+        PARSER_SERVICE = JavaMOPMain.getParserService();
     }
     
     static private boolean used = false;
@@ -48,14 +44,14 @@ public final class MOPNameSpace {
     /**
      * Register a new user variable.
      * @param varName The name of the user variable.
-     * @throws MOPException If the name is reserved in JavaMOP.
+     * @throws javamop.parser.MOPException If the name is reserved in JavaMOP.
      */
-    static public void addUserVariable(final String varName) throws MOPException {
+    static public void addUserVariable(final String varName) throws ParserService.MOPExceptionImpl {
         if (used)
-            throw new MOPException("Cannot update MOPNameSpace after once used");
+            throw PARSER_SERVICE.generateMOPException("Cannot update MOPNameSpace after once used");
         
         if(keywords.contains(varName))
-            throw new MOPException(varName + " is reserved in JavaMOP/AspectJ. Please rename it.");
+            throw PARSER_SERVICE.generateMOPException(varName + " is reserved in JavaMOP/AspectJ. Please rename it.");
         
         if(!userVariables.contains(varName))
             userVariables.add(varName);
@@ -64,9 +60,9 @@ public final class MOPNameSpace {
     /**
      * Add a collection of user variables.
      * @param varNames A collection of user variable names.
-     * @throws MOPException If any of the names is reserved in JavaMOP.
+     * @throws javamop.ParserService.MOPExceptionImpl If any of the names is reserved in JavaMOP.
      */
-    static public void addUserVariables(final Collection<String> varNames) throws MOPException {
+    static public void addUserVariables(final Collection<String> varNames) throws ParserService.MOPExceptionImpl {
         for (String varName : varNames)
             addUserVariable(varName);
     }

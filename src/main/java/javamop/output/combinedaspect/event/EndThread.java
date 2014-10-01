@@ -1,7 +1,9 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event;
 
-import javamop.MOPException;
+import javamop.JavaMOPMain;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
@@ -25,7 +27,10 @@ public class EndThread {
     MOPVariable threadSet;
     
     MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
-
+    /**
+     * Get the parser service from the JavaMOPMain.
+     */
+    private final static ParserService PARSER_SERVICE= JavaMOPMain.getParserService();
 
     /**
      * Construct an EndThread hook.
@@ -35,9 +40,10 @@ public class EndThread {
      * @throws MOPException If {@code event} is not an endThread event.
      */
     public EndThread(JavaMOPSpec mopSpec, EventDefinition event, CombinedAspect combinedAspect) 
-            throws MOPException {
+            throws ParserService.MOPExceptionImpl {
         if (!event.isEndThread())
-            throw new MOPException("EndThread should be defined only for an endThread pointcut.");
+            throw PARSER_SERVICE.generateMOPException
+                    ("EndThread should be defined only for an endThread pointcut.");
         
         this.mopSpec = mopSpec;
         this.event = event;

@@ -3,7 +3,9 @@ package javamop.output.combinedaspect.event;
 
 import java.util.ArrayList;
 
-import javamop.MOPException;
+import javamop.JavaMOPMain;
+import javamop.ParserService;
+import javamop.parser.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;
@@ -19,7 +21,10 @@ public class EndProgram {
     
     private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
     private final ArrayList<AdviceBody> eventBodies = new ArrayList<AdviceBody>();
-
+    /**
+     * Get the parser service from the JavaMOPMain.
+     */
+    private final static ParserService PARSER_SERVICE= JavaMOPMain.getParserService();
     /**
      * Construct a named end program hook.
      * @param name The name of the hook.
@@ -35,9 +40,9 @@ public class EndProgram {
      * @param combinedAspect The complete aspect that the event is part of.
      */
     public void addEndProgramEvent(final JavaMOPSpec mopSpec, final EventDefinition event, 
-            final CombinedAspect combinedAspect) throws MOPException {
+            final CombinedAspect combinedAspect) throws ParserService.MOPExceptionImpl {
         if (!event.isEndProgram())
-            throw new MOPException("EndProgram should be defined only for an " +
+            throw PARSER_SERVICE.generateMOPException("EndProgram should be defined only for an " +
                 "endProgram pointcut.");
         
         this.eventBodies.add(new AdviceBody(mopSpec, event, combinedAspect));
