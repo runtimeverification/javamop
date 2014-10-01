@@ -37,7 +37,7 @@
     <!-- Installer Resources -->
     <resources>
         <res id="CustomLangpack.xml_eng" src="res/izpack-rv-eng-lang.xml"/>
-        <res id="LicencePanel.licence" src="LICENSE"/>
+        <res id="LicencePanel.licence" src="LICENSE.md"/>
         <res id="HTMLFinishInfoPanel.finish" src="res/rvdependencies/finish_mop_classpath.html"/>
         <res id="Heading.image" src="res/images/javamop.png"/>
     </resources>
@@ -56,7 +56,7 @@
         <pack name="JavaMOP" required="yes" installGroups="New Application" >
             <description>Required JavaMOP libraries and executables.</description>
             <file src="README.md" targetdir="$INSTALL_PATH"/>
-            <file src="LICENSE" targetdir="$INSTALL_PATH"/>
+            <file src="LICENSE.md" targetdir="$INSTALL_PATH"/>
             <file src="bin" targetdir="$INSTALL_PATH"/>
             <file src="config" targetdir="$INSTALL_PATH"/>
             <fileset dir="lib" targetdir="$INSTALL_PATH/lib"/>

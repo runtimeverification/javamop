@@ -34,7 +34,6 @@ public class SpecFilter {
     private static final String SERVER_SETTING= "remote_server_addr.properties";
     private final String url;
     private final String vcs;
-    //private final String filterConfig;
     private final String omitFile;
     private final String configPath;
     public static String specDirPath;
