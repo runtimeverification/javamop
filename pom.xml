@@ -166,30 +166,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.izpack</groupId>
-                <artifactId>izpack-maven-plugin</artifactId>
-                <version>5.0.0-rc2</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <baseDir>${project.build.directory}/release/javamop</baseDir>
-                    <installFile>src/main/izpack/install.xml</installFile>
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                    <finalName>installer-${project.build.finalName}</finalName>
-                    <enableOverrideArtifact>true</enableOverrideArtifact>
-                    <mkdirs>true</mkdirs>
-                    <autoIncludeUrl>false</autoIncludeUrl>
-                    <autoIncludeDevelopers>false</autoIncludeDevelopers>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>izpack</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+       </plugins>
     </build>
 </project>
