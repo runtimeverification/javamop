@@ -104,6 +104,11 @@ public abstract class Node {
         return visitor.getSource();
     }
 
+    /**
+     * Iterate through JavaMOP ast classes and output .rvm file
+     *
+     * @return .rvm file contents as a String
+     */
     public String toRVString() {
         RVDumpVisitor visitor = new RVDumpVisitor();
         accept(visitor, null);
