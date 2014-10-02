@@ -19,6 +19,8 @@ This file contains instructions for installing JavaMOP.
        download and install Git, please follow the instructions found
        on [this page](http://git-scm.com/book/en/Getting-Started-Installing-Git)
 
+N.B. Step 2 and Step 3 are interchangeable. You can perform either step and then go to Step 4.
+
 2. Build JavaMOP from Source
 
   1. Download the JavaMOP source code
