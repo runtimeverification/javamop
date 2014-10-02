@@ -103,7 +103,8 @@
                         </goals>
                         <configuration>
                             <formats>
-                                <format>dir</format>
+                                <format>tar.gz</format>
+                                <format>zip</format>
                             </formats>
                             <finalName>javamop</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
