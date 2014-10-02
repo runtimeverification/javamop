@@ -3,7 +3,7 @@ import java.util.*;
 
 public class SafeSyncMap_1 {
     public static void main(String[] args){
-        Map<String,String> testMap = new HashMap<String,String>();
+        Map<String,String> testMap = new LinkedHashMap<String,String>();
         testMap = Collections.synchronizedMap(testMap);
         synchronized (testMap) {
             testMap.put("Foo", "Bar");
