@@ -1,48 +1,62 @@
-This file contains instructions for installing JavaMOP.
+#JavaMOP INSTALL
 
-1. Prerequisites
+This file contains instructions for installing JavaMOP. 
 
-  1. JDK
+##Prerequisites
 
-     Java Runtime Edition version 7 (http://java.com/en/download/index.jsp)
-     * To make sure java is installed properly, call `java -version` in a terminal.
+To use JavaMOP you only need JDK. However, you'll need Maven and Git if you want to build JavaMOP from the its source.
 
-  2. Maven 3
+1. JDK
 
-      JavaMOP requires Maven 3.0 or higher to build. To download and
-      install Maven 3.0, please follow the instructions on 
-      [this page](http://maven.apache.org/download.cgi)
+ Java Runtime Edition version 7 (http://java.com/en/download/index.jsp)
+ * To make sure java is installed properly, call `java -version` in a terminal.
 
-  3. Git 1.8 or higher
+2. Maven 3 or higher
 
-       Git is required to download the sources for JavaMOP. To
-       download and install Git, please follow the instructions found
-       on [this page](http://git-scm.com/book/en/Getting-Started-Installing-Git)
+ JavaMOP requires Maven 3.0 or higher to build. To download and
+ install Maven 3.0, please follow the instructions on 
+ [this page](http://maven.apache.org/download.cgi)
 
-2. Build JavaMOP from Source
+3. Git 1.8 or higher
 
-  1. Download the JavaMOP source code
+ Git is required to download the sources for JavaMOP. To
+ download and install Git, please follow the instructions found
+ on [this page](http://git-scm.com/book/en/Getting-Started-Installing-Git)
 
-     From the Github repository:
+##Install
 
-     ```git clone https://github.com/runtimeverification/javamop.git```
+You may either download JavaMOP's source code and locally build it ***or*** directly download it's pre-packaged binary and start using it.
 
-     You can also download a "zip" or "tar.gz" from [here](https://github.com/runtimeverification/javamop/releases)      and unzip to your favorite location.
+###Option 1: Build from Source
 
-  2. Build JavaMOP
+1. Download the JavaMOP source code From the Github repository:
 
-      From the top level directory of JavaMOP (i.e. the directory this
-      file is in) run the following commands:
+ ```git clone https://github.com/runtimeverification/javamop.git```
 
-      ```mvn package```
+ You can also download a "zip" or "tar.gz" from [here](https://github.com/runtimeverification/javamop/releases) and unzip to your favorite location.
 
-      This will download many dependencies the first time you run it.
+2. Build JavaMOP
 
-3. JavaMOP Setup
+ From the top level directory of JavaMOP (i.e. the directory this
+ file is in) run the following commands:
 
-     For convenient usage, update your $PATH environment variable with `<path-to-javamop>/bin/javamop`
+ ```mvn package```
 
-4. Contact Information
+ This will download many dependencies the first time you run it.
+
+###Option 2: Download pre-packaged binary
+   
+1. Download JavaMOP binary file from [its website](http://fsl.cs.illinois.edu/javamop).
+
+2. Unzip or untar JavaMOP binary file in your preferred location.
+
+##Use 
+
+In either case, `<path-to-javamop>/bin/javamop` is the target binary. For convenient usage, update your $PATH environment variable with `<path-to-javamop>/bin/`.
+
+For information regarding usage of JavaMOP, please refer to the README file.
+
+#Contact Information
 
 If you experience any problems installing JavaMOP, please open a new
 issue on [Github](https://github.com/runtimeverification/javamop/issues)
