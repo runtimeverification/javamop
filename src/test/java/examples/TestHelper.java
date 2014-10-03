@@ -49,7 +49,7 @@ public class TestHelper {
      * in files if {@code expectedFilePrefix} not null.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
      * @param mustSucceed if the program's return code must be {@code 0}.
-     * @param command  list of arguments describing the system command to be executed.
+     * @param commands  list of arguments describing the system command to be executed.
      * @throws Exception
      */
     public void testCommand(String expectedFilePrefix, boolean mustSucceed, String... commands) throws Exception {
@@ -73,16 +73,11 @@ public class TestHelper {
         String actualErrFile = null;
         String expectedOutFile = null;
         String expectedErrFile = null;
-        if (expectedFilePrefix != null) {
-            testsPrefix = basePath.toString() + "/" + relativePath + "/" + expectedFilePrefix;
-            actualOutFile = testsPrefix + ".actual.out";
-            actualErrFile = testsPrefix + ".actual.err";
-            expectedOutFile = testsPrefix + ".expected.out";
-            expectedErrFile = testsPrefix + ".expected.err";
-        } else {
-            actualOutFile = "/dev/null";
-            actualErrFile = "/dev/null";
-        }
+        testsPrefix = basePath.toString() + File.separator + relativePath + File.separator + expectedFilePrefix;
+        actualOutFile = testsPrefix + ".actual.out";
+        actualErrFile = testsPrefix + ".actual.err";
+        expectedOutFile = testsPrefix + ".expected.out";
+        expectedErrFile = testsPrefix + ".expected.err";
         processBuilder.redirectError(new File(actualErrFile));
         processBuilder.redirectOutput(new File(actualOutFile));
         Process process = processBuilder.start();
