@@ -27,7 +27,7 @@ To use JavaMOP you only need JDK. However, you'll need Maven and Git if you want
 
 You may either download JavaMOP's source code and locally build it ***or*** directly download it's pre-packaged binary and start using it.
 
-###Option 1: Build JavaMOP from Source
+###Option 1: Build from Source
 
 1. Download the JavaMOP source code From the Github repository:
 
@@ -50,7 +50,7 @@ You may either download JavaMOP's source code and locally build it ***or*** dire
 
 2. Unzip or untar JavaMOP binary file in your preferred location.
 
-##Using JavaMOP 
+##Use 
 
 In either case, `<path-to-javamop>/bin/javamop` is the target binary. For convenient usage, update your $PATH environment variable with `<path-to-javamop>/bin/`.
 
