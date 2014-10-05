@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
@@ -36,7 +37,11 @@ public class ExamplesIT {
     @Test
     public void testExample() throws Exception {
         final String testName = path.substring(path.lastIndexOf('/')+1);
-        helper.testCommand(null, true, "javamop", testName + ".mop");
+        String command = "javamop";
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command += ".bat";
+        }
+        helper.testCommand(null, true, command, testName + ".mop");
         
         String classpath = ".:mop/:" + System.getProperty("java.class.path");
         
