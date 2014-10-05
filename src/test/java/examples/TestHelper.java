@@ -68,16 +68,11 @@ public class TestHelper {
     public void testCommand(String relativePath, String expectedFilePrefix, boolean mustSucceed, String... command) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
-        String actualOutFile = null;
-        String testsPrefix;
-        String actualErrFile = null;
-        String expectedOutFile = null;
-        String expectedErrFile = null;
-        testsPrefix = basePath.toString() + File.separator + relativePath + File.separator + expectedFilePrefix;
-        actualOutFile = testsPrefix + ".actual.out";
-        actualErrFile = testsPrefix + ".actual.err";
-        expectedOutFile = testsPrefix + ".expected.out";
-        expectedErrFile = testsPrefix + ".expected.err";
+        String testsPrefix = basePath.toString() + File.separator + relativePath + File.separator + expectedFilePrefix;
+        String actualOutFile = testsPrefix + ".actual.out";
+        String actualErrFile = testsPrefix + ".actual.err";
+        String expectedOutFile = testsPrefix + ".expected.out";
+        String expectedErrFile = testsPrefix + ".expected.err";
         processBuilder.redirectError(new File(actualErrFile));
         processBuilder.redirectOutput(new File(actualOutFile));
         Process process = processBuilder.start();
