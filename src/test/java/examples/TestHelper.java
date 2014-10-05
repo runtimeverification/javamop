@@ -2,6 +2,7 @@
 package examples;
 
 import javamop.util.Tool;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 
 import java.io.File;
@@ -68,11 +69,27 @@ public class TestHelper {
     public void testCommand(String relativePath, String expectedFilePrefix, boolean mustSucceed, String... command) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
-        String testsPrefix = basePath.toString() + File.separator + relativePath + File.separator + expectedFilePrefix;
-        String actualOutFile = testsPrefix + ".actual.out";
-        String actualErrFile = testsPrefix + ".actual.err";
-        String expectedOutFile = testsPrefix + ".expected.out";
-        String expectedErrFile = testsPrefix + ".expected.err";
+        String actualOutFile = null;
+        String testsPrefix;
+        String actualErrFile = null;
+        String expectedOutFile = null;
+        String expectedErrFile = null;
+        if (expectedFilePrefix != null) {
+            testsPrefix = basePath.toString() + "/" + relativePath + "/" + expectedFilePrefix;
+            actualOutFile = testsPrefix + ".actual.out";
+            actualErrFile = testsPrefix + ".actual.err";
+            expectedOutFile = testsPrefix + ".expected.out";
+            expectedErrFile = testsPrefix + ".expected.err";
+        } else {
+            if (SystemUtils.IS_OS_WINDOWS) {
+                actualOutFile = "NUL";
+                actualErrFile = "NUL";
+            } else {
+                actualOutFile = "/dev/null";
+                actualErrFile = "/dev/null";
+            }
+
+        }
         processBuilder.redirectError(new File(actualErrFile));
         processBuilder.redirectOutput(new File(actualOutFile));
         Process process = processBuilder.start();
