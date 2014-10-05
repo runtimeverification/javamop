@@ -4,7 +4,7 @@ import java.util.*;
 public class UnsafeMapIterator_2 {
     public static void main(String[] args){
         try{
-            Map<String, String> testMap = new HashMap<String,String>();
+            Map<String, String> testMap = new LinkedHashMap<String,String>();
             testMap.put("Foo", "Bar");
             testMap.put("Bar", "Foo");
             Set<String> keys = testMap.keySet();
