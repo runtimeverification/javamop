@@ -22,11 +22,13 @@ import java.util.*;
 
 SafeHashSet(HashSet t, Object o) {
   int hashcode;
+  Object involved;
  
   event add after(HashSet t, Object o) : 
     call(* Collection+.add(Object)) 
       && target(t) && args(o) {
       hashcode = o.hashCode();
+      involved = o;
     }
   event unsafe_contains 
     before(HashSet t, Object o) : 
@@ -42,7 +44,7 @@ SafeHashSet(HashSet t, Object o) {
   @match{
     System.err.println(
        "HashCode changed for Object " 
-     + o 
+     + involved 
      + " while being in a   Hashtable!"); 
     System.exit(1); 
   }
