@@ -7,6 +7,6 @@ set RELEASE=%SRC_ROOT%\lib
 set PLUGINS=%RELEASE%\plugins
 set LOGICPLUGINPATH=%PLUGINS%
 set CP=%RELEASE%\*;%PLUGINS%\*
-for /f %%a IN ('dir /b /s "%PLUGINS%\*.jar"') do call :concat %%a
+for /f %%a IN ('dir /b /s "%PLUGINS%\*.jar"') do call %concat% %%a
 
 java -cp "%CLASSPATH%;%CP%" javamop.JavaMOPMain %*
