@@ -2,6 +2,7 @@
 package examples;
 
 import javamop.util.Tool;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 
 import java.io.File;
@@ -49,7 +50,7 @@ public class TestHelper {
      * in files if {@code expectedFilePrefix} not null.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
      * @param mustSucceed if the program's return code must be {@code 0}.
-     * @param command  list of arguments describing the system command to be executed.
+     * @param commands  list of arguments describing the system command to be executed.
      * @throws Exception
      */
     public void testCommand(String expectedFilePrefix, boolean mustSucceed, String... commands) throws Exception {
@@ -80,8 +81,14 @@ public class TestHelper {
             expectedOutFile = testsPrefix + ".expected.out";
             expectedErrFile = testsPrefix + ".expected.err";
         } else {
-            actualOutFile = "/dev/null";
-            actualErrFile = "/dev/null";
+            if (SystemUtils.IS_OS_WINDOWS) {
+                actualOutFile = "NUL";
+                actualErrFile = "NUL";
+            } else {
+                actualOutFile = "/dev/null";
+                actualErrFile = "/dev/null";
+            }
+
         }
         processBuilder.redirectError(new File(actualErrFile));
         processBuilder.redirectOutput(new File(actualOutFile));

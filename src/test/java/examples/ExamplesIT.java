@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
@@ -35,16 +36,21 @@ public class ExamplesIT {
      */
     @Test
     public void testExample() throws Exception {
-        final String testName = path.substring(path.lastIndexOf('/')+1);
-        helper.testCommand(null, true, "javamop", testName + ".mop");
+        final String testName = path.substring(path.lastIndexOf(File.separator)+1);
+        String command = "javamop";
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command += ".bat";
+        }
+        helper.testCommand(null, true, command, testName + ".mop");
         
-        String classpath = ".:mop/:" + System.getProperty("java.class.path");
+        String classpath = "." + File.pathSeparator + "mop" + File.separator + File.pathSeparator
+                + System.getProperty("java.class.path");
         
         String subcasePath = testName + "_";
         for(int i = 1; new File(path + File.separator + subcasePath + i).exists(); i++) {
             String subcasePathI = subcasePath + i;
-            String specificClasspath = classpath + ":" + subcasePathI + ":" + subcasePathI + 
-                File.separator + "mop";
+            String specificClasspath = classpath + File.pathSeparator + subcasePathI + 
+                    File.pathSeparator + subcasePathI + File.separator + "mop";
             // AJC has nonzero return codes with just warnings, not errorss.
             helper.testCommand(null, true, "java", "-cp", specificClasspath, 
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI + 
@@ -80,32 +86,32 @@ public class ExamplesIT {
     public static Collection<Object[]> data() {
         ArrayList<Object[]> data = new ArrayList<Object[]>();
         //from examples/runall.txt
-        data.add(new Object[]{"examples/CFG/HasNext/HasNext.mop"});
-        data.add(new Object[]{"examples/CFG/SafeFile/SafeFile.mop"});
-        data.add(new Object[]{"examples/CFG/SafeFileWriter/SafeFileWriter.mop"});
-        
-        data.add(new Object[]{"examples/ERE/HasNext/HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "SafeFile" + File.separator + "SafeFile.mop"});
+        data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
+
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
         //#SuffixHasNext, hasnext2, hashset, passwordlogic require to change mop/directoy name
-        data.add(new Object[]{"examples/ERE/SafeSyncCollection/SafeSyncCollection.mop"});
-        data.add(new Object[]{"examples/ERE/SafeFileWriter/SafeFileWriter.mop"});
-        data.add(new Object[]{"examples/ERE/SafeSyncMap/SafeSyncMap.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeSyncCollection" + File.separator + "SafeSyncCollection.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeSyncMap" + File.separator + "SafeSyncMap.mop"});
         //Pending Issue 5
-        data.add(new Object[]{"examples/ERE/SafeEnum/SafeEnum.mop"});
-        data.add(new Object[]{"examples/ERE/UnsafeIterator/UnsafeIterator.mop"});
-        data.add(new Object[]{"examples/ERE/UnsafeMapIterator/UnsafeMapIterator.mop"});
-        
-        data.add(new Object[]{"examples/FSM/HasNext/HasNext.mop"});
-        data.add(new Object[]{"examples/FSM/HasNext2/HasNext2.mop"});
-        
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeEnum" + File.separator + "SafeEnum.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "UnsafeIterator" + File.separator + "UnsafeIterator.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "UnsafeMapIterator" + File.separator + "UnsafeMapIterator.mop"});
+
+        data.add(new Object[]{"examples" + File.separator + "FSM" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "FSM" + File.separator + "HasNext2" + File.separator + "HasNext2.mop"});
+
         //Pending Issue 5
-        data.add(new Object[]{"examples/LTL/SafeEnum/SafeEnum.mop"});
-        data.add(new Object[]{"examples/LTL/HasNext/HasNext.mop"});
-        data.add(new Object[]{"examples/LTL/SafeFileWriter/SafeFileWriter.mop"});
-        data.add(new Object[]{"examples/LTL/SafeIterator/SafeIterator.mop"});
-        data.add(new Object[]{"examples/LTL/SafeMapIterator/SafeMapIterator.mop"});
-        
-        data.add(new Object[]{"examples/MOPSyntax/Creation/Creation.mop"});
-        data.add(new Object[]{"examples/EndProgram/FileClose/FileClose.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeEnum" + File.separator + "SafeEnum.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeIterator" + File.separator + "SafeIterator.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeMapIterator" + File.separator + "SafeMapIterator.mop"});
+
+        data.add(new Object[]{"examples" + File.separator + "MOPSyntax" + File.separator + "Creation" + File.separator + "Creation.mop"});
+        data.add(new Object[]{"examples" + File.separator + "EndProgram" + File.separator + "FileClose" + File.separator + "FileClose.mop"});
         //# Think about sth similar to handle countCond
         return data;
     }
