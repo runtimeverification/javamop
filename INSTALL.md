@@ -9,13 +9,13 @@ To use JavaMOP you need JRE and AJC.
 
 1. JRE
 
- Java Runtime Edition version 7 (http://java.com/en/download/index.jsp)
+ Java Runtime Environment version 7 (http://java.com/en/download/index.jsp)
  * To make sure java is installed properly, call `java -version` in a terminal.
   
 2. AJC
 
- ApsectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
- Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
+ AspectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
+ * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
  
 
 
