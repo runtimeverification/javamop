@@ -7,13 +7,13 @@ If you only want to use JavaMOP out of the box please refer to ../INSTALL.md
 
 1. JDK
 
- Java Runtime Edition version 7 (http://java.com/en/download/index.jsp)
+ Java Runtime Environment version 7 (http://java.com/en/download/index.jsp)
  * To make sure java is installed properly, call `java -version` in a terminal.
 
 2. AJC
 
- ApsectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
- Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
+ AspectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
+ * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
 
 3. Maven 3 or higher
 
