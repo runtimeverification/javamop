@@ -6,6 +6,7 @@ If you are a developer or want to build JavaMOP from its source code, please ref
 ##Prerequisites
 
 To use JavaMOP you only need JRE. 
+
 1. JRE
 
  Java Runtime Edition version 7 (http://java.com/en/download/index.jsp)
@@ -16,7 +17,7 @@ To use JavaMOP you only need JRE.
    
 1. Download JavaMOP's binary from [its website](http://fsl.cs.illinois.edu/javamop).
  
-2. Unzip or untar JavaMOP the file in your preferred location.
+2. Unzip or untar the file in your preferred location.
 
 ##Use 
 
