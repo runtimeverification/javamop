@@ -167,9 +167,9 @@ public final class JavaMOPMain {
                 do{
                     suffixNumber++;
                     aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
-                        "MultiSpec_" + suffixNumber + AJ_FILE_SUFFIX);
+                        "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
                 } while(aspectFile.exists());
-                aspectName = "MultiSpec_" + suffixNumber;
+                aspectName = "JavaMOPAgent_" + suffixNumber;
             }
             options.aspectname = aspectName;
         }
@@ -193,11 +193,11 @@ public final class JavaMOPMain {
      * @param aspectName The name of the aspect, used to determine the file.
      * @throws MOPException If something goes wrong writing the file.
      */
-    protected static void writeCombinedAspectFile(String aspectContent, String aspectName) 
+    protected static void writeCombinedAspectFile(String aspectContent, String aspectName)
             throws MOPException {
         if (aspectContent == null || aspectContent.length() == 0)
             return;
-        
+
         final String path = options.outputDir.getAbsolutePath() + File.separator +
                 aspectName + AJ_FILE_SUFFIX;
         FileWriter f = null;
@@ -217,7 +217,7 @@ public final class JavaMOPMain {
         }
         System.out.println(" " + aspectName + AJ_FILE_SUFFIX+ " is generated");
     }
-    
+
     /**
      * Write any sort of content to a file.
      * @param content The text to write into the file.
@@ -229,7 +229,7 @@ public final class JavaMOPMain {
             throws MOPException {
         if (content == null || content.length() == 0)
             return;
-        
+
         int i = location.lastIndexOf(File.separator);
         String filePath = location.substring(0, i + 1) + Tool.getFileName(location) + suffix;
         FileWriter f = null;
@@ -252,7 +252,7 @@ public final class JavaMOPMain {
         }
         System.out.println(" " + Tool.getFileName(location) + suffix + " is generated");
     }
-    
+
     /**
      * Aggregate MOP files and recursively search directories for more MOP files.
      * @param files Path array. Files are added directly, directories are searched recursively.
@@ -260,11 +260,11 @@ public final class JavaMOPMain {
      */
     public static ArrayList<File> collectFiles(String[] files, String path) throws MOPException {
         ArrayList<File> ret = new ArrayList<File>();
-        
+
         for (String file : files) {
             String fPath = path.length() == 0 ? file : path + File.separator + file;
             File f = new File(fPath);
-            
+
             if (!f.exists()) {
                 throw new MOPException("[Error] Target file, " + file + ", doesn't exsit!");
             } else if (f.isDirectory()) {
@@ -281,10 +281,10 @@ public final class JavaMOPMain {
                 }
             }
         }
-        
+
         return ret;
     }
-    
+
     /**
      * Parse all MOP files into one or more RVM files.
      * @param files Array of MOP file and directory paths.
@@ -292,11 +292,11 @@ public final class JavaMOPMain {
      */
     public static void process(String[] files, String path) throws MOPException {
         ArrayList<File> specFiles = collectFiles(files, path);
-        
+
         if(options.aspectname != null && files.length > 1){
             options.merge = true;
         }
-        
+
         if (options.merge) {
             System.out.println("-Processing " + specFiles.size()
             + " specification(s)");
@@ -308,9 +308,9 @@ public final class JavaMOPMain {
             String combinerArgs[] = new String[2];
             combinerArgs[0] = javaFile;
             combinerArgs[1] = ajFile;
-            
+
             listFilePairs.add(combinerArgs);
-            
+
         } else {
             for (File file : specFiles) {
                 boolean needResetAspectName = options.aspectname == null;
@@ -322,10 +322,10 @@ public final class JavaMOPMain {
                 } else if (Tool.isJavaFile(file.getName())) {
                     processJavaFile(file, location);
                 }
-                
+
                 File combineDir = options.outputDir == null ? file.getAbsoluteFile()
                 .getParentFile() : options.outputDir;
-                
+
                 String javaFile = combineDir.getAbsolutePath() + File.separator
                 + options.aspectname + "RuntimeMonitor.java";
                 String ajFile = combineDir.getAbsolutePath() + File.separator
@@ -333,16 +333,16 @@ public final class JavaMOPMain {
                 String combinerArgs[] = new String[2];
                 combinerArgs[0] = javaFile;
                 combinerArgs[1] = ajFile;
-                
+
                 listFilePairs.add(combinerArgs);
-                
+
                 if (needResetAspectName) {
                     options.aspectname = null;
                 }
             }
         }
     }
-    
+
     /**
      * Handle one or multiple input files and produce .rvm files.
      * @param files a list of file names.
@@ -351,10 +351,10 @@ public final class JavaMOPMain {
         if(options.outputDir != null && !options.outputDir.exists())
             throw new MOPException("The output directory, " + options.outputDir.getPath() +
                 " does not exist.");
-        
+
         process(files.toArray(new String[0]), "");
     }
-    
+
     /**
      * Initialize JavaMOP with the given command-line parameters, process the given MOP files
      * into RVM files, run RV-Monitor on the MOP files, and optionally postprocess the output.
@@ -375,11 +375,11 @@ public final class JavaMOPMain {
 
         ClassLoader loader = JavaMOPMain.class.getClassLoader();
         String mainClassPath = loader.getResource("javamop/JavaMOPMain.class").toString();
-        if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") && 
+        if (mainClassPath.endsWith(".jar!/javamop/JavaMOPMain.class") &&
                 mainClassPath.startsWith("jar:")) {
             isJarFile = true;
-            
-            jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() - 
+
+            jarFilePath = mainClassPath.substring("jar:file:".length(), mainClassPath.length() -
                 "!/javamop/JavaMOPMain.class".length());
             jarFilePath = Tool.polishPath(jarFilePath);
         }
@@ -418,7 +418,7 @@ public final class JavaMOPMain {
             if (options.debug)
                 e.printStackTrace();
         }
-        
+
         // replace mop with rvm and call rv-monitor
         List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
@@ -440,6 +440,11 @@ public final class JavaMOPMain {
         if (options.usedb){
             rvArgs.add(SpecFilter.specDirPath);
         }
+
+        // add default name that rv-monitor will use. This is needed as we have
+        // now changed the deafult aspectname when the user doesn't pass in a name
+        rvArgs.add("-n");
+        rvArgs.add(options.aspectname);
         
         Main.main(rvArgs.toArray(new String[0]));
 
