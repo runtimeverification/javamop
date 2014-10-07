@@ -1,7 +1,7 @@
 #JavaMOP INSTALL
 
 This file contains instructions for using JavaMOP out of the box. 
-If you are a developer or want to build JavaMOP from its source code, please refer to src/INSTALL.md  
+If you are a developer or want to build JavaMOP from its source code, please refer to src/README.md  
 
 ##Prerequisites
 
