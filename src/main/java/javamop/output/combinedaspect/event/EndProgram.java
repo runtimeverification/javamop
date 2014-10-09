@@ -3,7 +3,7 @@ package javamop.output.combinedaspect.event;
 
 import java.util.ArrayList;
 
-import javamop.MOPException;
+import javamop.util.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceBody;

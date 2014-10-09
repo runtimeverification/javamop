@@ -4,6 +4,7 @@ package javamop;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
+import javamop.util.MOPException;
 
 public final class MOPErrorChecker {
     
@@ -17,7 +18,7 @@ public final class MOPErrorChecker {
     /**
      * Verify that certain properties about the specification are true.
      * @param mopSpec The specification to verify the properties of.
-     * @throws MOPException If some properties are not met.
+     * @throws javamop.util.MOPException If some properties are not met.
      */
     public static void verify(final JavaMOPSpec mopSpec) throws MOPException {
         for (EventDefinition event : mopSpec.getEvents()) {

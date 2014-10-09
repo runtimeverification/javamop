@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javamop.MOPException;
+import javamop.util.MOPException;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.body.BodyDeclaration;

@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.util;
 
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public final class MOPNameSpace {
     /**
      * Register a new user variable.
      * @param varName The name of the user variable.
-     * @throws MOPException If the name is reserved in JavaMOP.
+     * @throws javamop.util.MOPException If the name is reserved in JavaMOP.
      */
     static public void addUserVariable(final String varName) throws MOPException {
         if (used)

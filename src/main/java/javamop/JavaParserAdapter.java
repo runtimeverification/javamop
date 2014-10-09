@@ -11,19 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javamop.MOPException;
+import javamop.util.MOPException;
 
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.PackageDeclaration;
 
 import javamop.parser.ast.body.BodyDeclaration;
-import javamop.parser.ast.body.ModifierSet;
-
-import javamop.parser.ast.expr.NameExpr;
-import javamop.parser.ast.expr.QualifiedNameExpr;
 
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.SpecModifierSet;

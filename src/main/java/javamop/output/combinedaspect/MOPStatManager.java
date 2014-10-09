@@ -4,7 +4,7 @@ package javamop.output.combinedaspect;
 import java.util.HashMap;
 import java.util.List;
 
-import javamop.MOPException;
+import javamop.util.MOPException;
 import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.EventDefinition;

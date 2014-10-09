@@ -1,7 +1,6 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.util;
 
-import javamop.MOPException;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.PackageDeclaration;
@@ -109,7 +108,7 @@ public class FileCombiner {
      * package, or with some in one package and the rest with no package.
      * @param specFiles A list of specification files.
      * @return A single aggregate MOPSpecFile.
-     * @throws javamop.MOPException When the specification files are in conflicting packages.
+     * @throws MOPException When the specification files are in conflicting packages.
      */
     public static MOPSpecFile combineSpecFiles(ArrayList<MOPSpecFile> specFiles) throws MOPException {
         PackageDeclaration pakage = null;

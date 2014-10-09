@@ -24,6 +24,8 @@ import javamop.commandline.JavaMOPOptions;
 import javamop.SpecFiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.FileCombiner;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
 import javamop.util.Tool;
 import javamop.util.Utility;
 
@@ -63,9 +65,9 @@ public final class JavaMOPMain {
      * directory that JavaMOP is executing in.
      * @param specFiles The specifications the program is being run on.
      * @return The directory to place output files in.
-     * @throws MOPException If something goes wrong finding the file locations.
+     * @throws javamop.util.MOPException If something goes wrong finding the file locations.
      */
-    static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
+    static private File getTargetDir(ArrayList<File> specFiles) throws MOPException {
         if(options.outputDir != null){
             return options.outputDir;
         }

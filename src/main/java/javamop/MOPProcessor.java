@@ -16,6 +16,8 @@ import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.visitor.CollectUserVarVisitor;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
 import javamop.util.Tool;
 
 /**
@@ -39,7 +41,7 @@ public class MOPProcessor {
      * Register user variables into the MOPNameSpace so that generated code does not clash with
      * them.
      * @param mopSpec The specification to extract variables from.
-     * @throws MOPException If something goes wrong reading or registering the variables.
+     * @throws javamop.util.MOPException If something goes wrong reading or registering the variables.
      */
     private void registerUserVar(JavaMOPSpec mopSpec) throws MOPException {
         for (EventDefinition event : mopSpec.getEvents()) {
