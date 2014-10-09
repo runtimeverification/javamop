@@ -21,7 +21,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
-import javamop.SpecFiltering.SpecFilter;
+import javamop.specfiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.FileCombiner;
 import javamop.util.MOPException;
