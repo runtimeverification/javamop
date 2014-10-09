@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop.commandline;
+package javamop;
 
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
