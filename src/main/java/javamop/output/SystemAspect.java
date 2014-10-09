@@ -1,8 +1,6 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output;
 
-import javamop.JavaMOPMain;
-
 /**
  * An aspect that is included with the generated code to keep track of the depth of the call stack.
  * It has thread-local storage to keep independent storage for each thread's callstack.
@@ -46,29 +44,18 @@ public class SystemAspect {
         ret += "return new int[1];\n";
         ret += "}\n";
         ret += "};\n\n";
-        
-        
-        
+
+
         ret += "pointcut sysbegin() : execution(* *(..)) && ";
-        if(JavaMOPMain.options.dacapo){
-            ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
-                "&& BaseAspect.notwithin();\n";
-        } else {
-            ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
-        }
+        ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " + "&& BaseAspect.notwithin();\n";
         ret += "before () : sysbegin() {\n";
         ret += "((int[])t_version.get())[++((int[])t_global_depth.get())[0]]++;\n";
         ret += "}\n";
         ret += "}\n\n";
-        
+
         ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
         ret += "pointcut sysend() : execution(* *(..)) && ";
-        if(JavaMOPMain.options.dacapo){
-            ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " +
-                "&& BaseAspect.notwithin();\n";
-        } else {
-            ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
-        }
+        ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " + "&& BaseAspect.notwithin();\n";
         ret += "after () : sysend() {\n";
         ret += "((int[])" + name + ".t_global_depth.get())[0]--;\n";
         ret += "}\n";
