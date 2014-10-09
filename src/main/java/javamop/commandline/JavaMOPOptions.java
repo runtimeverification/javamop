@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.commandline;
 
+import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 
 import java.io.File;
@@ -79,4 +80,11 @@ public class JavaMOPOptions {
             "an Exception. For a list config files used with this option, please see the " +
             "javamop/config/remote_server_addr.properties file.")
     public boolean usedb = false;
+
+    public static class FileConverter implements IStringConverter<File> {
+        @Override
+        public File convert(String value) {
+            return new File(value);
+        }
+    }
 }
