@@ -1,10 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop.commandline;
+package javamop.SpecFiltering;
 
-import javamop.AgentGenerator;
-import javamop.Configuration;
-import javamop.TextConfiguration;
 import javamop.util.Tool;
+import javamop.util.Utility;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -97,7 +95,7 @@ public class SpecFilter {
         //make a copy of the specDirectory
         if (Files.exists(specCopyPath)) {
             try {
-                AgentGenerator.deleteDirectory(specCopyPath);
+                Utility.deleteDirectory(specCopyPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -135,7 +133,7 @@ public class SpecFilter {
             for (File file : specDirs){
                 if (!filters.stringPropertyNames().contains(file.getName())){
                     try {
-                        AgentGenerator.deleteDirectory(file.toPath());
+                        Utility.deleteDirectory(file.toPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -237,8 +235,8 @@ public class SpecFilter {
      */
     public void cleanup() {
         try {
-            AgentGenerator.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
-            AgentGenerator.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
+            Utility.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+            Utility.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
         } catch (IOException e) {
             System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
             e.printStackTrace();

@@ -21,10 +21,11 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.commandline.JavaMOPOptions;
-import javamop.commandline.SpecFilter;
+import javamop.SpecFiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.FileCombiner;
 import javamop.util.Tool;
+import javamop.util.Utility;
 
 /**
  * Entry point class for the JavaMOP program.
@@ -501,7 +502,7 @@ public final class JavaMOPMain {
     private static void cleanup(boolean tempOutput, SpecFilter filter) {
         if(tempOutput) {
             try {
-                AgentGenerator.deleteDirectory(options.outputDir.toPath());
+                Utility.deleteDirectory(options.outputDir.toPath());
             } catch(IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");
