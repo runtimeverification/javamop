@@ -5,7 +5,7 @@ If you are a developer or want to build JavaMOP from its source code, please ref
 
 ##Prerequisites
 
-To use JavaMOP you need JRE and AJC.
+To use JavaMOP you need JRE, AJC and RVMonitor.
 
 1. JRE
 
@@ -15,9 +15,14 @@ To use JavaMOP you need JRE and AJC.
 2. AJC
 
  AspectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
- * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
+ * Make sure that `<Path-to-AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
+ * Also ensure that `<Path-to-AspectJ_HOME>/lib/aspectjrt.jar` in your CLASSPATH.
  
-
+3. RVMonitor
+   
+ The RVMonitor libraries. (website to RVMonitor binaries)
+ 1. Download `rvmonitorrt.jar` and `rvmonitor.jar` from the above website.
+ 2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to your CLASSPATH.
 
 ##Install
    
