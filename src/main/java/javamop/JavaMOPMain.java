@@ -26,7 +26,6 @@ import javamop.util.FileCombiner;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
 import javamop.util.Tool;
-import javamop.util.Utility;
 
 /**
  * Entry point class for the JavaMOP program.
@@ -503,7 +502,7 @@ public final class JavaMOPMain {
     private static void cleanup(boolean tempOutput, SpecFilter filter) {
         if(tempOutput) {
             try {
-                Utility.deleteDirectory(options.outputDir.toPath());
+                Tool.deleteDirectory(options.outputDir.toPath());
             } catch(IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");

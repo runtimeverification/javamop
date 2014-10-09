@@ -1,7 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop;
 
-import javamop.util.Utility;
+import javamop.util.Tool;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -14,11 +14,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
 
@@ -199,7 +195,7 @@ public final class AgentGenerator {
 
             System.out.println(aspectname + ".jar is generated.");
         } finally {
-            Utility.deleteDirectory(agentDir.toPath());
+            Tool.deleteDirectory(agentDir.toPath());
         }
     }
 

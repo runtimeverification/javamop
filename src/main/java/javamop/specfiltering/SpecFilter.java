@@ -2,7 +2,6 @@
 package javamop.specfiltering;
 
 import javamop.util.Tool;
-import javamop.util.Utility;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -95,7 +94,7 @@ public class SpecFilter {
         //make a copy of the specDirectory
         if (Files.exists(specCopyPath)) {
             try {
-                Utility.deleteDirectory(specCopyPath);
+                Tool.deleteDirectory(specCopyPath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -133,7 +132,7 @@ public class SpecFilter {
             for (File file : specDirs){
                 if (!filters.stringPropertyNames().contains(file.getName())){
                     try {
-                        Utility.deleteDirectory(file.toPath());
+                        Tool.deleteDirectory(file.toPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -235,8 +234,8 @@ public class SpecFilter {
      */
     public void cleanup() {
         try {
-            Utility.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
-            Utility.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
+            Tool.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY));
+            Tool.deleteDirectory(FileSystems.getDefault().getPath(SPEC_DIRECTORY_COPY));
         } catch (IOException e) {
             System.err.println("Could not delete the downloaded spec directory: "+SPEC_DIRECTORY);
             e.printStackTrace();
