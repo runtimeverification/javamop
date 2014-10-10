@@ -2,7 +2,6 @@
 package javamop.agent;
 
 import javamop.JavaMOPMain;
-import javamop.MOPProcessor;
 import javamop.util.Tool;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -43,10 +42,11 @@ public final class AgentGenerator {
      * @param outputDir  The place to put all the intermediate generated files in.
      * @param aspectname Generates {@code aspectname}.jar.
      * @param baseAspect The aspect file to combine with the generated aspects.
+     * @param verbose whether in verbose mode or not
      * @throws IOException If something goes wrong in the many filesystem operations.
      */
     public static void generate(final File outputDir, final String aspectname,
-                                File baseAspect) throws IOException {
+                                File baseAspect, boolean verbose) throws IOException {
 
         if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
             System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
@@ -73,7 +73,7 @@ public final class AgentGenerator {
             FileUtils.write(generatedJava, lines);
         }
 
-        final int javacReturn = runCommandDir(outputDir, "javac", "-d", ".",
+        final int javacReturn = runCommandDir(outputDir, verbose, "javac", "-d", ".",
                 "-cp", baseClasspath, generatedJavaFileName);
         if (javacReturn != 0) {
             System.err.println("(javac) Failed to compile agent.");
@@ -97,7 +97,7 @@ public final class AgentGenerator {
         }
 
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
-        final int ajcReturn = runCommandDir(outputDir, "java", "-cp", baseClasspath,
+        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", baseClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
                 baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
         /*
@@ -155,13 +155,13 @@ public final class AgentGenerator {
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
-            int extractReturn = runCommandDir(agentDir, "jar", "xvf", weaverJarName);
+            int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
             if (extractReturn != 0) {
                 System.err.println("(jar) Failed to extract the AspectJ weaver jar");
                 return;
             }
 
-            extractReturn = runCommandDir(agentDir, "jar", "xvf", rvmRTJarName);
+            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
             if (extractReturn != 0) {
                 System.err.println("(jar) Failed to extract the rvmonitorrt jar");
                 return;
@@ -188,7 +188,7 @@ public final class AgentGenerator {
 
 
             // # Step 15: Stepmake the java agent jar
-            final int jarReturn = runCommandDir(new File("."), "jar", "cmf", jarManifest.toString(),
+            final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf", jarManifest.toString(),
                     aspectname + ".jar", "-C", agentDir.toString(), ".");
             if (jarReturn != 0) {
                 System.err.println("(jar) Failed to produce final jar");
@@ -257,17 +257,18 @@ public final class AgentGenerator {
      * is in verbose mode. Blocks until the command finishes, then gives the return code.
      *
      * @param dir  The directory to run the command in.
+     * @param verbose whether in verbose mode or not
      * @param args The program to run and its arguments.
      * @return The return code of the program.
      */
-    private static int runCommandDir(final File dir, final String... args) throws IOException {
+    private static int runCommandDir(final File dir, boolean verbose, final String... args) throws IOException {
         try {
-            if (MOPProcessor.verbose) { // -v
+            if (verbose) { // -v
                 System.out.println(dir.toString() + ": " + Arrays.asList(args).toString());
             }
             final ProcessBuilder builder = new ProcessBuilder();
             builder.command(args).directory(dir);
-            if (MOPProcessor.verbose) { // -v
+            if (verbose) { // -v
                 builder.inheritIO();
             } else {
                 builder.redirectErrorStream(true);
@@ -277,7 +278,7 @@ public final class AgentGenerator {
             // If the output stream does not get consumed, when the buffer of the subprocess
             // is full it will get blocked. This fixed issue #37:
             // https://github.com/runtimeverification/javamop/issues/37
-            if (!MOPProcessor.verbose) {
+            if (!verbose) {
                 // Consume output/error stream
                 final StringWriter writer = new StringWriter();
                 new Thread(new Runnable() {

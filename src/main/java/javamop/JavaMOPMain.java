@@ -22,6 +22,7 @@ import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.agent.AgentGenerator;
 import javamop.output.MOPProcessor;
+import javamop.parser.SpecExtractor;
 import javamop.specfiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.FileCombiner;
@@ -453,7 +454,7 @@ public final class JavaMOPMain {
 
         if(options.generateAgent) {
             try {
-                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect);
+                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect, options.verbose);
             } catch(IOException ioe) {
                 ioe.printStackTrace();
             }

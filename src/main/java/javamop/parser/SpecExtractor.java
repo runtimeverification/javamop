@@ -1,9 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.parser;
 
 import java.io.File;
 
-import javamop.parser.JavaMOPExtender;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.astex.MOPSpecFileExt;
 import javamop.util.MOPException;
