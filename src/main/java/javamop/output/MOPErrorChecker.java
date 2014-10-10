@@ -6,7 +6,7 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.util.MOPException;
 
-public final class MOPErrorChecker {
+final class MOPErrorChecker {
     
     /**
      * Private to prevent instantiation.

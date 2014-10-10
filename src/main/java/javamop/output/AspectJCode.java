@@ -10,7 +10,7 @@ import javamop.parser.ast.mopspec.PropertyAndHandlers;
 /**
  * The top-level generated AspectJ code.
  */
-public class AspectJCode {
+class AspectJCode {
     private final String name;
     
     private final Package packageDecl;

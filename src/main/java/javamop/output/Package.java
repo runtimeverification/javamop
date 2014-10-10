@@ -6,7 +6,7 @@ import javamop.parser.ast.MOPSpecFile;
 /**
  * A package declaration string.
  */
-public class Package {
+class Package {
     private final String packageString;
     
     /**
