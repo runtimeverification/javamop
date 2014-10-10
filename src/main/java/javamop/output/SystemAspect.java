@@ -47,7 +47,7 @@ class SystemAspect {
 
 
         ret += "pointcut sysbegin() : execution(* *(..)) && ";
-        ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " + "&& BaseAspect.notwithin();\n";
+        ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
         ret += "before () : sysbegin() {\n";
         ret += "((int[])t_version.get())[++((int[])t_global_depth.get())[0]]++;\n";
         ret += "}\n";
@@ -55,7 +55,7 @@ class SystemAspect {
 
         ret += "aspect " + name + "2 implements javamoprt.MOPObject {\n";
         ret += "pointcut sysend() : execution(* *(..)) && ";
-        ret += "!within(javamoprt.MOPObject+) && !adviceexecution() " + "&& BaseAspect.notwithin();\n";
+        ret += "!within(javamoprt.MOPObject+) && !adviceexecution();\n";
         ret += "after () : sysend() {\n";
         ret += "((int[])" + name + ".t_global_depth.get())[0]--;\n";
         ret += "}\n";
