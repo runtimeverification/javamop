@@ -49,7 +49,7 @@ import com.runtimeverification.rvmonitor.core.parser.RVParser;
  * MOPSpecFileExt objects.
  * @author A. Cody Schuffelen
  */
-public final class JavaParserAdapter {
+final class JavaParserAdapter {
 
     /**
      * Private constructor to prevent instantiation.

@@ -51,7 +51,7 @@ class SpecContext {
 	}
 }
 
-public class JavaMOPExtender {
+class JavaMOPExtender {
 	public static MOPSpecFile translateMopSpecFile(MOPSpecFileExt currentFile) throws MOPException {
 		HashMap<String, MOPSpecFileExt> depFiles = new HashMap<String, MOPSpecFileExt>();
 
