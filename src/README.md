@@ -10,18 +10,13 @@ If you only want to use JavaMOP out of the box please refer to ../INSTALL.md
  Java Runtime Environment version 7 (http://java.com/en/download/index.jsp)
  * To make sure java is installed properly, call `java -version` in a terminal.
 
-2. AJC
-
- AspectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
- * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
-
-3. Maven 3 or higher
+2. Maven 3 or higher
 
  JavaMOP requires Maven 3.0 or higher to build. To download and
  install Maven 3.0, please follow the instructions on 
  [this page](http://maven.apache.org/download.cgi)
 
-4. Git 1.8 or higher
+3. Git 1.8 or higher
 
  Git is required to download the sources for JavaMOP. To
  download and install Git, please follow the instructions found
