@@ -21,6 +21,10 @@ future states); and (c) as a lightweight formal method.
 
 JavaMOP is an instance of MOP for Java.
 
+## Install
+
+Refer to INSTALL.md for using JavaMOP out of the box or src/README.md for building it from its source code. 
+
 ## Usage
 
 JavaMOP currently supports two modes of use:
