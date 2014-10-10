@@ -1,6 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.agent;
 
+import javamop.JavaMOPMain;
+import javamop.MOPProcessor;
 import javamop.util.Tool;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
