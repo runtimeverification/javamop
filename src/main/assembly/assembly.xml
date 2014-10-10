@@ -10,6 +10,11 @@
             <outputDirectory>lib</outputDirectory>
             <excludes>
                 <exclude>com.runtimeverification.rvmonitor.logicrepository.plugins:*</exclude>
+                <exclude>org.aspectj:aspectjtools</exclude>
+                <exclude>org.aspectj:aspectjweaver</exclude>
+                <exclude>org.aspectj:aspectjrt</exclude>
+                <exclude>com.runtimeverification.rvmonitor:rv-monitor</exclude>
+                <exclude>com.runtimeverification.rvmonitor:rvmonitorrt</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
