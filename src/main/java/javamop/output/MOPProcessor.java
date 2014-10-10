@@ -4,11 +4,10 @@
  * The class handling the mop specification tree
  */
 
-package javamop;
+package javamop.output;
 
 import java.util.List;
 
-import javamop.output.AspectJCode;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.body.BodyDeclaration;

@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.output;
 
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
