@@ -6,7 +6,7 @@ import java.util.Properties;
 /**
  * Interface for all the configurations
  */
-public interface Configuration {
+interface Configuration {
 
     /**
      * Get all the property settings for the given configuration
