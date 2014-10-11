@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javamop.MOPException;
-import javamop.MOPNameSpace;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.SpecModifierSet;
-import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.astex.ExtNode;
 import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;

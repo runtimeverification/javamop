@@ -1,7 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output;
 
-import javamop.MOPNameSpace;
+import javamop.util.MOPNameSpace;
 
 /**
  * A variable used in the generated code, with an optional package component.

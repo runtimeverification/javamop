@@ -1,13 +1,11 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.parser;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 
-import javamop.parser.JavaMOPExtender;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.astex.MOPSpecFileExt;
-import javamop.parser.main_parser.JavaMOPParser;
+import javamop.util.MOPException;
 import javamop.util.Tool;
 
 /**
@@ -19,7 +17,7 @@ public final class SpecExtractor {
      * Retrieve the text of the file at the given path.
      * @param path The path of the file.
      * @return A string with the content of the file.
-     * @throws MOPException If something goes wrong opening or reading the file.
+     * @throws javamop.util.MOPException If something goes wrong opening or reading the file.
      */
     static private String convertFileToString(final String path) throws MOPException {
         try {

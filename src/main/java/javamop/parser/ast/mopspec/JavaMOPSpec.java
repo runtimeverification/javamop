@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javamop.MOPException;
-import javamop.MOPNameSpace;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;

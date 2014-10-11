@@ -1,7 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output;
 
-import javamop.MOPException;
+import javamop.util.MOPException;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -10,7 +10,7 @@ import javamop.parser.ast.mopspec.PropertyAndHandlers;
 /**
  * The top-level generated AspectJ code.
  */
-public class AspectJCode {
+class AspectJCode {
     private final String name;
     
     private final Package packageDecl;

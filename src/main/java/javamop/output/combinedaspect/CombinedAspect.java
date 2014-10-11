@@ -3,7 +3,7 @@ package javamop.output.combinedaspect;
 
 import java.util.List;
 
-import javamop.MOPException;
+import javamop.util.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.event.EventManager;
 import javamop.parser.ast.MOPSpecFile;

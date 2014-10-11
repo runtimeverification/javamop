@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,19 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javamop.MOPException;
+import javamop.util.MOPException;
 
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.PackageDeclaration;
 
 import javamop.parser.ast.body.BodyDeclaration;
-import javamop.parser.ast.body.ModifierSet;
-
-import javamop.parser.ast.expr.NameExpr;
-import javamop.parser.ast.expr.QualifiedNameExpr;
 
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.SpecModifierSet;
@@ -56,7 +49,7 @@ import com.runtimeverification.rvmonitor.core.parser.RVParser;
  * MOPSpecFileExt objects.
  * @author A. Cody Schuffelen
  */
-public final class JavaParserAdapter {
+final class JavaParserAdapter {
 
     /**
      * Private constructor to prevent instantiation.

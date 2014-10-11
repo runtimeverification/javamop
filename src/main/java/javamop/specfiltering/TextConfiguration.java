@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.specfiltering;
 
 import javamop.util.Tool;
 
@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  * Class for loading plain text configuration file.
  */
-public class TextConfiguration implements Configuration {
+class TextConfiguration implements Configuration {
 
     private final Properties properties;
 

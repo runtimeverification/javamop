@@ -20,10 +20,14 @@ import java.util.List;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
-import javamop.commandline.JavaMOPOptions;
-import javamop.commandline.SpecFilter;
+import javamop.agent.AgentGenerator;
+import javamop.output.MOPProcessor;
+import javamop.parser.SpecExtractor;
+import javamop.specfiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.FileCombiner;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
 import javamop.util.Tool;
 
 /**
@@ -62,9 +66,9 @@ public final class JavaMOPMain {
      * directory that JavaMOP is executing in.
      * @param specFiles The specifications the program is being run on.
      * @return The directory to place output files in.
-     * @throws MOPException If something goes wrong finding the file locations.
+     * @throws javamop.util.MOPException If something goes wrong finding the file locations.
      */
-    static private File getTargetDir(ArrayList<File> specFiles) throws MOPException{
+    static private File getTargetDir(ArrayList<File> specFiles) throws MOPException {
         if(options.outputDir != null){
             return options.outputDir;
         }
@@ -450,8 +454,7 @@ public final class JavaMOPMain {
 
         if(options.generateAgent) {
             try {
-                AgentGenerator.generate(options.outputDir, options.aspectname,
-                        options.baseAspect);
+                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect, options.verbose);
             } catch(IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -501,7 +504,7 @@ public final class JavaMOPMain {
     private static void cleanup(boolean tempOutput, SpecFilter filter) {
         if(tempOutput) {
             try {
-                AgentGenerator.deleteDirectory(options.outputDir.toPath());
+                Tool.deleteDirectory(options.outputDir.toPath());
             } catch(IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");

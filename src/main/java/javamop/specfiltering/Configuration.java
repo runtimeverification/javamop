@@ -1,12 +1,12 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.specfiltering;
 
 import java.util.Properties;
 
 /**
  * Interface for all the configurations
  */
-public interface Configuration {
+interface Configuration {
 
     /**
      * Get all the property settings for the given configuration

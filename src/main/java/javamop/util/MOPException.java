@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package javamop;
+package javamop.util;
 
 /**
  * A general exception class signifying something went wrong in the JavaMOP logic.
