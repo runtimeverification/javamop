@@ -26,16 +26,7 @@ public final class Tool {
     private Tool() {
         
     }
-    
-    /**
-     * Determine if a path belongs to a Java file based on its extension.
-     * @param path The path of the file.
-     * @return If the file is a Java file.
-     */
-    public static boolean isJavaFile(final String path) {
-        return path.endsWith(".java");
-    }
-    
+
     /**
      * Determine if a path belongs to a Specification file based on its extension.
      * @param path The path of the file.
