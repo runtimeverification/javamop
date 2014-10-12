@@ -22,7 +22,7 @@ To use JavaMOP you need JRE, AJC and RVMonitor.
    
  The RVMonitor libraries. (https://www.runtimeverification.com/monitor)
  1. Download `rvmonitorrt.jar` and `rvmonitor.jar` from the above website.
- 2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to your CLASSPATH.
+ 2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to your CLASSPATH. In the current version of RVMonitor, those jars are under lib/ and named as rv-monitor-0.2-SNAPSHOT.jar and rvmonitorrt-0.2-SNAPSHOT.jar respectively.
 
 ##Install
    
