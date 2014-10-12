@@ -59,10 +59,6 @@ prior to issuing the command above. ```<properties>``` refers
 to one or more property (i.e. *.mop) files, or a directory containing
 such property files.
 
-Note that when building an agent, users need to have their properties
-under ```package mop```. This is because JavaMOP is using some
-internal helper classes inside that package in the process.
-
 If the user specifies the [-n agentName], the above command will
 create <agentName>.jar in the same directory as that from which the
 command is run. If a [-n agentName] is not specified and there is just
@@ -70,6 +66,13 @@ one specification, then an agent with the same name as the
 specification will be generated. Finally, if [-n agentName] is not
 specified and there are multiple specification files, then an agent
 called "MultiSpec_1.jar" is generated.
+
+Regarding the properties for building an agent, users can either
+choose to write their own properties or use properties we have already
+formalized for Java API. If users decide to write their own
+properties, they need to have those properties under ```package
+mop```. This is because JavaMOP is using some internal helper classes
+inside that package in the process.
 
 We have formalized some properties from the Java API. If you are
 interested to build a java agent to monitor all these properties,
