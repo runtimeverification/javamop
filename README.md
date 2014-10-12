@@ -59,6 +59,10 @@ prior to issuing the command above. ```<properties>``` refers
 to one or more property (i.e. *.mop) files, or a directory containing
 such property files.
 
+Note that when building an agent, users need to have their properties
+under ```package mop```. This is because JavaMOP is using some
+internal helper classes inside that package in the process.
+
 If the user specifies the [-n agentName], the above command will
 create <agentName>.jar in the same directory as that from which the
 command is run. If a [-n agentName] is not specified and there is just
