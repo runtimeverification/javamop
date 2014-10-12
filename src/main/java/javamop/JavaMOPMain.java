@@ -108,8 +108,7 @@ public final class JavaMOPMain {
      */
     public static void processSpecFile(File file, String location) throws MOPException {
         MOPNameSpace.init();
-        String specStr = SpecExtractor.readSpecFile(file);
-        MOPSpecFile spec =  SpecExtractor.parse(specStr);
+        MOPSpecFile spec =  SpecExtractor.parse(file);
         
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
@@ -158,8 +157,7 @@ public final class JavaMOPMain {
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
             //System.out.println(file);
-            String specStr = SpecExtractor.readSpecFile(file);
-            MOPSpecFile spec =  SpecExtractor.parse(specStr);
+            MOPSpecFile spec =  SpecExtractor.parse(file);
             writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
             specs.add(spec);
         }
