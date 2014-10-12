@@ -96,30 +96,6 @@ public final class JavaMOPMain {
         }
     }
     
-    
-    /**
-     * Process a java file including mop annotations to generate an aspectj file. The path 
-     * argument should be an existing java file name. The location argument should contain the 
-     * original file name, But it may have a different directory.
-     * 
-     * @param file
-     *            an absolute path of a specification file
-     * @param location
-     *            an absolute path for result file
-     */
-    public static void processJavaFile(File file, String location) throws MOPException {
-        MOPNameSpace.init();
-        String specStr = SpecExtractor.process(file);
-        MOPSpecFile spec =  SpecExtractor.parse(specStr);
-        
-        if (options.aspectname == null) {
-            options.aspectname = Tool.getFileName(file.getAbsolutePath());
-        }
-        MOPProcessor processor = new MOPProcessor(options.aspectname);
-        
-        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
-    }
-    
     /**
      * Process a specification file to generate an aspectj file. The path argument should be an 
      * existing specification file name. The location argument should contain the original file 
@@ -132,7 +108,7 @@ public final class JavaMOPMain {
      */
     public static void processSpecFile(File file, String location) throws MOPException {
         MOPNameSpace.init();
-        String specStr = SpecExtractor.process(file);
+        String specStr = SpecExtractor.readSpecFile(file);
         MOPSpecFile spec =  SpecExtractor.parse(specStr);
         
         if (options.aspectname == null) {
@@ -182,7 +158,7 @@ public final class JavaMOPMain {
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
             //System.out.println(file);
-            String specStr = SpecExtractor.process(file);
+            String specStr = SpecExtractor.readSpecFile(file);
             MOPSpecFile spec =  SpecExtractor.parse(specStr);
             writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
             specs.add(spec);
@@ -276,9 +252,7 @@ public final class JavaMOPMain {
             } else {
                 if (Tool.isSpecFile(file)) {
                     ret.add(f);
-                } else if (Tool.isJavaFile(file)) {
-                    ret.add(f);
-                } else {
+                }  else {
                     //System.err.println("Ignoring " + file);
                     /*throw new MOPException("Unrecognized file type! The JavaMOP specification " +
                         "file should have .mop as the extension.");*/
@@ -323,8 +297,6 @@ public final class JavaMOPMain {
                 System.out.println("-Processing " + file.getPath());
                 if (Tool.isSpecFile(file.getName())) {
                     processSpecFile(file, location);
-                } else if (Tool.isJavaFile(file.getName())) {
-                    processJavaFile(file, location);
                 }
 
                 File combineDir = options.outputDir == null ? file.getAbsoluteFile()

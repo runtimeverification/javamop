@@ -28,44 +28,15 @@ public final class SpecExtractor {
     }
     
     /**
-     * Retrieve all the annotation blocks of the form /*@ ... @* /. They are concatenated
-     * together.
-     * @param input The program source.
-     * @return The annotation blocks concatenated together.
-     * @throws MOPException When an annotation block does not end.
-     */
-    static private String getAnnotations(final String input) throws MOPException {
-        String content = "";
-        
-        int start = input.indexOf("/*@", 0), end;
-        
-        while (start > -1) {
-            end = input.indexOf("@*/", start);
-            
-            if (end > -1)
-                content += input.substring(start + 3, end); // 4 means /*@ + a space
-                else
-                    throw new MOPException("annotation block didn't end");
-                
-                start = input.indexOf("/*@", start + 1);
-        }
-        return content;
-    }
-    
-    /**
-     * Retrieve the specification information from a File. If it is a Java file, return
-     * the annotations in the file. If it is a specification file, return the entire file.
+     * Retrieve the specification information from a File.
+     * If it is a specification file, return the entire file. Otherwise return empty string.
      * @param file The file to read from.
      * @return The specification information in the file.
      * @throws MOPException If something goes wrong in reading the file.
      */
-    static public String process(final File file) throws MOPException {
+    static public String readSpecFile(final File file) throws MOPException {
         if (Tool.isSpecFile(file.getName())) {
             return convertFileToString(file.getAbsolutePath());
-        } else if (Tool.isJavaFile(file.getName())) {
-            final String javaContent = convertFileToString(file.getAbsolutePath());
-            final String specContent = getAnnotations(javaContent);
-            return specContent;
         } else {
             return "";
         }
