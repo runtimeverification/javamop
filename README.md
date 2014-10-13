@@ -71,7 +71,9 @@ Regarding the properties for building an agent, users can either
 choose to write their own properties or use properties we have already
 formalized for Java API. If users decide to write their own
 properties, they need to have those properties under ```package
-mop```. This is because JavaMOP is using some internal helper classes
+mop``` (The property file does not need to be physically placed inside folder "mop";
+as long as the statement "package mop;" is placed on the top of the property file, it will be fine).
+This is because JavaMOP is using some internal helper classes
 inside that package in the process.
 
 We have formalized some properties from the Java API. If you are
