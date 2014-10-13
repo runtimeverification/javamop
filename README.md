@@ -67,6 +67,15 @@ specification will be generated. Finally, if [-n agentName] is not
 specified and there are multiple specification files, then an agent
 called "MultiSpec_1.jar" is generated.
 
+Regarding the properties for building an agent, users can either
+choose to write their own properties or use properties we have already
+formalized for Java API. If users decide to write their own
+properties, they need to have those properties under ```package
+mop``` (The property file does not need to be physically placed inside folder "mop";
+as long as the statement "package mop;" is placed on the top of the property file, it will be fine).
+This is because JavaMOP is using some internal helper classes
+inside that package in the process.
+
 We have formalized some properties from the Java API. If you are
 interested to build a java agent to monitor all these properties,
 please run the following command:
