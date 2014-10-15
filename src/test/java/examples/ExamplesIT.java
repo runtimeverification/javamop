@@ -31,7 +31,7 @@ public class ExamplesIT {
     
     /**
      * Test all the instances of this example. Each example has a _1, _2, and possibly a _3 
-     * component. This runs assertions on all the avilable ones. This function is inspired by the 
+     * component. This runs assertions on all the available ones. This function is inspired by the
      * examples/run script.
      */
     @Test
@@ -78,7 +78,7 @@ public class ExamplesIT {
         }
         helper.deleteFiles(true, testName + "MonitorAspect.aj");
     }
-    
+
     /**
      * Run a subset of the examples as tests. These are from the examples/runall script.
      */

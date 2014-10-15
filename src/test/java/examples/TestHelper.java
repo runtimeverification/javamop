@@ -140,10 +140,18 @@ public class TestHelper {
     public void deleteFiles(boolean fail, String... files) throws IOException {
         for (String s : files) {
             Path toDelete = fileSystem.getPath(basePath.toString(), s);
-            if (fail) {
-                Files.delete(toDelete);
+            if (!Files.exists(toDelete)) {
+                if (fail) {
+                    throw new IOException(toDelete.toString() + " does not exist!");
+                } else {
+                    return;
+                }
+            }
+
+            if (Files.isDirectory(toDelete)) {
+                Tool.deleteDirectory(toDelete);
             } else {
-                Files.deleteIfExists(toDelete);
+                Files.delete(toDelete);
             }
         }
     }
