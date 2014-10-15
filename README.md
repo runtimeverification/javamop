@@ -23,7 +23,7 @@ JavaMOP is an instance of MOP for Java.
 
 ## Install
 
-Refer to INSTALL.md for using JavaMOP out of the box or src/README.md for building it from its source code. 
+Refer to INSTALL.md for using JavaMOP out of the box or src/README.md for building it from its source code.
 
 ## Usage
 
@@ -32,7 +32,7 @@ JavaMOP currently supports two modes of use:
 1. Java Agent
 
   Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest one to use. Moreover, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
-   
+
 2. Static Weaving
 
   Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know how to use ajc and resolve all the dependencies by himself/herself.
@@ -112,7 +112,7 @@ follows:
 
 1. For projects with a well-defined entry point such as a Main class,
    first compile the source code and run the following command:
-  
+
    ```java -javaagent:agent.jar -cp .:[other dependencies] Main```
 
    In other words, you will need to run same command as you would
@@ -136,13 +136,13 @@ follows:
         			<argLine>-javaagent:agent.jar</argLine>
 	  		</configuration>
         	</plugin>
-		...       
+		...
       	</plugins>
      </build>
    ```
 
    Replace ```${surefire-version}``` with the exact surefire plugin
-   version used by the project (e.g., 2.16). 
+   version used by the project (e.g., 2.16).
 
    Adding the javaagent is the only change needed to an existing
    project and tests can still be run with ```mvn test```, as usual.
@@ -156,7 +156,7 @@ follows:
     	<junit ...>
     		...
         	<jvmarg value="-javaagent:agent.jar"/>
-		...       
+		...
       	</plugins>
      </target>
    ```
@@ -172,8 +172,8 @@ this file:
 
 ```
 cd examples/agent/many
-javamop -agent -n agent rvm 
-javac SafeMapIterator_1.java 
+javamop -agent -n agent rvm
+javac SafeMapIterator_1.java
 java -javaagent:agent.jar -cp . SafeMapIterator_1
 ```
 
@@ -196,20 +196,20 @@ java found the problem too
 
 #### Generating Instrumentation File and Java Library
 
-In this mode, the user can generate a instrumentation (.aj) file and 
+In this mode, the user can generate a instrumentation (.aj) file and
 a java library(.java) file to be weaved into the original program. The instrumentation
 file includes the pointcuts and advice which will be used by the AspectJ compiler (ajc) to
 instrument the code. The advice in the instrumentation file will call the functions
 provided in the java library. For simplicity, we append the java library to the
-instrumentation file so that JavaMop generates a single .aj file. Once JavaMOP is correctly installed (see the INSTALL.md file in this directory), this can be achieved by running the following command: 
+instrumentation file so that JavaMop generates a single .aj file. Once JavaMOP is correctly installed (see the INSTALL.md file in this directory), this can be achieved by running the following command:
 
 ```javamop [-v] [-d <target directory>] [-merge] <properties>```
 
-The option ```[-v]``` generates the file and the library in verbose mode and ```[-d <target directory>]``` stores 
+The option ```[-v]``` generates the file and the library in verbose mode and ```[-d <target directory>]``` stores
 all output files to the user specified directory which must exist prior to issuing the command above.
  ```<properties>``` refers to one or more property (i.e. *.mop) files, or a directory containing
 such property files. By default, one .aj file is generated for each JavaMOP specification. When
-```[-merge]``` is set, JavaMOP will generate a combined .aj file for monitoring multiple properties 
+```[-merge]``` is set, JavaMOP will generate a combined .aj file for monitoring multiple properties
 simultaneously.
 
 #### Weaving the code using Ajc Compiler
@@ -228,7 +228,7 @@ To weave the original program with monitoring library, run the following command
 ```-1.6```indicates the compliance level. ```[-d <target directory>]```specifies the directory to put the weaved
 code. The last two parameters refer to the path to the generated instrumentation file and the path to the original
 program (i.e the program to be weaved) respectively. Then the ajc compiler will instrument/compile the original
-java file and put the generated .class file in the ```<target directory>```. If there's no error reported, 
+java file and put the generated .class file in the ```<target directory>```. If there's no error reported,
 you can directly run the weaved code in the ```<target directory>```.
 
 (For more information on ajc compiler options, please type ```ajc -help``` for help)
