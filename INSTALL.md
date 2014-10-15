@@ -18,7 +18,7 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 
 2. AJC
 
- AspectJ Compiler version 1.8.1 or higher 
+ AspectJ Compiler version 1.8.1 or higher
  (http://www.eclipse.org/aspectj/downloads.php)
 
  * Make sure that `<Path-to-AspectJ_HOME>/bin` is in your `PATH` by

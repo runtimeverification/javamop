@@ -14,7 +14,8 @@ code.  If you only want to use JavaMOP out of the box please refer to
 
 2. AJC
 
- AspectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
+ AspectJ Compiler version 1.8.1 or higher
+ (http://www.eclipse.org/aspectj/downloads.php)
  * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling
    `ajc` in a terminal.
 

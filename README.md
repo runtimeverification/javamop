@@ -14,8 +14,8 @@ user-defined actions will be triggered, which can be any code: from
 information logging to runtime recovery.  MOP may be understood from
 at least three perspectives: (a) as a discipline allowing one to
 improve safety, reliability and dependability of a system by
-monitoring its requirements against its implementation at runtime; (b)
-as an extension of programming languages with logics (one can add
+monitoring its requirements against its implementation at runtime;
+(b) as an extension of programming languages with logics (one can add
 logical statements anywhere in the program, referring to past or
 future states); and (c) as a lightweight formal method.
 
@@ -33,8 +33,8 @@ JavaMOP currently supports two modes of use:
 
 1. Java Agent
 
-  Java
-  [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
+  Java [agents]
+  (http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
   make it possible to instrument programs running on the JVM. This
   option is the easiest one to use. Moreover, the user does not need
   AspectJ compiler (ajc), or to know how to resolve dependencies in
@@ -255,7 +255,7 @@ original java file and put the generated .class file in the ```<target
 directory>```. If there's no error reported, you can directly run the
 weaved code in the ```<target directory>```.
 
-(For more information on ajc compiler options, please type 
+(For more information on ajc compiler options, please type
 ```ajc -help``` for help)
 
 #### Runing the Weaved Code
