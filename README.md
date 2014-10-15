@@ -31,7 +31,7 @@ JavaMOP currently supports two modes of use:
 
 1. Java Agent
 
-  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest one to use. Moreso, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
+  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest one to use. Moreover, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
    
 2. Static Weaving
 
@@ -214,8 +214,11 @@ simultaneously.
 
 #### Weaving the code using Ajc Compiler
 
-Before weaving, make sure that you have already installed ajc compiler and put "aspectjrt.jar" and 
-"rvmonitorrt.jar" in the CLASSPATH. The ajc compiler can be downloaded at ```http://www.eclipse.org/aspectj/downloads.php```.
+Before weaving, make sure that you have already installed ajc compiler
+and RV-Monitor. Please refer to INSTALL.md for prerequisites of using
+JavaMOP.
+
+The ajc compiler can be downloaded at ```http://www.eclipse.org/aspectj/downloads.php```.
 Please download the version which is higher or equal to 1.7.*. The two jar files can be found under
 ```$aspectj-*.*.*.jar/lib``` and ```$javamop/target/release/javamop/lib``` respectively.
 To weave the original program with monitoring library, run the following command:
