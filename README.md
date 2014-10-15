@@ -23,7 +23,8 @@ JavaMOP is an instance of MOP for Java.
 
 ## Install
 
-Refer to INSTALL.md for using JavaMOP out of the box or src/README.md for building it from its source code.
+Refer to INSTALL.md for using JavaMOP out of the box or src/README.md
+for building it from its source code.
 
 ## Usage
 
@@ -31,14 +32,22 @@ JavaMOP currently supports two modes of use:
 
 1. Java Agent
 
-  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest one to use. Moreover, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
+  Java
+  [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
+  make it possible to instrument programs running on the JVM. This
+  option is the easiest one to use. Moreover, the user does not need
+  AspectJ compiler (ajc), or to know how to resolve dependencies in
+  the target program. However, using this option may incur more
+  runtime overhead, since it weaves the code at runtime.
 
 2. Static Weaving
 
-  Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know how to use ajc and resolve all the dependencies by himself/herself.
+  Compared to the Java Agent option, Static Weaving has better
+  performance, but it requires the user to know how to use ajc and
+  resolve all the dependencies by himself/herself.
 
-(For a description of all JavaMOP options, please type the following at
-any time: ```javamop -h```)
+(For a description of all JavaMOP options, please type the following
+at any time: ```javamop -h```)
 
 ### Building and using a Java Agent
 
@@ -53,11 +62,11 @@ achieved by running the following command:
 
 The optional ```[-n agentName]``` specifies "agentName" as the name of
 the agent generated, ```[-v]``` generates the agent in verbose mode
-and ```[-d <target directory>]``` stores all intermediate files
-from agent generation in a user specified directory which must exist
-prior to issuing the command above. ```<properties>``` refers
-to one or more property (i.e. *.mop) files, or a directory containing
-such property files.
+and ```[-d <target directory>]``` stores all intermediate files from
+agent generation in a user specified directory which must exist prior
+to issuing the command above. ```<properties>``` refers to one or more
+property (i.e. *.mop) files, or a directory containing such property
+files.
 
 If the user specifies the [-n agentName], the above command will
 create <agentName>.jar in the same directory as that from which the
@@ -70,17 +79,18 @@ called "MultiSpec_1.jar" is generated.
 Regarding the properties for building an agent, users can either
 choose to write their own properties or use properties we have already
 formalized for Java API. If users decide to write their own
-properties, they need to have those properties under ```package
-mop``` (The property file does not need to be physically placed inside folder "mop";
-as long as the statement "package mop;" is placed on the top of the property file, it will be fine).
-This is because JavaMOP is using some internal helper classes
-inside that package in the process.
+properties, they need to have those properties under ```package mop```
+(The property file does not need to be physically placed inside folder
+"mop"; as long as the statement "package mop;" is placed on the top of
+the property file, it will be fine).  This is because JavaMOP is using
+some internal helper classes inside that package in the process.
 
 We have formalized some properties from the Java API. If you are
 interested to build a java agent to monitor all these properties,
 please run the following command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>] -usedb```
+```javamop -agent [-n agentName] [-v] [-d <target directory>]
+-usedb```
 
 The ```-usedb``` option fetches our properties (formalized from the
 Java API) from this URL:
@@ -98,11 +108,13 @@ As a separate step, we encourage the reader to manually download the
 properties from the given above, place them in folder and generate an
 agent with the command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```,
+```javamop -agent [-n agentName] [-v] [-d <target directory>]
+<properties>```,
 
-where ```<properties>``` is replaced with the directory where the reader
-stored the properties. It may also be educational to open one or two
-of the ```.mop``` files to learn how the properties are written.
+where ```<properties>``` is replaced with the directory where the
+reader stored the properties. It may also be educational to open one
+or two of the ```.mop``` files to learn how the properties are
+written.
 
 #### Using A Java Agent
 
@@ -196,21 +208,26 @@ java found the problem too
 
 #### Generating Instrumentation File and Java Library
 
-In this mode, the user can generate a instrumentation (.aj) file and
-a java library(.java) file to be weaved into the original program. The instrumentation
-file includes the pointcuts and advice which will be used by the AspectJ compiler (ajc) to
-instrument the code. The advice in the instrumentation file will call the functions
-provided in the java library. For simplicity, we append the java library to the
-instrumentation file so that JavaMop generates a single .aj file. Once JavaMOP is correctly installed (see the INSTALL.md file in this directory), this can be achieved by running the following command:
+In this mode, the user can generate a instrumentation (.aj) file and a
+java library(.java) file to be weaved into the original program. The
+instrumentation file includes the pointcuts and advice which will be
+used by the AspectJ compiler (ajc) to instrument the code. The advice
+in the instrumentation file will call the functions provided in the
+java library. For simplicity, we append the java library to the
+instrumentation file so that JavaMop generates a single .aj file. Once
+JavaMOP is correctly installed (see the INSTALL.md file in this
+directory), this can be achieved by running the following command:
 
 ```javamop [-v] [-d <target directory>] [-merge] <properties>```
 
-The option ```[-v]``` generates the file and the library in verbose mode and ```[-d <target directory>]``` stores
-all output files to the user specified directory which must exist prior to issuing the command above.
- ```<properties>``` refers to one or more property (i.e. *.mop) files, or a directory containing
-such property files. By default, one .aj file is generated for each JavaMOP specification. When
-```[-merge]``` is set, JavaMOP will generate a combined .aj file for monitoring multiple properties
-simultaneously.
+The option ```[-v]``` generates the file and the library in verbose
+mode and ```[-d <target directory>]``` stores all output files to the
+user specified directory which must exist prior to issuing the command
+above.  ```<properties>``` refers to one or more property (i.e. *.mop)
+files, or a directory containing such property files. By default, one
+.aj file is generated for each JavaMOP specification. When
+```[-merge]``` is set, JavaMOP will generate a combined .aj file for
+monitoring multiple properties simultaneously.
 
 #### Weaving the code using Ajc Compiler
 
@@ -218,28 +235,37 @@ Before weaving, make sure that you have already installed ajc compiler
 and RV-Monitor. Please refer to INSTALL.md for prerequisites of using
 JavaMOP.
 
-The ajc compiler can be downloaded at ```http://www.eclipse.org/aspectj/downloads.php```.
-Please download the version which is higher or equal to 1.7.*. The two jar files can be found under
-```$aspectj-*.*.*.jar/lib``` and ```$javamop/target/release/javamop/lib``` respectively.
-To weave the original program with monitoring library, run the following command:
+The ajc compiler can be downloaded at
+```http://www.eclipse.org/aspectj/downloads.php```.  Please download
+the version which is higher or equal to 1.7.*. The two jar files can
+be found under ```$aspectj-*.*.*.jar/lib``` and
+```$javamop/target/release/javamop/lib``` respectively.  To weave the
+original program with monitoring library, run the following command:
 
-```ajc -1.6 -cp .:[other dependencies] [-d <target directory>] $path-to-aj-file $path-to-java-file```
+```ajc -1.6 -cp .:[other dependencies] [-d <target directory>]
+$path-to-aj-file $path-to-java-file```
 
-```-1.6```indicates the compliance level. ```[-d <target directory>]```specifies the directory to put the weaved
-code. The last two parameters refer to the path to the generated instrumentation file and the path to the original
-program (i.e the program to be weaved) respectively. Then the ajc compiler will instrument/compile the original
-java file and put the generated .class file in the ```<target directory>```. If there's no error reported,
-you can directly run the weaved code in the ```<target directory>```.
+```-1.6```indicates the compliance level. ```[-d <target
+directory>]```specifies the directory to put the weaved code. The last
+two parameters refer to the path to the generated instrumentation file
+and the path to the original program (i.e the program to be weaved)
+respectively. Then the ajc compiler will instrument/compile the
+original java file and put the generated .class file in the ```<target
+directory>```. If there's no error reported, you can directly run the
+weaved code in the ```<target directory>```.
 
-(For more information on ajc compiler options, please type ```ajc -help``` for help)
+(For more information on ajc compiler options, please type 
+```ajc -help``` for help)
 
 #### Runing the Weaved Code
 To run the weaved program, simply type:
 
 ```java -cp .:[other dependencies] Main```,
 
-where `Main` is the entry point to the application. Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH.
-Alternatively, you could also attach them as part of the ```-cp``` option when you run the program.
+where `Main` is the entry point to the application. Again, make sure
+that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH.
+Alternatively, you could also attach them as part of the ```-cp```
+option when you run the program.
 
 
 ## Contact Information
