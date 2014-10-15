@@ -1,8 +1,8 @@
 #JavaMOP BUILD
 
 This file contains instructions for building JavaMOP from its source
-code.  If you only want to use JavaMOP out of the box please refer to
-../INSTALL.md
+code.  If you only want to use JavaMOP from released zip archive
+please refer to ../INSTALL.md
 
 ##Prerequisites
 

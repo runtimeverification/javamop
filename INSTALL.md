@@ -1,9 +1,8 @@
 #JavaMOP INSTALL
 
-This file contains instructions for using JavaMOP out of the box.
-
-Users who checked out the sources should follow the instructions in
-src/README.md to build JavaMOP.
+Here are instructions for installing JavaMOP from the release zip
+archive. Users who checked out the sources should follow the
+instructions in src/README.md to build JavaMOP.
 
 ##Prerequisites
 
