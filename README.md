@@ -31,11 +31,11 @@ JavaMOP currently supports two modes of use:
 
 1. Java Agent
 
-  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest to use. Moreso, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
+  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html) make it         possible to instrument programs running on the JVM. This option is the easiest one to use. Moreso, the user does not   need AspectJ compiler (ajc), or to know how to resolve dependencies in the target program. However, using this    option may incur more runtime overhead, since it weaves the code at runtime.
    
 2. Static Weaving
 
-  Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know the    dependencies of the target program and how to use ajc.  
+  Compared to the Java Agent option, Static Weaving has better performance, but it requires the user to know how to use ajc and resolve all the dependencies by himself/herself.
 
 (For a description of all JavaMOP options, please type the following at
 any time: ```javamop -h```)
@@ -146,6 +146,23 @@ follows:
 
    Adding the javaagent is the only change needed to an existing
    project and tests can still be run with ```mvn test```, as usual.
+
+3. For Ant-based projects which have tests, users can also modify
+   ```build.xml``` to run all tests with JavaMOP agent. All they need to
+   do is to add one line under ```junit``` task.
+
+  ```xml
+    <target name=...>
+    	<junit ...>
+    		...
+        	<jvmarg value="-javaagent:agent.jar"/>
+		...       
+      	</plugins>
+     </target>
+   ```
+
+   After that, users can run their tests as usual by using ```ant
+   ${test_target_name}```.
 
 #### Putting it all together
 

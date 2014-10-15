@@ -5,7 +5,7 @@ If you are a developer or want to build JavaMOP from its source code, please ref
 
 ##Prerequisites
 
-To use JavaMOP you need JRE, AJC and RVMonitor.
+To use JavaMOP you need JRE, AJC and RV-Monitor.
 
 1. JRE
 
@@ -16,19 +16,19 @@ To use JavaMOP you need JRE, AJC and RVMonitor.
 
  AspectJ Compiler version 1.8.1 or higher (http://www.eclipse.org/aspectj/downloads.php)
  * Make sure that `<Path-to-AspectJ_HOME>/bin` is in your `PATH` by calling `ajc` in a terminal.
- * Also ensure that `<Path-to-AspectJ_HOME>/lib/aspectjrt.jar`, `<Path-to-AspectJ_HOME>/lib/aspectjweaver.jar` and `<Path-to-AspectJ_HOME>/lib/aspectjtools.jar` in your CLASSPATH.
+ * Also ensure that `<Path-to-AspectJ_HOME>/lib/aspectjrt.jar`, `<Path-to-AspectJ_HOME>/lib/aspectjweaver.jar` and `<Path-to-AspectJ_HOME>/lib/aspectjtools.jar` are in your CLASSPATH.
  
-3. RVMonitor
+3. RV-Monitor
    
- The RVMonitor libraries. (https://www.runtimeverification.com/monitor)
- 1. Download RVMonitor installer from above website and install it to your desired directory
- 2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to your CLASSPATH. In the current version of RVMonitor, those jars are under lib/ inside the directory of RVMonitor, and are named as rv-monitor-0.2-SNAPSHOT.jar and rvmonitorrt-0.2-SNAPSHOT.jar respectively.
+ The RV-Monitor libraries. (https://www.runtimeverification.com/monitor)
+ 1. Download RV-Monitor installer from above website and install it to your desired directory.
+ 2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to your CLASSPATH. In the current version of RV-Monitor, those jars are under lib/ inside the directory of RV-Monitor, and are named as rv-monitor-0.2-SNAPSHOT.jar and rvmonitorrt-0.2-SNAPSHOT.jar respectively.
 
 ##Install
    
-1. Download JavaMOP's binary from [its website](http://fsl.cs.illinois.edu/javamop).
+1. Download JavaMOP's binary from [its website] (http://fsl.cs.illinois.edu/index.php/JavaMOP4).
  
-2. Unzip or untar the file in your preferred location.
+2. Unzip the file in your preferred location.
 
 ##Use 
 
