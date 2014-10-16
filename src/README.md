@@ -37,9 +37,9 @@ please refer to ../INSTALL.md
 
  ```git clone https://github.com/runtimeverification/javamop.git```
 
- You can also download a "zip" or "tar.gz" from
- [here](https://github.com/runtimeverification/javamop/releases) and
- unzip to your favorite location.
+ Alternatively, you may directly download source code without using
+ git from [here](https://github.com/runtimeverification/javamop/releases),
+ and unpack it to your favorite location.
 
 2. Build JavaMOP
 
