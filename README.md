@@ -221,7 +221,36 @@ To run the weaved program, simply type:
 where `Main` is the entry point to the application. Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH.
 Alternatively, you could also attach them as part of the ```-cp``` option when you run the program.
 
+#### Troubleshooting
+In some extreme cases when you need to monitor classes with huge methods or the
+intended pointcuts are very intensive in some method, you may encounter some 
+error while using standard AspectJ compiler to weave code; such as: 
+/YourBigClass.java [error] problem generating method YourBigClass.bigMethod :
+Code size too big: 65613. This kind of error is caused by Java's 64-KB maximum
+method size constraint. If a method of the monitored class has already been
+very big, then after inserting the advice at the pointcuts, it may exceed the
+64-KB's constraints. To address this issue, we provide a patch for the standard
+AspectJ to solve this problem quickly. There are two possible ways of using the
+patch (Please backup your AspectJ before applying the patch):
 
+```Option One: Binary Patch```
+1. Download the stdAJC-patch.zip from [here](link to binary patch)
+2. Extract the four jar files from the zip to <path-to-aspectj-home>
+/lib, and replace the library files with the same names.
+
+
+```Option Two: Source Patch```
+1. Go to your local AspectJ git repository, and checkout the version 1.7.1
+readme by executing the command below (You may need to pull to get the latest
+update before you can perform the operation below):
+``git checkout 6cae3ed57c66d0659492ab1d12bc42cc10ad6f71``
+2. Download the stdAJC-1.7.1.patch from [here](link to source patch) and place
+it in the above AspectJ repository's top level.
+3. Apply the patch by executing:
+``git apply stdAJC-1.7.1.patch``
+
+After installing the patch, you AspectJ compiler should be able to handle the
+classes with huge methods now.
 ## Contact Information
 
 We welcome your interest in JavaMOP. Your feedback, comments and bug
