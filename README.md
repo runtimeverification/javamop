@@ -228,8 +228,8 @@ error while using standard AspectJ compiler to weave code; such as:
 `/YourBigClass.java [error] problem generating method YourBigClass.bigMethod: Code size too big: 65613.` 
 This kind of error is caused by Java's 64-KB maximum method size constraint. 
 If a method of the monitored class has already been very big, 
-then after inserting the advice at the pointcuts, it may exceed the
-64-KB's constraints. To address this issue, we provide a patch for the standard
+then after inserting the advices at the pointcuts, it may violate the
+64-KB-constraint. To address this issue, we provide a patch for the standard
 AspectJ to solve this problem quickly. Please follow the instructions below to install
 the patch (Please backup your AspectJ before applying the patch):
 
