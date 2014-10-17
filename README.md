@@ -230,8 +230,8 @@ This kind of error is caused by Java's 64-KB maximum method size constraint.
 If a method of the monitored class has already been very big, 
 then after inserting the advice at the pointcuts, it may exceed the
 64-KB's constraints. To address this issue, we provide a patch for the standard
-AspectJ to solve this problem quickly. There are two possible ways of using the
-patch (Please backup your AspectJ before applying the patch):
+AspectJ to solve this problem quickly. Please follow the instructions below to install
+the patch (Please backup your AspectJ before applying the patch):
 
 1. Go to your local AspectJ git repository, and checkout the version `1.7.1
 readme` by executing the command below (You may need to pull to get the latest
