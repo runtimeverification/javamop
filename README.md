@@ -223,7 +223,7 @@ Alternatively, you could also attach them as part of the ```-cp``` option when y
 
 #### Troubleshooting
 In some extreme cases when you need to monitor classes with huge methods or the
-intended pointcuts are very intensive in some method, you may encounter some 
+intended pointcuts are very dense in some method, you may encounter some 
 error while using standard AspectJ compiler to weave code; such as: 
 /YourBigClass.java [error] problem generating method YourBigClass.bigMethod :
 Code size too big: 65613. This kind of error is caused by Java's 64-KB maximum
@@ -232,15 +232,6 @@ very big, then after inserting the advice at the pointcuts, it may exceed the
 64-KB's constraints. To address this issue, we provide a patch for the standard
 AspectJ to solve this problem quickly. There are two possible ways of using the
 patch (Please backup your AspectJ before applying the patch):
-
-```Option One: Binary Patch```
-
-1. Download the stdAJC-patch.zip from [here](link to binary patch)
-
-2. Extract the four jar files from the above zip to `<path-to-aspectj-home>/lib`, and replace the library files with the same names.
-
-
-```Option Two: Source Patch```
 
 1. Go to your local AspectJ git repository, and checkout the version `1.7.1
 readme` by executing the command below (You may need to pull to get the latest
@@ -255,9 +246,9 @@ it in the above AspectJ repository's top level.
 
 	``git apply stdAJC-1.7.1.patch``
 	
-4. Build the AspectJ project using ant. During the build process, an error like "property 'local-properties' not at ..." may occur. In this case, you can go to `build` directory of AspectJ source code, create a copy of the file `sample.local.properties`, and then rename it to `local.properties`. After doing this, this build problem should be solved.
+4. Build the AspectJ project using ant. During the build process, an error like "property 'local-properties' not at ..." may occur. In this case, you can go to `build` directory of AspectJ source code, create a copy of the file `sample.local.properties`, and then rename that copy to `local.properties`. After doing this, the build problem should be solved.
 	
-``N.B.`` This AspectJ patch is intended to be used with `JDK 7`, it is not compatible with `JDK 8` at the current stage.
+``N.B.`` The updated AspectJ libraries you get by going through the above operations are intended to be used under `JDK 7`, and they are not compatible with `JDK 8` at the current stage.
 
 After generating the new AspectJ libraries and deploying them, you AspectJ compiler should be able to handle the classes with huge methods now.
 
