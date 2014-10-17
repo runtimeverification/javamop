@@ -31,7 +31,7 @@ public class ExamplesIT {
     
     /**
      * Test all the instances of this example. Each example has a _1, _2, and possibly a _3 
-     * component. This runs assertions on all the avilable ones. This function is inspired by the 
+     * component. This runs assertions on all the available ones. This function is inspired by the
      * examples/run script.
      */
     @Test
@@ -41,7 +41,7 @@ public class ExamplesIT {
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
         }
-        helper.testCommand(null, true, command, testName + ".mop");
+        helper.testCommand(null, false, true, command, testName + ".mop");
         
         String classpath = "." + File.pathSeparator + "mop" + File.separator + File.pathSeparator
                 + System.getProperty("java.class.path");
@@ -52,10 +52,10 @@ public class ExamplesIT {
             String specificClasspath = classpath + File.pathSeparator + subcasePathI + 
                     File.pathSeparator + subcasePathI + File.separator + "mop";
             // AJC has nonzero return codes with just warnings, not errorss.
-            helper.testCommand(null, true, "java", "-cp", specificClasspath, 
+            helper.testCommand(null, false, true, "java", "-cp", specificClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI + 
                 File.separator + subcasePathI + ".java", testName + "MonitorAspect.aj");
-            helper.testCommand(subcasePathI, subcasePathI, true, "java", "-cp", specificClasspath, 
+            helper.testCommand(subcasePathI, subcasePathI, false, true, "java", "-cp", specificClasspath,
                 subcasePathI);
             helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".actual.err", 
                 subcasePathI + File.separator + subcasePathI + ".actual.out");
@@ -78,7 +78,7 @@ public class ExamplesIT {
         }
         helper.deleteFiles(true, testName + "MonitorAspect.aj");
     }
-    
+
     /**
      * Run a subset of the examples as tests. These are from the examples/runall script.
      */

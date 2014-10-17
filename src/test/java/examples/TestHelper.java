@@ -12,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Helper class for testing the output of external commands against the expected output.
@@ -42,19 +43,20 @@ public class TestHelper {
      * @throws Exception
      */
     public void testCommand(String expectedFilePrefix, String... command) throws Exception {
-        testCommand(expectedFilePrefix, true, command);
+        testCommand(expectedFilePrefix, false, true, command);
     }
     
     /**
      * Execute command, tests return code and potentially checks standard and error output against expected content
      * in files if {@code expectedFilePrefix} not null.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
+     * @param ordered when comparing contents of two files, whether to ignore the order of lines or not
      * @param mustSucceed if the program's return code must be {@code 0}.
      * @param commands  list of arguments describing the system command to be executed.
      * @throws Exception
      */
-    public void testCommand(String expectedFilePrefix, boolean mustSucceed, String... commands) throws Exception {
-        testCommand("", expectedFilePrefix, mustSucceed, commands);
+    public void testCommand(String expectedFilePrefix, boolean ordered, boolean mustSucceed, String... commands) throws Exception {
+        testCommand("", expectedFilePrefix, ordered, mustSucceed, commands);
     }
 
     /**
@@ -62,11 +64,12 @@ public class TestHelper {
      * in files if {@code expectedFilePrefix} not null.
      * @param relativePath The path relative to the MOP file directory to run commands from and find expected files in.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
+     * @param ordered when comparing contents of two files, whether to ignore the order of lines or not
      * @param mustSucceed if the program's return code must be {@code 0}.
      * @param command  list of arguments describing the system command to be executed.
      * @throws Exception
      */
-    public void testCommand(String relativePath, String expectedFilePrefix, boolean mustSucceed, String... command) throws Exception {
+    public void testCommand(String relativePath, String expectedFilePrefix, boolean ordered, boolean mustSucceed, String... command) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
         String actualOutFile = null;
@@ -98,8 +101,14 @@ public class TestHelper {
             Assert.assertEquals("Expected no error during" + Arrays.toString(command) + ".", 0, returnCode);
         }
         if (expectedFilePrefix != null) {
-            assertEqualFiles(expectedOutFile, actualOutFile);
-            assertEqualFiles(expectedErrFile, actualErrFile);
+            if (!ordered) {
+                assertEqualFiles(expectedOutFile, actualOutFile);
+                assertEqualFiles(expectedErrFile, actualErrFile);
+            }
+            else {
+                assertEqualUnorderedFiles(expectedOutFile, actualOutFile);
+                assertEqualUnorderedFiles(expectedErrFile, actualErrFile);
+            }
         }
     }
     
@@ -112,6 +121,18 @@ public class TestHelper {
         String expectedText = Tool.convertFileToString(expectedFile);
         String actualText = Tool.convertFileToString(actualFile);
         
+        Assert.assertEquals(actualFile + " should match " + expectedFile, expectedText, actualText);
+    }
+
+    /**
+     * Assert two files have the same contents, but lines can have different order.
+     * @param expectedFile The path to the file with the expected result.
+     * @param actualFile The path to the file with the calculated result.
+     */
+    public void assertEqualUnorderedFiles(String expectedFile, String actualFile) throws IOException {
+        Set<String> expectedText = Tool.convertFileToStringSet(expectedFile);
+        Set<String> actualText = Tool.convertFileToStringSet(actualFile);
+
         Assert.assertEquals(actualFile + " should match " + expectedFile, expectedText, actualText);
     }
 
@@ -140,10 +161,18 @@ public class TestHelper {
     public void deleteFiles(boolean fail, String... files) throws IOException {
         for (String s : files) {
             Path toDelete = fileSystem.getPath(basePath.toString(), s);
-            if (fail) {
-                Files.delete(toDelete);
+            if (!Files.exists(toDelete)) {
+                if (fail) {
+                    throw new IOException(toDelete.toString() + " does not exist!");
+                } else {
+                    return;
+                }
+            }
+
+            if (Files.isDirectory(toDelete)) {
+                Tool.deleteDirectory(toDelete);
             } else {
-                Files.deleteIfExists(toDelete);
+                Files.delete(toDelete);
             }
         }
     }

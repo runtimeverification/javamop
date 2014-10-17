@@ -12,6 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * @author fengchen
@@ -223,6 +226,21 @@ public final class Tool {
      */
     public static String convertFileToString(final String path) throws IOException {
         return convertFileToString(new File(path));
+    }
+
+    /**
+     * Retrieve the contents of the given file and return all lines in a set
+     * @param path The path to the file to read.
+     * @return The contents of the file as a set.
+     * @throws IOException If there is an error in reading the file.
+     */
+    public static Set<String> convertFileToStringSet(final String path) throws IOException {
+        Set<String> contents = new HashSet<String>();
+        Scanner sc = new Scanner(new File(path));
+        while (sc.hasNext()) {
+            contents.add(sc.next());
+        }
+        return contents;
     }
     
     /**
