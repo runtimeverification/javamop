@@ -257,6 +257,7 @@ it in the above AspectJ repository's top level.
 	
 4. Build the AspectJ project using ant. During the build process, an error like "property 'local-properties' not at ..." may occur. In this case, you can go to `build` directory of AspectJ source code, create a copy of the file `sample.local.properties`, and then rename it to `local.properties`. After doing this, this build problem should be solved.
 	
+``N.B.`` This AspectJ patch is intended to be used with `JDK 7`, it is not compatible with `JDK 8` at the current stage.
 
 After generating the new AspectJ libraries and deploying them, you AspectJ compiler should be able to handle the classes with huge methods now.
 
