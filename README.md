@@ -237,14 +237,13 @@ patch (Please backup your AspectJ before applying the patch):
 
 1. Download the stdAJC-patch.zip from [here](link to binary patch)
 
-2. Extract the four jar files from the zip to <path-to-aspectj-home>
-/lib, and replace the library files with the same names.
+2. Extract the four jar files from the above zip to `<path-to-aspectj-home>/lib`, and replace the library files with the same names.
 
 
 ```Option Two: Source Patch```
 
-1. Go to your local AspectJ git repository, and checkout the version 1.7.1
-readme by executing the command below (You may need to pull to get the latest
+1. Go to your local AspectJ git repository, and checkout the version `1.7.1
+readme` by executing the command below (You may need to pull to get the latest
 update before you can perform the operation below):
 
 	``git checkout 6cae3ed57c66d0659492ab1d12bc42cc10ad6f71``
@@ -255,9 +254,12 @@ it in the above AspectJ repository's top level.
 3. Apply the patch by executing:
 
 	``git apply stdAJC-1.7.1.patch``
+	
+4. Build the AspectJ project using ant. During the build process, an error like "property 'local-properties' not at ..." may occur. In this case, you can go to `build` directory of AspectJ source code, create a copy of the file `sample.local.properties`, and then rename it to `local.properties`. After doing this, this build problem should be solved.
+	
 
-After installing the patch, you AspectJ compiler should be able to handle the
-classes with huge methods now.
+After generating the new AspectJ libraries and deploying them, you AspectJ compiler should be able to handle the classes with huge methods now.
+
 ## Contact Information
 
 We welcome your interest in JavaMOP. Your feedback, comments and bug
