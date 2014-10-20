@@ -221,7 +221,7 @@ To run the weaved program, simply type:
 where `Main` is the entry point to the application. Again, make sure that "aspectjrt.jar" and "rvmonitorrt.jar" is in the CLASSPATH.
 Alternatively, you could also attach them as part of the ```-cp``` option when you run the program.
 
-#### Troubleshooting
+### Troubleshooting
 In some extreme cases when you need to monitor classes with huge methods or the
 intended pointcuts are very dense in some method, you may encounter some 
 error while using standard AspectJ compiler to weave code; such as: 
@@ -230,8 +230,18 @@ This kind of error is caused by Java's 64-KB maximum method size constraint.
 If a method of the monitored class has already been very big, 
 then after inserting the advices at the pointcuts, it may violate the
 64-KB-constraint. To address this issue, we provide a patch for the standard
-AspectJ to solve this problem quickly. Please follow the instructions below to install
+AspectJ source code to solve this problem quickly. Please follow the instructions below to install
 the patch (Please backup your AspectJ before applying the patch):
+
+ **Prerequisites for using the patch:**
+ 
+* AspectJ source code.
+
+  If you have not checked out the source code of AspectJ, you can go to [here](http://git.eclipse.org/c/aspectj/org.aspectj.git) to check it out.
+  
+* Ant.
+
+  If you have not installed the program 'ant' yet, then go to [here](http://ant.apache.org/) to download and install the latest 'ant' program.
 
 1. Go to your local AspectJ git repository, and checkout the version `1.7.1
 readme` by executing the command below (You may need to pull to get the latest
@@ -244,9 +254,12 @@ it in the above AspectJ repository's top level.
 
 3. Apply the patch by executing:
 
-	``git apply stdAJC-1.7.1.patch``
+	``git apply --whitespace=nowarn stdAJC-1.7.1.patch``
 	
-4. Build the AspectJ project using ant. During the build process, an error like "property 'local-properties' not at ..." may occur. In this case, you can go to `build` directory of AspectJ source code, create a copy of the file `sample.local.properties`, and then rename that copy to `local.properties`. After doing this, the build problem should be solved.
+4. Build the AspectJ project using ant. You can execute the command ``ant`` at the top level of the AspectJ's repository.
+
+5. Deploy the AspectJ's libraries. If the previous step is successful, there will be a new folder called `aj-build` appearing at the top level of the repository. Add all the jar files in `<path-to-aspectj-repository>/aj-build/dist/tools/lib` to your system's CLASSPATH.
+
 	
 N.B. The updated AspectJ libraries you get by going through the above operations are intended to be used under `JDK 7`, and they are not compatible with `JDK 8` at the current stage.
 
