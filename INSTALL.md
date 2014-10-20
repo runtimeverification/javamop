@@ -10,7 +10,7 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 
 1. JRE
 
- Java Runtime Environment version 7 (http://java.com/en/download/index.jsp)
+ Java Runtime Environment version 7 or higher (http://java.com/en/download/index.jsp)
 
 * To make sure java is installed properly, call `java -version` in a
   terminal.
