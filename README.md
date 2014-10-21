@@ -243,25 +243,22 @@ the patch (Please backup your AspectJ before applying the patch):
 
   If you have not installed the program 'ant' yet, then go to [here](http://ant.apache.org/) to download and install the latest 'ant' program.
 
-1. Go to your local AspectJ git repository, and checkout the version `1.7.1
-readme` by executing the command below (You may need to pull to get the latest
+1. Go to your local AspectJ git repository, and checkout the commit `Fix 443355: interface super references` by executing the command below (You may need to pull to get the latest
 update before you can perform the operation below):
 
-	``git checkout 6cae3ed57c66d0659492ab1d12bc42cc10ad6f71``
+	``git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c``
 
-2. Download the stdAJC-1.7.1.patch from [here](link to source patch) and place
+2. Download the `stdAJC_dddd123.patch` from [here](link to source patch) and place
 it in the above AspectJ repository's top level.
 
 3. Apply the patch by executing:
 
-	``git apply --whitespace=nowarn stdAJC-1.7.1.patch``
+	``git apply --whitespace=nowarn stdAJC_dddd123.patch``
 	
 4. Build the AspectJ project using ant. You can execute the command ``ant`` at the top level of the AspectJ's repository.
 
-5. Deploy the AspectJ's libraries. If the previous step is successful, there will be a new folder called `aj-build` appearing at the top level of the repository. Add all the jar files in `<path-to-aspectj-repository>/aj-build/dist/tools/lib` to your system's CLASSPATH.
+5. Deploy the AspectJ's libraries. If the previous step is successful, there will be a new folder called `aj-build` appearing at the top level of the repository. Add all the jar files in `<path-to-aspectj-repository>/aj-build/dist/tools/lib` to your AspectJ compiler's CLASSPATH.
 
-	
-N.B. The updated AspectJ libraries you get by going through the above operations are intended to be used under `JDK 7`, and they are not compatible with `JDK 8` at the current stage.
 
 After generating the new AspectJ libraries and deploying them, you AspectJ compiler should be able to handle the classes with huge methods now.
 
