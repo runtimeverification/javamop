@@ -72,6 +72,9 @@ public class TestHelper {
     public void testCommand(String relativePath, String expectedFilePrefix, boolean ordered, boolean mustSucceed, String... command) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
+        System.out.println(System.getProperty("java.class.path"));
+        processBuilder.environment().put("CLASSPATH", System.getProperty("java.class.path"));
+
         String actualOutFile = null;
         String testsPrefix;
         String actualErrFile = null;
