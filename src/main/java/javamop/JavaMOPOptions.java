@@ -12,6 +12,9 @@ import java.util.List;
  * Command-line options available for controlling JavaMOP, and through it RV-Monitor.
  */
 public class JavaMOPOptions {
+    // Any stand-alone command line argument which is not required for a '-x' option 
+    // Examples: in `javamop a.mop`, files = [a.mop]
+    //           in ` javamop -n test rvm a.mop, files = [rvm, a.mop]
     @Parameter(description = "Files")
     public List<String> files = new ArrayList<String>();
 
