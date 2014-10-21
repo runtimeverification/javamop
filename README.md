@@ -238,13 +238,7 @@ monitoring multiple properties simultaneously.
 
 Before weaving the code, make sure that you have already installed ajc
 and RV-Monitor. Please refer to INSTALL.md for prerequisites of using
-JavaMOP.
-
-The AspectJ Compiler can be downloaded at
-```http://www.eclipse.org/aspectj/downloads.php```.  Please download
-the version which is higher or equal to 1.7.*. The two jar files can
-be found under ```$aspectj-*.*.*.jar/lib``` and
-```$javamop/target/release/javamop/lib``` respectively.  
+JavaMOP (installing JRE, AJC and RV-Monitor).
 
 To weave the target program with the generated monitoring library, run
 the following command:
