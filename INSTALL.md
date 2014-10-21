@@ -12,7 +12,7 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 
  Java Runtime Environment version 7 or higher (http://java.com/en/download/index.jsp)
 
-* To make sure java is installed properly, call `java -version` in a
+* To make sure java is installed properly, run `java -version` from a
   terminal.
 
 2. AJC
@@ -32,22 +32,23 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 
  The RV-Monitor libraries. (https://www.runtimeverification.com/monitor)
 
- 1. Download RV-Monitor installer from above website and install it to
- your desired directory.
+ 1. Download RV-Monitor installer from the rv-monitor website
+ mentioned above and follow the instructions on that website to
+ install it to your desired directory.
 
  2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to
  your CLASSPATH. In the current version of RV-Monitor, those jars are
- under lib/ inside the directory of RV-Monitor, and are named as
- rv-monitor-0.2-SNAPSHOT.jar and rvmonitorrt-0.2-SNAPSHOT.jar
- respectively.
-
+ in the `lib/` directory which is located inside the directory to
+ which RV-Monitor was installed, and are named,
+ rv-monitor-${version}-SNAPSHOT.jar and
+ rvmonitorrt-${version}-SNAPSHOT.jar, respectively.
 
 ##Install
 
 1. Download JavaMOP's binary from [its website]
 (http://fsl.cs.illinois.edu/index.php/JavaMOP4).
 
-2. Unzip the file in your preferred location.
+2. Unzip the file to your preferred location.
 
 ##Use
 
@@ -55,11 +56,11 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 usage, update your `PATH` environment variable with
 `<path-to-javamop>/bin/`.
 
-For information regarding usage of JavaMOP, please refer to the
-README.md file.
+For information on how to use JavaMOP, please refer to the README.md
+file.
 
 #Troubleshooting
 
-If you experience any problems installing JavaMOP, please open a new
-issue on
+If you experience any problems while installing JavaMOP, please open a
+new issue on
 [Github](https://github.com/runtimeverification/javamop/issues)
