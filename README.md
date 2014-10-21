@@ -134,7 +134,7 @@ follows:
    addition of the ```-javaagent:agent.jar```, as shown above.
 
 
-2. For Maven-based projects which have tests, can simply run ```mvn
+2. For Maven-based projects which have tests, users can simply run ```mvn
    test```, after modifying the individual projects ```pom.xml``` to have
    an element like the following:
 
@@ -177,6 +177,21 @@ follows:
 
    After that, users can run their tests as usual by using ```ant
    ${test_target_name}```.
+
+4. Java agent is easily integrated into IDE like Intellij, Eclipse, etc.
+   
+   For Intellij, you can try the following steps:
+   click "Run" tab -> select "Edit Configurations" tab -> select the application
+   you are running -> select "configuration" tab ->
+   -> enter "javaagent:agent.jar" into VM options part. 
+   
+   For Eclipse, please try:
+   click "Run" tab -> select "Run configurations" tab -> select the application
+   you are running -> select "Arguments" tab -> 
+   -> enter "javaagent:agent.jar" into VM options part.
+   
+   By doing this, you can run or debug the program with the java agent.
+   
 
 #### Putting it all together
 
