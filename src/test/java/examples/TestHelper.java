@@ -55,7 +55,8 @@ public class TestHelper {
      * @param commands  list of arguments describing the system command to be executed.
      * @throws Exception
      */
-    public void testCommand(String expectedFilePrefix, boolean ordered, boolean mustSucceed, String... commands) throws Exception {
+    public void testCommand(String expectedFilePrefix, boolean ordered, boolean mustSucceed,
+                            String... commands) throws Exception {
         testCommand("", expectedFilePrefix, ordered, mustSucceed, commands);
     }
 
@@ -69,9 +70,13 @@ public class TestHelper {
      * @param command  list of arguments describing the system command to be executed.
      * @throws Exception
      */
-    public void testCommand(String relativePath, String expectedFilePrefix, boolean ordered, boolean mustSucceed, String... command) throws Exception {
+    public void testCommand(String relativePath, String expectedFilePrefix, boolean ordered,
+                            boolean mustSucceed, String... command) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
+        processBuilder.environment().put("CLASSPATH", processBuilder.environment().get("CLASSPATH") + File.pathSeparator
+                + System.getProperty("java.class.path"));
+
         String actualOutFile = null;
         String testsPrefix;
         String actualErrFile = null;

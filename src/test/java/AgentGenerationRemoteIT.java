@@ -16,7 +16,12 @@ public class AgentGenerationRemoteIT {
     @Test
     public void testAgentGenerationUsedb() throws Exception {
         helper.deleteFiles(false, "properties", "properties-copy", "agent.jar");
-        String command = "javamop";
+
+       String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command += ".bat";
+        }
+
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
         }
