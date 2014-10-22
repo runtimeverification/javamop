@@ -37,7 +37,7 @@ public class ExamplesIT {
     @Test
     public void testExample() throws Exception {
         final String testName = path.substring(path.lastIndexOf(File.separator)+1);
-        String command = "javamop";
+        String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
         }
