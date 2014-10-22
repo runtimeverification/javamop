@@ -284,45 +284,61 @@ Alternatively, you could also attach them as part of the ```-cp```
 option when you run the program.
 
 ### Troubleshooting
-In some extreme cases when you need to monitor classes with huge methods or the
-intended pointcuts are very dense in some method, you may encounter some 
-error while using standard AspectJ compiler to weave code; such as: 
-`/YourBigClass.java [error] problem generating method YourBigClass.bigMethod: Code size too big: 65613.` 
-This kind of error is caused by Java's 64-KB maximum method size constraint. 
-If a method of the monitored class has already been very big, 
-then after inserting the advices at the pointcuts, it may violate the
-64-KB-constraint. To address this issue, we provide a patch for the standard
-AspectJ source code to solve this problem quickly. Please follow the instructions below to install
-the patch (Please backup your AspectJ before applying the patch):
+
+In some extreme cases when you need to monitor classes with huge
+methods or the intended pointcuts are very dense in some method, you
+may encounter some error while using standard AspectJ compiler to
+weave code; such as: `/YourBigClass.java [error] problem generating
+method YourBigClass.bigMethod: Code size too big: 65613.` This kind of
+error is caused by Java's 64-KB maximum method size constraint.  If a
+method of the monitored class has already been very big, then after
+inserting the advices at the pointcuts, it may violate the
+64-KB-constraint. To address this issue, we provide a patch for the
+standard AspectJ source code to solve this problem quickly. Please
+follow the instructions below to install the patch (Please backup your
+AspectJ before applying the patch):
 
  **Prerequisites for using the patch:**
  
 * AspectJ source code.
 
-  If you have not checked out the source code of AspectJ, you can go to [here](http://git.eclipse.org/c/aspectj/org.aspectj.git) to check it out.
+  If you have not checked out the source code of AspectJ, you can go
+  to [here](http://git.eclipse.org/c/aspectj/org.aspectj.git) to check
+  it out.
   
 * Ant.
 
-  If you have not installed the program 'ant' yet, then go to [here](http://ant.apache.org/) to download and install the latest 'ant' program.
+  If you have not installed the program 'ant' yet, then go to
+  [here](http://ant.apache.org/) to download and install the latest
+  'ant' program.
 
-1. Go to your local AspectJ git repository, and checkout the commit `Fix 443355: interface super references` by executing the command below (You may need to pull to get the latest
-update before you can perform the operation below):
+1. Go to your local AspectJ git repository, and checkout the commit
+`Fix 443355: interface super references` by executing the command
+below (You may need to pull to get the latest update before you can
+perform the operation below):
 
 	``git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c``
 
-2. Download the `stdAJC_dddd123.patch` from [here](link to source patch) and place
-it in the above AspectJ repository's top level.
+2. Download the `stdAJC_dddd123.patch` from [here](link to source
+patch) and place it in the above AspectJ repository's top level.
 
 3. Apply the patch by executing:
 
 	``git apply --whitespace=nowarn stdAJC_dddd123.patch``
 	
-4. Build the AspectJ project using ant. You can execute the command ``ant`` at the top level of the AspectJ's repository.
+4. Build the AspectJ project using ant. You can execute the command
+``ant`` at the top level of the AspectJ's repository.
 
-5. Deploy the AspectJ's libraries. If the previous step is successful, there will be a new folder called `aj-build` appearing at the top level of the repository. Add all the jar files in `<path-to-aspectj-repository>/aj-build/dist/tools/lib` to your AspectJ compiler's CLASSPATH.
+5. Deploy the AspectJ's libraries. If the previous step is successful,
+there will be a new folder called `aj-build` appearing at the top
+level of the repository. Add all the jar files in
+`<path-to-aspectj-repository>/aj-build/dist/tools/lib` to your AspectJ
+compiler's CLASSPATH.
 
 
-After generating the new AspectJ libraries and deploying them, you AspectJ compiler should be able to handle the classes with huge methods now.
+After generating the new AspectJ libraries and deploying them, you
+AspectJ compiler should be able to handle the classes with huge
+methods now.
 
 ## Contact Information
 
