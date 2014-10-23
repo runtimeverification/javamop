@@ -288,8 +288,6 @@ option, please make sure that aspectjrt.jar and rvmonitorrt.jar
 remain on the path. We recommend you to do it as
 `-cp "<dependencies>:$CLASSPATH"`
 (or `-cp <dependencies>;%CLASSPATH%` in Windows).
-Also note that you do not need to do this if you use Java agent
-mode in JavaMOP since the agent is self contained.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
@@ -300,7 +298,8 @@ where `Main` is the entry point to the application.
 
 **Note:** Again, make sure that aspectjrt.jar and rvmonitorrt.jar
 are in the class path specially when you use `-cp` (or `-classpath`)
-option.
+option. Also note that you do not need to do this if you use Java agent
+mode in JavaMOP since the agent is self contained.
 
 ### Troubleshooting
 
