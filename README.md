@@ -212,7 +212,7 @@ Note that running ```javamop -agent -n agent rvm/``` as above will
 print the specifications used in building the agent, and give a
 "agent.jar is generated." message at the end, if everything goes well.
 
-Also, running ```java -javaagent:agent.jar -cp . SafeMapIterator_1```
+Also, running ```java -javaagent:agent.jar SafeMapIterator_1```
 as above will run the specified java program and, if everything works,
 will print out the following violation messages:
 
