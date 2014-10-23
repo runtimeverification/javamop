@@ -195,7 +195,7 @@ run as follows:
    By doing this, you can run or debug the program with the java agent.
    
 
-#### Putting it all together
+#### Running JavaMOP examples
 
 To build a java agent and run it using some of the examples that ship
 with JavaMOP, run the following commands from the same directory as
