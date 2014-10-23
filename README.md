@@ -33,7 +33,7 @@ the src/README file.
 
 Before using JavaMOP, you should specify the properties you want
 to be monitored. The specifications must be stored in files with 
-`.mop` extenstion (e.g. `HasNext.mop`). You can either write your own
+`.mop` extension (e.g. `HasNext.mop`). You can either write your own
 properties (for more information, please refer to [JavaMOP syntax]
 (http://fsl.cs.illinois.edu/index.php/JavaMOP4_Syntax)
  page), or use the existing ones (we have formalized some properties from
@@ -92,7 +92,7 @@ choose to write their own properties or use the properties that we
 have already formalized from Java API. If users decide to write their
 own properties, they need to declare those properties to be in
 `package mop;` This is because JavaMOP is using some internal helper
-classes inside that package in the process. (It is not neccessary for
+classes inside that package in the process. (It is not necessary for
 the property file(s) to be physically placed inside a directory called
 "mop"; all that is required is to make the statement, "package mop;"
 to be the first line in the property file).
@@ -281,15 +281,27 @@ directory>```.
 
 (For more information on ajc options, type ```ajc -help``` for help)
 
-#### Runing the Weaved Code
+**Note:** aspectjrt.jar and rvmonitorrt.jar must be on the
+class path when you execute the above command. If you have additional
+dependencies and you want to add them with `-cp` (or `-classpath`)
+option, please make sure that aspectjrt.jar and rvmonitorrt.jar
+remain on the path. We recommend you to do it as
+`-cp "<dependencies>:$CLASSPATH"`
+(or `-cp <dependencies>;%CLASSPATH%` in Windows).
+
+Also note that you do not need to do this if you use Java agent
+mode in JavaMOP since the agent is self contained.
+
+#### Running the Weaved Code
 To run the weaved program, simply type:
 
 ```java Main```,
 
-where `Main` is the entry point to the application. Again, make sure
-that "aspectjrt.jar" and "rvmonitorrt.jar" are in the CLASSPATH.
-Alternatively, you could also attach them as part of the ```-cp```
-option when you run the program.
+where `Main` is the entry point to the application.
+
+**Note:** Again, make sure that aspectjrt.jar and rvmonitorrt.jar
+are in the class path specially when you use `-cp` (or `-classpath`)
+option.
 
 ### Troubleshooting
 
