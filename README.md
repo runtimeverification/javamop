@@ -129,7 +129,7 @@ run as follows:
 1. For projects with a well-defined entry point such as a Main class,
    first compile the source code and run the following command:
 
-   ```java -javaagent:agent.jar -cp .:[other dependencies] Main```
+   ```java -javaagent:agent.jar Main```
 
    In other words, you will need to run same command as you would
    normally use for running your java application, but with the
@@ -203,12 +203,12 @@ this file:
 
 ```
 cd examples/agent/many
-javamop -agent -n agent rvm
+javamop -agent -n agent rvm/
 javac SafeMapIterator_1.java
-java -javaagent:agent.jar -cp . SafeMapIterator_1
+java -javaagent:agent.jar SafeMapIterator_1
 ```
 
-Note that running ```javamop -agent -n agent rvm``` as above will
+Note that running ```javamop -agent -n agent rvm/``` as above will
 print the specifications used in building the agent, and give a
 "agent.jar is generated." message at the end, if everything goes well.
 
@@ -258,8 +258,8 @@ JavaMOP (installing JRE, AJC and RV-Monitor).
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6 -cp .:[other dependencies] [-d <target directory>]
-$path-to-aj-file $path-to-java-file```
+```ajc -1.6  [-d <target directory>]
+<path-to-aj-file> <path-to-java-file>```
 
 ```-1.6``` indicates the source code compliance level. ```[-d <target
 directory>]``` specifies the directory to which the weaved code will
@@ -276,7 +276,7 @@ directory>```.
 #### Runing the Weaved Code
 To run the weaved program, simply type:
 
-```java -cp .:[other dependencies] Main```,
+```java Main```,
 
 where `Main` is the entry point to the application. Again, make sure
 that "aspectjrt.jar" and "rvmonitorrt.jar" are in the CLASSPATH.
