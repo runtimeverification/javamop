@@ -31,6 +31,14 @@ the src/README file.
 
 ## Usage
 
+Before using JavaMOP, you should specify the properties you want
+to be monitored. The specifications must be stored in files with 
+`.mop` extenstion (e.g. `HasNext.mop`). You can either write your own
+properties (for more information, please refer to [JavaMOP syntax]
+(http://fsl.cs.illinois.edu/index.php/JavaMOP4_Syntax)
+ page), or use the existing ones (we have formalized some properties from
+the Java API).
+
 JavaMOP currently supports two modes of use:
 
 1. Java Agent
@@ -195,7 +203,7 @@ run as follows:
    By doing this, you can run or debug the program with the java agent.
    
 
-#### Running JavaMOP examples
+#### JavaMOP agent generation examples
 
 To build a java agent and run it using some of the examples that ship
 with JavaMOP, run the following commands from the same directory as
