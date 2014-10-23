@@ -40,8 +40,8 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
  your CLASSPATH. In the current version of RV-Monitor, those jars are
  in the `lib/` directory which is located inside the directory to
  which RV-Monitor was installed, and are named,
- rv-monitor-${version}-SNAPSHOT.jar and
- rvmonitorrt-${version}-SNAPSHOT.jar, respectively.
+ rv-monitor-${version}.jar and
+ rvmonitorrt-${version}.jar, respectively.
 
 ##Install
 
