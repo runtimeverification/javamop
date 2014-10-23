@@ -286,8 +286,7 @@ class path when you execute the above command. If you have additional
 dependencies and you want to add them with `-cp` (or `-classpath`)
 option, please make sure that aspectjrt.jar and rvmonitorrt.jar
 remain on the path. We recommend you to do it as
-`-cp "<dependencies>:$CLASSPATH"`
-(or `-cp <dependencies>;%CLASSPATH%` in Windows).
+`-cp "<dependencies>:$CLASSPATH"`.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
