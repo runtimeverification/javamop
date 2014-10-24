@@ -28,14 +28,14 @@
     </repositories>
     <distributionManagement>
         <repository>
-            <id>javamop</id>
+            <id>runtime-verification</id>
             <name>JavaMop Repository</name>
             <url>http://office.runtimeverification.com:8888/repository/internal</url>
        </repository>
        <snapshotRepository>
-           <id>javamop.snapshots</id>
-           <name>JavaMop Snapshot Repository</name>
-           <url>http://office.runtimeverification.com:8888/repository/snapshots</url>
+            <id>runtime-verification.snapshots</id>
+            <name>JavaMop Snapshot Repository</name>
+            <url>http://office.runtimeverification.com:8888/repository/snapshots</url>
        </snapshotRepository>
     </distributionManagement>
     <dependencies>
