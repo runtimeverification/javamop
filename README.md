@@ -326,12 +326,22 @@ weave code; as follows:
 This error is caused by Java's 64KB maximum method size constraint.
 If a method of the monitored class is already too big, then, after
 inserting the advice at the pointcuts, it may exceed the 64KB
-limit. To address this issue, we provide a patch for the standard
-AspectJ source code to solve this problem. Please follow the
-instructions below to install the patch (Please backup your AspectJ
-before applying this patch):
+limit.
 
- **Prerequisites for using the patch:**
+If you have access to the source code (.java files) of the program
+that you want to monitor, then the easiest way to solve this problem
+is weaving the source code (.java files) instead of weaving the
+compiled code (.class). The AspectJ compiler optimize the source code
+to make it more space-efficient so that it will not violate the method
+size constraint during weaving.
+
+In case you encounter such problem, but either you do not have access to
+the source code, or, you prefer to weave using the compiled code, 
+then we also provide a patch for the standard AspectJ source code 
+to solve this problem. Please follow the instructions below to install the
+patch (Please backup your AspectJ before applying the patch):
+
+**Prerequisites for using the patch:**
  
 * AspectJ source code.
 
@@ -352,7 +362,8 @@ perform the operation below):
 
 	``git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c``
 
-2. Download the `stdAJC_dddd123.patch.zip` from [here](http://fsl.cs.illinois.edu/index.php/File:StdAJC_dddd123.patch.zip),
+2. Download the `stdAJC_dddd123.patch.zip` from 
+[here](http://fsl.cs.illinois.edu/index.php/File:StdAJC_dddd123.patch.zip),
 extract `stdAJC_dddd123.patch` from the zip, and place the patch file
 in the above AspectJ repository's top level.
 
@@ -373,8 +384,8 @@ After generating the new AspectJ libraries and deploying them, your
 AspectJ compiler should now be able to handle the classes with huge
 methods.
 
-####Complete list for troubleshooting
-If your problem is not listed in the above section, you can go to
+####Complete list for troubleshooting If your problem is not listed in
+the above section, you can go to
 [here](http://fsl.cs.illinois.edu/index.php/JavaMOP4_Troubleshooting)
 for a complete list of common issues and their solutions.
 
