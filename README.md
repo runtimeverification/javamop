@@ -293,19 +293,21 @@ method YourBigClass.bigMethod: Code size too big: 65613.` This kind of
 error is caused by Java's 64-KB maximum method size constraint.  If a
 method of the monitored class has already been very big, then after
 inserting the advices at the pointcuts, it may violate the
-64-KB-constraint. This kind of problem usually happens when you try to
-weave the bytecode (.class files) and aspects. If you have access to the 
-source code (.java files) of the program that you want to monitor, then
-the easiest way to solve this problem is weaving the source code (.java files)
-instead of weaving the compiled code (.class). AspectJ compiler will do some
-optimization to the source code to make it more space-efficient so that 
-it will not violate the method size constraint during weaving.
+64-KB-constraint. This kind of error has nothing to do with JavaMOP,
+it is caused by AspectJ's limitation. This kind of problem often happens
+when you try to weave the bytecode (.class files) and aspects. If you have
+access to the source code (.java files) of the program that you want to
+monitor, then the easiest way that is likely to solve this problem is 
+weaving the source code (.java files) instead of weaving the compiled code
+(.class files). AspectJ compiler will do some optimization to the source
+code to make it more space-efficient so that the method size may reduce to
+the safe zone.
 
 In case you encounter such problem, but either you do not have access to
-the source code, or, you prefer to weave using the compiled code, 
-then we also provide a patch for the standard AspectJ source code 
-to solve this problem. Please follow the instructions below to install the
-patch (Please backup your AspectJ before applying the patch):
+the source code, or, the above method does not work, then we also provide
+a patch for the standard AspectJ source code to solve this problem. 
+Please follow the instructions below to install the patch (Please backup
+your AspectJ before applying the patch):
 
  **Prerequisites for using the patch:**
  
