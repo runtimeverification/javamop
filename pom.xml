@@ -124,7 +124,7 @@
                                 <format>tar.gz</format>
                                 <format>zip</format>
                             </formats>
-                            <finalName>javamop-${version}</finalName>
+                            <finalName>javamop</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <outputDirectory>${project.build.directory}/release</outputDirectory>
                         </configuration>
