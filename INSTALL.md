@@ -37,10 +37,9 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
  install it to your desired directory.
 
  2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to
- your CLASSPATH. In the current version of RV-Monitor, those jars are
- in the `lib/` directory which is located inside the directory to
- which RV-Monitor was installed, and are named rvmonitor.jar and 
- rvmonitorrt.jar, respectively.
+ your CLASSPATH. Those jars are in the `lib/` directory which is 
+ located inside the directory to which RV-Monitor was installed, 
+ and are named rvmonitor.jar and rvmonitorrt.jar, respectively.
 
 ##Install
 
