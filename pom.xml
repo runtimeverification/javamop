@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <url>http://www.runtimeverification.com</url>
     <groupId>javamop</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>4.0</version>
     <artifactId>javamop</artifactId>
     <name>javamop</name>
     <scm>
@@ -26,6 +26,18 @@
             <releases><enabled>false</enabled></releases>
         </repository>
     </repositories>
+    <distributionManagement>
+        <repository>
+            <id>javamop</id>
+            <name>JavaMop Repository</name>
+            <url>http://office.runtimeverification.com:8888/repository/internal</url>
+       </repository>
+       <snapshotRepository>
+           <id>javamop.snapshots</id>
+           <name>JavaMop Snapshot Repository</name>
+           <url>http://office.runtimeverification.com:8888/repository/snapshots</url>
+       </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -112,7 +124,7 @@
                                 <format>tar.gz</format>
                                 <format>zip</format>
                             </formats>
-                            <finalName>javamop</finalName>
+                            <finalName>javamop-${version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <outputDirectory>${project.build.directory}/release</outputDirectory>
                         </configuration>
