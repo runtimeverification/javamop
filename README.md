@@ -24,8 +24,8 @@ JavaMOP is an instance of MOP for Java.
 ## Install
 
 Refer to the INSTALL.md file for installing JavaMOP from the [released
-zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4). To build
-JavaMOP from sources, please download the [source
+zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4). 
+To build JavaMOP from sources, please download the [source
 code](https://github.com/runtimeverification/javamop), and refer to
 the src/README file.
 
@@ -281,12 +281,15 @@ directory>```.
 
 (For more information on ajc options, type ```ajc -help``` for help)
 
-**Note:** aspectjrt.jar and rvmonitorrt.jar must be on the
-class path when you execute the above command. If you have additional
-dependencies and you want to add them with `-cp` (or `-classpath`)
-option, please make sure that aspectjrt.jar and rvmonitorrt.jar
-remain on the path. We recommend you to do it as
-`-cp "<dependencies>:$CLASSPATH"`.
+**Note:** aspectjrt.jar, rvmonitorrt.jar, and some other files 
+(please see Prerequisites in INSTALL.md for a comprehensive list)
+must be on the java class path.
+If you have additional dependencies and you want to add them with 
+`-cp` (or `-classpath`) option, please make sure that the files mentioned
+above remain on the path.
+We recommend you to do it as
+`-cp "<dependencies>:$CLASSPATH"` assuming you have followed instructions
+in INSTALL.md while installing JavaMOP.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
@@ -295,9 +298,10 @@ To run the weaved program, simply type:
 
 where `Main` is the entry point to the application.
 
-**Note:** Again, make sure that aspectjrt.jar and rvmonitorrt.jar
-are in the class path specially when you use `-cp` (or `-classpath`)
-option. Also note that you do not need to do this if you use Java agent
+**Note:** Again, make sure that aspectjrt.jar, rvmonitorrt.jar, and ...
+are in the java class path specially when you use `-cp` (or `-classpath`)
+option.
+Also note that you do not need to do this if you use Java agent
 mode in JavaMOP since the agent is self contained.
 
 ### Troubleshooting
