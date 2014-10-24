@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <url>http://www.runtimeverification.com</url>
     <groupId>javamop</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>4.0</version>
     <artifactId>javamop</artifactId>
     <name>javamop</name>
     <scm>
