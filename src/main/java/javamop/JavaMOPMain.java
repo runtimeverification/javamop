@@ -113,12 +113,14 @@ public final class JavaMOPMain {
         if (options.aspectname == null) {
             options.aspectname = Tool.getFileName(file.getAbsolutePath());
         }
-        
-        MOPProcessor processor = new MOPProcessor(options.aspectname);
-        
-        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
 
-        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX);
+        MOPProcessor processor = new MOPProcessor(options.aspectname);
+
+        // We shouldn't pass the -n argument to rv-monitor, because the input file to rv-monitor
+        // is the .mop file, with suffix replaced by .rvm
+        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX, null);
+
+        writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX, options.aspectname);
     }
     
     /**
@@ -141,7 +143,7 @@ public final class JavaMOPMain {
                 aspectName = Tool.getFileName(specFiles.get(0).getAbsolutePath());
             } else {
                 int suffixNumber = 0;
-                // generate auto name like 'MultiMonitorApsect.aj'
+                // generate auto name like 'MultiMonitorAspect.aj'
                 File aspectFile;
                 do{
                     suffixNumber++;
@@ -152,13 +154,15 @@ public final class JavaMOPMain {
             }
             options.aspectname = aspectName;
         }
+
         MOPProcessor processor = new MOPProcessor(aspectName);
         MOPNameSpace.init();
         ArrayList<MOPSpecFile> specs = new ArrayList<MOPSpecFile>();
         for(File file : specFiles){
             //System.out.println(file);
             MOPSpecFile spec =  SpecExtractor.parse(file);
-            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX);
+            // -n option does not make sense when input are multiple files
+            writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX, null);
             specs.add(spec);
         }
         MOPSpecFile combinedSpec = FileCombiner.combineSpecFiles(specs);
@@ -201,15 +205,17 @@ public final class JavaMOPMain {
      * @param content The text to write into the file.
      * @param location The file to write into.
      * @param suffix The new file extension to use for the file.
+     * @param name Name for the generated file. If null, use the same name as the input file
      * @throws MOPException If something goes wrong in generating the file.
      */
-    protected static void writeFile(String content, String location, String suffix)
+    protected static void writeFile(String content, String location, String suffix, String name)
             throws MOPException {
         if (content == null || content.length() == 0)
             return;
 
         int i = location.lastIndexOf(File.separator);
-        String filePath = location.substring(0, i + 1) + Tool.getFileName(location) + suffix;
+        String filePath = location.substring(0, i + 1) +
+                (name == null ? Tool.getFileName(location) : name) + suffix;
         FileWriter f = null;
         try {
             f = new FileWriter(filePath);
@@ -416,7 +422,7 @@ public final class JavaMOPMain {
         }
 
         // add default name that rv-monitor will use. This is needed as we have
-        // now changed the deafult aspectname when the user doesn't pass in a name
+        // now changed the default aspectname when the user doesn't pass in a name
         rvArgs.add("-n");
         rvArgs.add(options.aspectname);
         
