@@ -266,12 +266,14 @@ JavaMOP (installing JRE, AJC and RV-Monitor).
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6  [-d <target directory>]
+```ajc -1.6  -d <target directory>
 <path-to-aj-file> <path-to-java-file>```
 
-```-1.6``` indicates the source code compliance level. ```[-d <target
-directory>]``` specifies the directory to which the weaved code will
-be stored. The last two parameters refer to the path to the generated
+```-1.6``` indicates the source code compliance level. ```-d <target
+directory>``` specifies the directory to which the weaved code will
+be stored. Note that you must specify the output directory explicitly
+so that ajc can put the binary code in the right place.
+The last two parameters refer to the path to the generated
 instrumentation file and the path to the target program (i.e the
 program to be weaved) respectively. Given this command, ajc will
 instrument and compile the original java file and store the generated
