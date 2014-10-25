@@ -272,13 +272,15 @@ the following command:
 ```-1.6``` indicates the source code compliance level. ```-d <target
 directory>``` specifies the directory to which the weaved code will
 be stored. Note that you must specify the output directory explicitly
-so that ajc can put the binary code in the right place.
-The last two parameters refer to the path to the generated
-instrumentation file and the path to the target program (i.e the
-program to be weaved) respectively. Given this command, ajc will
-instrument and compile the original java file and store the generated
-.class file in ```<target directory>```. If there is no error
-reported, you can directly run the weaved code in the ```<target
+so that ajc can put the binary code in the right place. Without ```-d```, 
+ajc will output all the bytecode files in the current directory without 
+keeping their package layout. You can simply use  ```-d .``` to output
+binary code in the current directory. The last two parameters refer
+to the path to the generated instrumentation file and the path to the
+target program (i.e the program to be weaved) respectively. Given this
+command, ajc will instrument and compile the original java file and store
+the generated .class file in ```<target directory>```. If there is no
+error reported, you can directly run the weaved code in the ```<target
 directory>```.
 
 (For more information on ajc options, type ```ajc -help``` for help)
