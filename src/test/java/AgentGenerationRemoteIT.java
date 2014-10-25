@@ -22,9 +22,6 @@ public class AgentGenerationRemoteIT {
             command += ".bat";
         }
 
-        if (SystemUtils.IS_OS_WINDOWS) {
-            command += ".bat";
-        }
         try {
             helper.testCommand("usedb", true, true, command, "-agent -n agent -usedb");
         } finally {
