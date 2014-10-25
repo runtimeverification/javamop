@@ -64,22 +64,6 @@ public final class AgentGenerator {
         final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
 
-        // Step 10: Compile the generated Java File (allRuntimeMonitor.java)
-        String generatedJavaFileName = aspectname + "RuntimeMonitor.java";
-        if (JavaMOPMain.options.usedb) {
-            File generatedJava = new File(outputDir.getName() + File.separator
-                    + generatedJavaFileName);
-            String lines = FileUtils.readFileToString(generatedJava, Charset.defaultCharset());
-            FileUtils.write(generatedJava, lines);
-        }
-
-        final int javacReturn = runCommandDir(outputDir, verbose, "javac", "-d", ".",
-                "-cp", baseClasspath, generatedJavaFileName);
-        if (javacReturn != 0) {
-            System.err.println("(javac) Failed to compile agent.");
-            return;
-        }
-
         if (baseAspect == null) {
             baseAspect = new File(outputDir, "BaseAspect.aj");
         }

@@ -22,12 +22,11 @@ public class AgentGenerationRemoteIT {
             command += ".bat";
         }
 
-        if (SystemUtils.IS_OS_WINDOWS) {
-            command += ".bat";
+        try {
+            helper.testCommand("usedb", true, true, command, "-agent -n agent -usedb");
+        } finally {
+            helper.deleteFiles(true, "properties", "properties-copy", "agent.jar");
+            helper.deleteFiles(true, "usedb.actual.out", "usedb.actual.err");
         }
-        helper.testCommand("usedb", true, true, command, "-agent -n agent -usedb");
-
-        helper.deleteFiles(true, "properties", "properties-copy", "agent.jar");
-        helper.deleteFiles(true, "usedb.actual.out", "usedb.actual.err");
     }
 }
