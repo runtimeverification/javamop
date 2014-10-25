@@ -73,12 +73,12 @@ public final class AgentGenerator {
             FileUtils.write(generatedJava, lines);
         }
 
-        final int javacReturn = runCommandDir(outputDir, verbose, "javac", "-d", ".",
-                "-cp", baseClasspath, generatedJavaFileName);
-        if (javacReturn != 0) {
-            System.err.println("(javac) Failed to compile agent.");
-            return;
-        }
+//        final int javacReturn = runCommandDir(outputDir, verbose, "javac", "-d", ".",
+//                "-cp", baseClasspath, generatedJavaFileName);
+//        if (javacReturn != 0) {
+//            System.err.println("(javac) Failed to compile agent.");
+//            return;
+//        }
 
         if (baseAspect == null) {
             baseAspect = new File(outputDir, "BaseAspect.aj");

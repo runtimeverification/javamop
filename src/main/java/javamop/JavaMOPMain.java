@@ -422,14 +422,6 @@ public final class JavaMOPMain {
         
         Main.main(rvArgs.toArray(new String[0]));
 
-        if(options.generateAgent) {
-            try {
-                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect, options.verbose);
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-
         // Call FileCombiner here to combine these two
         for (String[] filePair : listFilePairs) {
             FileCombiner.combineAJFiles(filePair);
@@ -446,7 +438,15 @@ public final class JavaMOPMain {
                 e.printStackTrace();
             }
         }
-        
+
+        if(options.generateAgent) {
+            try {
+                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect, options.verbose);
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
         for (String rvmFilePath : listRVMFiles) {
             File rvmFile = new File(rvmFilePath);
             try {
