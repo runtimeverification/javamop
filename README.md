@@ -203,7 +203,7 @@ run as follows:
    By doing this, you can run or debug the program with the java agent.
    
 
-#### JavaMOP agent generation examples
+#### Agent generation examples
 
 To build a java agent and run it using some of the examples that ship
 with JavaMOP, run the following commands from the same directory as
@@ -269,19 +269,20 @@ the following command:
 ```ajc -1.6  -d <target directory>
 <path-to-aj-file> <path-to-java-file>```
 
-```-1.6``` indicates the source code compliance level. ```-d <target
-directory>``` specifies the directory to which the weaved code will
-be stored. Note that you must specify the output directory explicitly
-so that ajc can put the binary code in the right place. Without ```-d```, 
-ajc will output all the bytecode files in the current directory without 
-keeping their package layout. You can simply use  ```-d .``` to output
-binary code in the current directory. The last two parameters refer
+```-1.6``` indicates the output bytecode version. ```-d <target
+directory>``` specifies the directory to which the weaved code will be
+stored. Note that you must specify the output directory explicitly so
+that ajc can put the binary code in the right place. Without ```-d```,
+ajc will output all the bytecode files in the current directory,
+failing to keep the necessary package layout. You can simply use ```-d
+.``` to output binary code in the current
+directory. ```<path-to-aj-file>``` and ```<path-to-java-file>``` refer
 to the path to the generated instrumentation file and the path to the
 target program (i.e the program to be weaved) respectively. Given this
-command, ajc will instrument and compile the original java file and store
-the generated .class file in ```<target directory>```. If there is no
-error reported, you can directly run the weaved code in the ```<target
-directory>```.
+command, ajc will instrument and compile the original java file and
+store the generated .class file in ```<target directory>```. If there
+is no error reported, you can directly run the weaved code in the
+```<target directory>```.
 
 (For more information on ajc options, type ```ajc -help``` for help)
 
@@ -290,10 +291,7 @@ directory>```.
 must be on the java class path.
 If you have additional dependencies and you want to add them with 
 `-cp` (or `-classpath`) option, please make sure that the files mentioned
-above remain on the path.
-We recommend you to do it as
-`-cp "<dependencies>:$CLASSPATH"` assuming you have followed instructions
-in INSTALL.md while installing JavaMOP.
+above remain on the classpath.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
@@ -302,11 +300,9 @@ To run the weaved program, simply type:
 
 where `Main` is the entry point to the application.
 
-**Note:** Again, make sure that aspectjrt.jar, rvmonitorrt.jar, and ...
-are in the java class path specially when you use `-cp` (or `-classpath`)
-option.
-Also note that you do not need to do this if you use Java agent
-mode in JavaMOP since the agent is self contained.
+**Note:** Again, make sure that aspectjrt.jar, rvmonitorrt.jar and
+other pre-requisites jars are in the java class path specially when
+you use `-cp` (or `-classpath`) option.
 
 ### Troubleshooting
 
