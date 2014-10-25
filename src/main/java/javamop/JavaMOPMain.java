@@ -116,8 +116,10 @@ public final class JavaMOPMain {
 
         MOPProcessor processor = new MOPProcessor(options.aspectname);
 
-        // We shouldn't pass the -n argument to rv-monitor, because the input file to rv-monitor
-        // is the .mop file, with suffix replaced by .rvm
+        // We shouldn't use the name bound to the -n option for renaming the the .mop 
+        // file to .rvm before passing to rv-monitor.
+        // the input file to rv-monitor is the .mop file, whose extension has been replaced by .rvm
+        // NOTE: If we separate rv-monitor from JavaMOP completely, we neeed to revisit this.
         writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX, null);
 
         writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX, options.aspectname);
