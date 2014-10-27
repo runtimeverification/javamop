@@ -370,10 +370,9 @@ perform the operation below):
 
 	``git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c``
 
-2. Download the `stdAJC_dddd123.patch.zip` from 
-[here](http://fsl.cs.illinois.edu/index.php/File:StdAJC_dddd123.patch.zip),
-extract `stdAJC_dddd123.patch` from the zip, and place the patch file
-in the above AspectJ repository's top level.
+2. Download the `stdAJC_dddd123.patch` from 
+[here](http://fsl.cs.illinois.edu/downloads/stdAJC_dddd123.patch),
+and place the patch file in the above AspectJ repository's top level.
 
 3. Apply the patch by executing:
 
