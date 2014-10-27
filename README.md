@@ -79,11 +79,11 @@ to issuing the command above. ```<properties>``` refers to one or more
 property (i.e. *.mop) files, or a directory containing such property
 files.
 
-If the user specifies the [-n agentName] option, the previous command
-will create <agentName>.jar in the same directory as that from which
-the command is run. If a [-n agentName] is not specified and there is
+If the user specifies the ```[-n agentName]``` option, the previous command
+will create ```<agentName>.jar``` in the same directory as that from which
+the command is run. If a ```[-n agentName]``` is not specified and there is
 just one specification, then an agent with the same name as the
-specification will be generated. Finally, if [-n agentName] is not
+specification will be generated. Finally, if ```[-n agentName]``` is not
 specified and there are multiple specification files, then an agent
 called "JavaMOPAgent_1.jar" will be generated.
 
@@ -128,7 +128,7 @@ reader has stored the properties. It may also be educational to open
 one or two of the ```.mop``` files to learn how properties are
 written.
 
-#### Using A Java Agent
+#### Using a Java Agent
 
 Assuming that an agent called "JavaMOPAgent.jar" has been built using
 any of the commands from the previous section, such an agent may be
@@ -200,7 +200,7 @@ run as follows:
    you are running -> select "Arguments" tab -> 
    enter "javaagent:agent.jar" into VM options part.
    
-   By doing this, you can run or debug the program with the java agent.
+   By doing this, you can run or debug programs with the java agent.
    
 
 #### Agent generation examples
