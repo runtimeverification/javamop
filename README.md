@@ -29,10 +29,10 @@ To build JavaMOP from sources, please download the [source
 code](https://github.com/runtimeverification/javamop), and refer to
 the src/README file.
 
-**Note:** The rest of this text assumes you 
+**Note:** The rest of this text assumes that you 
 have followed all the instructions in INSTALL.md 
 and updated your CLASSPATH and PATH environment
-varibales according to Prerequisites section in that file. 
+varibales according to the Prerequisites section in that file. 
 In addition, please make sure the dependencies mentioned there
 remain on the class path even if you modify or overwrite the path.
 
