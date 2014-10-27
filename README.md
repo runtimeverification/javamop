@@ -362,7 +362,7 @@ patch) and place it in the above AspectJ repository's top level.
 4. Build the AspectJ project using ant. You can execute the command
 ``ant`` at the top level of the AspectJ repository.
 
-5. Deploy the Aspect's libraries. If the previous step is successful,
+5. Deploy the AspectJ libraries. If the previous step is successful,
 there will be a new folder called `aj-build` appearing at the top
 level of the repository. Add all the jar files in
 `<path-to-AspectJ-repository>/aj-build/dist/tools/lib` to your
