@@ -392,8 +392,9 @@ After generating the new AspectJ libraries and deploying them, your
 AspectJ compiler should now be able to handle the classes with huge
 methods.
 
-####Complete list for troubleshooting If your problem is not listed in
-the above section, you can go to
+####Complete list for troubleshooting 
+
+If your problem is not listed in the above section, you can go to
 [here](http://fsl.cs.illinois.edu/index.php/JavaMOP4_Troubleshooting)
 for a complete list of common issues and their solutions.
 
