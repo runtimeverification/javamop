@@ -24,12 +24,23 @@ JavaMOP is an instance of MOP for Java.
 ## Install
 
 Refer to the INSTALL.md file for installing JavaMOP from the [released
-zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4). To build
+zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4).  To build
 JavaMOP from sources, please download the [source
 code](https://github.com/runtimeverification/javamop), and refer to
 the src/README file.
 
+**Note:** The rest of this document assumes that you have followed all
+the instructions in INSTALL.md and updated your CLASSPATH and PATH
+environment variables according to the Prerequisites section in that
+file.  In addition, please make sure the dependencies mentioned in
+INSTALL.md remain on the CLASSPATH whenever you modify or overwrite
+the CLASSPATH.
+
 ## Usage
+
+Before using JavaMOP, you should specify the properties you want to be
+monitored. The specifications must be stored in files with `.mop`
+extension (e.g. `HasNext.mop`).
 
 JavaMOP currently supports two modes of use:
 
@@ -56,7 +67,7 @@ from a terminal at any time: `javamop -h`)
 
 #### Building a Java Agent
 
-With this mode, users may build Java agents for run-time
+With this mode, users may build Java agents for runtime
 instrumentation of their applications. Once JavaMOP is correctly
 installed (see the INSTALL.md file in this directory), this may be
 achieved by running the following command:
@@ -71,11 +82,11 @@ to issuing the command above. ```<properties>``` refers to one or more
 property (i.e. *.mop) files, or a directory containing such property
 files.
 
-If the user specifies the [-n agentName] option, the previous command
-will create <agentName>.jar in the same directory as that from which
-the command is run. If a [-n agentName] is not specified and there is
+If the user specifies the ```[-n agentName]``` option, the previous command
+will create ```<agentName>.jar``` in the same directory as that from which
+the command is run. If a ```[-n agentName]``` is not specified and there is
 just one specification, then an agent with the same name as the
-specification will be generated. Finally, if [-n agentName] is not
+specification will be generated. Finally, if ```[-n agentName]``` is not
 specified and there are multiple specification files, then an agent
 called "JavaMOPAgent_1.jar" will be generated.
 
@@ -84,10 +95,12 @@ choose to write their own properties or use the properties that we
 have already formalized from Java API. If users decide to write their
 own properties, they need to declare those properties to be in
 `package mop;` This is because JavaMOP is using some internal helper
-classes inside that package in the process. (It is not neccessary for
+classes inside that package in the process. (It is not necessary for
 the property file(s) to be physically placed inside a directory called
 "mop"; all that is required is to make the statement, "package mop;"
-to be the first line in the property file).
+to be the first line in the property file). Please refer to [JavaMOP
+syntax] (http://fsl.cs.illinois.edu/index.php/JavaMOP4_Syntax) page
+for more information on writing your own property files.
 
 We have formalized some properties from the Java API. If you are
 interested to build a java agent to monitor all these properties,
@@ -120,20 +133,20 @@ reader has stored the properties. It may also be educational to open
 one or two of the ```.mop``` files to learn how properties are
 written.
 
-#### Using A Java Agent
+#### Using a Java Agent
 
 Assuming that an agent called "JavaMOPAgent.jar" has been built using
 any of the commands from the previous section, such an agent may be
 run as follows:
 
 1. For projects with a well-defined entry point such as a Main class,
-   first compile the source code and run the following command:
+   first compile the source code and then run the following command:
 
-   ```java -javaagent:agent.jar -cp .:[other dependencies] Main```
+   ```java -javaagent:JavaMOPAgent.jar Main```
 
-   In other words, you will need to run same command as you would
+   In other words, you will need to run the same command as you would
    normally use for running your java application, but with the
-   addition of the ```-javaagent:agent.jar```, as shown above.
+   addition of the ```-javaagent:JavaMOPAgent.jar```, as shown above.
 
 
 2. For Maven-based projects which have tests, users can simply run
@@ -149,7 +162,7 @@ run as follows:
 	  		<artifactId>maven-surefire-plugin</artifactId>
 	  		<version>${surefire-version}</version>
 	  		<configuration>
-        			<argLine>-javaagent:agent.jar</argLine>
+        			<argLine>-javaagent:JavaMOPAgent.jar</argLine>
 	  		</configuration>
         	</plugin>
 		...
@@ -160,8 +173,9 @@ run as follows:
    Replace ```${surefire-version}``` with the exact surefire plugin
    version used by the project (e.g., 2.16).
 
-   Adding the javaagent is the only change needed to an existing
-   project and tests can still be run with ```mvn test```, as usual.
+   Adding the javaagent to the `pom.xml` file is the only change
+   needed to an existing project and tests can still be run with
+   ```mvn test```, as usual.
 
 3. For Ant-based projects which have tests, users can also modify
    ```build.xml``` to run all tests with JavaMOP agent. All that is
@@ -171,7 +185,7 @@ run as follows:
     <target name=...>
     	<junit ...>
     		...
-        	<jvmarg value="-javaagent:agent.jar"/>
+        	<jvmarg value="-javaagent:JavaMOPAgent.jar"/>
 		...
       	</plugins>
      </target>
@@ -180,41 +194,48 @@ run as follows:
    After that, users can run their tests as usual by using ```ant
    ${test_target_name}```.
 
-4. Java agent is easily integrated into IDE like Intellij, Eclipse, etc.
+4. Java agent is easily integrated into IDEs like IntelliJ, Eclipse,
+etc.
    
-   For Intellij, you can try the following steps:
-   click "Run" tab -> select "Edit Configurations" tab -> select the application
-   you are running -> select "configuration" tab ->
-   enter "javaagent:agent.jar" into VM options part. 
+   For IntelliJ:
+   click the "Run" tab 
+             -> select the "Edit Configurations" tab 
+             -> select the application you are running 
+             -> select "configuration" tab 
+             -> enter "javaagent:JavaMOPAgent.jar" in the "VM options" textbox. 
    
-   For Eclipse, please try:
-   click "Run" tab -> select "Run configurations" tab -> select the application
-   you are running -> select "Arguments" tab -> 
-   enter "javaagent:agent.jar" into VM options part.
+   For Eclipse:
+   click "Run" tab 
+         -> select "Run configurations" tab 
+         -> select the application you are running 
+         -> select "Arguments" tab 
+         -> enter "javaagent:JavaMOPAgent.jar" into "VM options" textbox.
    
-   By doing this, you can run or debug the program with the java agent.
+   By doing this, you can run or debug programs with the java agent
+   from within your IDE.
    
 
-#### Putting it all together
+#### Agent generation examples
 
-To build a java agent and run it using some of the examples that ship
+To build a java agent and run it using one of the examples that ship
 with JavaMOP, run the following commands from the same directory as
 this file:
 
 ```
 cd examples/agent/many
-javamop -agent -n agent rvm
+javamop -agent -n JavaMOPAgent rvm/
 javac SafeMapIterator_1.java
-java -javaagent:agent.jar -cp . SafeMapIterator_1
+java -javaagent:JavaMOPAgent.jar SafeMapIterator_1
 ```
 
-Note that running ```javamop -agent -n agent rvm``` as above will
-print the specifications used in building the agent, and give a
-"agent.jar is generated." message at the end, if everything goes well.
+Note that running ```javamop -agent -n JavaMOPAgent rvm/``` as above
+will print the specification used in building the agent, and give a
+"JavaMOPAgent.jar is generated." message at the end, if everything
+goes well.
 
-Also, running ```java -javaagent:agent.jar -cp . SafeMapIterator_1```
+Also, running ```java -javaagent:JavaMOPAgent.jar SafeMapIterator_1```
 as above will run the specified java program and, if everything works,
-will print out the following violation messages:
+will print out the following messages:
 
 ```
 unsafe iterator usage!
@@ -258,50 +279,70 @@ JavaMOP (installing JRE, AJC and RV-Monitor).
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6 -cp .:[other dependencies] [-d <target directory>]
-$path-to-aj-file $path-to-java-file```
+```ajc -1.6  -d <target directory> <path-to-aj-file> <path-to-java-file>```
 
-```-1.6``` indicates the source code compliance level. ```[-d <target
-directory>]``` specifies the directory to which the weaved code will
-be stored. The last two parameters refer to the path to the generated
-instrumentation file and the path to the target program (i.e the
-program to be weaved) respectively. Given this command, ajc will
-instrument and compile the original java file and store the generated
-.class file in ```<target directory>```. If there is no error
-reported, you can directly run the weaved code in the ```<target
-directory>```.
+```-1.6``` indicates the output bytecode version. ```-d <target
+directory>``` specifies the directory to which the weaved code will be
+stored. Note that you must specify the output directory explicitly so
+that ajc can put the binary code in the right place. Without ```-d```,
+ajc will output all the bytecode files in the current directory,
+failing to keep the necessary package layout. You can simply use ```-d
+.``` to output binary code in the current
+directory. ```<path-to-aj-file>``` and ```<path-to-java-file>``` refer
+to the path to the generated instrumentation file and the path to the
+target program (i.e the program to be weaved) respectively. Given this
+command, ajc will instrument and compile the original java file and
+store the generated .class file(s) in ```<target directory>```. If
+there is no error reported, you can directly run the weaved code in
+the ```<target directory>```.
 
 (For more information on ajc options, type ```ajc -help``` for help)
 
-#### Runing the Weaved Code
+**Note:** As mentioned before, certain files (see Prerequisites in
+INSTALL.md) must be present on the java class path.  If you have
+additional dependencies and you want to add them with `-cp` (or
+`-classpath`) option, please make sure that those files remain on the
+classpath.
+
+#### Running the Weaved Code
 To run the weaved program, simply type:
 
-```java -cp .:[other dependencies] Main```,
+```java Main```
 
-where `Main` is the entry point to the application. Again, make sure
-that "aspectjrt.jar" and "rvmonitorrt.jar" are in the CLASSPATH.
-Alternatively, you could also attach them as part of the ```-cp```
-option when you run the program.
+where `Main` is the entry point to the application.
+
+**Note:** Again, make sure that pre-requisites are in the java class
+path specially when you use `-cp` (or `-classpath`) option.
 
 ### Troubleshooting
 
 In some extreme cases when you need to monitor classes with huge
 methods or the intended pointcuts are very dense in some method, you
-may encounter some error while using standard AspectJ compiler to
-weave code; such as: `/YourBigClass.java [error] problem generating
-method YourBigClass.bigMethod: Code size too big: 65613.` This kind of
-error is caused by Java's 64-KB maximum method size constraint.  If a
-method of the monitored class has already been very big, then after
-inserting the advices at the pointcuts, it may violate the
-64-KB-constraint. This kind of error has nothing to do with JavaMOP,
-it is caused by AspectJ's limitation. This kind of problem often happens
-when you try to weave the bytecode (.class files) and aspects. If you have
-access to the source code (.java files) of the program that you want to
-monitor, then the easiest way that is likely to solve this problem is 
-weaving the source code (.java files) instead of weaving the compiled code
-(.class files). AspectJ compiler will do some optimization to the source
-code to make it more space-efficient so that the method size may reduce to
-the safe zone.
+<<<<<<< HEAD
+may encounter some error while using the standard AspectJ compiler to
+weave code; as follows:
+
+`/YourBigClass.java [error] problem generating method YourBigClass.bigMethod: Code size too big: 65613.` 
+
+This error is caused by Java's 64KB maximum method size constraint.
+If a method of the monitored class is already too big, then, after
+inserting the advice at the pointcuts, it may exceed the 64KB
+limit.
+
+If you have access to the source code (.java files) of the program
+that you want to monitor, then the easiest way to solve this problem
+is weaving the source code (.java files) instead of weaving the
+compiled code (.class). The AspectJ compiler optimizes the source code
+to make it more space-efficient so that it will not violate the method
+size constraint during weaving. This error has nothing to do with
+JavaMOP, it is caused by AspectJ's limitation. This kind of problem
+often happens when you try to weave the bytecode (.class files) and
+aspects. If you have access to the source code (.java files) of the
+program that you want to monitor, then the easiest way that is likely
+to solve this problem is weaving the source code (.java files) instead
+of weaving the compiled code (.class files). AspectJ compiler will do
+some optimization to the source code to make it more space-efficient
+so that the method size may reduce to the safe zone.
 
 In case you encounter such problem, but either you do not have access to
 the source code, or, the above method does not work, then we also provide
@@ -309,7 +350,7 @@ a patch for the standard AspectJ source code to solve this problem.
 Please follow the instructions below to install the patch (Please backup
 your AspectJ before applying the patch):
 
- **Prerequisites for using the patch:**
+**Prerequisites for using the patch:**
  
 * AspectJ source code.
 
@@ -319,37 +360,43 @@ your AspectJ before applying the patch):
   
 * Ant.
 
-  If you have not installed the program 'ant' yet, then go to
+  If you do not have Ant installed, then go to
   [here](http://ant.apache.org/) to download and install the latest
-  'ant' program.
+  version.
 
 1. Go to your local AspectJ git repository, and checkout the commit
 `Fix 443355: interface super references` by executing the command
-below (You may need to pull to get the latest update before you can
+below (You may need to pull to get the latest updates before you can
 perform the operation below):
 
 	``git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c``
 
-2. Download the `stdAJC_dddd123.patch` from [here](link to source
-patch) and place it in the above AspectJ repository's top level.
+2. Download the `stdAJC_dddd123.patch.zip` from 
+[here](http://fsl.cs.illinois.edu/index.php/File:StdAJC_dddd123.patch.zip),
+extract `stdAJC_dddd123.patch` from the zip, and place the patch file
+in the above AspectJ repository's top level.
 
 3. Apply the patch by executing:
 
 	``git apply --whitespace=nowarn stdAJC_dddd123.patch``
 	
 4. Build the AspectJ project using ant. You can execute the command
-``ant`` at the top level of the AspectJ's repository.
+``ant`` at the top level of the AspectJ repository.
 
-5. Deploy the AspectJ's libraries. If the previous step is successful,
+5. Deploy the AspectJ libraries. If the previous step is successful,
 there will be a new folder called `aj-build` appearing at the top
 level of the repository. Add all the jar files in
-`<path-to-aspectj-repository>/aj-build/dist/tools/lib` to your AspectJ
-compiler's CLASSPATH.
+`<path-to-AspectJ-repository>/aj-build/dist/tools/lib` to your
+CLASSPATH.
 
+After generating the new AspectJ libraries and deploying them, your
+AspectJ compiler should now be able to handle the classes with huge
+methods.
 
-After generating the new AspectJ libraries and deploying them, you
-AspectJ compiler should be able to handle the classes with huge
-methods now.
+####Complete list for troubleshooting If your problem is not listed in
+the above section, you can go to
+[here](http://fsl.cs.illinois.edu/index.php/JavaMOP4_Troubleshooting)
+for a complete list of common issues and their solutions.
 
 ## Contact Information
 
