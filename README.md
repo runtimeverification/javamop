@@ -29,6 +29,13 @@ To build JavaMOP from sources, please download the [source
 code](https://github.com/runtimeverification/javamop), and refer to
 the src/README file.
 
+**Note:** The rest of this text assumes you 
+have followed all the instructions in INSTALL.md 
+and updated your CLASSPATH and PATH environment
+varibales according to Prerequisites section in that file. 
+In addition, please make sure the dependencies mentioned there
+remain on the class path even if you modify or overwrite the path.
+
 ## Usage
 
 Before using JavaMOP, you should specify the properties you want
@@ -286,12 +293,12 @@ is no error reported, you can directly run the weaved code in the
 
 (For more information on ajc options, type ```ajc -help``` for help)
 
-**Note:** aspectjrt.jar, rvmonitorrt.jar, and some other files 
-(please see Prerequisites in INSTALL.md for a comprehensive list)
-must be on the java class path.
+**Note:** As mentioned before, certain files 
+(see Prerequisites in INSTALL.md)
+must be present on the java class path.
 If you have additional dependencies and you want to add them with 
-`-cp` (or `-classpath`) option, please make sure that the files mentioned
-above remain on the classpath.
+`-cp` (or `-classpath`) option, please make sure that those files 
+remain on the classpath.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
@@ -300,8 +307,8 @@ To run the weaved program, simply type:
 
 where `Main` is the entry point to the application.
 
-**Note:** Again, make sure that aspectjrt.jar, rvmonitorrt.jar and
-other pre-requisites jars are in the java class path specially when
+**Note:** Again, make sure that pre-requisites are in the java
+class path specially when
 you use `-cp` (or `-classpath`) option.
 
 ### Troubleshooting
