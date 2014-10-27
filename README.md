@@ -318,7 +318,6 @@ path specially when you use `-cp` (or `-classpath`) option.
 
 In some extreme cases when you need to monitor classes with huge
 methods or the intended pointcuts are very dense in some method, you
-<<<<<<< HEAD
 may encounter some error while using the standard AspectJ compiler to
 weave code; as follows:
 
