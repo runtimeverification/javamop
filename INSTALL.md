@@ -1,7 +1,7 @@
 #JavaMOP INSTALL
 
-Here are instructions for installing JavaMOP from the release zip
-archive. Users who checked out the sources should follow the
+Here are instructions for installing JavaMOP from its binary release
+zip archive. Users who checked out the sources should follow the
 instructions in src/README.md to build JavaMOP.
 
 ##Prerequisites
@@ -10,36 +10,36 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 
 1. JRE
 
- Java Runtime Environment version 7 or higher (http://java.com/en/download/index.jsp)
+ Java Development Kit (JDK) version 7.0.0 or higher 
+ (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 * To make sure java is installed properly, run `java -version` from a
-  terminal.
+  terminal. Also if you need to use agent in JavaMOP, also make sure
+  `jar` is in your `PATH`.
 
 2. AJC
 
  AspectJ Compiler version 1.8.1 or higher
  (http://www.eclipse.org/aspectj/downloads.php)
 
- * Make sure that `<Path-to-AspectJ_HOME>/bin` is in your `PATH` by
+ * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by
    calling `ajc` in a terminal.
 
- * Also ensure that `<Path-to-AspectJ_HOME>/lib/aspectjrt.jar`,
-   `<Path-to-AspectJ_HOME>/lib/aspectjweaver.jar` and
-   `<Path-to-AspectJ_HOME>/lib/aspectjtools.jar` are in your
+ * Also ensure that `<AspectJ_HOME>/lib/aspectjrt.jar`,
+   `<AspectJ_HOME>/lib/aspectjweaver.jar` and
+   `<AspectJ_HOME>/lib/aspectjtools.jar` are in your
    CLASSPATH.
 
 3. RV-Monitor
 
- The RV-Monitor libraries. (https://www.runtimeverification.com/monitor)
+ The latest version of RV-Monitor libraries 
+ (https://www.runtimeverification.com/monitor)
 
- 1. Download RV-Monitor installer from the rv-monitor website
- mentioned above and follow the instructions on that website to
- install it to your desired directory.
+ 1. Download RV-Monitor installer (from the website above) and install
+ it to your desired directory (referred as `<RV-Monitor_HOME>`).
 
- 2. Add `<path-to-rvmonitorrt.jar>` and `<path-to-rvmonitor.jar>` to
- your CLASSPATH. Those jars are in the `lib/` directory which is 
- located inside the directory to which RV-Monitor was installed, 
- and are named rvmonitor.jar and rvmonitorrt.jar, respectively.
+ 2. Add `<RV-Monitor_HOME>/lib/rvmonitor.jar` and
+ `<RV-Monitor_HOME>/lib/rvmonitorrt.jar` to your CLASSPATH.
 
 ##Install
 
@@ -54,11 +54,9 @@ To use JavaMOP you need JRE, AJC and RV-Monitor.
 usage, update your `PATH` environment variable with
 `<path-to-javamop>/bin/`.
 
-For information on how to use JavaMOP, please refer to the README.md
-file.
+See README.md for info on how to use JavaMOP.
 
 #Troubleshooting
 
-If you experience any problems while installing JavaMOP, please open a
-new issue on
+To get help or report problems go to
 [Github](https://github.com/runtimeverification/javamop/issues)
