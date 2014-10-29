@@ -54,8 +54,7 @@ To use JavaMOP you need JDK, AJC and RV-Monitor.
 ##Use
 
 `<JavaMOP_HOME>/bin/javamop` is the target binary. For convenient
-usage, update your `PATH` environment variable with
-`<JavaMOP_HOME>/bin`.
+usage, update your `PATH` variable with `<JavaMOP_HOME>/bin`.
 
 See README.md for info on how to use JavaMOP.
 
