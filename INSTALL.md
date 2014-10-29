@@ -25,13 +25,12 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
  AspectJ Compiler version 1.8.1 or higher
  (http://www.eclipse.org/aspectj/downloads.php)
 
- * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by
-   calling `ajc` in a terminal.
+ * Check AspectJ is installed properly: run `ajc -version` from a
+   terminal.
 
- * Also ensure that `<AspectJ_HOME>/lib/aspectjrt.jar`,
+ * Add `<AspectJ_HOME>/lib/aspectjrt.jar`,
    `<AspectJ_HOME>/lib/aspectjweaver.jar` and
-   `<AspectJ_HOME>/lib/aspectjtools.jar` are in your
-   CLASSPATH.
+   `<AspectJ_HOME>/lib/aspectjtools.jar` to your CLASSPATH.
 
 3. RV-Monitor
 
@@ -39,7 +38,10 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
  (https://www.runtimeverification.com/monitor)
 
  * Download RV-Monitor installer (from the website above) and install
- it to your desired directory (referred as `<RV-Monitor_HOME>`).
+ it to your desired directory.
+
+ * Check RV-Monitor is installed properly: run `rv-monitor` from a
+   terminal.
 
  * Add `<RV-Monitor_HOME>/lib/rvmonitor.jar` and
  `<RV-Monitor_HOME>/lib/rvmonitorrt.jar` to your CLASSPATH.
