@@ -8,14 +8,17 @@ instructions in src/README.md to build JavaMOP.
 
 To use JavaMOP you need JRE, AJC and RV-Monitor.
 
-1. JRE
+1. JDK
 
  Java Development Kit (JDK) version 7.0.0 or higher 
  (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-* To make sure java is installed properly, run `java -version` from a
-  terminal. Also if you need to use agent in JavaMOP, also make sure
-  `jar` is in your `PATH`.
+* Check Java is installed properly: run `java -version` and `jar` from
+  a terminal. You can add `<JAVA_HOME>/bin` to your `PATH`.
+
+* Note: The reason JDK is required here but not JRE is that the script
+  `jar` is not included in JRE, but it is needed when using agent in
+  JavaMOP.
 
 2. AJC
 
