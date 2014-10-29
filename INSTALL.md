@@ -13,10 +13,10 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
  Java Development Kit (JDK) version 7.0.0 or higher
  (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
-* Check Java is installed properly: run `java -version` from a
+ * Check Java is installed properly: run `java -version` from a
   terminal.
 
-* Note: The reason JDK is required here but not JRE is that the script
+ * Note: The reason JDK is required here but not JRE is that the script
   `jar` is not included in JRE, but it is needed when generating
   agents with JavaMOP.
 
@@ -38,10 +38,10 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
  The latest version of RV-Monitor 
  (https://www.runtimeverification.com/monitor)
 
- 1. Download RV-Monitor installer (from the website above) and install
+ * Download RV-Monitor installer (from the website above) and install
  it to your desired directory (referred as `<RV-Monitor_HOME>`).
 
- 2. Add `<RV-Monitor_HOME>/lib/rvmonitor.jar` and
+ * Add `<RV-Monitor_HOME>/lib/rvmonitor.jar` and
  `<RV-Monitor_HOME>/lib/rvmonitorrt.jar` to your CLASSPATH.
 
 ##Install
