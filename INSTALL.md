@@ -32,8 +32,8 @@ higher
  * Check RV-Monitor is installed properly: run `rv-monitor` from a
    terminal.
 
- * Add `<RV-Monitor_HOME>/lib/rvmonitor.jar` and
- `<RV-Monitor_HOME>/lib/rvmonitorrt.jar` to your CLASSPATH.
+ * Add `<RV-Monitor_HOME>/lib/rv-monitor.jar` and
+ `<RV-Monitor_HOME>/lib/rv-monitor-rt.jar` to your CLASSPATH.
 
 ##Install
 
