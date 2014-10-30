@@ -1,9 +1,9 @@
 <!-- Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved. -->
+
 ==============================================================================
 The JavaMOP Release License
 ==============================================================================
-University of Illinois/NCSA
-Open Source License
+University of Illinois/NCSA Open Source License
 
 Copyright (c) 2009-2013 University of Illinois at Urbana-Champaign.
 All rights reserved.
@@ -63,5 +63,6 @@ The following pieces of software have additional or alternate copyrights,
 licenses, and/or restrictions:
 
 ---------------------------------------
-RV-Monitor (http://runtimeverification.com/monitor/) is licensed under a proprietary license.
+RV-Monitor (http://runtimeverification.com/monitor/) is licensed under
+a proprietary license.
 
