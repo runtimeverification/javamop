@@ -57,9 +57,3 @@ License applies to all code in the JavaMOP Distribution, and nothing in any
 of the other licenses gives permission to use the names of the JavaMOP
 Team or the University of Illinois to endorse or promote products
 derived from this Software.
-
-The following pieces of software have additional or alternate copyrights,
-licenses, and/or restrictions:
-
----------------------------------------
-RV-Monitor (http://runtimeverification.com/monitor/) is licensed under a proprietary license.
