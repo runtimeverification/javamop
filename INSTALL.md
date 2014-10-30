@@ -51,5 +51,5 @@ See README.md for info on how to use JavaMOP.
 
 #Troubleshooting
 
-To get help or report problems go to
-[Github](https://github.com/runtimeverification/javamop/issues).
+To get help or report problems go to [JavaMOP's issues]
+(https://github.com/runtimeverification/javamop/issues).
