@@ -16,10 +16,8 @@ JavaMOP)
  * Check Java is installed properly: run `java -version` from a
   terminal.
 
-2. AJC
-
- [AspectJ Compiler] (http://www.eclipse.org/aspectj/downloads.php)
- v.1.8.1 or higher
+2. [AJC] (http://www.eclipse.org/aspectj/downloads.php) v.1.8.1 or
+higher
  
  * Check AspectJ is installed properly: run `ajc -version` from a
    terminal.
@@ -28,11 +26,8 @@ JavaMOP)
    `<AspectJ_HOME>/lib/aspectjweaver.jar` and
    `<AspectJ_HOME>/lib/aspectjtools.jar` to your CLASSPATH.
 
-3. RV-Monitor
-
- [RV-Monitor] (https://www.runtimeverification.com/monitor) v.1.3 or
- higher
- 
+3. [RV-Monitor] (https://www.runtimeverification.com/monitor) v.1.3 or
+higher
 
  * Check RV-Monitor is installed properly: run `rv-monitor` from a
    terminal.
