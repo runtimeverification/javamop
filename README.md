@@ -32,9 +32,9 @@ the src/README file.
 **Note:** The rest of this document assumes that you have followed all
 the instructions in INSTALL.md and updated your CLASSPATH and PATH
 environment variables according to the Prerequisites section in that
-file.  In addition, please make sure the dependencies mentioned in
-INSTALL.md remain on the CLASSPATH whenever you modify or overwrite
-the CLASSPATH.
+file. In addition, we also assume that "." is on your CLASSPATH. Last
+but not least, please be cautious whenever you modify or override the
+CLASSPATH as it might break the prerequisites of JavaMOP.
 
 ## Usage
 
@@ -50,7 +50,7 @@ JavaMOP currently supports two modes of use:
   (http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
   make it possible to instrument programs running on the JVM. This
   option is the easiest one to use. Moreover, the user does not need
-  AspectJ compiler (ajc), or to know how to resolve dependencies in
+  AspectJ Compiler (ajc), or to know how to resolve dependencies in
   the target program. However, using this option may incur more
   runtime overhead, since it weaves the code at runtime.
 
@@ -272,10 +272,6 @@ monitoring multiple properties simultaneously.
 
 #### Weaving the code using AspectJ Compiler (ajc)
 
-Before weaving the code, make sure that you have already installed ajc
-and RV-Monitor. Please refer to INSTALL.md for prerequisites of using
-JavaMOP (installing JRE, AJC and RV-Monitor).
-
 To weave the target program with the generated monitoring library, run
 the following command:
 
@@ -298,21 +294,17 @@ the ```<target directory>```.
 
 (For more information on ajc options, type ```ajc -help``` for help)
 
-**Note:** As mentioned before, certain files (see Prerequisites in
-INSTALL.md) must be present on the java class path.  If you have
-additional dependencies and you want to add them with `-cp` (or
-`-classpath`) option, please make sure that those files remain on the
-classpath.
+**Note:** If you have additional dependencies, then you may add them 
+with `-cp` (or `-classpath`) option. Please be careful when using this
+option because it will override your CLASSPATH. This suggestion applies 
+to both ```ajc``` and ```java```.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
 
 ```java Main```
 
-where `Main` is the entry point to the application.
-
-**Note:** Again, make sure that pre-requisites are in the java class
-path specially when you use `-cp` (or `-classpath`) option.
+where `Main` is assumed to be the entry point to the application.
 
 ### Troubleshooting
 
@@ -401,5 +393,5 @@ for a complete list of common issues and their solutions.
 
 We welcome your interest in JavaMOP. Your feedback, comments and bug
 reports are highly appreciated. Please feel free to contact us by
-opening new issues on
-[Github](https://github.com/runtimeverification/javamop/issues)
+opening new issues on [JavaMOP's issues page]
+(https://github.com/runtimeverification/javamop/issues).
