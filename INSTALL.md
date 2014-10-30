@@ -42,14 +42,12 @@ higher
 
 2. Unzip the file to your preferred location.
 
-##Use
+3. Add <JavaMOP_HOME>/bin to your PATH. 
 
-`<JavaMOP_HOME>/bin/javamop` is the target binary. For convenient
-usage, update your `PATH` variable with `<JavaMOP_HOME>/bin`.
+4. Check JavaMOP is installed properly: run `javamop` from a
+   terminal.
 
 See README.md for info on how to use JavaMOP.
-
-#Troubleshooting
 
 To get help or report problems go to [JavaMOP's issues]
 (https://github.com/runtimeverification/javamop/issues).
