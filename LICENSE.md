@@ -63,4 +63,3 @@ licenses, and/or restrictions:
 
 ---------------------------------------
 RV-Monitor (http://runtimeverification.com/monitor/) is licensed under a proprietary license.
-
