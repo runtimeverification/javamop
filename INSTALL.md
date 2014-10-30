@@ -41,7 +41,7 @@ higher
 (http://fsl.cs.illinois.edu/index.php/JavaMOP4).
 
 2. Unzip the file to your preferred location, and add
-<JavaMOP_HOME>/bin to your PATH.
+ <JavaMOP_HOME>/bin to your PATH.
 
 3. Check JavaMOP is installed properly: run `javamop` from a
    terminal.
