@@ -50,7 +50,7 @@ JavaMOP currently supports two modes of use:
   (http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
   make it possible to instrument programs running on the JVM. This
   option is the easiest one to use. Moreover, the user does not need
-  AspectJ compiler (ajc), or to know how to resolve dependencies in
+  AspectJ Compiler (ajc), or to know how to resolve dependencies in
   the target program. However, using this option may incur more
   runtime overhead, since it weaves the code at runtime.
 
