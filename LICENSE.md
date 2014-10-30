@@ -45,7 +45,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE
 SOFTWARE.
 
 ==============================================================================
-Third Party Software Distributed with JavaMOP:
+Third Party Software Distributed with JavaMOP
 ==============================================================================
 The JavaMOP software contains code written by third parties. Such
 software will have its own individual LICENSE file in the directory in
