@@ -30,11 +30,9 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
 
 3. RV-Monitor
 
- The latest version of RV-Monitor 
- (https://www.runtimeverification.com/monitor)
-
- * Download RV-Monitor installer (from the website above) and install
- it to your desired directory.
+ [RV-Monitor] (https://www.runtimeverification.com/monitor) v1.3 or
+ higher
+ 
 
  * Check RV-Monitor is installed properly: run `rv-monitor` from a
    terminal.
@@ -44,7 +42,7 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
 
 ##Install
 
-1. Download JavaMOP's binary from its website
+1. Download JavaMOP's binary from [its website]
 (http://fsl.cs.illinois.edu/index.php/JavaMOP4).
 
 2. Unzip the file to your preferred location.
