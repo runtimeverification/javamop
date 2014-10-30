@@ -44,7 +44,7 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
 
 ##Install
 
-1. Download JavaMOP's binary from [its website]
+1. Download JavaMOP's binary from its website
 (http://fsl.cs.illinois.edu/index.php/JavaMOP4).
 
 2. Unzip the file to your preferred location.
