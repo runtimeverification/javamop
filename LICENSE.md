@@ -49,11 +49,9 @@ Copyrights and Licenses for Third Party Software Distributed with JavaMOP:
 ==============================================================================
 The JavaMOP software contains code written by third parties. Such
 software will have its own individual LICENSE file in the directory in
-which it appears. This file will describe the copyrights, license, and
-restrictions which apply to that code.
-
-The disclaimer of warranty in the University of Illinois Open Source
-License applies to all code in the JavaMOP Distribution, and nothing in any
-of the other licenses gives permission to use the names of the JavaMOP
-Team or the University of Illinois to endorse or promote products
-derived from this Software.
+which it appears. The disclaimer of warranty in the University of
+Illinois Open Source License applies to all code in the JavaMOP
+Distribution, and nothing in any of the other licenses gives
+permission to use the names of the institutions or companies forming
+the JavaMOP Team to endorse or promote products derived from this
+Software.
