@@ -40,14 +40,12 @@ higher
 1. Download JavaMOP's binary from [its website]
 (http://fsl.cs.illinois.edu/index.php/JavaMOP4).
 
-2. Unzip the file to your preferred location.
+2. Unzip the file to your preferred location, and add
+<JavaMOP_HOME>/bin to your PATH.
 
-3. Add <JavaMOP_HOME>/bin to your PATH. 
-
-4. Check JavaMOP is installed properly: run `javamop` from a
+3. Check JavaMOP is installed properly: run `javamop` from a
    terminal.
 
-See README.md for info on how to use JavaMOP.
-
-To get help or report problems go to [JavaMOP's issues]
+See README.md for usage information. To get help or report problems go
+to [JavaMOP's issues page]
 (https://github.com/runtimeverification/javamop/issues).
