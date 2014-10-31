@@ -1,3 +1,11 @@
+#Troubleshooting
+
+Here we gathered some problems that you might encounter during
+installing or using JavaMOP, along with instructions how to
+solve them.
+
+## I get "Code size too big" error when using AspecJ Compiler, what should I do?
+
 In some extreme cases when you need to monitor classes with huge
 methods or the intended pointcuts are very dense in some method, you
 may encounter some error while using the standard AspectJ compiler to
@@ -73,8 +81,19 @@ After generating the new AspectJ libraries and deploying them, your
 AspectJ compiler should now be able to handle the classes with huge
 methods.
 
-####Complete list for troubleshooting 
+## I get error when I use Xbootclasspath, what should I do ?
 
-If your problem is not listed in the above section, you can go to
-[here](http://fsl.cs.illinois.edu/index.php/JavaMOP4_Troubleshooting)
-for a complete list of common issues and their solutions.
+Instrumenting with Xbootclasspath can lead to errors if the right
+jar files are not passed to the java command after weaving. 
+For example, one may see the following error message when 
+running something with Xbootclasspath:
+
+	Error occurred during initialization of VM
+	java.lang.NoSuchMethodError: sun.misc.JavaLangAccess.registerShutdownHook(ILjava/lang/Runnable;)V
+    		at java.io.Console.<clinit>(Console.java:493)
+    		at sun.misc.Unsafe.ensureClassInitialized(Native Method)
+    		at sun.misc.SharedSecrets.getJavaIOAccess(SharedSecrets.java:93)
+    		at java.lang.System.initializeSystemClass(System.java:1089)
+    		
+The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is `-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
+
