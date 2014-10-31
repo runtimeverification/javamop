@@ -23,16 +23,16 @@ JavaMOP is an instance of MOP for Java.
 
 ## Install
 
-Refer to the INSTALL.md file for installing JavaMOP from the [released
+Refer to the INSTALL.md for installing JavaMOP from the [released
 zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4).  To build
 JavaMOP from sources, please download the [source
 code](https://github.com/runtimeverification/javamop), and refer to
-the src/README file.
+the src/README.md.
 
 
 ## Usage
 
-Refer to Usage.md in docs folder for instructions on how to use JavaMOP.
+Refer to docs/Usage.md for instructions on how to use JavaMOP.
 
 ### Troubleshooting
 
