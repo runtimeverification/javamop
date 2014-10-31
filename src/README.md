@@ -42,8 +42,8 @@ higher
 
 2. Build JavaMOP
 
- From the top level directory of JavaMOP (i.e. the directory this file
- is in) run the following commands:
+ From the top level directory of JavaMOP (i.e. the parent directory
+ this file is in) run the following commands:
 
  ```mvn package```
 
