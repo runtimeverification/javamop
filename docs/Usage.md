@@ -11,6 +11,8 @@ Before using JavaMOP, you should specify the properties to be
 monitored. The specifications must be stored in files with `.mop`
 extension (e.g. `HasNext.mop`).
 
+# Mods of use
+
 JavaMOP currently supports two modes of use:
 
 1. Java Agent
