@@ -25,7 +25,7 @@ higher
  * Check Maven is installed properly: run `mvn -version` from a
    terminal.
 
-4. [Git] (http://git-scm.com/book/en/Getting-Started-Installing-Git) v1.8 or higher
+4. [Git] (http://git-scm.com/book/en/Getting-Started-Installing-Git) v.1.8 or higher
 
  * Check Git is installed properly: run `git` from a
    terminal.
