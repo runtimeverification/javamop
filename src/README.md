@@ -6,34 +6,33 @@ please refer to ../INSTALL.md
 
 ##Prerequisites
 
-1. JDK
+1. [JDK]
+(http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+v.7.0.0 or higher (JRE suffices if you don't generate agents with
+JavaMOP)
 
- Java Runtime Environment version 7
- (http://java.com/en/download/index.jsp) * To make sure java is
- installed properly, call `java -version` in a terminal.
+ * Check Java is installed properly: run `java -version` from a
+  terminal.
 
-2. AJC
+2. [AJC] (http://www.eclipse.org/aspectj/downloads.php) v.1.8.1 or
+higher
 
- AspectJ Compiler version 1.8.1 or higher
- (http://www.eclipse.org/aspectj/downloads.php)
- * Make sure that `<AspectJ_HOME>/bin` is in your `PATH` by calling
-   `ajc` in a terminal.
+ * Check AspectJ is installed properly: run `ajc -version` from a
+   terminal.
 
-3. Maven 3 or higher
+3. [Maven] (http://maven.apache.org/download.cgi) v.3.0 or higher
 
- JavaMOP requires Maven 3.0 or higher to build. To download and
- install Maven 3.0, please follow the instructions on
- [this page](http://maven.apache.org/download.cgi)
+ * Check Maven is installed properly: run `mvn -version` from a
+   terminal.
 
-4. Git 1.8 or higher
+4. [Git] (http://git-scm.com/book/en/Getting-Started-Installing-Git) v1.8 or higher
 
- Git is required to download the sources for JavaMOP.
- To download and install Git, please follow the instructions found
- on [this page](http://git-scm.com/book/en/Getting-Started-Installing-Git)
+ * Check Git is installed properly: run `git` from a
+   terminal.
 
-##Build
+##Build and Install
 
-1. Download the JavaMOP source code From the Github repository:
+1. Check out the JavaMOP source code from the Github repository:
 
  ```git clone https://github.com/runtimeverification/javamop.git```
 
@@ -50,18 +49,11 @@ please refer to ../INSTALL.md
 
  This will download many dependencies the first time you run it.
 
+3. Add <JavaMOP_HOME>/bin` to your PATH.
 
-##Use
+4. Check JavaMOP is installed properly: run `javamop` from a
+   terminal.
 
-After building the project, `<path-to-javamop>/bin/javamop` is the
-target binary. For convenient usage, update your $PATH environment
-variable with `<path-to-javamop>/bin/`.
-
-For information regarding usage of JavaMOP, please refer to the
-../README.md file.
-
-#Troubleshooting
-
-If you experience any problems building JavaMOP, please open a new
-issue on
-[Github](https://github.com/runtimeverification/javamop/issues)
+See README.md for usage information. To get help or report problems go
+to [JavaMOP's issues page]
+(https://github.com/runtimeverification/javamop/issues).
