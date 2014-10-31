@@ -54,6 +54,6 @@ higher
 4. Check JavaMOP is installed properly: run `javamop` from a
    terminal.
 
-See README.md for usage information. To get help or report problems go
+See ../README.md for usage information. To get help or report problems go
 to [JavaMOP's issues page]
 (https://github.com/runtimeverification/javamop/issues).
