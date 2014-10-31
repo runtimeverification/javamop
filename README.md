@@ -19,7 +19,7 @@ information logging to runtime recovery.
 (http://fsl.cs.illinois.edu/javamop)
 is an instance of MOP for Java.
 
-## Install
+## Installation
 
 Refer to the INSTALL.md for installing JavaMOP from the [released
 zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4).  To build
