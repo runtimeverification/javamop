@@ -1,7 +1,7 @@
 #Troubleshooting
 
 Here we gathered some problems that you might encounter during
-installing or using JavaMOP, along with instructions how to
+installing or using JavaMOP, along with instructions on how to
 solve them.
 
 ## I get "Code size too big" error when using AspecJ Compiler, what should I do?
