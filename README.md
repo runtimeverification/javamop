@@ -30,7 +30,9 @@ the src/README.md.
 
 ## Usage
 
-Refer to docs/Usage.md for instructions on how to use JavaMOP.
+```javamop [-agent [-n agentName]] [-v] [-d <target directory>] <properties>```
+
+Refer to docs/Usage.md for detailed instructions on how to use JavaMOP.
 
 ## Troubleshooting
 
