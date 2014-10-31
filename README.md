@@ -49,16 +49,16 @@ JavaMOP currently supports two modes of use:
   Java [agents]
   (http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
   make it possible to instrument programs running on the JVM. This
-  option is the easiest one to use. Moreover, the user does not need
-  AspectJ Compiler (ajc), or to know how to resolve dependencies in
-  the target program. However, using this option may incur more
-  runtime overhead, since it weaves the code at runtime.
+  option is the easiest one to use: AspectJ Compiler (ajc) is not
+  needed and all the dependencies are contained within the
+  agent. However, using this option may incur more runtime overhead,
+  since it weaves the code at runtime.
 
 2. Static Weaving
 
   Compared to the Java Agent option, Static Weaving has better
-  performance, but it requires users to know how to use ajc and to
-  resolve all the target program's dependencies by themselves.
+  performance, but it requires knowledge of using ajc and resolving
+  all the target program's dependencies by themselves.
 
 (For a description of all JavaMOP options, please run the following
 from a terminal at any time: `javamop -h`)
@@ -67,7 +67,7 @@ from a terminal at any time: `javamop -h`)
 
 #### Building a Java Agent
 
-With this mode, users may build Java agents for runtime
+With this mode, you may build Java agents for runtime
 instrumentation of their applications. Once JavaMOP is correctly
 installed (see the INSTALL.md file in this directory), this may be
 achieved by running the following command:
@@ -82,7 +82,7 @@ to issuing the command above. ```<properties>``` refers to one or more
 property (i.e. *.mop) files, or a directory containing such property
 files.
 
-If the user specifies the ```[-n agentName]``` option, the previous command
+If you specify the ```[-n agentName]``` option, the previous command
 will create ```<agentName>.jar``` in the same directory as that from which
 the command is run. If a ```[-n agentName]``` is not specified and there is
 just one specification, then an agent with the same name as the
@@ -90,10 +90,10 @@ specification will be generated. Finally, if ```[-n agentName]``` is not
 specified and there are multiple specification files, then an agent
 called "JavaMOPAgent_1.jar" will be generated.
 
-Regarding the properties for building an agent, users can either
+Regarding the properties for building an agent, you can either
 choose to write their own properties or use the properties that we
-have already formalized from Java API. If users decide to write their
-own properties, they need to declare those properties to be in
+have already formalized from Java API. If you decide to write you
+own properties, you need to declare those properties to be in
 `package mop;` This is because JavaMOP is using some internal helper
 classes inside that package in the process. (It is not necessary for
 the property file(s) to be physically placed inside a directory called
@@ -149,9 +149,8 @@ run as follows:
    addition of the ```-javaagent:JavaMOPAgent.jar```, as shown above.
 
 
-2. For Maven-based projects which have tests, users can simply run
-   ```mvn test```, after modifying the individual project's
-   ```pom.xml``` to have an element like the following:
+2. For Maven-based projects with tests, you can modify ```pom.xml```
+to use agent when running tests by adding following lines:
 
   ```xml
     <build>
@@ -173,13 +172,12 @@ run as follows:
    Replace ```${surefire-version}``` with the exact surefire plugin
    version used by the project (e.g., 2.16).
 
-   Adding the javaagent to the `pom.xml` file is the only change
-   needed to an existing project and tests can still be run with
-   ```mvn test```, as usual.
+   After that, you can run their tests with agent as usual by using
+   ```mvn test```.
 
-3. For Ant-based projects which have tests, users can also modify
-   ```build.xml``` to run all tests with JavaMOP agent. All that is
-   needed is to add one line under the ```junit``` task as follows:
+3. For Ant-based projects which have tests, you can also modify
+   ```build.xml``` to use agent when running tests by adding one line
+   under the ```junit``` task:
 
   ```xml
     <target name=...>
@@ -191,8 +189,8 @@ run as follows:
      </target>
    ```
 
-   After that, users can run their tests as usual by using ```ant
-   ${test_target_name}```.
+   After that, you can run their tests with agent as usual by using
+   ```ant ${test_target_name}```.
 
 4. Java agent is easily integrated into IDEs like IntelliJ, Eclipse,
 etc.
@@ -248,7 +246,7 @@ java found the problem too
 
 #### Generating Instrumentation File and Java Library
 
-With this mode, users can generate an instrumentation (.aj) file and a
+With this mode, you can generate an instrumentation (.aj) file and a
 java library (.java) file to be weaved into the target program. The
 instrumentation file includes the pointcuts and advice which will be
 used by the AspectJ compiler (ajc) to instrument the code. The advice
