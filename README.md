@@ -38,7 +38,7 @@ CLASSPATH as it might break the prerequisites of JavaMOP.
 
 ## Usage
 
-Before using JavaMOP, you should specify the properties you want to be
+Before using JavaMOP, you should specify the properties to be
 monitored. The specifications must be stored in files with `.mop`
 extension (e.g. `HasNext.mop`).
 
@@ -58,7 +58,7 @@ JavaMOP currently supports two modes of use:
 
   Compared to the Java Agent option, Static Weaving has better
   performance, but it requires knowledge of using ajc and resolving
-  all the target program's dependencies by themselves.
+  all the target program's dependencies.
 
 (For a description of all JavaMOP options, please run the following
 from a terminal at any time: `javamop -h`)
@@ -67,10 +67,9 @@ from a terminal at any time: `javamop -h`)
 
 #### Building a Java Agent
 
-With this mode, you may build Java agents for runtime
-instrumentation of their applications. Once JavaMOP is correctly
-installed (see the INSTALL.md file in this directory), this may be
-achieved by running the following command:
+With this mode, you may build Java agents for runtime instrumentation
+of your applications. Once JavaMOP is correctly installed, this can
+be achieved by running the following command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```
 
@@ -90,21 +89,21 @@ specification will be generated. Finally, if ```[-n agentName]``` is not
 specified and there are multiple specification files, then an agent
 called "JavaMOPAgent_1.jar" will be generated.
 
-Regarding the properties for building an agent, you can either
-choose to write their own properties or use the properties that we
-have already formalized from Java API. If you decide to write you
-own properties, you need to declare those properties to be in
-`package mop;` This is because JavaMOP is using some internal helper
-classes inside that package in the process. (It is not necessary for
-the property file(s) to be physically placed inside a directory called
+Regarding the properties for building an agent, you can either choose
+to write your own properties or use the properties that we have
+already formalized from Java API. If you decide to write your own
+properties, you need to declare those properties to be in `package
+mop;` This is because JavaMOP is using some internal helper classes
+inside that package in the process. (It is not necessary for the
+property file(s) to be physically placed inside a directory called
 "mop"; all that is required is to make the statement, "package mop;"
 to be the first line in the property file). Please refer to [JavaMOP
 syntax] (http://fsl.cs.illinois.edu/index.php/JavaMOP4_Syntax) page
 for more information on writing your own property files.
 
-We have formalized some properties from the Java API. If you are
-interested to build a java agent to monitor all these properties,
-please run the following command:
+We have formalized a large number of properties from the Java API. If
+you are interested in building a java agent to monitor all these
+properties, please run the following command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>]
 -usedb```
@@ -121,17 +120,16 @@ directory. That way, subsequent runs from the same directory do not
 require an internet connection, unless the properties directory is
 deleted.
 
-As a separate step, we encourage the reader to manually download the
-properties from the URL given above, place them in folder and generate
-an agent with the command:
+As a separate step, we also encourage the reader to manually download
+the properties from the URL given above, place them in a separate
+folder and generate an agent with the command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>]
 <properties>```,
 
 where ```<properties>``` is replaced with the directory where the
-reader has stored the properties. It may also be educational to open
-one or two of the ```.mop``` files to learn how properties are
-written.
+reader has stored the properties. It may also be educational to open a
+few of the ```.mop``` files to learn how to write JavaMOP properties.
 
 #### Using a Java Agent
 
@@ -150,7 +148,7 @@ run as follows:
 
 
 2. For Maven-based projects with tests, you can modify ```pom.xml```
-to use agent when running tests by adding following lines:
+to use the agent when running tests by adding following lines:
 
   ```xml
     <build>
@@ -172,12 +170,12 @@ to use agent when running tests by adding following lines:
    Replace ```${surefire-version}``` with the exact surefire plugin
    version used by the project (e.g., 2.16).
 
-   After that, you can run their tests with agent as usual by using
+   After that, you can run tests with the agent as usual by using
    ```mvn test```.
 
-3. For Ant-based projects which have tests, you can also modify
-   ```build.xml``` to use agent when running tests by adding one line
-   under the ```junit``` task:
+3. For Ant-based projects which have tests, you can modify
+   ```build.xml``` to use the agent when running tests by adding one
+   line under the ```junit``` task:
 
   ```xml
     <target name=...>
@@ -189,7 +187,7 @@ to use agent when running tests by adding following lines:
      </target>
    ```
 
-   After that, you can run their tests with agent as usual by using
+   After that, you can run tests with the agent as usual by using
    ```ant ${test_target_name}```.
 
 4. Java agent is easily integrated into IDEs like IntelliJ, Eclipse,
@@ -209,15 +207,16 @@ etc.
          -> select "Arguments" tab 
          -> enter "javaagent:JavaMOPAgent.jar" into "VM options" textbox.
    
-   By doing this, you can run or debug programs with the java agent
-   from within your IDE.
+   By doing this, you will be able to run or debug programs with the
+   agent within your IDE.
    
 
 #### Agent generation examples
 
-To build a java agent and run it using one of the examples that ship
-with JavaMOP, run the following commands from the same directory as
-this file:
+To build an agent and run it using one of the examples that shipped
+with JavaMOP, run following commands from the same directory as in
+this example:
+
 
 ```
 cd examples/agent/many
@@ -227,9 +226,9 @@ java -javaagent:JavaMOPAgent.jar SafeMapIterator_1
 ```
 
 Note that running ```javamop -agent -n JavaMOPAgent rvm/``` as above
-will print the specification used in building the agent, and give a
-"JavaMOPAgent.jar is generated." message at the end, if everything
-goes well.
+will print the specification used for building the agent, and print
+out message "JavaMOPAgent.jar is generated." at the end, which
+indicates everything goes well.
 
 Also, running ```java -javaagent:JavaMOPAgent.jar SafeMapIterator_1```
 as above will run the specified java program and, if everything works,
@@ -249,13 +248,12 @@ java found the problem too
 With this mode, you can generate an instrumentation (.aj) file and a
 java library (.java) file to be weaved into the target program. The
 instrumentation file includes the pointcuts and advice which will be
-used by the AspectJ compiler (ajc) to instrument the code. The advice
-in the instrumentation file will call the functions provided in the
-java library. For simplicity, JavaMOP appends the java library file to
-the instrumentation file and generates a single .aj file in the
-end. Once JavaMOP is correctly installed (see the INSTALL.md file in
-this directory), this can be achieved by running the following
-command:
+used by ajc to instrument the code. The advice in the instrumentation
+file will call the functions provided in the Java library. For
+simplicity, JavaMOP appends the java library file to the
+instrumentation file and generates a single .aj file in the end. Once
+JavaMOP is correctly installed, this can be achieved by running the
+following command:
 
 ```javamop [-v] [-d <target directory>] [-merge] <properties>```
 
@@ -268,7 +266,7 @@ files, or a directory containing such property files. By default, one
 ```[-merge]``` is set, JavaMOP will generate a combined .aj file for
 monitoring multiple properties simultaneously.
 
-#### Weaving the code using AspectJ Compiler (ajc)
+#### Weaving the code using ajc
 
 To weave the target program with the generated monitoring library, run
 the following command:
@@ -290,12 +288,10 @@ store the generated .class file(s) in ```<target directory>```. If
 there is no error reported, you can directly run the weaved code in
 the ```<target directory>```.
 
-(For more information on ajc options, type ```ajc -help``` for help)
-
-**Note:** If you have additional dependencies, then you may add them 
-with `-cp` (or `-classpath`) option. Please be careful when using this
-option because it will override your CLASSPATH. This suggestion applies 
-to both ```ajc``` and ```java```.
+**Note:** If you have additional dependencies, you may add them with
+`-cp` (or `-classpath`) option. Please be careful when using this
+option because it will override your CLASSPATH. This suggestion
+applies to both ```ajc``` and ```java```.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
@@ -341,7 +337,7 @@ your AspectJ before applying the patch):
 
 **Prerequisites for using the patch:**
  
-* AspectJ source code.
+* AspectJ Compiler source code.
 
   If you have not checked out the source code of AspectJ, you can go
   to [here](http://git.eclipse.org/c/aspectj/org.aspectj.git) to check
