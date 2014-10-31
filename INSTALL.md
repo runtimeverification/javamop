@@ -10,8 +10,7 @@ To use JavaMOP, you need JDK, AJC and RV-Monitor.
 
 1. [JDK]
 (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-v.7.0.0 or higher (JRE suffices if you don't generate agents with
-JavaMOP)
+v.7.0.0 or higher
 
  * Check Java is installed properly: run `java -version` from a
   terminal.
