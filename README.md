@@ -41,9 +41,3 @@ and can not find your answer in docs/Troubleshooting.md,
 open a new issues on [JavaMOP's issues page]
 (https://github.com/runtimeverification/javamop/issues).
 
-## Contact Information
-
-We welcome your interest in JavaMOP. Your feedback, comments and bug
-reports are highly appreciated. Please feel free to contact us by
-opening new issues on [JavaMOP's issues page]
-(https://github.com/runtimeverification/javamop/issues).
