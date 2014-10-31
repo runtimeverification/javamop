@@ -274,7 +274,7 @@ where `Main` is assumed to be the entry point to the application.
 ##Troubleshooting
 
 Here we gathered some problems that you might encounter while
-JavaMOP, along with instructions on how to
+using JavaMOP, along with instructions on how to
 solve them.
 
 ### I get "Code size too big" error when using AspecJ Compiler, what should I do?
@@ -368,7 +368,9 @@ running something with Xbootclasspath:
     		at sun.misc.SharedSecrets.getJavaIOAccess(SharedSecrets.java:93)
     		at java.lang.System.initializeSystemClass(System.java:1089)
     		
-The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is `-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
+The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is
+
+`-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
 
 ### I did not find a solution to my problem here, what should I do ?
 
