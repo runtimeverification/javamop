@@ -32,10 +32,4 @@ the src/README.md.
 
 Refer to docs/Usage.md for detailed instructions on how to use JavaMOP.
 
-## Troubleshooting
-
-If you experience any problems while installing or using JavaMOP,
-and can not find your answer in docs/Troubleshooting.md,
-open a new issue on [JavaMOP's issues page]
-(https://github.com/runtimeverification/javamop/issues).
 
