@@ -34,7 +34,7 @@ the src/README.md.
 
 Refer to docs/Usage.md for instructions on how to use JavaMOP.
 
-### Troubleshooting
+## Troubleshooting
 
 If you experience any problems when installing or using JavaMOP,
 and can not find your answer in docs/Troubleshooting.md,
