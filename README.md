@@ -34,7 +34,7 @@ Refer to docs/Usage.md for instructions on how to use JavaMOP.
 
 ## Troubleshooting
 
-If you experience any problems when installing or using JavaMOP,
+If you experience any problems while installing or using JavaMOP,
 and can not find your answer in docs/Troubleshooting.md,
 open a new issues on [JavaMOP's issues page]
 (https://github.com/runtimeverification/javamop/issues).
