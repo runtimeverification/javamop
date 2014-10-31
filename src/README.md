@@ -49,7 +49,7 @@ higher
 
  This will download many dependencies the first time you run it.
 
-3. Add <JavaMOP_HOME>/bin` to your PATH.
+3. Add `<JavaMOP_HOME>/bin` to your PATH.
 
 4. Check JavaMOP is installed properly: run `javamop` from a
    terminal.
