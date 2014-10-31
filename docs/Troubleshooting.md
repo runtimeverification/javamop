@@ -97,3 +97,7 @@ running something with Xbootclasspath:
     		
 The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is `-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
 
+## I can not find my problem here, what should I do ?
+
+Open a new issue on  [JavaMOP's issues page]
+(https://github.com/runtimeverification/javamop/issues).
