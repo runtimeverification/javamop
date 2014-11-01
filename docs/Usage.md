@@ -289,22 +289,16 @@ weave code; as follows:
 This error is caused by Java's 64KB maximum method size constraint.
 If a method of the monitored class is already too big, then, after
 inserting the advice at the pointcuts, it may exceed the 64KB
-limit.
+limit. This error has nothing to do with JavaMOP, it is caused by
+AspectJ's limitation. 
 
-If you have access to the source code (.java files) of the program
-that you want to monitor, then the easiest way to solve this problem
-is weaving the source code (.java files) instead of weaving the
-compiled code (.class). The AspectJ compiler optimizes the source code
-to make it more space-efficient so that it will not violate the method
-size constraint during weaving. This error has nothing to do with
-JavaMOP, it is caused by AspectJ's limitation. This kind of problem
-often happens when you try to weave the bytecode (.class files) and
-aspects. If you have access to the source code (.java files) of the
-program that you want to monitor, then the easiest way that is likely
-to solve this problem is weaving the source code (.java files) instead
-of weaving the compiled code (.class files). AspectJ compiler will do
-some optimization to the source code to make it more space-efficient
-so that the method size may reduce to the safe zone.
+This kind of problem often happens when you try to weave the bytecode
+(.class files) and aspects. If you have access to the source code 
+(.java files) of the program that you want to monitor, then the easiest
+way that is likely to solve this problem is weaving the source code
+(.java files) instead of weaving the compiled code (.class files).
+AspectJ compiler will do some optimization to the source code to make it
+more space-efficient so that the method size may reduce to the safe zone.
 
 In case you encounter such problem, but either you do not have access to
 the source code, or, the above method does not work, then we also provide
