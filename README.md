@@ -23,7 +23,7 @@ To build JavaMOP from sources, download the
 [source code](https://github.com/runtimeverification/javamop) and refer to
 [src/README.md](src/README.md).
 
-3# Usage
+## Usage
 
 Refer to [docs/Usage.md](docs/Usage.md) for detailed instructions on how
 to use JavaMOP.
