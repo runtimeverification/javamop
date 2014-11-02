@@ -3,6 +3,7 @@
 ==============================================================================
 The JavaMOP Release License
 ==============================================================================
+
 University of Illinois/NCSA Open Source License
 
 Copyright (c) 2009-2013 University of Illinois at Urbana-Champaign.
@@ -47,6 +48,7 @@ SOFTWARE.
 ==============================================================================
 Third Party Software Distributed with JavaMOP
 ==============================================================================
+
 The JavaMOP software contains code written by third parties. Such
 software will have its own individual LICENSE file in the directory in
 which it appears. The disclaimer of warranty in the University of
