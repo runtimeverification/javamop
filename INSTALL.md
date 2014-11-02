@@ -6,7 +6,7 @@ instructions in [src/README.md](src/README.md) to build JavaMOP.
 
 ##Prerequisites
 
-To use JavaMOP, you need JDK, AJC and RV-Monitor.
+JavaMOP requires JDK, AJC and RV-Monitor.
 
 1. [JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 v.7 or higher
