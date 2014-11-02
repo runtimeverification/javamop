@@ -23,7 +23,7 @@ v.1.8 or higher
 1. Run `git clone https://github.com/runtimeverification/javamop.git`
 to check out the source code from the
 [Github repository](https://github.com/runtimeverification/javamop/)
-(or download them as a ZIP archive directly from the
+(or download it as a ZIP archive directly from the
 [Github release page](https://github.com/runtimeverification/javamop/releases)).
 
 2. Run `mvn package` in the `<JavaMOP_HOME>` directory.
