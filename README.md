@@ -19,7 +19,7 @@ is an instance of MOP for Java.
 
 See [INSTALL.md](INSTALL.md) for installing JavaMOP from the
 [binary release zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4).
-To build JavaMOP from sources, download the
+To build JavaMOP from source code, download the
 [source code](https://github.com/runtimeverification/javamop) and refer to
 [src/README.md](src/README.md).
 

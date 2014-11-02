@@ -1,6 +1,6 @@
-# Building JavaMOP from Sources
+# Building JavaMOP from Source Code
 
-This file contains instructions to build JavaMOP from sources.
+This file contains instructions to build JavaMOP from source code.
 If you only want to be a user, but not a developer of JavaMOP, then we
 recommend that you install it from its
 [binary release zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4);

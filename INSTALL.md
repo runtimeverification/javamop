@@ -28,11 +28,11 @@ v.1.3 or higher
 
 ## Install
 
-1. Download JavaMOP's binary release zip archive from
+1. Download the binary JavaMOP release from
    [its website](http://fsl.cs.illinois.edu/index.php/JavaMOP4).
 
 2. Unzip it to your preferred location and add
- `<JavaMOP_HOME>/bin` to your PATH.
+   `<JavaMOP_HOME>/bin` to your PATH.
 
 3. Check JavaMOP is installed properly: run `javamop` from a
    terminal.
