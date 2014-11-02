@@ -1,6 +1,4 @@
-# JavaMOP README
-
-## Overview
+# Overview
 
 [Monitoring-Oriented Programming (MOP)](http://fsl.cs.illinois.edu/mop),
 is a software development and analysis framework which aims to reduce
@@ -17,7 +15,7 @@ information logging to runtime recovery.
 [JavaMOP](http://fsl.cs.illinois.edu/javamop)
 is an instance of MOP for Java.
 
-## Installation
+# Installation
 
 See [INSTALL.md](INSTALL.md) for installing JavaMOP from the
 [binary release zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4).
@@ -25,7 +23,7 @@ To build JavaMOP from sources, download the
 [source code](https://github.com/runtimeverification/javamop) and refer to
 [src/README.md](src/README.md).
 
-## Usage
+# Usage
 
 Refer to [docs/Usage.md](docs/Usage.md) for detailed instructions on how
 to use JavaMOP.

@@ -1,12 +1,10 @@
-# JavaMOP BUILD
-
 This file contains instructions to build JavaMOP from sources.
 If you only want to be a user, but not a developer of JavaMOP, then we
 recommend that you install it from its
 [binary release zip archive](http://fsl.cs.illinois.edu/index.php/JavaMOP4);
 in that case, please refer to [../INSTALL.md](../INSTALL.md).
 
-## Prerequisites
+# Prerequisites
 
 All the prerequisites in [../INSTALL.md](../INSTALL.md) for users
 installing from binaries, plus:
@@ -18,12 +16,12 @@ v.3.0 or higher
 v.1.8 or higher
  * Check Git is installed properly: run `git` from a terminal.
 
-##Build and Install
+# Build and Install
 
 1. Run `git clone https://github.com/runtimeverification/javamop.git`
 to check out the source code from the
 [Github repository](https://github.com/runtimeverification/javamop/)
-(or download it as a ZIP/TAR.GZ archive directly from the
+(or download it as a ZIP or TAR.GZ archive directly from the
 [Github release page](https://github.com/runtimeverification/javamop/releases)).
 
 2. Run `mvn package` in the `<JavaMOP_HOME>` directory.
