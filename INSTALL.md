@@ -1,8 +1,10 @@
+# Installing JavaMOP from Binaries
+
 Here are instructions for installing JavaMOP from its binary release
 zip archive. Users who checked out the source code should follow the
 instructions in [src/README.md](src/README.md) to build JavaMOP.
 
-# Prerequisites
+## Prerequisites
 
 JavaMOP requires JDK, AJC and RV-Monitor.
 
@@ -24,7 +26,7 @@ v.1.3 or higher
  * Add `<RV-Monitor_HOME>/lib/rv-monitor.jar` and
  `<RV-Monitor_HOME>/lib/rv-monitor-rt.jar` to your CLASSPATH.
 
-# Install
+## Install
 
 1. Download JavaMOP's binary release zip archive from
    [its website](http://fsl.cs.illinois.edu/index.php/JavaMOP4).

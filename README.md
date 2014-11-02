@@ -1,4 +1,4 @@
-# Overview
+# JavaMOP Overview
 
 [Monitoring-Oriented Programming (MOP)](http://fsl.cs.illinois.edu/mop),
 is a software development and analysis framework which aims to reduce
