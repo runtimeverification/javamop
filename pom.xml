@@ -48,7 +48,8 @@
         <dependency>
             <groupId>com.runtimeverification.rvmonitor</groupId>
             <artifactId>rv-monitor</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <!-- Allow any released (non-snapshot) RV-Monitor release >= 1.3 -->
+            <version>[1.3,)</version>
         </dependency>
         <!-- A runtime dependency, as JavaMOP uses AspectJ to compile agents. -->
         <dependency>
@@ -83,6 +84,73 @@
             <version>1.35</version>
         </dependency>
     </dependencies>
+    <!-- Profile for installing RV-Monitor dependency with no repo access (will attempt only when rvMonitoBase property is provided) -->
+    <profiles>
+        <profile>
+            <id>install-rv-monitor-locally</id>
+            <activation>
+                <property>
+                    <name>rvMonitorBase</name>
+                </property>
+            </activation>
+            <build>
+                <!-- Execute iterator plugin if RV-Monitor is to be resolved -->
+                <plugins>
+                    <plugin>
+                        <groupId>com.soebes.maven.plugins</groupId>
+                        <artifactId>iterator-maven-plugin</artifactId>
+                        <version>0.2</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>executor</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>true</skip>
+                                    <items>
+                                        <!-- List of proprietary RV-Monitor dependencies 
+                                        (as file name from base of lib/ directory with no jar extension)-->
+                                        <item>rv-monitor</item>
+                                        <item>rv-monitor-rt</item>
+                                        <item>logicrepository</item>
+                                        <item>plugins/cfg</item>
+                                        <item>plugins/ere</item>
+                                        <item>plugins/fsm</item>
+                                        <item>plugins/ltl</item>
+                                        <item>plugins/pda</item>
+                                        <item>plugins/po</item>
+                                        <item>plugins/ptcaret</item>
+                                        <item>plugins/ptltl</item>
+                                        <item>plugins/srs</item>
+                                        <item>plugins/tfsm</item>
+                                    </items>
+                                    <pluginExecutors>
+                                        <pluginExecutor>
+                                            <plugin>
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>exec-maven-plugin</artifactId>
+                                                <version>1.2.1</version>
+                                            </plugin>
+                                            <goal>exec</goal>
+                                            <configuration>
+                                                <executable>mvn</executable>
+                                                <arguments>
+                                                    <!-- Ensure v2.5.2 of install plugin is used (old versions don't support install from Jar's POM) -->
+                                                    <argument>org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file</argument>
+                                                    <argument>-Dfile=${rvMonitorBase}/lib/@item@.jar</argument>
+                                                </arguments>
+                                            </configuration>
+                                        </pluginExecutor>
+                                    </pluginExecutors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
