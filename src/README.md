@@ -26,12 +26,17 @@ to check out the source code from the
 (or download it as a ZIP or TAR.GZ archive directly from the
 [Github release page](https://github.com/runtimeverification/javamop/releases)).
 
-2. Run `mvn package` in the `<JavaMOP_HOME>` directory.
+2. To prepare to build JavaMOP, you must install RV-Monitor to your local Maven
+repository.  If you do not have access to the proprietary RV Maven repository run
+`mvn validate -DrvMonitorBase=[path to RV-Monitor base dir]` from the 
+`<JavaMOP_HOME>` directory.  No failures should be reported.
+
+3. Run `mvn package` in the `<JavaMOP_HOME>` directory.
 This will download many dependencies the first time you run it.
 
-3. Add `<JavaMOP_HOME>/bin` to your PATH.
+4. Add `<JavaMOP_HOME>/bin` to your PATH.
 
-4. Check JavaMOP is installed properly: run `javamop` from a
+5. Check JavaMOP is installed properly: run `javamop` from a
    terminal.
 
 See [../README.md](../README.md) for more information.
