@@ -26,10 +26,11 @@ to check out the source code from the
 (or download it as a ZIP or TAR.GZ archive directly from the
 [Github release page](https://github.com/runtimeverification/javamop/releases)).
 
-2. To prepare to build JavaMOP, you must install RV-Monitor to your local Maven
-repository.  If you do not have access to the proprietary RV Maven repository run
-`mvn validate -DrvMonitorBase=[path to RV-Monitor base dir]` from the 
-`<JavaMOP_HOME>` directory.  No failures should be reported.
+2. To prepare to build JavaMOP, you must either
+  - Install RV-Monitor to your local Maven repository by running 
+    `mvn validate -DrvMonitorBase=<RV-Monitor_HOME>` (no fails should occur) OR
+  - Get access to the proprietary RV Maven repository 
+    (by filing an [RV Support](http://runtimeverification.com/support) ticket).
 
 3. Run `mvn package` in the `<JavaMOP_HOME>` directory.
 This will download many dependencies the first time you run it.
