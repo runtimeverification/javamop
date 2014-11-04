@@ -1,10 +1,10 @@
 # JavaMOP Usage
 
 **Note:** This document assumes that you have followed all
-the instructions in [../INSTALL.md](../INSTALL.md) and updated your CLASSPATH and PATH
-environment variables according to the Prerequisites section in that
-file. In addition, we also assume that "." is on your CLASSPATH. Last
-but not least, be cautious whenever you modify or override the
+the instructions in [../INSTALL.md](../INSTALL.md) and updated
+your CLASSPATH and PATH environment variables according to the
+Prerequisites section in that file.
+In addition, be cautious whenever you modify or override the
 CLASSPATH as it might break the prerequisites of JavaMOP.
 
 Before using JavaMOP, you should specify the properties to be
@@ -277,7 +277,7 @@ Here we gathered some problems that you might encounter while
 using JavaMOP, along with instructions on how to
 solve them.
 
-### I get "Code size too big" error when using AspectJ Compiler, what should I do?
+### I get `Code size too big` error when using AspectJ Compiler, what should I do?
 
 In some extreme cases when you need to monitor classes with huge
 methods or the intended pointcuts are very dense in some method, you
@@ -365,6 +365,10 @@ running something with Xbootclasspath:
 The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is
 
 `-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
+
+### I get `Could not find or load main class` error when I use `java` or `ajc` command, what should I do ?
+
+This document assumes that you have "." in your CLASSPATH (which almost always the case). If you do not, add it to your CLASSPATH and run those command agian. 
 
 ### I did not find a solution to my problem here, what should I do ?
 
