@@ -1,7 +1,7 @@
 # JavaMOP Usage
 
 **Note:** This document assumes that you have followed all
-the instructions in INSTALL.md and updated your CLASSPATH and PATH
+the instructions in [../INSTALL.md](../INSTALL.md) and updated your CLASSPATH and PATH
 environment variables according to the Prerequisites section in that
 file. In addition, we also assume that "." is on your CLASSPATH. Last
 but not least, be cautious whenever you modify or override the
