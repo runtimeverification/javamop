@@ -73,7 +73,7 @@ syntax] (http://fsl.cs.illinois.edu/index.php/JavaMOP4_Syntax) page
 for more information on writing your own property files.
 
 We have formalized a large number of properties from the Java API. If
-you are interested in building a java agent to monitor all these
+you are interested in building a Java agent to monitor all these
 properties, please run the following command:
 
 ```javamop -agent [-n agentName] [-v] [-d <target directory>]
@@ -114,7 +114,7 @@ run as follows:
    ```java -javaagent:JavaMOPAgent.jar Main```
 
    In other words, you will need to run the same command as you would
-   normally use for running your java application, but with the
+   normally use for running your Java application, but with the
    addition of the ```-javaagent:JavaMOPAgent.jar```, as shown above.
 
 
@@ -202,7 +202,7 @@ out message "JavaMOPAgent.jar is generated." at the end, which
 indicates everything goes well.
 
 Also, running ```java -javaagent:JavaMOPAgent.jar SafeMapIterator_1```
-as above will run the specified java program and, if everything works,
+as above will run the specified Java program and, if everything works,
 will print out the following messages:
 
 ```
@@ -217,11 +217,11 @@ java found the problem too
 #### Generating Instrumentation File and Java Library
 
 With this mode, you can generate an instrumentation (.aj) file and a
-java library (.java) file to be weaved into the target program. The
+Java library (.java) file to be weaved into the target program. The
 instrumentation file includes the pointcuts and advice which will be
 used by ajc to instrument the code. The advice in the instrumentation
 file will call the functions provided in the Java library. For
-simplicity, JavaMOP appends the java library file to the
+simplicity, JavaMOP appends the Java library file to the
 instrumentation file and generates a single .aj file in the end. Once
 JavaMOP is correctly installed, this can be achieved by running the
 following command:
@@ -254,7 +254,7 @@ failing to keep the necessary package layout. You can simply use ```-d
 directory. ```<path-to-aj-file>``` and ```<path-to-java-file>``` refer
 to the path to the generated instrumentation file and the path to the
 target program (i.e the program to be weaved) respectively. Given this
-command, ajc will instrument and compile the original java file and
+command, ajc will instrument and compile the original Java file and
 store the generated .class file(s) in ```<target directory>```. If
 there is no error reported, you can directly run the weaved code in
 the ```<target directory>```.
@@ -351,7 +351,7 @@ methods.
 ### I get error when I use Xbootclasspath, what should I do ?
 
 Instrumenting with Xbootclasspath can lead to errors if the right
-jar files are not passed to the java command after weaving. 
+jar files are not passed to the Java command after weaving. 
 For example, one may see the following error message when 
 running something with Xbootclasspath:
 
