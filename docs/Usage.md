@@ -42,9 +42,9 @@ With this mode, you may build Java agents for runtime instrumentation
 of your applications. Once JavaMOP is correctly installed, this can
 be achieved by running the following command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```
+```javamop -agent [-n <agent name>] [-v] [-d <target directory>] <properties>```
 
-The optional ```[-n agentName]``` specifies "agentName" as the name of
+The optional ```[-n <agent name>]``` specifies the name of
 the agent generated, ```[-v]``` generates the agent in verbose mode
 and ```[-d <target directory>]``` stores all intermediate files from
 agent generation in a user specified directory which must exist prior
@@ -52,11 +52,11 @@ to issuing the command above. ```<properties>``` refers to one or more
 property (i.e. *.mop) files, or a directory containing such property
 files.
 
-If you specify the ```[-n agentName]``` option, the previous command
-will create ```<agentName>.jar``` in the same directory as that from which
-the command is run. If a ```[-n agentName]``` is not specified and there is
+If you specify the ```[-n <agent name>]``` option, the previous command
+will create ```<agent name>.jar``` in the same directory as that from which
+the command is run. If a ```[-n <agent name>]``` is not specified and there is
 just one specification, then an agent with the same name as the
-specification will be generated. Finally, if ```[-n agentName]``` is not
+specification will be generated. Finally, if ```[-n <agent name>]``` is not
 specified and there are multiple specification files, then an agent
 called "JavaMOPAgent_1.jar" will be generated.
 
@@ -76,7 +76,7 @@ We have formalized a large number of properties from the Java API. If
 you are interested in building a Java agent to monitor all these
 properties, please run the following command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>]
+```javamop -agent [-n <agent name>] [-v] [-d <target directory>]
 -usedb```
 
 The ```-usedb``` option fetches our properties (formalized from the
@@ -95,7 +95,7 @@ As a separate step, we also encourage the reader to manually download
 the properties from the URL given above, place them in a separate
 folder and generate an agent with the command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>]
+```javamop -agent [-n <agent name>] [-v] [-d <target directory>]
 <properties>```,
 
 where ```<properties>``` is replaced with the directory where the
