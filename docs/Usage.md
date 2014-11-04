@@ -311,12 +311,12 @@ your AspectJ before applying the patch):
 * AspectJ Compiler source code.
 
   If you have not checked out the source code of AspectJ, you can go
-  to [here](http://git.eclipse.org/c/aspectj/org.aspectj.git) to check
+  [here](http://git.eclipse.org/c/aspectj/org.aspectj.git) to check
   it out.
   
 * Ant.
 
-  If you do not have Ant installed, then go to
+  If you do not have Ant installed, then go
   [here](http://ant.apache.org/) to download and install the latest
   version.
 
