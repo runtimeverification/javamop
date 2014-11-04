@@ -277,7 +277,7 @@ Here we gathered some problems that you might encounter while
 using JavaMOP, along with instructions on how to
 solve them.
 
-### I get "Code size too big" error when using AspecJ Compiler, what should I do?
+### I get "Code size too big" error when using AspectJ Compiler, what should I do?
 
 In some extreme cases when you need to monitor classes with huge
 methods or the intended pointcuts are very dense in some method, you
