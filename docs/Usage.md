@@ -367,7 +367,7 @@ This document assumes that you have "." in your CLASSPATH (which is almost alway
 
 ### I get errors when I use `java` or `ajc` with `-cp` (or `-classpath`) option, what should I do ?
 
-JavaMOP (and so the files it generates) depend on certain libraries to be on your CLASSPATH. `-cp` and `-classpath` options override your CLASSPATH. So make sure to include the old CLASSPATH in your new one.
+JavaMOP (and the files it generates) depend on certain libraries to be on your CLASSPATH. `-cp` and `-classpath` options override your CLASSPATH. So make sure to include the old CLASSPATH in your new one.
 
 ### I did not find a solution to my problem here, what should I do ?
 
