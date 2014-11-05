@@ -1,10 +1,10 @@
 # JavaMOP Usage
 
 **Note:** This document assumes that you have followed all
-the instructions in INSTALL.md and updated your CLASSPATH and PATH
-environment variables according to the Prerequisites section in that
-file. In addition, we also assume that "." is on your CLASSPATH. Last
-but not least, be cautious whenever you modify or override the
+the instructions in [../INSTALL.md](../INSTALL.md) and updated
+your CLASSPATH and PATH environment variables according to the
+Prerequisites section in that file.
+In addition, be cautious whenever you modify or override the
 CLASSPATH as it might break the prerequisites of JavaMOP.
 
 Before using JavaMOP, you should specify the properties to be
@@ -42,9 +42,9 @@ With this mode, you may build Java agents for runtime instrumentation
 of your applications. Once JavaMOP is correctly installed, this can
 be achieved by running the following command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>] <properties>```
+```javamop -agent [-n <agent name>] [-v] [-d <target directory>] <properties>```
 
-The optional ```[-n agentName]``` specifies "agentName" as the name of
+The optional ```[-n <agent name>]``` specifies the name of
 the agent generated, ```[-v]``` generates the agent in verbose mode
 and ```[-d <target directory>]``` stores all intermediate files from
 agent generation in a user specified directory which must exist prior
@@ -52,11 +52,11 @@ to issuing the command above. ```<properties>``` refers to one or more
 property (i.e. *.mop) files, or a directory containing such property
 files.
 
-If you specify the ```[-n agentName]``` option, the previous command
-will create ```<agentName>.jar``` in the same directory as that from which
-the command is run. If a ```[-n agentName]``` is not specified and there is
+If you specify the ```[-n <agent name>]``` option, the previous command
+will create ```<agent name>.jar``` in the same directory as that from which
+the command is run. If a ```[-n <agent name>]``` is not specified and there is
 just one specification, then an agent with the same name as the
-specification will be generated. Finally, if ```[-n agentName]``` is not
+specification will be generated. Finally, if ```[-n <agent name>]``` is not
 specified and there are multiple specification files, then an agent
 called "JavaMOPAgent_1.jar" will be generated.
 
@@ -76,7 +76,7 @@ We have formalized a large number of properties from the Java API. If
 you are interested in building a Java agent to monitor all these
 properties, please run the following command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>]
+```javamop -agent [-n <agent name>] [-v] [-d <target directory>]
 -usedb```
 
 The ```-usedb``` option fetches our properties (formalized from the
@@ -95,7 +95,7 @@ As a separate step, we also encourage the reader to manually download
 the properties from the URL given above, place them in a separate
 folder and generate an agent with the command:
 
-```javamop -agent [-n agentName] [-v] [-d <target directory>]
+```javamop -agent [-n <agent name>] [-v] [-d <target directory>]
 <properties>```,
 
 where ```<properties>``` is replaced with the directory where the
@@ -242,7 +242,7 @@ monitoring multiple properties simultaneously.
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6  -d <target directory> <path-to-aj-file> <path-to-java-file>```
+```ajc -1.6  -d <target directory> <aj file path> <java file path>```
 
 ```-1.6``` indicates the output bytecode version. ```-d <target
 directory>``` specifies the directory to which the weaved code will be
@@ -251,18 +251,13 @@ that ajc can put the binary code in the right place. Without ```-d```,
 ajc will output all the bytecode files in the current directory,
 failing to keep the necessary package layout. You can simply use ```-d
 .``` to output binary code in the current
-directory. ```<path-to-aj-file>``` and ```<path-to-java-file>``` refer
+directory. ```<aj file path>``` and ```<java file path>``` refer
 to the path to the generated instrumentation file and the path to the
 target program (i.e the program to be weaved) respectively. Given this
 command, ajc will instrument and compile the original Java file and
 store the generated .class file(s) in ```<target directory>```. If
 there is no error reported, you can directly run the weaved code in
 the ```<target directory>```.
-
-**Note:** If you have additional dependencies, you may add them with
-`-cp` (or `-classpath`) option. Please be careful when using this
-option because it will override your CLASSPATH. This suggestion
-applies to both ```ajc``` and ```java```.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
@@ -277,7 +272,7 @@ Here we gathered some problems that you might encounter while
 using JavaMOP, along with instructions on how to
 solve them.
 
-### I get "Code size too big" error when using AspectJ Compiler, what should I do?
+### I get `Code size too big` error when using AspectJ Compiler, what should I do?
 
 In some extreme cases when you need to monitor classes with huge
 methods or the intended pointcuts are very dense in some method, you
@@ -348,7 +343,7 @@ After generating the new AspectJ libraries and deploying them, your
 AspectJ compiler should now be able to handle the classes with huge
 methods.
 
-### I get error when I use Xbootclasspath, what should I do ?
+### I get error when I use `Xbootclasspath`, what should I do ?
 
 Instrumenting with Xbootclasspath can lead to errors if the right
 jar files are not passed to the Java command after weaving. 
@@ -365,6 +360,14 @@ running something with Xbootclasspath:
 The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is
 
 `-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
+
+### I get `Could not find or load main class` error when I use `java`, what should I do ?
+
+This document assumes that you have "." in your CLASSPATH (which is almost always the case). If you do not have it, add it to your CLASSPATH and run that command agian. 
+
+### I get errors when I use `java` or `ajc` with `-cp` (or `-classpath`) option, what should I do ?
+
+JavaMOP (and the files it generates) depend on certain libraries to be on your CLASSPATH. `-cp` and `-classpath` options override your CLASSPATH. So make sure to include the old CLASSPATH in your new one.
 
 ### I did not find a solution to my problem here, what should I do ?
 
