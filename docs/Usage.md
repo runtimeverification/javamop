@@ -361,11 +361,11 @@ The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is
 
 `-Xbootclasspath/p:directoryWithInstrumentedJRE:/usr/lib/jvm/java-6-sun-1.6.0.24/jre/lib/rt.jar`
 
-### I get `Could not find or load main class` error when I use `java` or `ajc` command, what should I do ?
+### I get `Could not find or load main class` error when I use `java`, what should I do ?
 
-This document assumes that you have "." in your CLASSPATH (which almost always the case). If you do not have it, add it to your CLASSPATH and run those command agian. 
+This document assumes that you have "." in your CLASSPATH (which is almost always the case). If you do not have it, add it to your CLASSPATH and run that command agian. 
 
-### I get errors when I run `java` or `ajc` with `-cp` (or `-classpath`) option, what should I do ?
+### I get errors when I use `java` or `ajc` with `-cp` (or `-classpath`) option, what should I do ?
 
 JavaMOP (and thus the files it generates) depend on certain libraries to be on your CLASSPATH. `-cp` and `-classpath` options override your CLASSPATH. So make sure to include the old CLASSPATH in your new one.
 
