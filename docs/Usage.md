@@ -259,11 +259,6 @@ store the generated .class file(s) in ```<target directory>```. If
 there is no error reported, you can directly run the weaved code in
 the ```<target directory>```.
 
-**Note:** If you have additional dependencies, you may add them with
-`-cp` (or `-classpath`) option. Please be careful when using this
-option because it will override your CLASSPATH. This suggestion
-applies to both ```ajc``` and ```java```.
-
 #### Running the Weaved Code
 To run the weaved program, simply type:
 
@@ -369,6 +364,10 @@ The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is
 ### I get `Could not find or load main class` error when I use `java` or `ajc` command, what should I do ?
 
 This document assumes that you have "." in your CLASSPATH (which almost always the case). If you do not, add it to your CLASSPATH and run those command agian. 
+
+### I get errors when I run `java` or `ajc` with `-cp` (or `-classpath`) option, what should I do ?
+
+JavaMOP (and thus the files it generates) depend on certain libraries to be on your CLASSPATH. `-cp` and `-classpath` options override your CLASSPATH. So make sure to include the old CLASSPATH in your new one.
 
 ### I did not find a solution to my problem here, what should I do ?
 
