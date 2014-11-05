@@ -343,7 +343,7 @@ After generating the new AspectJ libraries and deploying them, your
 AspectJ compiler should now be able to handle the classes with huge
 methods.
 
-### I get error when I use Xbootclasspath, what should I do ?
+### I get error when I use `Xbootclasspath`, what should I do ?
 
 Instrumenting with Xbootclasspath can lead to errors if the right
 jar files are not passed to the Java command after weaving. 
@@ -363,7 +363,7 @@ The minimum necessary (for JDK 1.6.0.24 on a Linux OS) is
 
 ### I get `Could not find or load main class` error when I use `java` or `ajc` command, what should I do ?
 
-This document assumes that you have "." in your CLASSPATH (which almost always the case). If you do not, add it to your CLASSPATH and run those command agian. 
+This document assumes that you have "." in your CLASSPATH (which almost always the case). If you do not have it, add it to your CLASSPATH and run those command agian. 
 
 ### I get errors when I run `java` or `ajc` with `-cp` (or `-classpath`) option, what should I do ?
 
