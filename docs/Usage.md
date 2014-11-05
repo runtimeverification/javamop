@@ -242,7 +242,7 @@ monitoring multiple properties simultaneously.
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6  -d <target directory> <path-to-aj-file> <path-to-java-file>```
+```ajc -1.6  -d <target directory> <path to aj file> <path to java file>```
 
 ```-1.6``` indicates the output bytecode version. ```-d <target
 directory>``` specifies the directory to which the weaved code will be
@@ -251,7 +251,7 @@ that ajc can put the binary code in the right place. Without ```-d```,
 ajc will output all the bytecode files in the current directory,
 failing to keep the necessary package layout. You can simply use ```-d
 .``` to output binary code in the current
-directory. ```<path-to-aj-file>``` and ```<path-to-java-file>``` refer
+directory. ```<path to aj file>``` and ```<path to java file>``` refer
 to the path to the generated instrumentation file and the path to the
 target program (i.e the program to be weaved) respectively. Given this
 command, ajc will instrument and compile the original Java file and
