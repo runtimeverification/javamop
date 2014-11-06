@@ -116,7 +116,7 @@ public final class AgentGenerator {
             //extract the absolute paths for these two jars from java classpath
             //running "mvn package", or similar, would set this java classpath appropriately
             String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
-            String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
+            String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
 
             //get the actual jar name from the absolute path
             String weaverJarName = null;
@@ -125,7 +125,7 @@ public final class AgentGenerator {
                 weaverJarName = getJarName(weaverJarPath);
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
             } else {
-                System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt " +
+                System.err.println("(missing jars) Could not find aspectjweaver or rv-monitor-rt " +
                         "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
 
@@ -137,7 +137,7 @@ public final class AgentGenerator {
             copyFile(new File(weaverJarPath), actualWeaverFile);
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
 
-            //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
+            //extract aspectjweaver.jar and rv-monitor-rt.jar (since their content will
             //be packaged with the agent.jar)
             int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
             if (extractReturn != 0) {
@@ -147,7 +147,7 @@ public final class AgentGenerator {
 
             extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
             if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
+                System.err.println("(jar) Failed to extract the rv-monitor-rt jar");
                 return;
             }
 
@@ -162,7 +162,7 @@ public final class AgentGenerator {
             }
 
             if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will" +
+                System.err.println("(delete) Failed to delete rv-monitor-rt jar; generated jar will" +
                         " have a bigger size than normal");
             }
 
@@ -346,7 +346,7 @@ public final class AgentGenerator {
 
     /**
      * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
-     * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
+     * rv-monitor-rt.jar from the classpath that is used when JavaMOP is run.
      *
      * @param f The file to write the manifest to.
      * @throws IOException If something goes wrong in writing the file.

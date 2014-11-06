@@ -14,7 +14,7 @@
                 <exclude>org.aspectj:aspectjweaver</exclude>
                 <exclude>org.aspectj:aspectjrt</exclude>
                 <exclude>com.runtimeverification.rvmonitor:rv-monitor</exclude>
-                <exclude>com.runtimeverification.rvmonitor:rvmonitorrt</exclude>
+                <exclude>com.runtimeverification.rvmonitor:rv-monitor-rt</exclude>
             </excludes>
         </dependencySet>
         <dependencySet>
