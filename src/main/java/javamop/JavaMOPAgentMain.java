@@ -56,5 +56,20 @@ public class JavaMOPAgentMain {
         JavaMOPAgentMain.baseAspect = options.baseAspect;
         JavaMOPAgentMain.agentName = options.agentName;
 
+        boolean firstAspect = true;
+        for (int j = 0; j < args.length; j++) {
+            if("-baseaspect".equals(args[j])) {
+                 j++;
+            } else if ("-n".equals(args[j]) || "-agentname".equals(args[j])) {
+                j++;
+            } else if (args[j].endsWith(".aj")) {
+                JavaMOPAgentMain.agentAspect = new File(args[j]);
+            } else if (!"-excludeJars".equals(args[j])){
+                // class directory
+                JavaMOPAgentMain.classDir = new File(args[j]);
+            }
+        }
+
+
     }
 }
