@@ -4,6 +4,7 @@ package javamop;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import javamop.agent.SeparateAgentGenerator;
+import javamop.util.Tool;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +40,18 @@ public class JavaMOPAgentMain {
         }
         jc.setProgramName("javamopagent");
 
+        boolean createdTempOutput = false;
+        try {
+            if (options.outputDir == null) {
+                options.outputDir =
+                        Files.createTempDirectory(new File(".").toPath(), "output").toFile();
+                options.outputDir.deleteOnExit();
+                createdTempOutput = true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         handleOptions(options, args, jc);
 
         // Generate agent with SeparateAgentGenerator
@@ -47,6 +60,15 @@ public class JavaMOPAgentMain {
                     JavaMOPAgentMain.baseAspect, JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, false);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (createdTempOutput) {
+            try {
+                Tool.deleteDirectory(options.outputDir.toPath());
+            } catch(IOException e) {
+                e.printStackTrace();
+                System.err.println("Failed to remove temporary files.");
+            }
         }
 
     }
@@ -59,7 +81,7 @@ public class JavaMOPAgentMain {
      *                 JavaMOP with
      */
     private static void handleOptions(JavaMOPAgentOptions options, String[] args, JCommander jc) {
-        if (args.length == 0){
+        if (args.length == 0 || options.files.size() < 2){
             jc.usage();
             System.exit(1);
         }
@@ -71,15 +93,6 @@ public class JavaMOPAgentMain {
             JavaMOPAgentMain.agentName = "agent";
         }
         JavaMOPAgentMain.outputDir = options.outputDir;
-        try {
-            if (JavaMOPAgentMain.outputDir == null) {
-                JavaMOPAgentMain.outputDir =
-                        Files.createTempDirectory(new File(".").toPath(), "output").toFile();
-                JavaMOPAgentMain.outputDir.deleteOnExit();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         for (int j = 0; j < args.length; j++) {
             if("-baseaspect".equals(args[j])) {
@@ -95,9 +108,6 @@ public class JavaMOPAgentMain {
                 JavaMOPAgentMain.classDir = new File(args[j]);
             }
         }
-
-
-
 
     }
 }

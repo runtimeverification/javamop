@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.agent;
 
+import javamop.JavaMOPAgentMain;
 import javamop.util.Tool;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
@@ -9,7 +10,12 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -35,16 +41,14 @@ public final class SeparateAgentGenerator {
     /**
      * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
      *
-     * @param outputDir  The place to put all the intermediate generated files in.
-     * @param aspectname Generates {@code aspectname}.jar.
-     * @param baseAspect The aspect file to combine with the generated aspects.
+     * @param outputDir   The place to put all the intermediate generated files in.
+     * @param aspectname  Generates {@code aspectname}.jar.
+     * @param baseAspect  The aspect file to combine with the generated aspects.
      * @param agentAspect The aspect file to used in the agent
-     * @param verbose whether in verbose mode or not
+     * @param verbose     whether in verbose mode or not
      * @throws java.io.IOException If something goes wrong in the many filesystem operations.
      */
-    public static void generate(final File outputDir, final String aspectname,
-                                File baseAspect, File agentAspect, File classDir,
-                                boolean verbose) throws IOException {
+    public static void generate(final File outputDir, final String aspectname, File baseAspect, File agentAspect, File classDir, boolean verbose) throws IOException {
 
         if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
             System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
@@ -82,8 +86,8 @@ public final class SeparateAgentGenerator {
         // Change aspect name
 
         final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", baseClasspath,
-                "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
-                baseAspect.getAbsolutePath(), agentAspect.getAbsolutePath());
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", baseAspect.getAbsolutePath(),
+                agentAspect.getAbsolutePath());
         /*
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
@@ -104,80 +108,83 @@ public final class SeparateAgentGenerator {
         agentDir.deleteOnExit();
         try {
             // Also need to copy all the .class files from classDir to outputDir
-            FileUtils.copyDirectory(classDir, outputDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
+            FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
                     new SuffixFileFilter(".class")));
 
             // Copy in the postprocessed xml file
             final File metaInf = new File(agentDir, "META-INF");
-            final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) ||
-                    metaInf.mkdir();
+            final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) || metaInf.mkdir();
             if (!mkdirMetaInfReturn) {
                 System.err.println("(mkdir) Failed to create META-INF");
                 return;
             }
             copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
 
-            //extract the absolute paths for these two jars from java classpath
-            //running "mvn package", or similar, would set this java classpath appropriately
-            String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
-            String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
+            if (!JavaMOPAgentMain.excludeJars) {
+                //extract the absolute paths for these two jars from java classpath
+                //running "mvn package", or similar, would set this java classpath appropriately
+                String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
+                String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
 
-            //get the actual jar name from the absolute path
-            String weaverJarName = null;
-            String rvmRTJarName = null;
-            if (rvMonitorRTJarPath != null && weaverJarPath != null) {
-                weaverJarName = getJarName(weaverJarPath);
-                rvmRTJarName = getJarName(rvMonitorRTJarPath);
-            } else {
-                System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt " +
-                        "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
+                //get the actual jar name from the absolute path
+                String weaverJarName = null;
+                String rvmRTJarName = null;
+                if (rvMonitorRTJarPath != null && weaverJarPath != null) {
+                    weaverJarName = getJarName(weaverJarPath);
+                    rvmRTJarName = getJarName(rvMonitorRTJarPath);
+                } else {
+                    System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
+                            + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
+                }
+
+
+                //make references so that these files can be referred to later
+                File actualWeaverFile = new File(agentDir, weaverJarName);
+                File actualRTFile = new File(agentDir, rvmRTJarName);
+
+                // copy in the needed jar files
+                copyFile(new File(weaverJarPath), actualWeaverFile);
+                copyFile(new File(rvMonitorRTJarPath), actualRTFile);
+
+                //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
+                //be packaged with the agent.jar)
+                int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
+                if (extractReturn != 0) {
+                    System.err.println("(jar) Failed to extract the AspectJ weaver jar");
+                    return;
+                }
+
+                extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
+                if (extractReturn != 0) {
+                    System.err.println("(jar) Failed to extract the rvmonitorrt jar");
+                    return;
+                }
+
+                // directory to hold compiled library files
+                // Copy in all the .class files for all the monitor libraries
+                new File(outputDir, "mop").renameTo(new File(agentDir, "mop"));
+
+                //remove extracted jars to make agent lighter weight
+                if (!actualWeaverFile.delete()) {
+                    System.err.println("(delete) Failed to delete weaver jar; generated jar will "
+                            + "have a bigger size than normal");
+                }
+
+                if (!actualRTFile.delete()) {
+                    System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
+                            + " have a bigger size than normal");
+                }
             }
 
-            //make references so that these files can be referred to later
-            File actualWeaverFile = new File(agentDir, weaverJarName);
-            File actualRTFile = new File(agentDir, rvmRTJarName);
-
-            // copy in the needed jar files
-            copyFile(new File(weaverJarPath), actualWeaverFile);
-            copyFile(new File(rvMonitorRTJarPath), actualRTFile);
-
-            //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
-            //be packaged with the agent.jar)
-            int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the AspectJ weaver jar");
-                return;
-            }
-
-            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
-                return;
-            }
-
-            // directory to hold compiled library files
-            // Copy in all the .class files for all the monitor libraries
-            new File(outputDir, "mop").renameTo(new File(agentDir, "mop"));
-
-            //remove extracted jars to make agent lighter weight
-            if (!actualWeaverFile.delete()) {
-                System.err.println("(delete) Failed to delete weaver jar; generated jar will " +
-                        "have a bigger size than normal");
-            }
-
-            if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will" +
-                        " have a bigger size than normal");
-            }
 
             // # Step 14: copy in the correct MANIFEST FILE
             final File jarManifest = new File(metaInf, manifest);
             writeAgentManifest(jarManifest);
 
 
-            // # Step 15: Stepmake the java agent jar
-            final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf", jarManifest.toString(),
-                    aspectname + ".jar", "-C", agentDir.toString(), ".");
+            // # Step 15: Step make the java agent jar
+            final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf",
+                    jarManifest.toString(), aspectname + ".jar", "-C", agentDir.toString(), ".");
             if (jarReturn != 0) {
                 System.err.println("(jar) Failed to produce final jar");
                 return;
@@ -206,7 +213,7 @@ public final class SeparateAgentGenerator {
      * @param baseClasspath A string representation of the "java.class.path" system property
      * @param key           A partial or complete name for the jar to be extracted from the path
      * @return Absolute path to a jar whose name (partially) matches the key, or null if no
-     *         match is found
+     * match is found
      */
     private static String getJarLocation(String baseClasspath, String key) {
         String[] jars = baseClasspath.split(File.pathSeparator);
@@ -244,9 +251,9 @@ public final class SeparateAgentGenerator {
      * Run a command in a directory. Passes the output of the run commands through if the program
      * is in verbose mode. Blocks until the command finishes, then gives the return code.
      *
-     * @param dir  The directory to run the command in.
+     * @param dir     The directory to run the command in.
      * @param verbose whether in verbose mode or not
-     * @param args The program to run and its arguments.
+     * @param args    The program to run and its arguments.
      * @return The return code of the program.
      */
     private static int runCommandDir(final File dir, boolean verbose, final String... args) throws IOException {
@@ -274,8 +281,7 @@ public final class SeparateAgentGenerator {
                         try {
                             IOUtils.copy(proc.getInputStream(), writer);
                         } catch (IOException e) {
-                            System.err.println("Exception in reading subprocess output: "
-                                    + e.getMessage());
+                            System.err.println("Exception in reading subprocess output: " + e.getMessage());
                         }
                     }
                 }).start();
@@ -342,13 +348,11 @@ public final class SeparateAgentGenerator {
             Class.forName(name, false, SeparateAgentGenerator.class.getClassLoader());
             return true;
         } catch (ExceptionInInitializerError eiie) {
-            throw new RuntimeException(
-                    "Class initializer for " + name + " should not have run.", eiie);
+            throw new RuntimeException("Class initializer for " + name + " should not have run.", eiie);
         } catch (ClassNotFoundException cnfe) {
             return false;
         } catch (LinkageError le) {
-            throw new RuntimeException(
-                    "Class " + name + " is on the classpath, but is outdated.", le);
+            throw new RuntimeException("Class " + name + " is on the classpath, but is outdated.", le);
         }
     }
 
