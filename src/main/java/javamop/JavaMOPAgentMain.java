@@ -3,6 +3,7 @@ package javamop;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import javamop.agent.SeparateAgentGenerator;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,12 @@ public class JavaMOPAgentMain {
         handleOptions(options, args, jc);
 
         // Generate agent with SeparateAgentGenerator
+        try {
+            SeparateAgentGenerator.generate(JavaMOPAgentMain.outputDir, JavaMOPAgentMain.agentName,
+                    JavaMOPAgentMain.baseAspect, JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -60,6 +67,9 @@ public class JavaMOPAgentMain {
         JavaMOPAgentMain.excludeJars = options.excludeJars;
         JavaMOPAgentMain.baseAspect = options.baseAspect;
         JavaMOPAgentMain.agentName = options.agentName;
+        if (JavaMOPAgentMain.agentName == null) {
+            JavaMOPAgentMain.agentName = "agent";
+        }
         JavaMOPAgentMain.outputDir = options.outputDir;
         try {
             if (JavaMOPAgentMain.outputDir == null) {

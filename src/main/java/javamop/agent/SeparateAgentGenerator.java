@@ -42,7 +42,7 @@ public final class SeparateAgentGenerator {
      * @param verbose whether in verbose mode or not
      * @throws java.io.IOException If something goes wrong in the many filesystem operations.
      */
-    public static void generate(final File outputDir, final File aspectname,
+    public static void generate(final File outputDir, final String aspectname,
                                 File baseAspect, File agentAspect, File classDir,
                                 boolean verbose) throws IOException {
 
