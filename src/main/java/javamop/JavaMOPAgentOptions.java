@@ -5,11 +5,16 @@ import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command-line options available for controlling JavaMOPAgent
  */
 public class JavaMOPAgentOptions {
+
+    @Parameter(description = "Files")
+    public List<String> files = new ArrayList<String>();
 
     @Parameter(names={"-n","-agentname"},description = "Use the given agent name instead of " +
             "agent.jar.")
