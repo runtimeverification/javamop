@@ -24,6 +24,10 @@ public class JavaMOPAgentOptions {
             "for use in generating an agent.", converter = FileConverter.class)
     public File baseAspect;
 
+    @Parameter(names="-d",description = "Directory in which to store the output.",
+            converter = FileConverter.class)
+    public File outputDir;
+
     public static class FileConverter implements IStringConverter<File> {
         @Override
         public File convert(String value) {

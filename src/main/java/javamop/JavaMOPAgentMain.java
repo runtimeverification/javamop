@@ -5,6 +5,8 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Main class for generating agent for JavaMOP
@@ -23,6 +25,8 @@ public class JavaMOPAgentMain {
 
     public static File classDir = null;
 
+    public static File outputDir = null;
+
     public static void main (String[] args) {
         options = new JavaMOPAgentOptions();
         JCommander jc;
@@ -36,6 +40,7 @@ public class JavaMOPAgentMain {
 
         handleOptions(options, args, jc);
 
+        // Generate agent with SeparateAgentGenerator
 
     }
 
@@ -55,12 +60,23 @@ public class JavaMOPAgentMain {
         JavaMOPAgentMain.excludeJars = options.excludeJars;
         JavaMOPAgentMain.baseAspect = options.baseAspect;
         JavaMOPAgentMain.agentName = options.agentName;
+        JavaMOPAgentMain.outputDir = options.outputDir;
+        try {
+            if (JavaMOPAgentMain.outputDir == null) {
+                JavaMOPAgentMain.outputDir =
+                        Files.createTempDirectory(new File(".").toPath(), "output").toFile();
+                JavaMOPAgentMain.outputDir.deleteOnExit();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        boolean firstAspect = true;
         for (int j = 0; j < args.length; j++) {
             if("-baseaspect".equals(args[j])) {
                  j++;
             } else if ("-n".equals(args[j]) || "-agentname".equals(args[j])) {
+                j++;
+            } else if ("-d".equals(args[j])) {
                 j++;
             } else if (args[j].endsWith(".aj")) {
                 JavaMOPAgentMain.agentAspect = new File(args[j]);
@@ -69,6 +85,8 @@ public class JavaMOPAgentMain {
                 JavaMOPAgentMain.classDir = new File(args[j]);
             }
         }
+
+
 
 
     }
