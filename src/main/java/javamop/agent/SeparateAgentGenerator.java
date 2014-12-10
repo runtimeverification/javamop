@@ -124,7 +124,7 @@ public final class SeparateAgentGenerator {
                 //extract the absolute paths for these two jars from java classpath
                 //running "mvn package", or similar, would set this java classpath appropriately
                 String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
-                String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rvmonitorrt");
+                String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
 
                 //get the actual jar name from the absolute path
                 String weaverJarName = null;
