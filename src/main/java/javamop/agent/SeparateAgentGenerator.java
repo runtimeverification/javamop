@@ -114,7 +114,7 @@ public final class SeparateAgentGenerator {
 
         // Step 3: suppress aspectJ warnings
         suppress_warnings(aopAjc);
-
+        
         // Also need to copy all the .class files from classDir to outputDir
         FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
                 new SuffixFileFilter(".class")));
