@@ -14,11 +14,6 @@ import javamop.parser.ast.mopspec.PropertyAndHandlers;
  * Statistics for a single property.
  */
 public class MOPStatistics {
-    private final String aspectName;
-    
-    private final MOPVariable numMonitor;
-    private final MOPVariable collectedMonitor;
-    private final MOPVariable terminatedMonitor;
 
     private final String totalMonitorMethodName = "getTotalMonitorCount";
     private final String collectedMonitorMethodName = "getCollectedMonitorCount";
@@ -33,6 +28,7 @@ public class MOPStatistics {
         new HashMap<MOPParameter, MOPVariable>();
     
     private final String specName;
+    private final boolean isRaw;
 
     /**
      * Construct statistics variables for a single property.
@@ -40,11 +36,8 @@ public class MOPStatistics {
      * @param mopSpec The specification that has statistics being collected on it.
      */
     public MOPStatistics(final String name, final JavaMOPSpec mopSpec) {
-        this.aspectName = name + "MonitorAspect";
         this.specName = mopSpec.getName();
-        this.numMonitor = new MOPVariable(mopSpec.getName() + "_Monitor_num");
-        this.collectedMonitor = new MOPVariable(mopSpec.getName() + "_CollectedMonitor_num");
-        this.terminatedMonitor = new MOPVariable(mopSpec.getName() + "_TerminatedMonitor_num");
+        this.isRaw = mopSpec.isRaw();
 
         for (EventDefinition event : mopSpec.getEvents()) {
             MOPVariable eventVar = new MOPVariable(mopSpec.getName() + "_" + event.getId() + 
@@ -78,7 +71,7 @@ public class MOPStatistics {
         if (!JavaMOPMain.options.statistics)
             return ret;
 
-        String monitorName = specName + "Monitor";
+        String monitorName = specName + (isRaw ? "Raw" : "") + "Monitor";
 
         ret += "after () : execution(* *.main(..)) {\n";
         
