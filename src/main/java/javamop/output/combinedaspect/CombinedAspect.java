@@ -70,8 +70,6 @@ public class CombinedAspect {
         ret += "public aspect " + this.name +
         " implements com.runtimeverification.rvmonitor.java.rt.RVMObject {\n";
         
-        ret += this.statManager.fieldDecl();
-        
         // Constructor
         ret += "public " + this.name + "(){\n";
         

@@ -139,25 +139,6 @@ public class MOPStatManager {
     }
     
     /**
-     * Field declarations for the global statistics.
-     * @return Java code with field declarations.
-     */
-    public String fieldDecl() {
-        String ret = "";
-        
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        ret += "// Declarations for Statistics \n";
-        for (MOPStatistics stat : stats.values()) {
-            ret += stat.fieldDecl();
-        }
-        ret += "\n";
-        
-        return ret;
-    }
-    
-    /**
      * AspectJ advice code for all of the managed statistics.
      * @return AspectJ code.
      */
