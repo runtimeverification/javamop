@@ -48,7 +48,8 @@ public final class SeparateAgentGenerator {
      * @param verbose     whether in verbose mode or not
      * @throws java.io.IOException If something goes wrong in the many filesystem operations.
      */
-    public static void generate(final File outputDir, final String aspectname, File baseAspect, File agentAspect, File classDir, boolean verbose) throws IOException {
+    public static void generate(final File outputDir, final String aspectname, File baseAspect, File agentAspect,
+                                File classDir, boolean verbose) throws IOException {
 
         if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
             System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
@@ -63,7 +64,6 @@ public final class SeparateAgentGenerator {
             return;
         }
 
-        final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
 
         if (baseAspect == null) {
@@ -82,118 +82,109 @@ public final class SeparateAgentGenerator {
             }
         }
 
-        // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
-        // Change aspect name
 
-        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", baseClasspath,
-                "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml", baseAspect.getAbsolutePath(),
-                agentAspect.getAbsolutePath());
-        /*
+        // Step 1: Prepare the directory from which the agent will be built
+        final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
+        agentDir.deleteOnExit();
+
+
+        // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
+        // Change aspect name
+        String completeClassPath = baseClasspath + File.pathSeparator + classDir.getAbsolutePath();
+        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", completeClassPath, "org.aspectj.tools.ajc.Main", "-1.6", "-d", agentDir.getAbsolutePath(), "-outxml", baseAspect.getAbsolutePath(), agentAspect.getAbsolutePath());
+
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
             System.exit(ajcReturn);
-        }*/
-        final File aopAjc = new File(ajOutDir + File.separator + "META-INF" + File.separator +
-                "aop-ajc.xml");
+        }
+
+        final File metaInf = new File(agentDir, "META-INF");
+        final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) || metaInf.mkdir();
+        if (!mkdirMetaInfReturn) {
+            System.err.println("(mkdir) Failed to create META-INF");
+            return;
+        }
+
+        final File aopAjc = new File(agentDir.getAbsolutePath() + File.separator
+                + "META-INF" + File.separator + "aop-ajc.xml");
         if (!aopAjc.exists()) {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
         }
 
-        // Step 12: suppress aspectJ warnings
+        // Step 3: suppress aspectJ warnings
         suppress_warnings(aopAjc);
 
-        // Step 13: Prepare the directory from which the agent will be built
-        final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
-        agentDir.deleteOnExit();
-        try {
-            // Also need to copy all the .class files from classDir to outputDir
-            FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
-                    new SuffixFileFilter(".class")));
+        // Also need to copy all the .class files from classDir to outputDir
+        FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
+                new SuffixFileFilter(".class")));
 
-            // Copy in the postprocessed xml file
-            final File metaInf = new File(agentDir, "META-INF");
-            final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) || metaInf.mkdir();
-            if (!mkdirMetaInfReturn) {
-                System.err.println("(mkdir) Failed to create META-INF");
-                return;
-            }
-            copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
+        if (!JavaMOPAgentMain.excludeJars) {
+            //extract the absolute paths for these two jars from java classpath
+            //running "mvn package", or similar, would set this java classpath appropriately
+            String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
+            String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
 
-            if (!JavaMOPAgentMain.excludeJars) {
-                //extract the absolute paths for these two jars from java classpath
-                //running "mvn package", or similar, would set this java classpath appropriately
-                String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
-                String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
-
-                //get the actual jar name from the absolute path
-                String weaverJarName = null;
-                String rvmRTJarName = null;
-                if (rvMonitorRTJarPath != null && weaverJarPath != null) {
-                    weaverJarName = getJarName(weaverJarPath);
-                    rvmRTJarName = getJarName(rvMonitorRTJarPath);
-                } else {
-                    System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
-                            + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
-                }
-
-
-                //make references so that these files can be referred to later
-                File actualWeaverFile = new File(agentDir, weaverJarName);
-                File actualRTFile = new File(agentDir, rvmRTJarName);
-
-                // copy in the needed jar files
-                copyFile(new File(weaverJarPath), actualWeaverFile);
-                copyFile(new File(rvMonitorRTJarPath), actualRTFile);
-
-                //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
-                //be packaged with the agent.jar)
-                int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
-                if (extractReturn != 0) {
-                    System.err.println("(jar) Failed to extract the AspectJ weaver jar");
-                    return;
-                }
-
-                extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
-                if (extractReturn != 0) {
-                    System.err.println("(jar) Failed to extract the rvmonitorrt jar");
-                    return;
-                }
-
-                // directory to hold compiled library files
-                // Copy in all the .class files for all the monitor libraries
-                new File(outputDir, "mop").renameTo(new File(agentDir, "mop"));
-
-                //remove extracted jars to make agent lighter weight
-                if (!actualWeaverFile.delete()) {
-                    System.err.println("(delete) Failed to delete weaver jar; generated jar will "
-                            + "have a bigger size than normal");
-                }
-
-                if (!actualRTFile.delete()) {
-                    System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
-                            + " have a bigger size than normal");
-                }
+            //get the actual jar name from the absolute path
+            String weaverJarName = null;
+            String rvmRTJarName = null;
+            if (rvMonitorRTJarPath != null && weaverJarPath != null) {
+                weaverJarName = getJarName(weaverJarPath);
+                rvmRTJarName = getJarName(rvMonitorRTJarPath);
+            } else {
+                System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
+                        + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
 
+            //make references so that these files can be referred to later
+            File actualWeaverFile = new File(agentDir, weaverJarName);
+            File actualRTFile = new File(agentDir, rvmRTJarName);
 
-            // # Step 14: copy in the correct MANIFEST FILE
-            final File jarManifest = new File(metaInf, manifest);
-            writeAgentManifest(jarManifest);
+            // copy in the needed jar files
+            copyFile(new File(weaverJarPath), actualWeaverFile);
+            copyFile(new File(rvMonitorRTJarPath), actualRTFile);
 
-
-            // # Step 15: Step make the java agent jar
-            final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf",
-                    jarManifest.toString(), aspectname + ".jar", "-C", agentDir.toString(), ".");
-            if (jarReturn != 0) {
-                System.err.println("(jar) Failed to produce final jar");
+            //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
+            //be packaged with the agent.jar)
+            int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
+            if (extractReturn != 0) {
+                System.err.println("(jar) Failed to extract the AspectJ weaver jar");
                 return;
             }
 
-            System.out.println(aspectname + ".jar is generated.");
-        } finally {
-            Tool.deleteDirectory(agentDir.toPath());
+            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
+            if (extractReturn != 0) {
+                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
+                return;
+            }
+
+            //remove extracted jars to make agent lighter weight
+            if (!actualWeaverFile.delete()) {
+                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
+                        + "have a bigger size than normal");
+            }
+
+            if (!actualRTFile.delete()) {
+                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
+                        + " have a bigger size than normal");
+            }
         }
+
+        // # Step 4: copy in the correct MANIFEST FILE
+        final File jarManifest = new File(metaInf, manifest);
+        writeAgentManifest(jarManifest);
+
+
+        // # Step 5: Step make the java agent jar
+        final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf", jarManifest.toString(), aspectname
+                + ".jar", "-C", agentDir.toString(), ".");
+        if (jarReturn != 0) {
+            System.err.println("(jar) Failed to produce final jar");
+            return;
+        }
+
+        System.out.println(aspectname + ".jar is generated.");
+
     }
 
     /**
