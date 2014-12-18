@@ -30,7 +30,7 @@ to use JavaMOP.
 
 ## JavaMOPAgent
 
-A separate tool called ```javamopagent''' is provided to facilitate the 
+A separate tool called ```javamopagent``` is provided to facilitate the 
 monitoring of your program. Refer to [docs/JavaMOPAgentUsage.md]
 (docs/JavaMOPAgentUsage.md) for detailed instructions on how to use 
 JavaMOPAgent. 
