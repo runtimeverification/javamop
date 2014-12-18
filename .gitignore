@@ -7,3 +7,4 @@ target/
 release/
 .idea
 *.iml
+*~
