@@ -135,7 +135,7 @@ public final class SeparateAgentGenerator {
                 System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
                         + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
-
+            
             //make references so that these files can be referred to later
             File actualWeaverFile = new File(agentDir, weaverJarName);
             File actualRTFile = new File(agentDir, rvmRTJarName);
