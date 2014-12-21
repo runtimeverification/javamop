@@ -1,11 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javamop.JavaMOPMain;
-import javamop.util.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.event.advice.AdviceAndPointCut;
@@ -13,6 +9,9 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.visitor.ConvertPointcutToCNFVisitor;
+import javamop.util.MOPException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages all the different types of events for one or more specifications.
@@ -130,13 +129,9 @@ public class EventManager {
         String ret = "";
 
         ret += "pointcut " + commonPointcut + "() : ";
-        String withinString = "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) " +
-                "&& !adviceexecution()";
-        if (JavaMOPMain.options.generateAgent){
-            ret += withinString + "&& BaseAspect.notwithin();\n";
-        } else {
-            ret += withinString +";\n";
-        }
+
+        ret += "!within(com.runtimeverification.rvmonitor.java.rt.RVMObject+) " +
+                "&& !adviceexecution() && BaseAspect.notwithin();\n";
 
         int numAdvice = 1;
         advices = this.adjustAdviceOrder();
