@@ -21,8 +21,6 @@ public class JavaMOPAgentMain {
 
     public static String agentName = null;
 
-    public static File baseAspect = null;
-
     public static File agentAspect = null;
 
     public static File classDir = null;
@@ -57,7 +55,7 @@ public class JavaMOPAgentMain {
         // Generate agent with SeparateAgentGenerator
         try {
             SeparateAgentGenerator.generate(JavaMOPAgentMain.outputDir, JavaMOPAgentMain.agentName,
-                    JavaMOPAgentMain.baseAspect, JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, false);
+                    JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,7 +85,6 @@ public class JavaMOPAgentMain {
         }
 
         JavaMOPAgentMain.excludeJars = options.excludeJars;
-        JavaMOPAgentMain.baseAspect = options.baseAspect;
         JavaMOPAgentMain.agentName = options.agentName;
         if (JavaMOPAgentMain.agentName == null) {
             JavaMOPAgentMain.agentName = "agent";

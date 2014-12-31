@@ -43,12 +43,11 @@ public final class SeparateAgentGenerator {
      *
      * @param outputDir   The place to put all the intermediate generated files in.
      * @param aspectname  Generates {@code aspectname}.jar.
-     * @param baseAspect  The aspect file to combine with the generated aspects.
      * @param agentAspect The aspect file to used in the agent
      * @param verbose     whether in verbose mode or not
      * @throws java.io.IOException If something goes wrong in the many filesystem operations.
      */
-    public static void generate(final File outputDir, final String aspectname, File baseAspect, File agentAspect,
+    public static void generate(final File outputDir, final String aspectname, File agentAspect,
                                 File classDir, boolean verbose) throws IOException {
 
         if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
@@ -66,23 +65,6 @@ public final class SeparateAgentGenerator {
 
         final String baseClasspath = getClasspath();
 
-        if (baseAspect == null) {
-            baseAspect = new File(outputDir, "BaseAspect.aj");
-        }
-        if (!"BaseAspect.aj".equals(baseAspect.getName())) {
-            throw new IOException("For now, --baseaspect files should be called BaseAspect.aj");
-        }
-        if (!baseAspect.exists()) {
-            final boolean success = baseAspect.createNewFile();
-            if (success) {
-                writeBaseAspect(baseAspect);
-            } else {
-                System.err.println("Unable to write BaseAspect.aj.");
-                return;
-            }
-        }
-
-
         // Step 1: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
         agentDir.deleteOnExit();
@@ -91,7 +73,9 @@ public final class SeparateAgentGenerator {
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
         // Change aspect name
         String completeClassPath = baseClasspath + File.pathSeparator + classDir.getAbsolutePath();
-        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", completeClassPath, "org.aspectj.tools.ajc.Main", "-1.6", "-d", agentDir.getAbsolutePath(), "-outxml", baseAspect.getAbsolutePath(), agentAspect.getAbsolutePath());
+        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", completeClassPath,
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d", agentDir.getAbsolutePath(),
+                "-outxml", agentAspect.getAbsolutePath());
 
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
