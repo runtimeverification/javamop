@@ -104,7 +104,7 @@ public final class JavaMOPMain {
      * @param location
      *            an absolute path for result file
      */
-    public static void processSpecFile(File file, String location) throws MOPException {
+    public static void processSpecFile(File file, String location) throws MOPException, IOException {
         MOPNameSpace.init();
         MOPSpecFile spec =  SpecExtractor.parse(file);
         
@@ -129,7 +129,7 @@ public final class JavaMOPMain {
      * @param specFiles All the specifications to consider.
      * @throws MOPException If something goes wrong in conversion.
      */
-    public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
+    public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException, IOException {
         String aspectName;
 
         if(options.outputDir == null){
@@ -272,7 +272,7 @@ public final class JavaMOPMain {
      * @param files Array of MOP file and directory paths.
      * @param path Common prefix to all the paths in {@code files}.
      */
-    public static void process(String[] files, String path) throws MOPException {
+    public static void process(String[] files, String path) throws MOPException, IOException {
         ArrayList<File> specFiles = collectFiles(files, path);
 
         if(options.aspectname != null && files.length > 1){
@@ -327,7 +327,7 @@ public final class JavaMOPMain {
      * Handle one or multiple input files and produce .rvm files.
      * @param files a list of file names.
      */
-    public static void process(List<String> files) throws MOPException {
+    public static void process(List<String> files) throws MOPException, IOException {
         if(options.outputDir != null && !options.outputDir.exists())
             throw new MOPException("The output directory, " + options.outputDir.getPath() +
                 " does not exist.");

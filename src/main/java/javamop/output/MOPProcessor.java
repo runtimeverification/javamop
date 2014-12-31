@@ -6,6 +6,7 @@
 
 package javamop.output;
 
+import java.io.IOException;
 import java.util.List;
 
 import javamop.parser.ast.ImportDeclaration;
@@ -90,7 +91,7 @@ public class MOPProcessor {
      * @return The generated aspectJ file.
      * @throws MOPException If there is a logic error in conversion.
      */
-    public String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException {
+    public String generateAJFile(MOPSpecFile mopSpecFile) throws MOPException, IOException {
         String result = "";
         
         // register all user variables to MOPNameSpace to avoid conflicts
