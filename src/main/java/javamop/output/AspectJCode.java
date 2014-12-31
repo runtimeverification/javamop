@@ -81,8 +81,10 @@ class AspectJCode {
         else if (!JavaMOPMain.options.baseAspect.exists()) {
             throw new IOException("BaseAspect.aj is not found");
         } else{
-            return new String(Files.readAllBytes(
+            String baseAJ= new String(Files.readAllBytes(
                     JavaMOPMain.options.baseAspect.toPath()));
+
+            return baseAJ.replaceAll("public(\\s)+aspect(\\s)+BaseAspect", "aspect BaseAspect");
         }
     }
 
