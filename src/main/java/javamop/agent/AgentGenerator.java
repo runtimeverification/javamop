@@ -63,27 +63,27 @@ public final class AgentGenerator {
 
         final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
-
-        if (baseAspect == null) {
-            baseAspect = new File(outputDir, "BaseAspect.aj");
-        }
-        if (!"BaseAspect.aj".equals(baseAspect.getName())) {
-            throw new IOException("For now, --baseaspect files should be called BaseAspect.aj");
-        }
-        if (!baseAspect.exists()) {
-            final boolean success = baseAspect.createNewFile();
-            if (success) {
-                writeBaseAspect(baseAspect);
-            } else {
-                System.err.println("Unable to write BaseAspect.aj.");
-                return;
-            }
-        }
+//
+//        if (baseAspect == null) {
+//            baseAspect = new File(outputDir, "BaseAspect.aj");
+//        }
+//        if (!"BaseAspect.aj".equals(baseAspect.getName())) {
+//            throw new IOException("For now, --baseaspect files should be called BaseAspect.aj");
+//        }
+//        if (!baseAspect.exists()) {
+//            final boolean success = baseAspect.createNewFile();
+//            if (success) {
+//                writeBaseAspect(baseAspect);
+//            } else {
+//                System.err.println("Unable to write BaseAspect.aj.");
+//                return;
+//            }
+//        }
 
         // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
         final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", baseClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
-                baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
+                aspectname + "MonitorAspect.aj");
         /*
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
@@ -383,28 +383,28 @@ public final class AgentGenerator {
      * @param f The file to write to.
      * @throws IOException If something goes wrong in writing the file.
      */
-    private static void writeBaseAspect(final File f) throws IOException {
-        final PrintWriter writer = new PrintWriter(f);
-        try {
-            writer.println("package mop;");
-            writer.println("public aspect BaseAspect {");
-            writer.println("    pointcut notwithin() :");
-            writer.println("    !within(sun..*) &&");
-            writer.println("    !within(java..*) &&");
-            writer.println("    !within(javax..*) &&");
-            writer.println("    !within(com.sun..*) &&");
-            writer.println("    !within(org.dacapo.harness..*) &&");
-            writer.println("    !within(org.apache.commons..*) &&");
-            writer.println("    !within(org.apache.geronimo..*) &&");
-            writer.println("    !within(net.sf.cglib..*) &&");
-            writer.println("    !within(mop..*) &&");
-            writer.println("    !within(javamoprt..*) &&");
-            writer.println("    !within(rvmonitorrt..*) &&");
-            writer.println("    !within(com.runtimeverification..*);");
-            writer.println("}");
-            writer.flush();
-        } finally {
-            writer.close();
-        }
-    }
+//    private static void writeBaseAspect(final File f) throws IOException {
+//        final PrintWriter writer = new PrintWriter(f);
+//        try {
+//            writer.println("package mop;");
+//            writer.println("public aspect BaseAspect {");
+//            writer.println("    pointcut notwithin() :");
+//            writer.println("    !within(sun..*) &&");
+//            writer.println("    !within(java..*) &&");
+//            writer.println("    !within(javax..*) &&");
+//            writer.println("    !within(com.sun..*) &&");
+//            writer.println("    !within(org.dacapo.harness..*) &&");
+//            writer.println("    !within(org.apache.commons..*) &&");
+//            writer.println("    !within(org.apache.geronimo..*) &&");
+//            writer.println("    !within(net.sf.cglib..*) &&");
+//            writer.println("    !within(mop..*) &&");
+//            writer.println("    !within(javamoprt..*) &&");
+//            writer.println("    !within(rvmonitorrt..*) &&");
+//            writer.println("    !within(com.runtimeverification..*);");
+//            writer.println("}");
+//            writer.flush();
+//        } finally {
+//            writer.close();
+//        }
+//    }
 }
