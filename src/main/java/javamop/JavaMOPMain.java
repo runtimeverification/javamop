@@ -150,7 +150,7 @@ public final class JavaMOPMain {
                     aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
                         "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
                 } while(aspectFile.exists());
-                aspectName = "JavaMOPAgent_" + suffixNumber;
+                aspectName = "MultiSpec_" + suffixNumber;
             }
             options.aspectname = aspectName;
         }
