@@ -116,8 +116,8 @@ specifications by executing the following commands:
 
 	```javamop -merge -keepRVFiles *.mop```
 
-After this step, ```MultiSpec_1MonitorAspect.aj```, ```A.rvm``` and ```B.rvm```
-will be generated.
+	After this step, ```MultiSpec_1MonitorAspect.aj```, ```A.rvm``` and ```B.rvm```
+	will be generated.
 
 2. Create directories for storing the monitor libraries:
 
@@ -127,11 +127,11 @@ will be generated.
 
 	```rv-monitor -merge -d classes/mop/ *.rvm```
 
-After this step, ```MultiSpec_1RuntimeMonitor.java``` will be generated in 
-folder ```classes/mop```. 
+	After this step, ```MultiSpec_1RuntimeMonitor.java``` will be generated in 
+	folder ```classes/mop```. 
 
 4. (Optional) Compile the monitor library file to byte code and remove .java
-source code:
+   source code:
 
 	```javac classes/mop/MultiSpec_1RuntimeMonitor.java```
 	```rm classes/mop/MultiSpec_1RuntimeMonitor.java```
