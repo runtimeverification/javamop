@@ -9,4 +9,4 @@ set LOGICPLUGINPATH=%PLUGINS%
 set CP=%RELEASE%\*;%PLUGINS%\*
 for /f %%a IN ('dir /b /s "%PLUGINS%\*.jar"') do call %concat% %%a
 
-java -cp "%CP%;%CLASSPATH%" javamop.JavaMOPMainAgent %*
+java -cp "%CP%;%CLASSPATH%" javamop.JavaMOPAgentMain %*

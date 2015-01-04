@@ -25,10 +25,6 @@ public class JavaMOPAgentOptions {
             " agent, so users can resolve the dependency themselves when running the agent.")
     public boolean excludeJars = false;
 
-    @Parameter(names="-baseaspect",description = "Optionally provide a BaseAspect.aj file " +
-            "for use in generating an agent.", converter = FileConverter.class)
-    public File baseAspect;
-
     @Parameter(names="-d",description = "Directory in which to store the output.",
             converter = FileConverter.class)
     public File outputDir;
