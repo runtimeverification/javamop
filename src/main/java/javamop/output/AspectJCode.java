@@ -17,7 +17,7 @@ import java.nio.file.Files;
  */
 class AspectJCode {
     private final String name;
-    
+
     private final Package packageDecl;
     private final Imports imports;
     private final String baseAspect;
@@ -28,7 +28,7 @@ class AspectJCode {
     /**
      * Construct the AspectJ code.
      *
-     * @param name The name of the aspect.
+     * @param name        The name of the aspect.
      * @param mopSpecFile The specification file that will be used to build aspects.
      * @throw MOPException If something goes wrong in generating the aspects.
      */
@@ -38,18 +38,18 @@ class AspectJCode {
         imports = new Imports(mopSpecFile);
 
         //init the base aspect
-        this.baseAspect=initBaseAspect();
+        this.baseAspect = initBaseAspect();
 
         for (JavaMOPSpec mopSpec : mopSpecFile.getSpecs()) {
-            
+
             for (PropertyAndHandlers prop : mopSpec.getPropertiesAndHandlers()) {
                 versionedStack |= prop.getVersionedStack();
             }
         }
-        
+
         aspect = new CombinedAspect(name, mopSpecFile, versionedStack);
-        
-        if(versionedStack) {
+
+        if (versionedStack) {
             systemAspect = new SystemAspect(name);
         } else {
             systemAspect = null;
@@ -73,15 +73,13 @@ class AspectJCode {
                     "    !within(rvmonitorrt..*) &&\n" +
                     "    !within(com.runtimeverification..*);\n" +
                     "}";
-        }
-        else if (!"BaseAspect.aj".equals(JavaMOPMain.options.baseAspect.getName())) {
+        } else if (!"BaseAspect.aj".equals(JavaMOPMain.options.baseAspect.getName())) {
             throw new IOException("For now, --baseaspect files should be " +
                     "called BaseAspect.aj");
-        }
-        else if (!JavaMOPMain.options.baseAspect.exists()) {
+        } else if (!JavaMOPMain.options.baseAspect.exists()) {
             throw new IOException("BaseAspect.aj is not found");
-        } else{
-            String baseAJ= new String(Files.readAllBytes(
+        } else {
+            String baseAJ = new String(Files.readAllBytes(
                     JavaMOPMain.options.baseAspect.toPath()));
 
             return baseAJ.replaceAll("public(\\s)+aspect(\\s)+BaseAspect", "aspect BaseAspect");
@@ -90,6 +88,7 @@ class AspectJCode {
 
     /**
      * Generate the AspectJ code that complements the generated RV-Monitor monitoring code.
+     *
      * @return The AspectJ/Java source code.
      */
     @Override
@@ -97,30 +96,30 @@ class AspectJCode {
         String ret = "";
         ret += packageDecl;
         ret += imports.toString().replaceAll("import javamoprt.*", "");
-        
+
         ret += "\n";
 
-        ret += this.baseAspect+"\n\n";
+        ret += this.baseAspect + "\n\n";
         // The order of these two is really important.
-        if(systemAspect != null){
+        if (systemAspect != null) {
             ret += "aspect " + name + "OrderAspect {\n";
             ret += "declare precedence : ";
-            ret += systemAspect.getSystemAspectName() + ""; 
+            ret += systemAspect.getSystemAspectName() + "";
             ret += ", ";
             ret += systemAspect.getSystemAspectName() + "2";
             ret += ", ";
             ret += aspect.getAspectName();
             ret += ";\n";
-            
+
             ret += "}\n";
             ret += "\n";
         }
-        
+
         ret += aspect.toString();
-        
-        if(systemAspect != null)
+
+        if (systemAspect != null)
             ret += "\n" + systemAspect;
-        
+
         return ret;
     }
 }
