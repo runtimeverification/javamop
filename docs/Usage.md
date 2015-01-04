@@ -58,7 +58,7 @@ the command is run. If a ```[-n <agent name>]``` is not specified and there is
 just one specification, then an agent with the same name as the
 specification will be generated. Finally, if ```[-n <agent name>]``` is not
 specified and there are multiple specification files, then an agent
-called "JavaMOPAgent_1.jar" will be generated.
+called "MultiSpec_1.jar" will be generated.
 
 Regarding the properties for building an agent, you can either choose
 to write your own properties or use the properties that we have
