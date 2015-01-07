@@ -77,9 +77,9 @@ public class TestHelper {
         processBuilder.environment().put("CLASSPATH", processBuilder.environment().get("CLASSPATH") + File.pathSeparator
                 + System.getProperty("java.class.path"));
 
-        String actualOutFile = null;
+        String actualOutFile;
         String testsPrefix;
-        String actualErrFile = null;
+        String actualErrFile;
         String expectedOutFile = null;
         String expectedErrFile = null;
         if (expectedFilePrefix != null) {
@@ -137,6 +137,19 @@ public class TestHelper {
     public void assertEqualUnorderedFiles(String expectedFile, String actualFile) throws IOException {
         Set<String> expectedText = Tool.convertFileToStringSet(expectedFile);
         Set<String> actualText = Tool.convertFileToStringSet(actualFile);
+
+        Assert.assertEquals(actualFile + " should match " + expectedFile, expectedText, actualText);
+    }
+
+    /**
+     * Assert two files have the same contents, ignoring the differences in line separators.
+     * @param expectedFile The path to the file with the expected result.
+     * @param actualFile The path to the file with the calculated result.
+     * @throws IOException
+     */
+    public void assertEqualFilesIgnoringLineSeparators(String expectedFile, String actualFile) throws IOException {
+        String expectedText = Tool.convertFileToString(expectedFile).replace("\n", "").replace("\r", "");
+        String actualText = Tool.convertFileToString(actualFile).replace("\n", "").replace("\r", "");
 
         Assert.assertEquals(actualFile + " should match " + expectedFile, expectedText, actualText);
     }
