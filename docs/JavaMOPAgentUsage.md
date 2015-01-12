@@ -47,13 +47,11 @@ following commands:
 3. ```cd examples/agent/many/rvm/cfg```. This directory contains two
 property files: SafeFile.mop and SafeFileWriter.mop.
 
-4. Generate the single .aj file and .rvm files from the properties:
+4. Generate the single .aj file and .rvm files from the properties (
+   After this step, the following files will be generated:
+   ```MultiSpec_1MonitorAspect.aj, SafeFile.rvm and SafeFileWriter.rvm```):
 
 	```javamop -merge -keepRVFiles *.mop```
-
-   After this step, the following files will be generated:
-   ```MultiSpec_1MonitorAspect.aj```, ```SafeFile.rvm``` and
-   ```SafeFileWriter.rvm```.
 
 5. Create directories for storing the monitor libraries:
 
