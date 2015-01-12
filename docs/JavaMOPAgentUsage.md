@@ -74,8 +74,8 @@ RV-Monitor jars:
 
 	```javamopagent MultiSpec_1MonitorAspect.aj classes -n JavaMOPAgent -excludeJars```
 
-After this step, ```JavaMOPAgent.jar``` will be created in the current
-directory. This agent can be used for runtime monitoring, as explained
+After step 8, ```JavaMOPAgent.jar``` will be created in the current
+directory and can be used for runtime monitoring, as explained
 below.
 
 ### Using a Java Agent
