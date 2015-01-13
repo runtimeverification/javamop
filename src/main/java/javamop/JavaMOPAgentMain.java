@@ -27,6 +27,8 @@ public class JavaMOPAgentMain {
 
     public static File outputDir = null;
 
+    public static boolean verboseMode = false;
+
     public static void main (String[] args) {
         options = new JavaMOPAgentOptions();
         JCommander jc;
@@ -55,7 +57,7 @@ public class JavaMOPAgentMain {
         // Generate agent with SeparateAgentGenerator
         try {
             SeparateAgentGenerator.generate(JavaMOPAgentMain.outputDir, JavaMOPAgentMain.agentName,
-                    JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, false);
+                    JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, verboseMode);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,6 +88,7 @@ public class JavaMOPAgentMain {
 
         JavaMOPAgentMain.excludeJars = options.excludeJars;
         JavaMOPAgentMain.agentName = options.agentName;
+        JavaMOPAgentMain.verboseMode = options.verbose;
         if (JavaMOPAgentMain.agentName == null) {
             JavaMOPAgentMain.agentName = "agent";
         }
