@@ -29,6 +29,13 @@ public class JavaMOPAgentOptions {
             converter = FileConverter.class)
     public File outputDir;
 
+
+    @Parameter(names={"-h","-help"}, description = "Show this help message.", help = true)
+    private boolean help = false;
+
+    @Parameter(names={"-v","-verbose"}, description = "Enable verbose output.")
+    public boolean verbose = false;
+
     public static class FileConverter implements IStringConverter<File> {
         @Override
         public File convert(String value) {
