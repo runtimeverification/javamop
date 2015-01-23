@@ -29,7 +29,7 @@ public class JavaMOPAgentMain {
 
     public static boolean verboseMode = false;
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         options = new JavaMOPAgentOptions();
         JCommander jc;
         try {
@@ -65,7 +65,7 @@ public class JavaMOPAgentMain {
         if (createdTempOutput) {
             try {
                 Tool.deleteDirectory(options.outputDir.toPath());
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println("Failed to remove temporary files.");
             }
@@ -77,11 +77,11 @@ public class JavaMOPAgentMain {
      * This method sets some field and other (dependent) options, based on the
      * flags that the user called JavaMOP with.
      *
-     * @param options  The object holding the options that the user called
-     *                 JavaMOP with
+     * @param options The object holding the options that the user called
+     *                JavaMOP with
      */
     private static void handleOptions(JavaMOPAgentOptions options, String[] args, JCommander jc) {
-        if (args.length == 0 || options.files.size() < 2){
+        if (args.length == 0 || options.files.size() < 2) {
             jc.usage();
             System.exit(1);
         }
@@ -95,15 +95,17 @@ public class JavaMOPAgentMain {
         JavaMOPAgentMain.outputDir = options.outputDir;
 
         for (int j = 0; j < args.length; j++) {
-            if("-baseaspect".equals(args[j])) {
-                 j++;
-            } else if ("-n".equals(args[j]) || "-agentname".equals(args[j])) {
+            if ("-n".equals(args[j]) || "-agentname".equals(args[j])) {
                 j++;
             } else if ("-d".equals(args[j])) {
                 j++;
             } else if (args[j].endsWith(".aj")) {
                 JavaMOPAgentMain.agentAspect = new File(args[j]);
-            } else if (!"-excludeJars".equals(args[j])){
+            } else if (!"-excludeJars".equals(args[j]) &&
+                    !"-h".equals(args[j]) &&
+                    !"-help".equals(args[j]) &&
+                    !"-v".equals(args[j]) &&
+                    !"-verbose".equals(args[j])) {
                 // class directory
                 JavaMOPAgentMain.classDir = new File(args[j]);
             }
