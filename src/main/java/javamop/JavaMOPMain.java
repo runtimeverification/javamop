@@ -42,8 +42,6 @@ public final class JavaMOPMain {
     public static boolean isJarFile = false;
     public static String jarFilePath = null;
 
-    public static final int NONE = 0;
-
     public static boolean empty_advicebody = false;
 
     private static final List<String[]> listFilePairs = new ArrayList<String[]>();
