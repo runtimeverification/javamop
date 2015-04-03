@@ -2,7 +2,6 @@
 package javamop.agent;
 
 import javamop.JavaMOPAgentMain;
-import javamop.util.Tool;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -10,12 +9,7 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -98,7 +92,7 @@ public final class SeparateAgentGenerator {
 
         // Step 3: suppress aspectJ warnings
         suppress_warnings(aopAjc);
-        
+
         // Also need to copy all the .class files from classDir to outputDir
         FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
                 new SuffixFileFilter(".class")));
@@ -119,7 +113,7 @@ public final class SeparateAgentGenerator {
                 System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
                         + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
-            
+
             //make references so that these files can be referred to later
             File actualWeaverFile = new File(agentDir, weaverJarName);
             File actualRTFile = new File(agentDir, rvmRTJarName);
