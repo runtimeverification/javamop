@@ -17,9 +17,10 @@ import java.util.List;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
- * and .rvm files have been processed into .java files. Based on Owolabi's build-agent.sh.
+ * and .rvm files have been processed into .java files. Based on A. Cody Schuffelen, Qingzhou Luo
+ * and Philip Daian 's AgentGenerator.
  *
- * @author A. Cody Schuffelen
+ * @author Qingzhou and He (xiaoguoyi27@gmail.com)
  */
 public final class SeparateAgentGenerator {
 

@@ -8,27 +8,22 @@
 
 package javamop;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.nio.file.Files;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.runtimeverification.rvmonitor.java.rvj.Main;
-import javamop.agent.AgentGenerator;
 import javamop.output.MOPProcessor;
 import javamop.parser.SpecExtractor;
-import javamop.specfiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
+import javamop.specfiltering.SpecFilter;
 import javamop.util.FileCombiner;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
 import javamop.util.Tool;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point class for the JavaMOP program.
@@ -364,31 +359,7 @@ public final class JavaMOPMain {
             jarFilePath = Tool.polishPath(jarFilePath);
         }
 
-        boolean tempOutput = options.generateAgent && options.outputDir == null;
-
-        if(tempOutput) {
-            // this line is redundant
-//            tempOutput = true;
-            try {
-                options.outputDir =
-                        Files.createTempDirectory(new File(".").toPath(), "output").toFile();
-                options.outputDir.deleteOnExit();
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-                options.generateAgent = false;
-            }
-        }
-
         SpecFilter filter = null;
-        if (options.usedb) {
-            try {
-                filter = new SpecFilter();
-                options.files = new ArrayList<String>();
-                options.files.add(filter.filter());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
         // Generate .rvm files and .aj files
         try {
@@ -399,76 +370,6 @@ public final class JavaMOPMain {
                 e.printStackTrace();
         }
 
-        // replace mop with rvm and call rv-monitor
-        List<String> rvArgs = new ArrayList<String>();
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].compareTo("-keepRVFiles") == 0 || args[j].compareTo("-usedb") == 0) {
-                // Don't pass keepRVFiles to rvmonitor\
-            } else if("-agent".equals(args[j])) {
-                rvArgs.add("-merge");
-            } else if("-baseaspect".equals(args[j])) {
-                j++;
-            } else {
-                rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
-            }
-        }
-        if(tempOutput) {
-            rvArgs.add("-d");
-            rvArgs.add(options.outputDir.getAbsolutePath());
-        }
-
-        if (options.usedb){
-            rvArgs.add(SpecFilter.specDirPath);
-        }
-
-        // add default name that rv-monitor will use. This is needed as we have
-        // now changed the default aspectname when the user doesn't pass in a name
-        rvArgs.add("-n");
-        rvArgs.add(options.aspectname);
-        
-        Main.main(rvArgs.toArray(new String[0]));
-
-        // Call FileCombiner here to combine these two
-        for (String[] filePair : listFilePairs) {
-            FileCombiner.combineAJFiles(filePair);
-            File javaFile = new File(filePair[0]);
-            try {
-                if (!options.keepRVFiles) {
-                    boolean deleted = javaFile.delete();
-                    if (!deleted) {
-                        System.err.println("Failed to delete java file: "
-                        + filePair[0]);
-                    }
-                }
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if(options.generateAgent) {
-            try {
-                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect, options.verbose);
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-
-        for (String rvmFilePath : listRVMFiles) {
-            File rvmFile = new File(rvmFilePath);
-            try {
-                if (!options.keepRVFiles) {
-                    boolean deleted = rvmFile.delete();
-                    if (!deleted) {
-                        System.err.println("Failed to delete java file: " + rvmFilePath);
-                    }
-                }
-                
-            } catch (SecurityException e) {
-                  e.printStackTrace();
-            }
-        }
-
-        cleanup(tempOutput, filter);
     }
 
     /**
@@ -500,7 +401,7 @@ public final class JavaMOPMain {
      *                 JavaMOP with
      */
     private static void handleOptions(JavaMOPOptions options, String[] args, JCommander jc) {
-        if (args.length == 0 || (options.files.size() == 0 && !options.usedb)){
+        if (args.length == 0 || (options.files.size() == 0)){
             jc.usage();
             System.exit(1);
         }
@@ -513,18 +414,8 @@ public final class JavaMOPMain {
             JavaMOPMain.specifiedAJName = true;
         }
 
-        if (options.generateAgent) {
-            options.merge = true;
-            options.keepRVFiles = true;
-        }
-
         if (options.noadvicebody){
             JavaMOPMain.empty_advicebody = true;
-        }
-
-        if ((options.usedb) && !options.generateAgent){
-            throw new IllegalArgumentException("The \"-usedb\" option should only be set in " +
-                    "conjunction with the \"-agent\" option (which was not set in this case)");
         }
     }
 }
