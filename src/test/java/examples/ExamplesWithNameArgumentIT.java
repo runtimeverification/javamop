@@ -2,7 +2,6 @@
 package examples;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
 
 import java.io.File;
 
@@ -16,7 +15,7 @@ public class ExamplesWithNameArgumentIT {
 
     private final TestHelper helper = new TestHelper(path + File.separator + mopFile);
 
-    @Test
+//    @Test
     public void testExampleWithArgs() throws Exception{
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
         if (SystemUtils.IS_OS_WINDOWS) {
