@@ -50,14 +50,14 @@ public class TestHelper {
      * Execute command, tests return code and potentially checks standard and error output against expected content
      * in files if {@code expectedFilePrefix} not null.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
-     * @param ordered when comparing contents of two files, whether to ignore the order of lines or not
+     * @param ignoreOrder when comparing contents of two files, whether to ignore the order of lines or not
      * @param mustSucceed if the program's return code must be {@code 0}.
      * @param commands  list of arguments describing the system command to be executed.
      * @throws Exception
      */
-    public void testCommand(String expectedFilePrefix, boolean ordered, boolean mustSucceed,
+    public void testCommand(String expectedFilePrefix, boolean ignoreOrder, boolean mustSucceed,
                             String... commands) throws Exception {
-        testCommand("", expectedFilePrefix, ordered, mustSucceed, commands);
+        testCommand("", expectedFilePrefix, ignoreOrder, mustSucceed, commands);
     }
 
     /**
@@ -65,21 +65,21 @@ public class TestHelper {
      * in files if {@code expectedFilePrefix} not null.
      * @param relativePath The path relative to the MOP file directory to run commands from and find expected files in.
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
-     * @param ordered when comparing contents of two files, whether to ignore the order of lines or not
+     * @param ignoreOrder when comparing contents of two files, whether to ignore the order of lines or not
      * @param mustSucceed if the program's return code must be {@code 0}.
      * @param command  list of arguments describing the system command to be executed.
      * @throws Exception
      */
-    public void testCommand(String relativePath, String expectedFilePrefix, boolean ordered,
+    public void testCommand(String relativePath, String expectedFilePrefix, boolean ignoreOrder,
                             boolean mustSucceed, String... command) throws Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
         processBuilder.environment().put("CLASSPATH", processBuilder.environment().get("CLASSPATH") + File.pathSeparator
                 + System.getProperty("java.class.path"));
 
-        String actualOutFile = null;
+        String actualOutFile;
         String testsPrefix;
-        String actualErrFile = null;
+        String actualErrFile;
         String expectedOutFile = null;
         String expectedErrFile = null;
         if (expectedFilePrefix != null) {
@@ -106,7 +106,7 @@ public class TestHelper {
             Assert.assertEquals("Expected no error during" + Arrays.toString(command) + ".", 0, returnCode);
         }
         if (expectedFilePrefix != null) {
-            if (!ordered) {
+            if (!ignoreOrder) {
                 assertEqualFiles(expectedOutFile, actualOutFile);
                 assertEqualFiles(expectedErrFile, actualErrFile);
             }
@@ -137,6 +137,19 @@ public class TestHelper {
     public void assertEqualUnorderedFiles(String expectedFile, String actualFile) throws IOException {
         Set<String> expectedText = Tool.convertFileToStringSet(expectedFile);
         Set<String> actualText = Tool.convertFileToStringSet(actualFile);
+
+        Assert.assertEquals(actualFile + " should match " + expectedFile, expectedText, actualText);
+    }
+
+    /**
+     * Assert two files have the same contents, ignoring the differences in line separators.
+     * @param expectedFile The path to the file with the expected result.
+     * @param actualFile The path to the file with the calculated result.
+     * @throws IOException
+     */
+    public void assertEqualFilesIgnoringLineSeparators(String expectedFile, String actualFile) throws IOException {
+        String expectedText = Tool.convertFileToString(expectedFile).replace("\n", "").replace("\r", "");
+        String actualText = Tool.convertFileToString(actualFile).replace("\n", "").replace("\r", "");
 
         Assert.assertEquals(actualFile + " should match " + expectedFile, expectedText, actualText);
     }
