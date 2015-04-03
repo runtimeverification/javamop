@@ -2,7 +2,6 @@ package baseaspect;
 
 import examples.TestHelper;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.FileSystem;
@@ -38,7 +37,7 @@ public class BaseAspectIT {
         return this.fileSystem.getPath(path).getParent();
     }
 
-    @Test
+//    @Test
     /**
      * Test whether javamop can integrate the default base aspect into the generated .aj file if user does not
      * specify a Base Aspect.
@@ -81,7 +80,7 @@ public class BaseAspectIT {
         }
     }
 
-    @Test
+//    @Test
     /**
      * Test whether javamop can integrate the user provided Base Aspect into the generated .aj file;
      * Also test whether the base aspect works as expected by observing whether certain pointcuts are ignored in
