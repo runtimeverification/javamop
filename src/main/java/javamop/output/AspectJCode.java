@@ -2,13 +2,12 @@
 package javamop.output;
 
 import javamop.JavaMOPMain;
-import javamop.util.MOPException;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.util.MOPException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -95,6 +94,7 @@ class AspectJCode {
     public String toString() {
         String ret = "";
         ret += packageDecl;
+        ret += "\n";
         ret += imports.toString().replaceAll("import javamoprt.*", "");
 
         ret += "\n";
