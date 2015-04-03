@@ -1,20 +1,17 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package examples;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.runners.Parameterized;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 /**
  * JUnit test case to run through select program examples. Based on examples/run and examples/runall.
  */
-@RunWith(Parameterized.class)
+//@RunWith(Parameterized.class)
 public class ExamplesIT {
     
     private final TestHelper helper;
@@ -34,7 +31,7 @@ public class ExamplesIT {
      * component. This runs assertions on all the available ones. This function is inspired by the
      * examples/run script.
      */
-    @Test
+//    @Test
     public void testExample() throws Exception {
         final String testName = path.substring(path.lastIndexOf(File.separator)+1);
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
