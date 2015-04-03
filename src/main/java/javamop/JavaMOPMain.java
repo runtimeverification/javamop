@@ -10,7 +10,6 @@ package javamop;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import com.runtimeverification.rvmonitor.java.rvj.Main;
 import javamop.output.MOPProcessor;
 import javamop.parser.SpecExtractor;
 import javamop.parser.ast.MOPSpecFile;
@@ -411,63 +410,6 @@ public final class JavaMOPMain {
             System.err.println(e.getMessage());
             if (options.debug)
                 e.printStackTrace();
-        }
-
-        if (listFilePairs.size() == 0) {
-            //it indicates there is no output generated
-            //perhaps the input is a directory and all work has been done
-            System.out.println("Done.");
-            return;
-        }
-        // replace mop with rvm and call rv-monitor
-        List<String> rvArgs = new ArrayList<String>();
-        for (int j = 0; j < args.length; j++) {
-            if (args[j].compareTo("-keepRVFiles") == 0) {
-                // Don't pass keepRVFiles to rvmonitor\
-            } else if ("-baseaspect".equals(args[j])) {
-                j++;
-            } else {
-                rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
-            }
-        }
-
-        // add default name that rv-monitor will use. This is needed as we have
-        // now changed the default aspectname when the user doesn't pass in a name
-        rvArgs.add("-n");
-        rvArgs.add(options.aspectname);
-
-        Main.main(rvArgs.toArray(new String[0]));
-
-        // Call FileCombiner here to combine these two
-        for (String[] filePair : listFilePairs) {
-            FileCombiner.combineAJFiles(filePair);
-            File javaFile = new File(filePair[0]);
-            try {
-                if (!options.keepRVFiles) {
-                    boolean deleted = javaFile.delete();
-                    if (!deleted) {
-                        System.err.println("Failed to delete java file: "
-                                + filePair[0]);
-                    }
-                }
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (String rvmFilePath : listRVMFiles) {
-            File rvmFile = new File(rvmFilePath);
-            try {
-                if (!options.keepRVFiles) {
-                    boolean deleted = rvmFile.delete();
-                    if (!deleted) {
-                        System.err.println("Failed to delete java file: " + rvmFilePath);
-                    }
-                }
-
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
         }
     }
 
