@@ -52,8 +52,6 @@ public final class JavaMOPMain {
 
     public static boolean empty_advicebody = false;
 
-    public static boolean inline = false;
-
     private static final List<String []> listFilePairs = new ArrayList<String []>();
     private static final List<String> listRVMFiles = new ArrayList<String>();
 

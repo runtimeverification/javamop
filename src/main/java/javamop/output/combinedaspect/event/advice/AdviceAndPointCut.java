@@ -183,123 +183,6 @@ public class AdviceAndPointCut {
     }
     
     /**
-     * The generated advice code for this event.
-     * @return Generated advice code.
-     */
-    protected String adviceBody(){
-        String ret = "";
-        
-        if(JavaMOPMain.empty_advicebody){
-            ret += "System.out.print(\"\");\n";
-            
-            Iterator<EventDefinition> iter;
-            if(this.pos.equals("before"))
-                iter = this.events.descendingIterator();
-            else
-                iter = this.events.iterator();
-            
-            if (this.beCounted) {
-                ret += "++" + this.pointcutName + "_count;\n";
-            }
-            
-            while(iter.hasNext()){
-                EventDefinition event = iter.next(); 
-                
-                AdviceBody advice = advices.get(event);
-                
-                if(advices.size() > 1){
-                    ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
-                }
-            }
-        } else {
-            for (MOPParameter threadVar : threadVars) {
-                ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
-            }
-            
-            for(JavaMOPSpec spec : specsForActivation){
-                ret += activatorsManager.getActivator(spec) + " = true;\n";
-            }           
-            
-            if (isSync) {
-                ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
-                ret += "Thread.yield();\n";
-                ret += "}\n";
-            }
-            
-            Iterator<EventDefinition> iter;
-            if(this.pos.equals("before"))
-                iter = this.events.descendingIterator();
-            else
-                iter = this.events.iterator();
-            
-            if (this.beCounted) {
-                ret += "++" + this.pointcutName + "_count;\n";
-            }
-            
-            while(iter.hasNext()){
-                EventDefinition event = iter.next(); 
-                
-                AdviceBody advice = advices.get(event);
-                
-                ret += this.statManager.incEvent(advice.mopSpec, event);
-                
-                if(specsForChecking.contains(advice.mopSpec)){
-                    if(advices.size() > 1){
-                        ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
-                    }
-                    
-                    ret += "if (" + activatorsManager.getActivator(advice.mopSpec) + ") {\n";
-                } else {
-                    if(advices.size() > 1){
-                        ret += "//" + advice.mopSpec.getName() + "_" + event.getUniqueId() + "\n";
-                        ret += "{\n";
-                    }
-                }
-                
-                if (JavaMOPMain.options.statistics) {
-                    MOPStatistics stat = this.statManager.getStat(advice.mopSpec);
-                    
-                    ret += stat.eventInc(event.getId());
-                    
-                    for (MOPParameter param : event.getMOPParametersOnSpec()) {
-                        ret += stat.paramInc(param);
-                    }
-                    
-                    ret += "\n";
-                }
-                
-                // add check count condition here
-                String countCond = event.getCountCond();
-                
-                if (countCond != null && countCond.length() != 0) {
-                    countCond = countCond.replaceAll("count", this.pointcutName + "_count");
-                    ret += "if (" + countCond + ") {\n";
-                }
-                ret += advice;
-                
-                if (countCond != null && countCond.length() != 0) {
-                    ret += "}\n";
-                }
-                
-                if(specsForChecking.contains(advice.mopSpec)){
-                    ret += "}\n";
-                } else {
-                    if(advices.size() > 1){
-                        ret += "}\n";
-                    }
-                }
-            }
-            
-            if (isSync) {
-                ret += globalLock.getName() + ".unlock();\n";
-            }
-            
-        }
-        
-        return ret;
-    }
-    
-    /**
      * Generated Java/AspectJ complete source code for this advice and pointcut as code that works
      * together with RV-Monitor generated code.
      * @return Java/AspectJ source code.
@@ -308,23 +191,8 @@ public class AdviceAndPointCut {
     public String toString() {
         String ret = "";
         String pointcutStr = pointcut.toString();
-        
-        // Do we need to handle inline?
-        if(JavaMOPMain.inline && !isAround){
-            ret += "void " + inlineFuncName + "(" + inlineParameters.parameterDeclString();
-            if(hasThisJoinPoint){
-                if(inlineParameters.size() > 0) 
-                    ret += ", ";
-                ret += "JoinPoint thisJoinPoint";
-            }
-            ret += ") {\n";
-            
-            ret += adviceBody();
-            
-            ret += "}\n";
-        }
-        
-        
+
+
         ret += "pointcut " + pointcutName;
         ret += "(";
         ret += parameters.parameterDeclString();
@@ -359,105 +227,92 @@ public class AdviceAndPointCut {
         
         if (aroundLocalDecl != null)
             ret += aroundLocalDecl;
-        
-        if(JavaMOPMain.inline && !isAround){
-            ret += inlineFuncName + "(" + inlineParameters.parameterString();
-            if(hasThisJoinPoint){
-                if(inlineParameters.size() > 0) 
-                    ret += ", ";
-                ret += "thisJoinPoint";
+
+
+        // Call method here MOPNameRuntimeMonitor.nameEvent()
+        // If there's thread var, replace with t (currentThread),
+        // and also generate Thread t = currentThread before it
+        // If there's return/ throw pointcut, cat in the end
+
+        for (MOPParameter threadVar : threadVars) {
+            ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
+        }
+
+        Iterator<EventDefinition> iter;
+        if (this.pos.equals("before"))
+            iter = this.events.descendingIterator();
+        else
+            iter = this.events.iterator();
+
+        while (iter.hasNext()) {
+            EventDefinition event = iter.next();
+
+            AdviceBody advice = advices.get(event);
+
+            if (advices.size() > 1) {
+                ret += "//" + advice.mopSpec.getName() + "_"
+                        + event.getUniqueId() + "\n";
             }
-            ret += ");\n";
-        } else {
-            
-            // Call method here MOPNameRuntimeMonitor.nameEvent()
-            // If there's thread var, replace with t (currentThread),
-            // and also generate Thread t = currentThread before it
-            // If there's return/ throw pointcut, cat in the end 
-            
-            for (MOPParameter threadVar : threadVars) {
-                ret += "Thread " + threadVar.getName() + " = Thread.currentThread();\n";
+
+            String countCond = event.getCountCond();
+
+            if (countCond != null && countCond.length() != 0) {
+                ret += "++" + this.pointcutName + "_count;\n";
+                countCond = countCond.replaceAll("count", this.pointcutName
+                        + "_count");
+                ret += "if (" + countCond + ") {\n";
             }
-            
-            Iterator<EventDefinition> iter;
-            if(this.pos.equals("before"))
-                iter = this.events.descendingIterator();
-            else
-                iter = this.events.iterator();
-            
-            while (iter.hasNext()) {
-                EventDefinition event = iter.next();
-                
-                AdviceBody advice = advices.get(event);
-                
-                if (advices.size() > 1) {
-                    ret += "//" + advice.mopSpec.getName() + "_"
-                    + event.getUniqueId() + "\n";
-                }
-                
-                String countCond = event.getCountCond();
-                
-                if (countCond != null && countCond.length() != 0) {
-                    ret += "++" + this.pointcutName+ "_count;\n";
-                    countCond = countCond.replaceAll("count", this.pointcutName
-                    + "_count");
-                    ret += "if (" + countCond + ") {\n";
-                }
-                
-                ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event, 
+
+            ret += EventManager.EventMethodHelper.methodName(advice.mopSpec, event,
                     this.fileName);
-                ret += "(";
-                
-                // Parameters
-                // Original (including threadVar)
-                String  original = event.getParameters().parameterString();
-                ret += original;
-                
-                // Parameters in returning pointcut
-                if (event.getRetVal() != null && event.getRetVal().size() > 0) {
-                    String retParameters = event.getRetVal().parameterString();
-                    if (retParameters.length() > 0) {
-                        if (original == null || original.length() == 0)
-                        {
-                            ret += retParameters;
-                        } else {
-                            ret += ", " + retParameters;
-                        }
-                    }
-                }
-                
-                // Parameters in throwing pointcut
-                if (event.getThrowVal() != null && event.getThrowVal().size() > 0) {
-                    String throwParameters = event.getThrowVal().parameterString();
-                    if (throwParameters.length() > 0) {
-                        if (original == null || original.length() == 0)
-                        {
-                            ret += throwParameters;
-                        } else {
-                            ret += ", " + throwParameters;
-                        }
-                    }
-                }
-                
-                // __STATICSIG should be passed as an argument because rv-monitor cannot infer
-                if (event.has__STATICSIG()) {
-                    String staticsig = "thisJoinPoint.getStaticPart().getSignature()";
-                    if (original == null || original.length() == 0)
-                    {
-                        ret += staticsig;
+            ret += "(";
+
+            // Parameters
+            // Original (including threadVar)
+            String original = event.getParameters().parameterString();
+            ret += original;
+
+            // Parameters in returning pointcut
+            if (event.getRetVal() != null && event.getRetVal().size() > 0) {
+                String retParameters = event.getRetVal().parameterString();
+                if (retParameters.length() > 0) {
+                    if (original == null || original.length() == 0) {
+                        ret += retParameters;
                     } else {
-                        ret += ", " + staticsig;
+                        ret += ", " + retParameters;
                     }
                 }
-                
-                ret += ");\n";
-                
-                if (countCond != null && countCond.length() != 0) {
-                    ret += "}\n";
+            }
+
+            // Parameters in throwing pointcut
+            if (event.getThrowVal() != null && event.getThrowVal().size() > 0) {
+                String throwParameters = event.getThrowVal().parameterString();
+                if (throwParameters.length() > 0) {
+                    if (original == null || original.length() == 0) {
+                        ret += throwParameters;
+                    } else {
+                        ret += ", " + throwParameters;
+                    }
                 }
+            }
+
+            // __STATICSIG should be passed as an argument because rv-monitor cannot infer
+            if (event.has__STATICSIG()) {
+                String staticsig = "thisJoinPoint.getStaticPart().getSignature()";
+                if (original == null || original.length() == 0) {
+                    ret += staticsig;
+                } else {
+                    ret += ", " + staticsig;
+                }
+            }
+
+            ret += ");\n";
+
+            if (countCond != null && countCond.length() != 0) {
+                ret += "}\n";
             }
         }
-        
+
         if (aroundAdviceReturn != null)
             ret += aroundAdviceReturn;
         

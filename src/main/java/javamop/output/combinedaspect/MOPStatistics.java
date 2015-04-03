@@ -14,11 +14,13 @@ import javamop.parser.ast.mopspec.PropertyAndHandlers;
  * Statistics for a single property.
  */
 public class MOPStatistics {
-    private final String aspectName;
-    
-    private final MOPVariable numMonitor;
-    private final MOPVariable collectedMonitor;
-    private final MOPVariable terminatedMonitor;
+
+    private final String totalMonitorMethodName = "getTotalMonitorCount";
+    private final String collectedMonitorMethodName = "getCollectedMonitorCount";
+    private final String terminatedMonitorMethodName = "getTerminatedMonitorCount";
+    private final String eventCountersMethodName = "getEventCounters";
+    private final String categoryCountersMethodName = "getCategoryCounters";
+
     private final HashMap<String, MOPVariable> eventVars = new HashMap<String, MOPVariable>();
     private final HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>> categoryVars = 
         new HashMap<PropertyAndHandlers, HashMap<String, MOPVariable>>();
@@ -26,6 +28,7 @@ public class MOPStatistics {
         new HashMap<MOPParameter, MOPVariable>();
     
     private final String specName;
+    private final boolean isRaw;
 
     /**
      * Construct statistics variables for a single property.
@@ -33,11 +36,8 @@ public class MOPStatistics {
      * @param mopSpec The specification that has statistics being collected on it.
      */
     public MOPStatistics(final String name, final JavaMOPSpec mopSpec) {
-        this.aspectName = name + "MonitorAspect";
         this.specName = mopSpec.getName();
-        this.numMonitor = new MOPVariable(mopSpec.getName() + "_Monitor_num");
-        this.collectedMonitor = new MOPVariable(mopSpec.getName() + "_CollectedMonitor_num");
-        this.terminatedMonitor = new MOPVariable(mopSpec.getName() + "_TerminatedMonitor_num");
+        this.isRaw = mopSpec.isRaw();
 
         for (EventDefinition event : mopSpec.getEvents()) {
             MOPVariable eventVar = new MOPVariable(mopSpec.getName() + "_" + event.getId() + 
@@ -63,107 +63,6 @@ public class MOPStatistics {
     }
     
     /**
-     * Fields used in maintaining statistics for this property.
-     * @return Java source code declarations for maintaining statistics.
-     */
-    public String fieldDecl() {
-        String ret = "";
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        ret += "static long " + numMonitor + " = 0;\n";
-        ret += "static long " + collectedMonitor + " = 0;\n";
-        ret += "static long " + terminatedMonitor + " = 0;\n";
-        
-        for (MOPVariable eventVar : eventVars.values()) {
-            ret += "static long " + eventVar + " = 0;\n";
-        }
-        
-        for (HashMap<String, MOPVariable> categoryVarsforProp : categoryVars.values()) {
-            for (MOPVariable categoryVar : categoryVarsforProp.values()) {
-                ret += "static long " + categoryVar + " = 0;\n";
-            }
-        }
-        
-        return ret;
-    }
-    
-    public String paramInc(final MOPParameter param) {
-        return "";
-    }
-    
-    /**
-     * Code to increment the counter for an event.
-     * @param eventName The name of the event that was incremented.
-     * @return Java source code to increment the counter for receiving events.
-     */
-    public String eventInc(final String eventName) {
-        String ret = "";
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        MOPVariable eventVar = eventVars.get(eventName);
-        
-        ret += eventVar + "++;\n";
-        
-        return ret;
-    }
-    
-    public String categoryInc(final PropertyAndHandlers prop, final String category) {
-        String ret = "";
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        MOPVariable categoryVar = categoryVars.get(prop).get(category);
-        
-        ret += aspectName + "." + categoryVar + "++;\n";
-        
-        return ret;
-    }
-    
-    /**
-     * Code to increment the counter for number of monitors generated.
-     * @return Java code to increment the counter for a monitor being generated.
-     */
-    public String incNumMonitor() {
-        String ret = "";
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        ret += aspectName + "." + numMonitor + "++;\n";
-        
-        return ret;
-    }
-    
-    /**
-     * Code to increment the counter for collected monitors.
-     * @return Java code to increment the counter for a monitor being collected.
-     */
-    public String incCollectedMonitor() {
-        String ret = "";
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        ret += aspectName + "." + collectedMonitor + "++;\n";
-        
-        return ret;
-    }
-    
-    /**
-     * Code to increment the counter for terminated monitors.
-     * @return Java code to increment the counter for a monitor being terminated.
-     */
-    public String incTerminatedMonitor() {
-        String ret = "";
-        if (!JavaMOPMain.options.statistics)
-            return ret;
-        
-        ret += aspectName + "." + terminatedMonitor + "++;\n";
-        
-        return ret;
-    }
-    
-    /**
      * AspectJ advice code to display the statistics after termination of the program.
      * @return AspectJ/Java source code displaying statistics.
      */
@@ -171,23 +70,30 @@ public class MOPStatistics {
         String ret = "";
         if (!JavaMOPMain.options.statistics)
             return ret;
-        
+
+        String monitorName = specName + (isRaw ? "Raw" : "") + "Monitor";
+
         ret += "after () : execution(* *.main(..)) {\n";
         
         ret += "System.err.println(\"== " + this.specName + " ==\");\n";
-        ret += "System.err.println(\"#monitors: \" + " + numMonitor + ");\n";
+
+        ret += "System.err.println(\"#monitors: \" + " + monitorName + "." + this.totalMonitorMethodName + "());\n";
+        ret += "System.err.println(\"#collected monitors: \" + " + monitorName + "."
+                + this.collectedMonitorMethodName + "());\n";
+        ret += "System.err.println(\"#terminated monitors: \" + " + monitorName + "."
+                + this.terminatedMonitorMethodName + "());\n";
         
         for (String eventName : eventVars.keySet()) {
-            MOPVariable eventVar = eventVars.get(eventName);
-            ret += "System.err.println(\"#event - " + eventName + ": \" + " + eventVar + ");\n";
+            ret += "System.err.println(\"#event - " + eventName + ": \" + " + monitorName + "."
+                    + this.eventCountersMethodName + "()" + ".get(\""  + eventName + "\")" +");\n";
         }
         
         for (PropertyAndHandlers prop : categoryVars.keySet()) {
             HashMap<String, MOPVariable> categoryVarsforProp = categoryVars.get(prop);
             for (String categoryName : categoryVarsforProp.keySet()) {
-                MOPVariable categoryVar = categoryVarsforProp.get(categoryName);
-                ret += "System.err.println(\"#category - prop " + prop.getPropertyId() + " - " + 
-                    categoryName + ": \" + " + categoryVar + ");\n";
+                ret += "System.err.println(\"#category - prop " + prop.getPropertyId() + " - " +
+                    categoryName + ": \" + " + monitorName + "."
+                        + this.categoryCountersMethodName + "()" + ".get(\""  + categoryName + "\")" +");\n";
             }
         }
         
@@ -201,5 +107,5 @@ public class MOPStatistics {
         
         return ret;
     }
-    
+
 }
