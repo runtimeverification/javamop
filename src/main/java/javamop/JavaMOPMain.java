@@ -376,8 +376,6 @@ public final class JavaMOPMain {
         for (int j = 0; j < args.length; j++) {
             if (args[j].compareTo("-keepRVFiles") == 0) {
                 // Don't pass keepRVFiles to rvmonitor\
-            } else if("-agent".equals(args[j])) {
-                rvArgs.add("-merge");
             } else if("-baseaspect".equals(args[j])) {
                 j++;
             } else {
