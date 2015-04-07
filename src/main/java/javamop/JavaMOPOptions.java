@@ -68,21 +68,12 @@ public class JavaMOPOptions {
             "If this option is enabled, however, the file is preserved.")
     public boolean keepRVFiles = false;
 
-    @Parameter(names="-agent",description = "Generate an agent from the given .mop files.")
-    public boolean generateAgent = false;
-
     @Parameter(names="-baseaspect",description = "Optionally provide a BaseAspect.aj file " +
             "for use in generating an agent.", converter = FileConverter.class)
     public File baseAspect;
 
     @Parameter(names={"-h","-help"}, description = "Show this help message.", help = true)
     private boolean help = false;
-
-    @Parameter(names = "-usedb", description = "Use only the property database for building " +
-            "an Agent. Setting this option without setting the '-agent' option will result in " +
-            "an Exception. For a list config files used with this option, please see the " +
-            "javamop/config/remote_server_addr.properties file.")
-    public boolean usedb = false;
 
     public static class FileConverter implements IStringConverter<File> {
         @Override

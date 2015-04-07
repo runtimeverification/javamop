@@ -1,9 +1,2 @@
-In all of these folders, to build the agent, run:
-
-
-javamop --agent rvm -n agent
-
-To run the agent with a file:
-
-javac <Class>.java
-java -javaagent:agent.jar <Class>
+The agent generation feature has been removed from javamop, and delegated to the new tool
+"javamopagent". See docs/JavaMOPAgentUsage.md at javamop's top directory for details.

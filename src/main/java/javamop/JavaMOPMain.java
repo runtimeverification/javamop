@@ -8,27 +8,23 @@
 
 package javamop;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.nio.file.Files;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
-import javamop.agent.AgentGenerator;
 import javamop.output.MOPProcessor;
 import javamop.parser.SpecExtractor;
-import javamop.specfiltering.SpecFilter;
 import javamop.parser.ast.MOPSpecFile;
+import javamop.specfiltering.SpecFilter;
 import javamop.util.FileCombiner;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
 import javamop.util.Tool;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point class for the JavaMOP program.
@@ -104,7 +100,7 @@ public final class JavaMOPMain {
      * @param location
      *            an absolute path for result file
      */
-    public static void processSpecFile(File file, String location) throws MOPException {
+    public static void processSpecFile(File file, String location) throws MOPException, IOException {
         MOPNameSpace.init();
         MOPSpecFile spec =  SpecExtractor.parse(file);
         
@@ -129,7 +125,7 @@ public final class JavaMOPMain {
      * @param specFiles All the specifications to consider.
      * @throws MOPException If something goes wrong in conversion.
      */
-    public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException {
+    public static void processMultipleFiles(ArrayList<File> specFiles) throws MOPException, IOException {
         String aspectName;
 
         if(options.outputDir == null){
@@ -150,7 +146,7 @@ public final class JavaMOPMain {
                     aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
                         "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
                 } while(aspectFile.exists());
-                aspectName = "JavaMOPAgent_" + suffixNumber;
+                aspectName = "MultiSpec_" + suffixNumber;
             }
             options.aspectname = aspectName;
         }
@@ -272,7 +268,7 @@ public final class JavaMOPMain {
      * @param files Array of MOP file and directory paths.
      * @param path Common prefix to all the paths in {@code files}.
      */
-    public static void process(String[] files, String path) throws MOPException {
+    public static void process(String[] files, String path) throws MOPException, IOException {
         ArrayList<File> specFiles = collectFiles(files, path);
 
         if(options.aspectname != null && files.length > 1){
@@ -327,7 +323,7 @@ public final class JavaMOPMain {
      * Handle one or multiple input files and produce .rvm files.
      * @param files a list of file names.
      */
-    public static void process(List<String> files) throws MOPException {
+    public static void process(List<String> files) throws MOPException, IOException {
         if(options.outputDir != null && !options.outputDir.exists())
             throw new MOPException("The output directory, " + options.outputDir.getPath() +
                 " does not exist.");
@@ -364,31 +360,7 @@ public final class JavaMOPMain {
             jarFilePath = Tool.polishPath(jarFilePath);
         }
 
-        boolean tempOutput = options.generateAgent && options.outputDir == null;
-
-        if(tempOutput) {
-            // this line is redundant
-//            tempOutput = true;
-            try {
-                options.outputDir =
-                        Files.createTempDirectory(new File(".").toPath(), "output").toFile();
-                options.outputDir.deleteOnExit();
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-                options.generateAgent = false;
-            }
-        }
-
         SpecFilter filter = null;
-        if (options.usedb) {
-            try {
-                filter = new SpecFilter();
-                options.files = new ArrayList<String>();
-                options.files.add(filter.filter());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
         // Generate .rvm files and .aj files
         try {
@@ -402,23 +374,13 @@ public final class JavaMOPMain {
         // replace mop with rvm and call rv-monitor
         List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
-            if (args[j].compareTo("-keepRVFiles") == 0 || args[j].compareTo("-usedb") == 0) {
+            if (args[j].compareTo("-keepRVFiles") == 0) {
                 // Don't pass keepRVFiles to rvmonitor\
-            } else if("-agent".equals(args[j])) {
-                rvArgs.add("-merge");
             } else if("-baseaspect".equals(args[j])) {
                 j++;
             } else {
                 rvArgs.add(args[j].replaceAll("\\.mop", "\\.rvm"));
             }
-        }
-        if(tempOutput) {
-            rvArgs.add("-d");
-            rvArgs.add(options.outputDir.getAbsolutePath());
-        }
-
-        if (options.usedb){
-            rvArgs.add(SpecFilter.specDirPath);
         }
 
         // add default name that rv-monitor will use. This is needed as we have
@@ -445,14 +407,6 @@ public final class JavaMOPMain {
             }
         }
 
-        if(options.generateAgent) {
-            try {
-                AgentGenerator.generate(options.outputDir, options.aspectname, options.baseAspect, options.verbose);
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-
         for (String rvmFilePath : listRVMFiles) {
             File rvmFile = new File(rvmFilePath);
             try {
@@ -467,8 +421,6 @@ public final class JavaMOPMain {
                   e.printStackTrace();
             }
         }
-
-        cleanup(tempOutput, filter);
     }
 
     /**
@@ -500,7 +452,7 @@ public final class JavaMOPMain {
      *                 JavaMOP with
      */
     private static void handleOptions(JavaMOPOptions options, String[] args, JCommander jc) {
-        if (args.length == 0 || (options.files.size() == 0 && !options.usedb)){
+        if (args.length == 0 || (options.files.size() == 0)){
             jc.usage();
             System.exit(1);
         }
@@ -513,18 +465,8 @@ public final class JavaMOPMain {
             JavaMOPMain.specifiedAJName = true;
         }
 
-        if (options.generateAgent) {
-            options.merge = true;
-            options.keepRVFiles = true;
-        }
-
         if (options.noadvicebody){
             JavaMOPMain.empty_advicebody = true;
-        }
-
-        if ((options.usedb) && !options.generateAgent){
-            throw new IllegalArgumentException("The \"-usedb\" option should only be set in " +
-                    "conjunction with the \"-agent\" option (which was not set in this case)");
         }
     }
 }

@@ -1,52 +1,49 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.agent;
 
-import javamop.JavaMOPMain;
-import javamop.util.Tool;
+import javamop.JavaMOPAgentMain;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Handles generating a complete Java agent after .mop files have been processed into .rvm files
- * and .rvm files have been processed into .java files. Based on Owolabi's build-agent.sh.
+ * and .rvm files have been processed into .java files. Based on A. Cody Schuffelen, Qingzhou Luo
+ * and Philip Daian 's AgentGenerator.
  *
- * @author A. Cody Schuffelen
+ * @author Qingzhou and He (xiaoguoyi27@gmail.com)
  */
-public final class AgentGenerator {
+public final class SeparateAgentGenerator {
 
     private static final String manifest = "MANIFEST.MF";
 
     /**
      * Private to avoid instantiation.
      */
-    private AgentGenerator() {
+    private SeparateAgentGenerator() {
 
     }
 
     /**
      * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
      *
-     * @param outputDir  The place to put all the intermediate generated files in.
-     * @param aspectname Generates {@code aspectname}.jar.
-     * @param baseAspect The aspect file to combine with the generated aspects.
-     * @param verbose whether in verbose mode or not
-     * @throws IOException If something goes wrong in the many filesystem operations.
+     * @param outputDir   The place to put all the intermediate generated files in.
+     * @param aspectname  Generates {@code aspectname}.jar.
+     * @param agentAspect The aspect file to used in the agent
+     * @param verbose     whether in verbose mode or not
+     * @throws java.io.IOException If something goes wrong in the many filesystem operations.
      */
-    public static void generate(final File outputDir, final String aspectname,
-                                File baseAspect, boolean verbose) throws IOException {
+    public static void generate(final File outputDir, final String aspectname, File agentAspect,
+                                File classDir, boolean verbose) throws IOException {
 
         if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
             System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
@@ -61,58 +58,47 @@ public final class AgentGenerator {
             return;
         }
 
-        final String ajOutDir = outputDir.getAbsolutePath();
         final String baseClasspath = getClasspath();
 
-        if (baseAspect == null) {
-            baseAspect = new File(outputDir, "BaseAspect.aj");
-        }
-        if (!"BaseAspect.aj".equals(baseAspect.getName())) {
-            throw new IOException("For now, --baseaspect files should be called BaseAspect.aj");
-        }
-        if (!baseAspect.exists()) {
-            final boolean success = baseAspect.createNewFile();
-            if (success) {
-                writeBaseAspect(baseAspect);
-            } else {
-                System.err.println("Unable to write BaseAspect.aj.");
-                return;
-            }
-        }
+        // Step 1: Prepare the directory from which the agent will be built
+        final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
+        agentDir.deleteOnExit();
 
-        // Step 11: Compile the generated AJC File (allMonitorAspect.aj)
-        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", baseClasspath,
-                "org.aspectj.tools.ajc.Main", "-1.6", "-d", ajOutDir, "-outxml",
-                baseAspect.getAbsolutePath(), aspectname + "MonitorAspect.aj");
-        /*
+
+        // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
+        // Change aspect name
+        String completeClassPath = baseClasspath + File.pathSeparator + classDir.getAbsolutePath();
+        final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", completeClassPath,
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d", agentDir.getAbsolutePath(),
+                "-outxml", agentAspect.getAbsolutePath());
+
         if(ajcReturn != 0) {
             System.err.println("(ajc) Failed to compile agent.");
             System.exit(ajcReturn);
-        }*/
-        final File aopAjc = new File(ajOutDir + File.separator + "META-INF" + File.separator +
-                "aop-ajc.xml");
+        }
+
+        final File metaInf = new File(agentDir, "META-INF");
+        final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) || metaInf.mkdir();
+        if (!mkdirMetaInfReturn) {
+            System.err.println("(mkdir) Failed to create META-INF");
+            return;
+        }
+
+        final File aopAjc = new File(agentDir.getAbsolutePath() + File.separator
+                + "META-INF" + File.separator + "aop-ajc.xml");
         if (!aopAjc.exists()) {
             System.err.println("(ajc) Failed to produce aop-ajc.xml");
             return;
         }
 
-        // Step 12: suppress aspectJ warnings
+        // Step 3: suppress aspectJ warnings
         suppress_warnings(aopAjc);
 
-        // Step 13: Prepare the directory from which the agent will be built
-        final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
-        agentDir.deleteOnExit();
-        try {
-            // Copy in the postprocessed xml file
-            final File metaInf = new File(agentDir, "META-INF");
-            final boolean mkdirMetaInfReturn = (metaInf.exists() && metaInf.isDirectory()) ||
-                    metaInf.mkdir();
-            if (!mkdirMetaInfReturn) {
-                System.err.println("(mkdir) Failed to create META-INF");
-                return;
-            }
-            copyFile(aopAjc, new File(metaInf, "aop-ajc.xml"));
+        // Also need to copy all the .class files from classDir to outputDir
+        FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
+                new SuffixFileFilter(".class")));
 
+        if (!JavaMOPAgentMain.excludeJars) {
             //extract the absolute paths for these two jars from java classpath
             //running "mvn package", or similar, would set this java classpath appropriately
             String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
@@ -125,8 +111,8 @@ public final class AgentGenerator {
                 weaverJarName = getJarName(weaverJarPath);
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
             } else {
-                System.err.println("(missing jars) Could not find aspectjweaver or rv-monitor-rt " +
-                        "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
+                System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
+                        + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
 
             //make references so that these files can be referred to later
@@ -137,7 +123,7 @@ public final class AgentGenerator {
             copyFile(new File(weaverJarPath), actualWeaverFile);
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
 
-            //extract aspectjweaver.jar and rv-monitor-rt.jar (since their content will
+            //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
             int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
             if (extractReturn != 0) {
@@ -147,42 +133,37 @@ public final class AgentGenerator {
 
             extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
             if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the rv-monitor-rt jar");
+                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
                 return;
             }
-
-            // directory to hold compiled library files
-            // Copy in all the .class files for all the monitor libraries
-            new File(outputDir, "mop").renameTo(new File(agentDir, "mop"));
 
             //remove extracted jars to make agent lighter weight
             if (!actualWeaverFile.delete()) {
-                System.err.println("(delete) Failed to delete weaver jar; generated jar will " +
-                        "have a bigger size than normal");
+                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
+                        + "have a bigger size than normal");
             }
 
             if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rv-monitor-rt jar; generated jar will" +
-                        " have a bigger size than normal");
+                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
+                        + " have a bigger size than normal");
             }
-
-            // # Step 14: copy in the correct MANIFEST FILE
-            final File jarManifest = new File(metaInf, manifest);
-            writeAgentManifest(jarManifest);
-
-
-            // # Step 15: Stepmake the java agent jar
-            final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf", jarManifest.toString(),
-                    aspectname + ".jar", "-C", agentDir.toString(), ".");
-            if (jarReturn != 0) {
-                System.err.println("(jar) Failed to produce final jar");
-                return;
-            }
-
-            System.out.println(aspectname + ".jar is generated.");
-        } finally {
-            Tool.deleteDirectory(agentDir.toPath());
         }
+
+        // # Step 4: copy in the correct MANIFEST FILE
+        final File jarManifest = new File(metaInf, manifest);
+        writeAgentManifest(jarManifest);
+
+
+        // # Step 5: Step make the java agent jar
+        final int jarReturn = runCommandDir(new File("."), verbose, "jar", "cmf", jarManifest.toString(), aspectname
+                + ".jar", "-C", agentDir.toString(), ".");
+        if (jarReturn != 0) {
+            System.err.println("(jar) Failed to produce final jar");
+            return;
+        }
+
+        System.out.println(aspectname + ".jar is generated.");
+
     }
 
     /**
@@ -202,7 +183,7 @@ public final class AgentGenerator {
      * @param baseClasspath A string representation of the "java.class.path" system property
      * @param key           A partial or complete name for the jar to be extracted from the path
      * @return Absolute path to a jar whose name (partially) matches the key, or null if no
-     *         match is found
+     * match is found
      */
     private static String getJarLocation(String baseClasspath, String key) {
         String[] jars = baseClasspath.split(File.pathSeparator);
@@ -240,9 +221,9 @@ public final class AgentGenerator {
      * Run a command in a directory. Passes the output of the run commands through if the program
      * is in verbose mode. Blocks until the command finishes, then gives the return code.
      *
-     * @param dir  The directory to run the command in.
+     * @param dir     The directory to run the command in.
      * @param verbose whether in verbose mode or not
-     * @param args The program to run and its arguments.
+     * @param args    The program to run and its arguments.
      * @return The return code of the program.
      */
     private static int runCommandDir(final File dir, boolean verbose, final String... args) throws IOException {
@@ -270,8 +251,7 @@ public final class AgentGenerator {
                         try {
                             IOUtils.copy(proc.getInputStream(), writer);
                         } catch (IOException e) {
-                            System.err.println("Exception in reading subprocess output: "
-                                    + e.getMessage());
+                            System.err.println("Exception in reading subprocess output: " + e.getMessage());
                         }
                     }
                 }).start();
@@ -289,7 +269,7 @@ public final class AgentGenerator {
      *
      * @param sourceFile The file to take the contents from.
      * @param destFile   The file to output to. Created if it does not already exist.
-     * @throws IOException If something goes wrong copying the file.
+     * @throws java.io.IOException If something goes wrong copying the file.
      */
     private static void copyFile(final File sourceFile, final File destFile) throws IOException {
         // http://www.javalobby.org/java/forums/t17036.html
@@ -314,6 +294,10 @@ public final class AgentGenerator {
         }
     }
 
+    public static void main(String[] args) {
+
+    }
+
     /**
      * The system classpath.
      *
@@ -331,25 +315,23 @@ public final class AgentGenerator {
      */
     private static boolean classOnClasspath(String name) {
         try {
-            Class.forName(name, false, AgentGenerator.class.getClassLoader());
+            Class.forName(name, false, SeparateAgentGenerator.class.getClassLoader());
             return true;
         } catch (ExceptionInInitializerError eiie) {
-            throw new RuntimeException(
-                    "Class initializer for " + name + " should not have run.", eiie);
+            throw new RuntimeException("Class initializer for " + name + " should not have run.", eiie);
         } catch (ClassNotFoundException cnfe) {
             return false;
         } catch (LinkageError le) {
-            throw new RuntimeException(
-                    "Class " + name + " is on the classpath, but is outdated.", le);
+            throw new RuntimeException("Class " + name + " is on the classpath, but is outdated.", le);
         }
     }
 
     /**
      * Write the agent manifest to a file. It extracts the locations of aspectjweaver.jar and
-     * rv-monitor-rt.jar from the classpath that is used when JavaMOP is run.
+     * rvmonitorrt.jar from the classpath that is used when JavaMOP is run.
      *
      * @param f The file to write the manifest to.
-     * @throws IOException If something goes wrong in writing the file.
+     * @throws java.io.IOException If something goes wrong in writing the file.
      */
     private static void writeAgentManifest(final File f) throws IOException {
         final PrintWriter writer = new PrintWriter(f);
@@ -381,7 +363,7 @@ public final class AgentGenerator {
      * Write the base aspect to a file.
      *
      * @param f The file to write to.
-     * @throws IOException If something goes wrong in writing the file.
+     * @throws java.io.IOException If something goes wrong in writing the file.
      */
     private static void writeBaseAspect(final File f) throws IOException {
         final PrintWriter writer = new PrintWriter(f);
