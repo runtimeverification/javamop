@@ -269,6 +269,8 @@ public final class JavaMOPMain {
      * @param path Common prefix to all the paths in {@code files}.
      */
     public static void process(String[] files, String path) throws MOPException, IOException {
+        areValidNames(files);
+
         ArrayList<File> specFiles = collectFiles(files, path);
 
         if(options.aspectname != null && files.length > 1){
@@ -315,6 +317,17 @@ public final class JavaMOPMain {
                 if (needResetAspectName) {
                     options.aspectname = null;
                 }
+            }
+        }
+    }
+
+    //If any input mop file does not have a valid name, then exit.
+    private static void areValidNames(String[] files) {
+        for (int i = 0; i < files.length; i++) {
+            String curName = Tool.getFileName(files[i]);
+            if (!curName.matches("[a-zA-Z_]\\p{Alnum}*")) {
+                System.err.println("The mop name " + curName + " is not valid!");
+                System.exit(1);
             }
         }
     }
