@@ -324,8 +324,8 @@ public final class JavaMOPMain {
     //If any input mop file does not have a valid name, then exit.
     private static void areValidNames(String[] files) {
         for (int i = 0; i < files.length; i++) {
-            String curName = files[i];
-            if (!curName.matches("[a-zA-Z_]\\p{Alnum}*\\.mop")) {
+            String curName = Tool.getFileName(files[i]);
+            if (!curName.matches("[a-zA-Z_]\\p{Alnum}*")) {
                 System.err.println("The mop name " + curName + " is not valid!");
                 System.exit(1);
             }
