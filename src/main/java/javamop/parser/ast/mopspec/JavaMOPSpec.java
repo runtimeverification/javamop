@@ -1,12 +1,6 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javamop.util.MOPException;
-import javamop.util.MOPNameSpace;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
@@ -14,6 +8,12 @@ import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 ///TODO:  All this has__ methods are carbon copies with the names changed.
 // This should really be refactored.
@@ -31,6 +31,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     
     private MOPParameters commonParamInEvents;
     private final MOPParameters varsToSave;
+    private String rawLogic;
     
     public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
                        List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
@@ -369,5 +370,12 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-                    
+
+    public String getRawLogic() {
+        return rawLogic;
+    }
+
+    public void setRawLogic(String rawLogic) {
+        this.rawLogic = rawLogic;
+    }
 }
