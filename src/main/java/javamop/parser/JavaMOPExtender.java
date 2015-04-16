@@ -74,7 +74,8 @@ class JavaMOPExtender {
 		}
 
 		// return as an original AST
-		return new MOPSpecFile(currentFile.getBeginLine(), currentFile.getBeginColumn(), currentFile.getPakage(), currentFile.getImports(), specList);
+		return new MOPSpecFile(currentFile.getBeginLine(), currentFile.getBeginColumn(), currentFile.getPakage(),
+				currentFile.getImports(), specList);
 	}
 
 	protected static JavaMOPSpec translateJavaMopSpec(JavaMOPSpecExt spec, MOPSpecFileExt currentFile, HashMap<String, MOPSpecFileExt> depFiles)
@@ -109,7 +110,7 @@ class JavaMOPExtender {
 		JavaMOPSpec ret;
 		try {
 			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getBeginLine(), spec.getBeginColumn(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
-					spec.getInMethod(), declarations, events, props);
+					spec.getInMethod(), declarations, events, props).setRawLogic(spec.getRawLogic());
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
 		}

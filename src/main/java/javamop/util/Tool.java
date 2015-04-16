@@ -174,7 +174,8 @@ public final class Tool {
                 else if (str.endsWith("},")){
                     offset = offset.substring(0, offset.length() - prefix.length());
                 }
-                aLine = offset + aLine;
+
+                aLine = (str.matches("raw\\s*:") ? "" : offset) + aLine;
                 output.append(aLine + "\n");
                 str = removeComments(aLine).trim();
                 if (str.endsWith("{")){

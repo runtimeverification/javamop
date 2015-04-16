@@ -375,7 +375,8 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         return rawLogic;
     }
 
-    public void setRawLogic(String rawLogic) {
+    public JavaMOPSpec setRawLogic(String rawLogic) {
         this.rawLogic = rawLogic;
+        return this;
     }
 }
