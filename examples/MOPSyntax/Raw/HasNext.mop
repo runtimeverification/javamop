@@ -1,0 +1,30 @@
+// Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies that a program 
+// always calls the hasnext method  before 
+// the next method of an iterator. 
+// It is monitored for the pattern fail 
+// condition.  This property is borrowed 
+// from tracematches (see ECOOP'07 
+// http://abc.comlab.ox.ac.uk/papers)
+
+HasNext(Iterator i) {
+	event hasnext after(Iterator i) : 
+              call(* Iterator.hasNext()) 
+              && target(i) {}
+	event next before(Iterator i) : 
+              call(* Iterator.next()) 
+              && target(i) {}
+
+
+raw  	
+:
+	if(false) {}
+	else 
+	  System.out.println("Iterator "+i+ " invokes some method");
+}
+

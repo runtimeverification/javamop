@@ -1,48 +1,28 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-
-import javamop.util.MOPException;
-
+import com.runtimeverification.rvmonitor.core.ast.*;
+import com.runtimeverification.rvmonitor.core.parser.RVParser;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.PackageDeclaration;
-
 import javamop.parser.ast.body.BodyDeclaration;
-
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.SpecModifierSet;
-
 import javamop.parser.ast.stmt.BlockStmt;
-
 import javamop.parser.astex.MOPSpecFileExt;
-
-import javamop.parser.astex.mopspec.EventDefinitionExt;
-import javamop.parser.astex.mopspec.ExtendedSpec;
-import javamop.parser.astex.mopspec.FormulaExt;
-import javamop.parser.astex.mopspec.HandlerExt;
-import javamop.parser.astex.mopspec.PropertyExt;
-import javamop.parser.astex.mopspec.PropertyAndHandlersExt;
-import javamop.parser.astex.mopspec.JavaMOPSpecExt;
-
-import javamop.parser.main_parser.ParseException;
+import javamop.parser.astex.mopspec.*;
 import javamop.parser.main_parser.JavaMOPParser;
+import javamop.parser.main_parser.ParseException;
+import javamop.util.MOPException;
 
-import com.runtimeverification.rvmonitor.core.ast.Event;
-import com.runtimeverification.rvmonitor.core.ast.MonitorFile;
-import com.runtimeverification.rvmonitor.core.ast.Property;
-import com.runtimeverification.rvmonitor.core.ast.PropertyHandler;
-import com.runtimeverification.rvmonitor.core.ast.Specification;
-
-import com.runtimeverification.rvmonitor.core.parser.RVParser;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class with static methods to convert the language-independent syntax into Java-specific
@@ -65,12 +45,61 @@ final class JavaParserAdapter {
      */
     public static MOPSpecFileExt parse(File file) throws MOPException {
         try {
-            final Reader source = new InputStreamReader(new FileInputStream(file));
-            final MonitorFile spec = RVParser.parse(source);
-            return convert(spec);
+            String str = new String(Files.readAllBytes(Paths.get(file.getPath())));
+            return parse(str);
         } catch(Exception e) {
             throw new MOPException(e);
         }
+    }
+
+    /**
+     * Get the list of raw monitoring code, one for each raw specification.
+     * There might be multiple specs in single file, as a result, there might be
+     * more than one raw monitoring block in one spec file.
+     *
+     * @param rawSpecFile which may contain multiple spec.
+     * @return The list of the raw monitoring code, sorted by the position in the spec file.
+     * @throws IOException If the monitoring code is not extracted successfully.
+     */
+    public static List<String> getRawMonitoringCode(String rawSpecFile) throws IOException {
+        List<String> listOfRawMonitoringCode = new ArrayList<>();
+        Pattern rawPattern = Pattern.compile("(?<=\\})\\s*raw\\s*:");
+        Matcher matcher = rawPattern.matcher(rawSpecFile);
+
+        while (matcher.find()) {
+            int balanceOfParenthesis = 0;
+
+            int indexOfRawKeyword = matcher.start();
+
+            String rawCodeUtilLast = rawSpecFile.substring(indexOfRawKeyword);
+            boolean codeIsComplete = false;
+            for (int j = 0; j < rawCodeUtilLast.length(); j++) {
+                char curC = rawCodeUtilLast.charAt(j);
+                if (curC == '{')
+                    balanceOfParenthesis++;
+                else if (curC == '}')
+                    balanceOfParenthesis--;
+                else {
+                }
+
+                if (balanceOfParenthesis == -1) {
+                    //reached the end of the spec, indicating the end of raw code
+                    listOfRawMonitoringCode.add(
+                            rawCodeUtilLast.substring(0, j) //raw code that contains "raw:"
+                                    .replaceAll("\\s*raw\\s*:","") //remove "raw:"
+                    );
+                    codeIsComplete = true;
+                    break;
+                }
+            }
+
+            if (!codeIsComplete) {
+                throw new IOException("Unexpected end of file while reading" +
+                        " raw monitoring code.");
+            }
+        }
+
+        return listOfRawMonitoringCode;
     }
 
     /**
@@ -80,12 +109,79 @@ final class JavaParserAdapter {
      */
     public static MOPSpecFileExt parse(String str) throws MOPException {
         try {
-            final Reader source = new StringReader(str);
-            final MonitorFile spec = RVParser.parse(source);
-            return convert(spec);
+            String specWithComments = str;
+            //remove all the one-line comments.
+            str = str.replaceAll("//.*[\n\r]", "");
+            String originalSpecStr = str;
+            //do some pre-processing to extract the raw monitoring code if there's any
+            List<String> listOfRawCode = getRawMonitoringCode(str);
+
+            if (listOfRawCode.size() > 0) {
+                str = str.replaceAll("(?<=\\})\\s*raw\\s*:", "");
+                for (int i = 0; i < listOfRawCode.size(); i++) {
+                    String rawCode = listOfRawCode.get(i);
+                    str = str.replace(rawCode, "");
+                }
+
+                final Reader source = new StringReader(str);
+                final MonitorFile spec = RVParser.parse(source);
+
+                List<String> listOfUpdatedRawCode = new ArrayList<>();
+                String regex4SplitingSpecs = "(";
+                for (int i = 0; i < spec.getSpecifications().size() - 1; i++) {
+                    Specification specI = spec.getSpecifications().get(i);
+                    String specIName = specI.getName();
+                    regex4SplitingSpecs += specIName + "|";
+                }
+
+                if (spec.getSpecifications().size() > 0) {
+                    regex4SplitingSpecs += spec.getSpecifications().get(spec.getSpecifications()
+                                            .size() - 1).getName();
+                }
+
+                regex4SplitingSpecs += ")\\s*\\(";
+                String[] partitions = originalSpecStr.split(regex4SplitingSpecs);
+
+                for (int i = 0, j = 0; i < spec.getSpecifications().size(); i++) {
+                    if (partitions[i+1].contains(listOfRawCode.get(j))) {
+                        listOfUpdatedRawCode.add(listOfRawCode.get(j++));
+                    } else {
+                        listOfUpdatedRawCode.add(null);
+                    }
+                }
+
+                return convert(spec, listOfUpdatedRawCode);
+            } else { //there is no raw property, so do the normal parsing as before
+                final Reader source = new StringReader(str);
+                final MonitorFile spec = RVParser.parse(source);
+                return convert(spec);
+            }
+
         } catch(Exception e) {
             throw new MOPException(e);
         }
+    }
+
+    /**
+     * Convert a language-independent specification into one with Java-specific information.
+     * @param file The specification to convert.
+     * @param listOfRawCode
+     * @return The Java-specific specification.
+     */
+    private static MOPSpecFileExt convert(MonitorFile file, List<String> listOfRawCode) throws ParseException {
+        final PackageDeclaration filePackage = getPackage(file.getPreamble());
+        final List<ImportDeclaration> imports = getImports(file.getPreamble());
+        final ArrayList<JavaMOPSpecExt> specs = new ArrayList<JavaMOPSpecExt>();
+
+        int counter = 0;
+        for(Specification spec : file.getSpecifications()) {
+            specs.add(convert(filePackage, spec,
+                    spec.getProperties().size() == 0 ? listOfRawCode.get(counter++) : null
+                    //if the size of properties is 0, then it should be a raw spec and it
+                    // requires a raw logic plugin.
+                                ));
+        }
+        return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
     }
 
     /**
@@ -98,7 +194,7 @@ final class JavaParserAdapter {
         final List<ImportDeclaration> imports = getImports(file.getPreamble());
         final ArrayList<JavaMOPSpecExt> specs = new ArrayList<JavaMOPSpecExt>();
         for(Specification spec : file.getSpecifications()) {
-            specs.add(convert(filePackage, spec));
+            specs.add(convert(filePackage, spec, null));
         }
         return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
     }
@@ -152,10 +248,12 @@ final class JavaParserAdapter {
      * Convert a {@link Specification} into a {@link JavaMOPSpecExt}.
      * @param pack The package declaration of the file the specification is in.
      * @param spec The specification to convert.
+     * @param rawCode
      * @return The Java-specific specification.
      */
     private static JavaMOPSpecExt convert(final PackageDeclaration pack,
-            final Specification spec) throws ParseException {
+                                          final Specification spec, String rawCode) throws
+            ParseException {
         final List<String> modifierList = spec.getLanguageModifiers();
         final boolean isPublic = modifierList.contains("public");
         final int modifierBitfield = extractModifierBitfield(modifierList);
@@ -176,7 +274,7 @@ final class JavaParserAdapter {
             index++;
         }
         return new JavaMOPSpecExt(pack, 0, 0, isPublic, modifierBitfield, name, parameters,
-            inMethod, extensions, declarations, events, properties);
+            inMethod, extensions, declarations, events, properties).setRawLogic(rawCode);
     }
 
     /**

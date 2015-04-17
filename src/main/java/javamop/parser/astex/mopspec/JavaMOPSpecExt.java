@@ -1,12 +1,6 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.mopspec;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javamop.util.MOPException;
-import javamop.util.MOPNameSpace;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
@@ -15,6 +9,12 @@ import javamop.parser.ast.mopspec.SpecModifierSet;
 import javamop.parser.astex.ExtNode;
 import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class JavaMOPSpecExt extends ExtNode {
     private final int modifiers;
@@ -28,7 +28,8 @@ public class JavaMOPSpecExt extends ExtNode {
     private final List<PropertyAndHandlersExt> properties;
     private final List<String> eventNames;
     private final List<ExtendedSpec> extendedSpecs;
-    
+    private String rawLogic;
+
     public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
                           List<BodyDeclaration> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
         super(line, column);
@@ -258,5 +259,13 @@ public class JavaMOPSpecExt extends ExtNode {
     public boolean isPublic() {
         return this.isPublic;
     }
-                        
+
+    public String getRawLogic() {
+        return rawLogic;
+    }
+
+    public JavaMOPSpecExt setRawLogic(String rawLogic) {
+        this.rawLogic = rawLogic;
+        return this;
+    }
 }

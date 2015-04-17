@@ -79,7 +79,13 @@ public class MOPProcessor {
             }
         }
         for(JavaMOPSpec mopSpec : mopSpecFile.getSpecs()){
-            rvresult += mopSpec.toRVString();
+            String curSpecStr = mopSpec.toRVString();
+            if (mopSpec.getRawLogic() != null) {
+                int index = curSpecStr.lastIndexOf("}");
+                curSpecStr = curSpecStr.substring(0, index);
+                curSpecStr += "\nraw: \n" + mopSpec.getRawLogic().trim() + "\n}\n";
+            }
+            rvresult += curSpecStr;
         }
         rvresult = Tool.changeIndentation(rvresult, "", "\t");
         return rvresult;
