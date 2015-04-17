@@ -109,45 +109,53 @@ final class JavaParserAdapter {
      */
     public static MOPSpecFileExt parse(String str) throws MOPException {
         try {
+            String specWithComments = str;
             //remove all the one-line comments.
             str = str.replaceAll("//.*[\n\r]", "");
             String originalSpecStr = str;
             //do some pre-processing to extract the raw monitoring code if there's any
             List<String> listOfRawCode = getRawMonitoringCode(str);
-            str = str.replaceAll("(?<=\\})\\s*raw\\s*:", "");
-            for (int i = 0; i < listOfRawCode.size(); i++) {
-                String rawCode = listOfRawCode.get(i);
-                str = str.replace(rawCode, "");
-            }
 
-            final Reader source = new StringReader(str);
-            final MonitorFile spec = RVParser.parse(source);
-
-            List<String> listOfUpdatedRawCode = new ArrayList<>();
-            String regex4SplitingSpecs = "(";
-            for (int i = 0; i < spec.getSpecifications().size() - 1; i++) {
-                Specification specI = spec.getSpecifications().get(i);
-                String specIName = specI.getName();
-                regex4SplitingSpecs += specIName + "|";
-            }
-
-            if (spec.getSpecifications().size() > 0) {
-                regex4SplitingSpecs += spec.getSpecifications().get(spec.getSpecifications()
-                                        .size() - 1).getName();
-            }
-
-            regex4SplitingSpecs += ")\\s*\\(";
-            String[] partitions = originalSpecStr.split(regex4SplitingSpecs);
-
-            for (int i = 0, j = 0; i < spec.getSpecifications().size(); i++) {
-                if (partitions[i+1].contains(listOfRawCode.get(j))) {
-                    listOfUpdatedRawCode.add(listOfRawCode.get(j++));
-                } else {
-                    listOfUpdatedRawCode.add(null);
+            if (listOfRawCode.size() > 0) {
+                str = str.replaceAll("(?<=\\})\\s*raw\\s*:", "");
+                for (int i = 0; i < listOfRawCode.size(); i++) {
+                    String rawCode = listOfRawCode.get(i);
+                    str = str.replace(rawCode, "");
                 }
-            }
 
-            return convert(spec, listOfUpdatedRawCode);
+                final Reader source = new StringReader(str);
+                final MonitorFile spec = RVParser.parse(source);
+
+                List<String> listOfUpdatedRawCode = new ArrayList<>();
+                String regex4SplitingSpecs = "(";
+                for (int i = 0; i < spec.getSpecifications().size() - 1; i++) {
+                    Specification specI = spec.getSpecifications().get(i);
+                    String specIName = specI.getName();
+                    regex4SplitingSpecs += specIName + "|";
+                }
+
+                if (spec.getSpecifications().size() > 0) {
+                    regex4SplitingSpecs += spec.getSpecifications().get(spec.getSpecifications()
+                                            .size() - 1).getName();
+                }
+
+                regex4SplitingSpecs += ")\\s*\\(";
+                String[] partitions = originalSpecStr.split(regex4SplitingSpecs);
+
+                for (int i = 0, j = 0; i < spec.getSpecifications().size(); i++) {
+                    if (partitions[i+1].contains(listOfRawCode.get(j))) {
+                        listOfUpdatedRawCode.add(listOfRawCode.get(j++));
+                    } else {
+                        listOfUpdatedRawCode.add(null);
+                    }
+                }
+
+                return convert(spec, listOfUpdatedRawCode);
+            } else { //there is no raw property, so do the normal parsing as before
+                final Reader source = new StringReader(str);
+                final MonitorFile spec = RVParser.parse(source);
+                return convert(spec);
+            }
 
         } catch(Exception e) {
             throw new MOPException(e);
@@ -172,6 +180,21 @@ final class JavaParserAdapter {
                     //if the size of properties is 0, then it should be a raw spec and it
                     // requires a raw logic plugin.
                                 ));
+        }
+        return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
+    }
+
+    /**
+     * Convert a language-independent specification into one with Java-specific information.
+     * @param file The specification to convert.
+     * @return The Java-specific specification.
+     */
+    private static MOPSpecFileExt convert(MonitorFile file) throws ParseException {
+        final PackageDeclaration filePackage = getPackage(file.getPreamble());
+        final List<ImportDeclaration> imports = getImports(file.getPreamble());
+        final ArrayList<JavaMOPSpecExt> specs = new ArrayList<JavaMOPSpecExt>();
+        for(Specification spec : file.getSpecifications()) {
+            specs.add(convert(filePackage, spec, null));
         }
         return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
     }
