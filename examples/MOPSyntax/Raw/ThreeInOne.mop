@@ -1,0 +1,57 @@
+// Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies that a program does
+// not call the hasnext method  before the next
+// method of an iterator. 
+// This property is borrowed from tracematches 
+// (see ECOOP'07 http://abc.comlab.ox.ac.uk/papers)
+
+full-binding HasNext(Iterator i) {
+   event hasnext after(Iterator i) : 
+      call(* Iterator.hasNext()) && target(i) {} 
+   event next before(Iterator i) : 
+      call(* Iterator.next()) && target(i) {}
+}
+
+SafeFile(FileReader f, Thread t) {
+   event open after(Thread t) returning(FileReader f) : 
+      call(FileReader.new(..)) && thread(t){}
+   event close after(FileReader f, Thread t) : 
+      call(* FileReader.close(..)) && target(f) && thread(t){}
+   event begin before(Thread t) :
+      execution(* *.*(..)) && thread(t) {}
+   event end after(Thread t) :
+      execution(* *.*(..)) && thread(t) {}
+}
+
+MsgDigest(MessageDigest P) {
+	event getInstance after(MessageDigest P) : 
+              call(* MessageDigest.getInstance()) && target(P) {}
+
+    event update after(MessageDigest P) : 
+              call(* MessageDigest.update()) &&
+              target(P) {}
+                        
+	 event reset before(MessageDigest P) : 
+              call(* MessageDigest.reset()) &&
+              target(P) {}
+              
+ 	event digest before(MessageDigest P) : 
+              call(* MessageDigest.digest()) &&
+              target(P) {}
+
+raw: System.out.println("This raw code should be put inside MsgDigest class.");
+}
+
+
+
+
+
+
+
+
+

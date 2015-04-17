@@ -111,6 +111,7 @@ final class JavaParserAdapter {
         try {
             //remove all the one-line comments.
             str = str.replaceAll("//.*[\n\r]", "");
+            String originalSpecStr = str;
             //do some pre-processing to extract the raw monitoring code if there's any
             List<String> listOfRawCode = getRawMonitoringCode(str);
             str = str.replaceAll("(?<=\\})\\s*raw\\s*:", "");
@@ -121,7 +122,32 @@ final class JavaParserAdapter {
 
             final Reader source = new StringReader(str);
             final MonitorFile spec = RVParser.parse(source);
-            return convert(spec, listOfRawCode);
+
+            List<String> listOfUpdatedRawCode = new ArrayList<>();
+            String regex4SplitingSpecs = "(";
+            for (int i = 0; i < spec.getSpecifications().size() - 1; i++) {
+                Specification specI = spec.getSpecifications().get(i);
+                String specIName = specI.getName();
+                regex4SplitingSpecs += specIName + "|";
+            }
+
+            if (spec.getSpecifications().size() > 0) {
+                regex4SplitingSpecs += spec.getSpecifications().get(spec.getSpecifications()
+                                        .size() - 1).getName();
+            }
+
+            regex4SplitingSpecs += ")\\s*\\(";
+            String[] partitions = originalSpecStr.split(regex4SplitingSpecs);
+
+            for (int i = 0, j = 0; i < spec.getSpecifications().size(); i++) {
+                if (partitions[i+1].contains(listOfRawCode.get(j))) {
+                    listOfUpdatedRawCode.add(listOfRawCode.get(j++));
+                } else {
+                    listOfUpdatedRawCode.add(null);
+                }
+            }
+
+            return convert(spec, listOfUpdatedRawCode);
 
         } catch(Exception e) {
             throw new MOPException(e);
