@@ -17,8 +17,8 @@ should be contained in a single directory (see the example below).
 
 ### Building a JavaMOP Agent
 
-The following ``javamopagent`` command can be used to build agents for
-runtime instrumentation of applications:
+The following command can be used to build agents for runtime
+instrumentation of applications:
 
 ```javamopagent <AJ-File> <Monitor-Lib-Dir> [-n <agent name>]
 [-excludeJars]```
@@ -35,10 +35,9 @@ jars in the CLASSPATH before running the agent.
 
 ### Example of Building an Agent
 
-Furthermore, assume there are two .mop files: `A.mop` and `B.mop` in
-the current directory and nothing else. We can generate a JavaMOP
-agent monitoring properties in those specifications by executing the
-following commands:
+Assuming only two .mop files, `A.mop` and `B.mop`, exist in the
+current directory, a JavaMOP agent to monitor the properties specified
+in these ```.mop``` files can be generated as follows:
 
 1. ```git clone https://github.com/runtimeverification/javamop.git```
 
@@ -48,8 +47,9 @@ following commands:
 property files: SafeFile.mop and SafeFileWriter.mop.
 
 4. Generate the single .aj file and .rvm files from the properties (
-   After this step, the following files will be generated:
-   ```MultiSpec_1MonitorAspect.aj, SafeFile.rvm and SafeFileWriter.rvm```):
+   After this step, these files will be generated:
+   ```MultiSpec_1MonitorAspect.aj, SafeFile.rvm and
+   SafeFileWriter.rvm```):
 
 	```javamop -merge -keepRVFiles *.mop```
 
@@ -69,7 +69,7 @@ property files: SafeFile.mop and SafeFileWriter.mop.
 	```javac classes/mop/MultiSpec_1RuntimeMonitor.java
 	rm classes/mop/MultiSpec_1RuntimeMonitor.java```
 
-8. Build a javamop agent which does not contain AspectJ Weaver and
+8. Build a JavaMOP agent which does not contain AspectJ Weaver and
 RV-Monitor jars:
 
 	```javamopagent MultiSpec_1MonitorAspect.aj classes -n JavaMOPAgent -excludeJars```
@@ -83,7 +83,7 @@ below.
 An agent, "JavaMOPAgent.jar", built as described in the previous
 section, can be used in the following ways:
 
-1. For projects with a well-defined entry point such as a Main class,
+1. For projects with a well-defined entry point, such as a Main class,
    first compile the source code and then run the following command:
 
    ```java -javaagent:JavaMOPAgent.jar Main```
@@ -157,5 +157,3 @@ Eclipse, etc.
    
    By doing this, you will be able to run or debug programs with the
    agent within your IDE.
-   
-
