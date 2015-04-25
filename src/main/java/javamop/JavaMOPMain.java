@@ -269,14 +269,13 @@ public final class JavaMOPMain {
      * @param path Common prefix to all the paths in {@code files}.
      */
     public static void process(String[] files, String path) throws MOPException, IOException {
-        areValidNames(files);
-
         ArrayList<File> specFiles = collectFiles(files, path);
-
         if(options.aspectname != null && files.length > 1){
             options.merge = true;
         }
 
+        //ensure every spec file has a valid name (according to Java's identifier naming convention)
+        areValidNames(specFiles);
         if (options.merge) {
             System.out.println("-Processing " + specFiles.size()
             + " specification(s)");
@@ -322,9 +321,9 @@ public final class JavaMOPMain {
     }
 
     //If any input mop file does not have a valid name, then exit.
-    private static void areValidNames(String[] files) {
-        for (int i = 0; i < files.length; i++) {
-            String curName = Tool.getFileName(files[i]);
+    private static void areValidNames(ArrayList<File> files) {
+        for (int i = 0; i < files.size(); i++) {
+            String curName = Tool.getFileName(files.get(i).getPath());
             if (!curName.matches("[a-zA-Z_]\\p{Alnum}*")) {
                 System.err.println("The mop name " + curName + " is not valid!");
                 System.exit(1);
@@ -372,9 +371,6 @@ public final class JavaMOPMain {
                 "!/javamop/JavaMOPMain.class".length());
             jarFilePath = Tool.polishPath(jarFilePath);
         }
-
-        SpecFilter filter = null;
-
         // Generate .rvm files and .aj files
         try {
             process(options.files);
