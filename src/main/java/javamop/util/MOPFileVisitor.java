@@ -21,12 +21,14 @@ public class MOPFileVisitor extends SimpleFileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attributes)
+    public FileVisitResult preVisitDirectory(final Path dir,
+                                   final BasicFileAttributes attributes)
         throws IOException {
         if (this.inputDirPath == null) {
             this.inputDirPath = dir;
         } else {
-            Files.createDirectories(this.outputDirPath.resolve(this.inputDirPath.relativize(dir)));
+            Files.createDirectories(this.outputDirPath.resolve
+                    (this.inputDirPath.relativize(dir)));
         }
         return CONTINUE;
     }
@@ -35,26 +37,15 @@ public class MOPFileVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
         String fileName = String.valueOf(file.getFileName());
         if (fileName.endsWith(".mop")) {
-            Path relativePath = inputDirPath.relativize(file);
-            System.out.println(relativePath);
-            //when the mop file is visited, its corresponding folder must have already been
-            //created in the output directory by the above preVisitDirectory method.
-            Path outputPath = this.outputDirPath.resolve(this.inputDirPath.relativize(file))
-                                .getParent();
+            //when the mop file is visited, its corresponding folder
+            // must have already been created in the output directory
+            // by the above preVisitDirectory method.
+            Path outputPath = this.outputDirPath.resolve
+                    (this.inputDirPath.relativize(file)).getParent();
             JavaMOPMain.main(new String[]{file.toFile().getAbsolutePath(),
                             "-d", outputPath.toFile().getAbsolutePath()});
         }
         return CONTINUE;
     }
 
-    public static void main(String[] args) throws IOException {
-        Path inP = Paths.get("A:\\UIUC-SW\\javamop\\target\\release\\javamop\\javamop\\examples" +
-                "\\agent\\many\\rvm");
-        Path outP = Paths.get("A:\\UIUC-SW\\javamop\\target\\release\\javamop\\javamop\\examples" +
-                "\\agent\\many\\testOut");
-        MOPFileVisitor mopFileVisitor = new MOPFileVisitor(outP);
-
-        Files.walkFileTree(inP, mopFileVisitor);
-
-    }
 }
