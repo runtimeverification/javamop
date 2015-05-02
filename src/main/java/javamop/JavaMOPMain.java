@@ -54,6 +54,20 @@ public final class JavaMOPMain {
     private static final String AJ_FILE_SUFFIX = "MonitorAspect.aj";
 
     /**
+     * Because the JavaMOP's main method may be invoked multiple times to handle
+     * multiple input files, we need to reset the static variables at the beginning
+     * of execution.
+     */
+    private static void init() {
+//        specifiedAJName = false;
+//        isJarFile = false;
+//        jarFilePath = null;
+//        empty_advicebody = false;
+        listFilePairs.clear();
+        listRVMFiles.clear();
+    }
+
+    /**
      * Determine where to place the JavaMOP output files, if it is not decided elsewhere. If all
      * the parameter files are in the same directory, use that directory. Otherwise, use the
      * directory that JavaMOP is executing in.
@@ -282,6 +296,10 @@ public final class JavaMOPMain {
             options.merge = true;
         }
 
+        init();
+        //The spec files in directories have already been handled, so reset env
+        // to avoid deleting the same file twice...
+
         //ensure every spec file has a valid name (according to Java's identifier naming convention)
         areValidNames(specFiles);
         if (options.merge) {
@@ -359,6 +377,8 @@ public final class JavaMOPMain {
      * @param args Configuration options and input files for JavaMOP.
      */
     public static void main(String[] args) {
+        init();
+
         options = new JavaMOPOptions();
         JCommander jc;
         try {
@@ -390,6 +410,12 @@ public final class JavaMOPMain {
                 e.printStackTrace();
         }
 
+        if (listFilePairs.size() == 0) {
+            //it indicates there is no output generated
+            //perhaps the input is a directory and all work has been done
+            System.out.println("Done.");
+            return;
+        }
         // replace mop with rvm and call rv-monitor
         List<String> rvArgs = new ArrayList<String>();
         for (int j = 0; j < args.length; j++) {
