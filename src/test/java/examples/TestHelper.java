@@ -57,7 +57,7 @@ public class TestHelper {
      */
     public void testCommand(String expectedFilePrefix, boolean ignoreOrder, boolean mustSucceed,
                             String... commands) throws Exception {
-        testCommand("", expectedFilePrefix, ignoreOrder, mustSucceed, commands);
+        testCommand("", expectedFilePrefix, ignoreOrder, mustSucceed, false, commands);
     }
 
     /**
@@ -67,11 +67,13 @@ public class TestHelper {
      * @param expectedFilePrefix the prefix for the expected files, or null if output is not checked.
      * @param ignoreOrder when comparing contents of two files, whether to ignore the order of lines or not
      * @param mustSucceed if the program's return code must be {@code 0}.
+     * @param onlyCheckStdErr Only check whether there is error occurring during execution.
      * @param command  list of arguments describing the system command to be executed.
      * @throws Exception
      */
     public void testCommand(String relativePath, String expectedFilePrefix, boolean ignoreOrder,
-                            boolean mustSucceed, String... command) throws Exception {
+                            boolean mustSucceed, boolean onlyCheckStdErr, String... command) throws
+            Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
         processBuilder.environment().put("CLASSPATH", processBuilder.environment().get("CLASSPATH") + File.pathSeparator
@@ -105,7 +107,7 @@ public class TestHelper {
         if(mustSucceed) {
             Assert.assertEquals("Expected no error during" + Arrays.toString(command) + ".", 0, returnCode);
         }
-        if (expectedFilePrefix != null) {
+        if (expectedFilePrefix != null && !onlyCheckStdErr) {
             if (!ignoreOrder) {
                 assertEqualFiles(expectedOutFile, actualOutFile);
                 assertEqualFiles(expectedErrFile, actualErrFile);

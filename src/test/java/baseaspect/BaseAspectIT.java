@@ -68,7 +68,7 @@ public class BaseAspectIT {
                     javaOutputPrefix + File.separator + javaOutputPrefix + ".java", ".." +
                             File.separator + this.ajName);
 
-            helper_default.testCommand(javaOutputPrefix, javaOutputPrefix, false, true,
+            helper_default.testCommand(javaOutputPrefix, javaOutputPrefix, false, true, false,
                     "java", "-cp", classpath, javaOutputPrefix);
 
 
@@ -113,7 +113,7 @@ public class BaseAspectIT {
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix1,
                     prefix1 + File.separator + prefix1 + ".java", ".." + File.separator + ajName);
 
-            helper_userSpecified.testCommand(prefix1, prefix1, false, true,
+            helper_userSpecified.testCommand(prefix1, prefix1, false, true, false,
                     "java", "-cp", classpath, prefix1);
 
             //Second, test whether HasNext_1.java was NOT instrumented as usual (the pointcuts within that path
@@ -123,7 +123,7 @@ public class BaseAspectIT {
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix2,
                     prefix2 + File.separator + prefix2 + ".java", ".." + File.separator + ajName);
 
-            helper_userSpecified.testCommand(prefix2, prefix2, false, true,
+            helper_userSpecified.testCommand(prefix2, prefix2, false, true, false,
                     "java", "-cp", classpath, prefix2);
 
 
