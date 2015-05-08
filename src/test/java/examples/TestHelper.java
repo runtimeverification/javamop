@@ -102,8 +102,8 @@ public class TestHelper {
         }
 
         if (!onlyCheckStdErr) {
-            processBuilder.redirectError(new File(actualErrFile));
-            processBuilder.redirectOutput(new File(actualOutFile));
+//            processBuilder.redirectError(new File(actualErrFile));
+//            processBuilder.redirectOutput(new File(actualOutFile));
         }
 
         Process process = processBuilder.start();
