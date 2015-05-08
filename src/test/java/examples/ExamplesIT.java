@@ -1,15 +1,14 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package examples;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Test;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 /**
  * JUnit test case to run through select program examples. Based on examples/run and examples/runall.
@@ -55,7 +54,8 @@ public class ExamplesIT {
             helper.testCommand(null, false, true, "java", "-cp", specificClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI + 
                 File.separator + subcasePathI + ".java", testName + "MonitorAspect.aj");
-            helper.testCommand(subcasePathI, subcasePathI, false, true, "java", "-cp", specificClasspath,
+            helper.testCommand(subcasePathI, subcasePathI, false, true, false,"java", "-cp",
+                    specificClasspath,
                 subcasePathI);
             helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".actual.err", 
                 subcasePathI + File.separator + subcasePathI + ".actual.out");
