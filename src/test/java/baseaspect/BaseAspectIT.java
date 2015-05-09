@@ -48,8 +48,11 @@ public class BaseAspectIT {
 
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator
                             + "javamop";
+        String rvmCommand = "rv-monitor";
+
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
+            rvmCommand += ".bat";
         }
 
         String classpath = "." + File.pathSeparator + javaOutputPrefix + File.separator + "mop"
@@ -63,8 +66,7 @@ public class BaseAspectIT {
 
 
             //generate the monitor library via rv-monitor
-            helper_default.testCommand(null, false, true, "java",
-                    "com.runtimeverification.rvmonitor.java.rvj.Main",
+            helper_default.testCommand(null, false, true, rvmCommand,
                     "-d", ".", rvmFile);
 
             // AJC has nonzero return codes with just warnings, not errorss.
@@ -99,9 +101,14 @@ public class BaseAspectIT {
         String prefix2 = "HasNext_1";
         String rvmFile = testName + ".rvm";
 
-        String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
+        String command = System.getProperty("user.dir") + File.separator + "bin" +
+                    File.separator + "javamop";
+
+        String rvmCommand = "rv-monitor";
+
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
+            rvmCommand += ".bat";
         }
 
         String classpath = "." + File.pathSeparator + prefix1 + File.separator + "mop" + File.separator +
@@ -118,8 +125,7 @@ public class BaseAspectIT {
 
 
             //generate the monitor library via rv-monitor
-            helper_userSpecified.testCommand(null, false, true, "java",
-                    "com.runtimeverification.rvmonitor.java.rvj.Main",
+            helper_userSpecified.testCommand(null, false, true, rvmCommand,
                     "-d", ".", rvmFile);
 
             // AJC has nonzero return codes with just warnings, not errorss.
