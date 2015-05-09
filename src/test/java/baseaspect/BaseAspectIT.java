@@ -44,6 +44,7 @@ public class BaseAspectIT {
      */
     public void testDefaultBaseAspect() throws Exception {
         String javaOutputPrefix = testName + "_1";
+        String rvmFile = testName + ".rvm";
 
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator
                             + "javamop";
@@ -64,7 +65,7 @@ public class BaseAspectIT {
             //generate the monitor library via rv-monitor
             helper_default.testCommand(null, false, true, "java",
                     "com.runtimeverification.rvmonitor.java.rvj.Main",
-                    "-d", ".", ".." + File.separator + testName + ".rvm");
+                    "-d", ".", rvmFile);
 
             // AJC has nonzero return codes with just warnings, not errorss.
             helper_default.testCommand(null, false, true, "java",
@@ -83,7 +84,7 @@ public class BaseAspectIT {
             helper_default.deleteFiles(true, javaOutputPrefix + File.separator + javaOutputPrefix + ".actual.out");
             helper_default.deleteFiles(true, javaOutputPrefix + File.separator + javaOutputPrefix + ".class");
             helper_default.deleteFiles(true, testName + "RuntimeMonitor.java");
-            helper_default.deleteFiles(true, ".." + File.separator + testName + ".rvm");
+            helper_default.deleteFiles(true, rvmFile);
         }
     }
 
@@ -96,6 +97,7 @@ public class BaseAspectIT {
     public void testUDefinedBaseAspect() throws Exception {
         String prefix1 = "Has_Next";
         String prefix2 = "HasNext_1";
+        String rvmFile = testName + ".rvm";
 
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -118,7 +120,7 @@ public class BaseAspectIT {
             //generate the monitor library via rv-monitor
             helper_userSpecified.testCommand(null, false, true, "java",
                     "com.runtimeverification.rvmonitor.java.rvj.Main",
-                    "-d", ".", ".." + File.separator + testName + ".rvm");
+                    "-d", ".", rvmFile);
 
             // AJC has nonzero return codes with just warnings, not errorss.
             //First, test whether Has_Next.java was instrumented as usual
@@ -144,7 +146,7 @@ public class BaseAspectIT {
 
         } finally {
             helper_userSpecified.deleteFiles(true, ajName);
-            helper_userSpecified.deleteFiles(true, ".." + File.separator + testName + ".rvm");
+            helper_userSpecified.deleteFiles(true, rvmFile);
             helper_userSpecified.deleteFiles(true, testName + "RuntimeMonitor.java");
 
             helper_userSpecified.deleteFiles(true, prefix1 + File.separator + "mop");

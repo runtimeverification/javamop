@@ -25,8 +25,8 @@ public class ReadDirIT {
         String outputDir = this.path + File.separator + ".." + File.separator
                 + "output" + File.separator;
 
-        File safeFileRVM = new File(this.path + File.separator + "SafeFile.rvm");
-        File safeFileWriterRVM = new File(this.path + File.separator + "SafeFileWriter.rvm");
+        File safeFileRVM = new File(outputDir + "SafeFile.rvm");
+        File safeFileWriterRVM = new File(outputDir + "SafeFileWriter.rvm");
 
         File safeFileAJ = new File(outputDir + "SafeFileMonitorAspect.aj");
         File safeFileWriterAJ = new File(outputDir + "SafeFileWriterMonitorAspect.aj");

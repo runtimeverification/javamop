@@ -123,7 +123,7 @@ public final class JavaMOPMain {
         // file to .rvm before passing to rv-monitor.
         // the input file to rv-monitor is the .mop file, whose extension has been replaced by .rvm
         // NOTE: If we separate rv-monitor from JavaMOP completely, we neeed to revisit this.
-        writeFile(processor.generateRVFile(spec), file.getAbsolutePath(), RVM_FILE_SUFFIX, null);
+        writeFile(processor.generateRVFile(spec), location, RVM_FILE_SUFFIX, null);
 
         writeFile(processor.generateAJFile(spec), location, AJ_FILE_SUFFIX, options.aspectname);
     }
@@ -299,6 +299,7 @@ public final class JavaMOPMain {
 
         //ensure every spec file has a valid name (according to Java's identifier naming convention)
         areValidNames(specFiles);
+
         if (options.merge) {
             System.out.println("-Processing " + specFiles.size()
                     + " specification(s)");
