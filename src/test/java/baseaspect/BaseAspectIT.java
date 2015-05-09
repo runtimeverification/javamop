@@ -2,6 +2,7 @@ package baseaspect;
 
 import examples.TestHelper;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.FileSystem;
@@ -16,67 +17,73 @@ public class BaseAspectIT {
 
     private final String inputMOP = ".." + File.separator + "HasNext.mop";
 
-    private final String ajName = "HasNextMonitorAspect.aj";
+    private final String testName = "HasNext";
 
-    private final Path defaultTestBasePath = this.getBasePath("examples" + File.separator + "BaseAspect"
-            + File.separator + "default-baseaspect" + File.separator + this.ajName + ".expected.out");
+    private final String ajName = testName + "MonitorAspect.aj";
 
-    private final TestHelper helper_default = new TestHelper(defaultTestBasePath.toString() + File.separator +
-            this.ajName + ".expected.out");
+    private final String defaultTestBasePath = "examples" + File.separator + "BaseAspect"
+            + File.separator + "default-baseaspect";
 
-    private final Path userSpecifiedTestBasePath = this.getBasePath("examples" + File.separator + "BaseAspect"
-            + File.separator + "user-specified-baseaspect" + File.separator + this.ajName + ".expected.out");
+    private final String userSpecifiedTestBasePath = "examples" + File.separator + "BaseAspect"
+            + File.separator + "user-specified-baseaspect";
 
-    private final TestHelper helper_userSpecified = new TestHelper(userSpecifiedTestBasePath +
-            File.separator + this.ajName + ".expected.out");
-
-    private final String actualAJ = this.defaultTestBasePath + File.separator + ".." + File.separator +
+    private final String aj_default = this.defaultTestBasePath + File.separator +
             this.ajName;
 
-    private Path getBasePath(String path) {
-        return this.fileSystem.getPath(path).getParent();
-    }
+    private final String aj_udefined = this.userSpecifiedTestBasePath + File.separator +
+            this.ajName;
 
-//    @Test
+    private final TestHelper helper_default = new TestHelper(aj_default + ".expected.out");
+
+    private final TestHelper helper_userSpecified = new TestHelper(aj_udefined + ".expected.out");
+
+    @Test
     /**
      * Test whether javamop can integrate the default base aspect into the generated .aj file if user does not
      * specify a Base Aspect.
      */
     public void testDefaultBaseAspect() throws Exception {
-        String javaOutputPrefix = "HasNext_1";
+        String javaOutputPrefix = testName + "_1";
 
-        String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
+        String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator
+                            + "javamop";
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
         }
 
-        String classpath = "." + File.pathSeparator + javaOutputPrefix + File.separator + "mop" + File.separator
-                + File.pathSeparator + System.getProperty("java.class.path") + File.pathSeparator +
-                javaOutputPrefix + File.separator;
+        String classpath = "." + File.pathSeparator + javaOutputPrefix + File.separator + "mop"
+                + File.separator + File.pathSeparator + System.getProperty("java.class.path")
+                + File.pathSeparator + javaOutputPrefix + File.separator;
 
         try {
-            helper_default.testCommand(null, command, inputMOP);
+            helper_default.testCommand(null, command, "-d", ".", inputMOP);
             helper_default.assertEqualFilesIgnoringLineSeparators
-                    (this.defaultTestBasePath + File.separator + this.ajName
-                            + ".expected.out", actualAJ);
+                    (aj_default + ".expected.out", aj_default);
 
+
+            //generate the monitor library via rv-monitor
+            helper_default.testCommand(null, false, true, "java",
+                    "com.runtimeverification.rvmonitor.java.rvj.Main",
+                    "-d", ".", ".." + File.separator + testName + ".rvm");
 
             // AJC has nonzero return codes with just warnings, not errorss.
-            helper_default.testCommand(null, false, true, "java", "-cp", classpath,
+            helper_default.testCommand(null, false, true, "java",
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", javaOutputPrefix,
-                    javaOutputPrefix + File.separator + javaOutputPrefix + ".java", ".." +
-                            File.separator + this.ajName);
+                    javaOutputPrefix + File.separator + javaOutputPrefix + ".java",
+                   testName + "RuntimeMonitor.java", ajName);
 
             helper_default.testCommand(javaOutputPrefix, javaOutputPrefix, false, true, false,
                     "java", "-cp", classpath, javaOutputPrefix);
 
 
         } finally {
-            helper_default.deleteFiles(true, ".." + File.separator + this.ajName);
+            helper_default.deleteFiles(true, this.ajName);
             helper_default.deleteFiles(true, javaOutputPrefix + File.separator + "mop");
             helper_default.deleteFiles(true, javaOutputPrefix + File.separator + javaOutputPrefix + ".actual.err");
             helper_default.deleteFiles(true, javaOutputPrefix + File.separator + javaOutputPrefix + ".actual.out");
             helper_default.deleteFiles(true, javaOutputPrefix + File.separator + javaOutputPrefix + ".class");
+            helper_default.deleteFiles(true, testName + "RuntimeMonitor.java");
+            helper_default.deleteFiles(true, ".." + File.separator + testName + ".rvm");
         }
     }
 
@@ -102,9 +109,10 @@ public class BaseAspectIT {
 
         try {
             String baseAJ = ".." + File.separator + "BaseAspect.aj";
-            helper_userSpecified.testCommand(null, command, "-baseaspect", baseAJ, inputMOP);
+            helper_userSpecified.testCommand(null, command, "-baseaspect", baseAJ,
+                    "-d", ".", inputMOP);
             helper_userSpecified.assertEqualFilesIgnoringLineSeparators
-                    (this.userSpecifiedTestBasePath + File.separator + ajName + ".expected.out", actualAJ);
+                    (aj_udefined + ".expected.out", aj_udefined);
 
             // AJC has nonzero return codes with just warnings, not errorss.
             //First, test whether Has_Next.java was instrumented as usual
