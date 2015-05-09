@@ -87,7 +87,7 @@ public class BaseAspectIT {
         }
     }
 
-//    @Test
+    @Test
     /**
      * Test whether javamop can integrate the user provided Base Aspect into the generated .aj file;
      * Also test whether the base aspect works as expected by observing whether certain pointcuts are ignored in
@@ -114,11 +114,18 @@ public class BaseAspectIT {
             helper_userSpecified.assertEqualFilesIgnoringLineSeparators
                     (aj_udefined + ".expected.out", aj_udefined);
 
+
+            //generate the monitor library via rv-monitor
+            helper_userSpecified.testCommand(null, false, true, "java",
+                    "com.runtimeverification.rvmonitor.java.rvj.Main",
+                    "-d", ".", ".." + File.separator + testName + ".rvm");
+
             // AJC has nonzero return codes with just warnings, not errorss.
             //First, test whether Has_Next.java was instrumented as usual
-            helper_userSpecified.testCommand(null, false, true, "java", "-cp", classpath,
+            helper_userSpecified.testCommand(null, false, true, "java", // "-cp", classpath,
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix1,
-                    prefix1 + File.separator + prefix1 + ".java", ".." + File.separator + ajName);
+                    prefix1 + File.separator + prefix1 + ".java",
+                     testName + "RuntimeMonitor.java", ajName);
 
             helper_userSpecified.testCommand(prefix1, prefix1, false, true, false,
                     "java", "-cp", classpath, prefix1);
@@ -128,14 +135,18 @@ public class BaseAspectIT {
             // occur in files whose names contain `HasNext`)
             helper_userSpecified.testCommand(null, false, true, "java", "-cp", classpath,
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix2,
-                    prefix2 + File.separator + prefix2 + ".java", ".." + File.separator + ajName);
+                    prefix2 + File.separator + prefix2 + ".java",
+                    testName + "RuntimeMonitor.java", ajName);
 
             helper_userSpecified.testCommand(prefix2, prefix2, false, true, false,
                     "java", "-cp", classpath, prefix2);
 
 
         } finally {
-            helper_userSpecified.deleteFiles(true, ".." + File.separator + ajName);
+            helper_userSpecified.deleteFiles(true, ajName);
+            helper_userSpecified.deleteFiles(true, ".." + File.separator + testName + ".rvm");
+            helper_userSpecified.deleteFiles(true, testName + "RuntimeMonitor.java");
+
             helper_userSpecified.deleteFiles(true, prefix1 + File.separator + "mop");
             helper_userSpecified.deleteFiles(true, prefix1 + File.separator + prefix1 + ".actual.err");
             helper_userSpecified.deleteFiles(true, prefix1 + File.separator + prefix1 + ".actual.out");
