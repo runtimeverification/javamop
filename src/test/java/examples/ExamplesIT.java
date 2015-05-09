@@ -15,10 +15,10 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 public class ExamplesIT {
-    
+
     private final TestHelper helper;
     private final String path;
-    
+
     /**
      * Construct this instance of the parameterized test.
      * @param path The path to the .mop file used in this test.
@@ -27,9 +27,9 @@ public class ExamplesIT {
         this.path = new File(path).getParent();
         helper = new TestHelper(path);
     }
-    
+
     /**
-     * Test all the instances of this example. Each example has a _1, _2, and possibly a _3 
+     * Test all the instances of this example. Each example has a _1, _2, and possibly a _3
      * component. This runs assertions on all the available ones. This function is inspired by the
      * examples/run script.
      */
@@ -41,38 +41,43 @@ public class ExamplesIT {
             command += ".bat";
         }
         helper.testCommand(null, false, true, command, testName + ".mop");
-        
+
         String classpath = "." + File.pathSeparator + "mop" + File.separator + File.pathSeparator
                 + System.getProperty("java.class.path");
-        
+
         String subcasePath = testName + "_";
         for(int i = 1; new File(path + File.separator + subcasePath + i).exists(); i++) {
             String subcasePathI = subcasePath + i;
-            String specificClasspath = classpath + File.pathSeparator + subcasePathI + 
+            String specificClasspath = classpath + File.pathSeparator + subcasePathI +
                     File.pathSeparator + subcasePathI + File.separator + "mop";
 
             //generate monitor library code
-            helper.testCommand(null, false, true, "java",  //"-cp", specificClasspath,
+            helper.testCommand(null, false, true, "java",
                     "com.runtimeverification.rvmonitor.java.rvj.Main", testName + ".rvm");
 
             // AJC has nonzero return codes with just warnings, not errors.
             helper.testCommand(null, false, true, "java", "-cp", specificClasspath,
-                "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI + 
-                File.separator + subcasePathI + ".java", testName + "MonitorAspect.aj");
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI +
+                File.separator + subcasePathI + ".java", testName + "RuntimeMonitor.java",
+                    testName + "MonitorAspect.aj");
+
             helper.testCommand(subcasePathI, subcasePathI, false, true, false,"java", "-cp",
-                    specificClasspath,
-                subcasePathI);
-            helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".actual.err", 
+                    specificClasspath, subcasePathI);
+
+            helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".actual.err",
                 subcasePathI + File.separator + subcasePathI + ".actual.out");
             helper.deleteFiles(true, subcasePathI + File.separator + subcasePathI + ".class");
-            
+
+            helper.deleteFiles(true, subcasePathI + File.separator + "mop" + File.separator +
+                    "BaseAspect.class");
+
             String[] classFilePrefix = {
                 subcasePathI + File.separator + "mop" + File.separator + testName,
                 subcasePathI + File.separator + testName
             };
             for(String prefix : classFilePrefix) {
-                helper.deleteFiles(false, prefix + "Monitor.class", prefix + "Monitor_Set.class", 
-                    prefix + "MonitorAspect.class", prefix + "RuntimeMonitor.class", 
+                helper.deleteFiles(false, prefix + "Monitor.class", prefix + "Monitor_Set.class",
+                    prefix + "MonitorAspect.class", prefix + "RuntimeMonitor.class",
                     prefix + "SuffixMonitor.class", prefix + "Monitor$IntStack.class",
                     prefix + "SuffixMonitor_Set.class", prefix  + "DisableHolder.class",
                     prefix + "MonitorAspect$" + testName + "_DummyHookThread.class"
@@ -82,6 +87,8 @@ public class ExamplesIT {
             }
         }
         helper.deleteFiles(true, testName + "MonitorAspect.aj");
+        helper.deleteFiles(true, testName + ".rvm");
+        helper.deleteFiles(true, testName + "RuntimeMonitor.java");
     }
 
     /**
