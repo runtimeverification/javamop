@@ -7,7 +7,6 @@ import java.util.concurrent.locks.*;
 import java.lang.ref.*;
 import org.aspectj.lang.*;
 
-package mop;
 aspect BaseAspect {
 	pointcut notwithin() :
 	!within(*HasNext*);
