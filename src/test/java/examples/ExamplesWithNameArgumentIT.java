@@ -23,7 +23,7 @@ public class ExamplesWithNameArgumentIT {
             command += ".bat";
         }
         try {
-            helper.testCommand(null, false, true, command, "HasNext.mop" + " -n test");
+            helper.testCommand(null, false, true, command, "-n", "test", "HasNext.mop");
         } finally {
             helper.deleteFiles(true, "testMonitorAspect.aj");
             helper.deleteFiles(true, "HasNext.rvm");
