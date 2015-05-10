@@ -9,15 +9,21 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * JUnit test case to run through select program examples. Based on examples/run and examples/runall.
  */
-//@RunWith(Parameterized.class)
+@RunWith(Parameterized.class)
 public class ExamplesIT {
 
     private final TestHelper helper;
     private final String path;
+    private final String libPath = System.getProperty("user.dir") + File.separator +
+            "target" + File.separator + "release" + File.separator + "javamop"
+            + File.separator + "javamop" + File.separator + "lib" + File.separator;
+
+    private final String logicPluginPath = libPath + "plugins" + File.separator;
 
     /**
      * Construct this instance of the parameterized test.
@@ -25,7 +31,18 @@ public class ExamplesIT {
      */
     public ExamplesIT(String path) {
         this.path = new File(path).getParent();
-        helper = new TestHelper(path);
+        String classpath = "." + File.pathSeparator + "mop" + File.separator + File.pathSeparator
+                + System.getProperty("java.class.path");
+
+        classpath = logicPluginPath + "*" +
+                File.pathSeparator + libPath + "*" +
+                File.pathSeparator + classpath;
+
+        HashMap<String,String> envMap = new HashMap<>();
+        envMap.put("LOGICPLUGINPATH", logicPluginPath);
+        System.setProperty("java.class.path", classpath);
+
+        helper = new TestHelper(path, envMap);
     }
 
     /**
@@ -33,7 +50,7 @@ public class ExamplesIT {
      * component. This runs assertions on all the available ones. This function is inspired by the
      * examples/run script.
      */
-//    @Test
+    @Test
     public void testExample() throws Exception {
         final String testName = path.substring(path.lastIndexOf(File.separator)+1);
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
@@ -42,9 +59,7 @@ public class ExamplesIT {
         }
         helper.testCommand(null, false, true, command, testName + ".mop");
 
-        String classpath = "." + File.pathSeparator + "mop" + File.separator + File.pathSeparator
-                + System.getProperty("java.class.path");
-
+        String classpath = System.getProperty("java.class.path");
         String subcasePath = testName + "_";
         for(int i = 1; new File(path + File.separator + subcasePath + i).exists(); i++) {
             String subcasePathI = subcasePath + i;
@@ -55,7 +70,7 @@ public class ExamplesIT {
                     "com.runtimeverification.rvmonitor.java.rvj.Main", testName + ".rvm");
 
             // AJC has nonzero return codes with just warnings, not errorss.
-            helper.testCommand(null, false, true, "java", // "-cp", specificClasspath,
+            helper.testCommand(null, false, true, "java", "-cp", specificClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI +
                 File.separator + subcasePathI + ".java", testName + "RuntimeMonitor.java",
                     testName + "MonitorAspect.aj");
@@ -93,7 +108,7 @@ public class ExamplesIT {
     /**
      * Run a subset of the examples as tests. These are from the examples/runall script.
      */
-//    @Parameterized.Parameters(name="{0}")
+    @Parameterized.Parameters(name="{0}")
     public static Collection<Object[]> data() {
         ArrayList<Object[]> data = new ArrayList<Object[]>();
         //from examples/runall.txt
