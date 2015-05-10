@@ -12,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -24,15 +25,21 @@ public class TestHelper {
     private final File basePathFile;
     private final Path basePath;
 
+    private final HashMap<String,String> envVars;
+
     /**
      * Initializes the {@code basePath} field to the parent directory of the specified file path
      * @param filePath  path to the file which prompted this test, used to establish working dir
      */
     public TestHelper(String filePath)   {
+        this(filePath, new HashMap<String, String>());
+    }
+
+    public TestHelper(String filePath, HashMap<String,String> map) {
         fileSystem = FileSystems.getDefault();
         this.basePath = fileSystem.getPath(filePath).getParent();
         basePathFile = basePath.toFile();
-
+        this.envVars = map;
     }
     
     /**
@@ -76,8 +83,11 @@ public class TestHelper {
             Exception {
         ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
         processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
-        processBuilder.environment().put("CLASSPATH", processBuilder.environment().get("CLASSPATH") + File.pathSeparator
-                + System.getProperty("java.class.path"));
+        processBuilder.environment().put("CLASSPATH",
+                System.getProperty("java.class.path") + File.pathSeparator +
+                        processBuilder.environment().get("CLASSPATH"));
+
+        processBuilder.environment().putAll(this.envVars);
 
         String actualOutFile;
         String testsPrefix;

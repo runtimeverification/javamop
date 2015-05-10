@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 /**
  * Created by xiaohe on 1/6/15.
@@ -33,9 +34,16 @@ public class BaseAspectIT {
     private final String aj_udefined = this.userSpecifiedTestBasePath + File.separator +
             this.ajName;
 
-    private final TestHelper helper_default = new TestHelper(aj_default + ".expected.out");
 
-    private final TestHelper helper_userSpecified = new TestHelper(aj_udefined + ".expected.out");
+    private TestHelper helper_default;
+
+    private TestHelper helper_userSpecified;
+
+    private final String libPath = System.getProperty("user.dir") + File.separator +
+            "target" + File.separator + "release" + File.separator + "javamop"
+            + File.separator + "javamop" + File.separator + "lib" + File.separator;
+
+    private final String logicPluginPath = libPath + "plugins" + File.separator;
 
     @Test
     /**
@@ -47,17 +55,24 @@ public class BaseAspectIT {
         String rvmFile = testName + ".rvm";
 
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator
-                            + "javamop";
-        String rvmCommand = "rv-monitor";
-
+                + "javamop";
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
-            rvmCommand += ".bat";
         }
 
         String classpath = "." + File.pathSeparator + javaOutputPrefix + File.separator + "mop"
                 + File.separator + File.pathSeparator + System.getProperty("java.class.path")
                 + File.pathSeparator + javaOutputPrefix + File.separator;
+
+        classpath = logicPluginPath + "*" +
+                    File.pathSeparator + libPath + "*" +
+                    File.pathSeparator + classpath;
+
+        HashMap<String,String> envMap = new HashMap<>();
+        envMap.put("LOGICPLUGINPATH", logicPluginPath);
+        System.setProperty("java.class.path", classpath);
+
+        this.helper_default = new TestHelper(aj_default + ".expected.out", envMap);
 
         try {
             helper_default.testCommand(null, command, "-d", ".", inputMOP);
@@ -66,14 +81,15 @@ public class BaseAspectIT {
 
 
             //generate the monitor library via rv-monitor
-            helper_default.testCommand(null, false, true, rvmCommand,
+            helper_default.testCommand(null, false, true, "java",
+                    "com.runtimeverification.rvmonitor.java.rvj.Main",
                     "-d", ".", rvmFile);
 
             // AJC has nonzero return codes with just warnings, not errorss.
             helper_default.testCommand(null, false, true, "java",
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", javaOutputPrefix,
                     javaOutputPrefix + File.separator + javaOutputPrefix + ".java",
-                   testName + "RuntimeMonitor.java", ajName);
+                    testName + "RuntimeMonitor.java", ajName);
 
             helper_default.testCommand(javaOutputPrefix, javaOutputPrefix, false, true, false,
                     "java", "-cp", classpath, javaOutputPrefix);
@@ -102,19 +118,28 @@ public class BaseAspectIT {
         String rvmFile = testName + ".rvm";
 
         String command = System.getProperty("user.dir") + File.separator + "bin" +
-                    File.separator + "javamop";
-
-        String rvmCommand = "rv-monitor";
+                File.separator + "javamop";
 
         if (SystemUtils.IS_OS_WINDOWS) {
             command += ".bat";
-            rvmCommand += ".bat";
         }
 
         String classpath = "." + File.pathSeparator + prefix1 + File.separator + "mop" + File.separator +
                 File.pathSeparator + prefix2 + File.separator + "mop" + File.separator
                 + File.pathSeparator + System.getProperty("java.class.path") + File.pathSeparator +
                 prefix1 + File.separator + File.pathSeparator + prefix2 + File.separator;
+
+        System.setProperty("LOGICPLUGINPATH", logicPluginPath);
+
+        classpath = logicPluginPath + "*" +
+                File.pathSeparator + libPath + "*" +
+                File.pathSeparator + classpath;
+
+        HashMap<String,String> envMap = new HashMap<>();
+        envMap.put("LOGICPLUGINPATH", logicPluginPath);
+        System.setProperty("java.class.path", classpath);
+
+        this.helper_userSpecified = new TestHelper(aj_udefined + ".expected.out", envMap);
 
         try {
             String baseAJ = ".." + File.separator + "BaseAspect.aj";
@@ -125,15 +150,16 @@ public class BaseAspectIT {
 
 
             //generate the monitor library via rv-monitor
-            helper_userSpecified.testCommand(null, false, true, rvmCommand,
+            helper_userSpecified.testCommand(null, false, true, "java",
+                    "com.runtimeverification.rvmonitor.java.rvj.Main",
                     "-d", ".", rvmFile);
 
             // AJC has nonzero return codes with just warnings, not errorss.
             //First, test whether Has_Next.java was instrumented as usual
-            helper_userSpecified.testCommand(null, false, true, "java", // "-cp", classpath,
+            helper_userSpecified.testCommand(null, false, true, "java",
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix1,
                     prefix1 + File.separator + prefix1 + ".java",
-                     testName + "RuntimeMonitor.java", ajName);
+                    testName + "RuntimeMonitor.java", ajName);
 
             helper_userSpecified.testCommand(prefix1, prefix1, false, true, false,
                     "java", "-cp", classpath, prefix1);
@@ -141,7 +167,7 @@ public class BaseAspectIT {
             //Second, test whether HasNext_1.java was NOT instrumented as usual (the pointcuts within that path
             // have been ignored in the instrumentation because user provided base aspect eliminate the pointcuts
             // occur in files whose names contain `HasNext`)
-            helper_userSpecified.testCommand(null, false, true, "java", "-cp", classpath,
+            helper_userSpecified.testCommand(null, false, true, "java",
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix2,
                     prefix2 + File.separator + prefix2 + ".java",
                     testName + "RuntimeMonitor.java", ajName);
