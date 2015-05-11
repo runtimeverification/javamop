@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event;
 
+import javamop.JavaMOPMain;
 import javamop.util.MOPException;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.CombinedAspect;
@@ -245,7 +246,7 @@ public class EndThread {
         ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
         ret += "Thread.yield();\n";
         ret += "}\n";
-        ret += threadSet + ".add(t);\n";
+        ret += JavaMOPMain.options.aspectname + "RuntimeMonitor." + threadSet + ".add(t);\n";
         ret += globalLock.getName() + ".unlock();\n";
         ret += "}\n";
         
