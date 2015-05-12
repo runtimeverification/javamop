@@ -2,21 +2,27 @@ package mop;
 
 enforce EnforceTest() {
     event oneBegin before():
-        execution(* *run(..)) && threadName("T1") {
+        execution(* SimpleRunnable1.run(..)) && threadName("T1") {
+
         }
-    event oneEnd after():
-        execution(* *run(..)) && threadName("T1") {
+   event oneEnd after():
+        execution(* SimpleRunnable1.run(..)) && threadName("T1") {
+
         }
     event twoBegin before():
-        execution(* *run(..)) && threadName("T2") {
+        execution(* SimpleRunnable2.run(..)) && threadName("T2") {
+
         }
     event twoEnd after():
-        execution(* *run(..)) && threadName("T2") {
+        execution(* SimpleRunnable2.run(..)) && threadName("T2") {
+
         }
-    ere : twoBegin twoEnd onebegin oneEnd
+    ere : (oneBegin | twoBegin) (oneBegin | twoBegin | oneEnd | twoEnd) (oneEnd | twoEnd) (oneEnd | twoEnd)  
 
     @nonfail {
         System.out.println("success!");
     }
-
+@deadlock {
+        System.out.println("deadlock!");
+    }
 }
