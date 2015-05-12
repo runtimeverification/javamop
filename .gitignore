@@ -9,5 +9,5 @@ release/
 *.iml
 *~
 *.rvm
-*.err
-*.out
+*.actual.err
+*.actual.out
