@@ -1,0 +1,22 @@
+package mop;
+
+enforce EnforceTest() {
+    event oneBegin before():
+        execution(* *run(..)) && threadName("Thread-0") {
+        }
+    event oneEnd after():
+        execution(* *run(..)) && threadName("Thread-0") {
+        }
+    event twoBegin before():
+        execution(* *run(..)) && threadName("Thread-1") {
+        }
+    event twoEnd after():
+        execution(* *run(..)) && threadName("Thread-1") {
+        }
+    ere : twoBegin twoEnd onebegin oneEnd
+
+    @nonfail {
+        System.out.println("success!");
+    }
+
+}
