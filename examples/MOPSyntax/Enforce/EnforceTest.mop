@@ -2,16 +2,16 @@ package mop;
 
 enforce EnforceTest() {
     event oneBegin before():
-        execution(* *run(..)) && threadName("Thread-0") {
+        execution(* *run(..)) && threadName("T1") {
         }
     event oneEnd after():
-        execution(* *run(..)) && threadName("Thread-0") {
+        execution(* *run(..)) && threadName("T1") {
         }
     event twoBegin before():
-        execution(* *run(..)) && threadName("Thread-1") {
+        execution(* *run(..)) && threadName("T2") {
         }
     event twoEnd after():
-        execution(* *run(..)) && threadName("Thread-1") {
+        execution(* *run(..)) && threadName("T2") {
         }
     ere : twoBegin twoEnd onebegin oneEnd
 
