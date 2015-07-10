@@ -67,6 +67,7 @@ property files: SafeFile.mop and SafeFileWriter.mop.
 7. (Optional) Compile the monitor library file and remove Java file:
 
 	```javac classes/mop/MultiSpec_1RuntimeMonitor.java```
+	
 	```rm classes/mop/MultiSpec_1RuntimeMonitor.java```
 
 8. Build a JavaMOP agent which does not contain AspectJ Weaver and
