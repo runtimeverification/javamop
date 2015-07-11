@@ -350,7 +350,7 @@ public final class JavaMOPMain {
     private static void areValidNames(ArrayList<File> files) {
         for (int i = 0; i < files.size(); i++) {
             String curName = Tool.getFileName(files.get(i).getPath());
-            if (!curName.matches("[A-Za-z0-9_]*")) {
+            if (!curName.matches("[a-zA-Z_][A-Za-z0-9_]*")) {
                 System.err.println("The mop name " + curName + " is not valid!");
                 System.exit(1);
             }
