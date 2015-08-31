@@ -352,6 +352,9 @@ public final class JavaMOPMain {
             String curName = Tool.getFileName(files.get(i).getPath());
             if (!curName.matches("[a-zA-Z_][A-Za-z0-9_]*")) {
                 System.err.println("The mop name " + curName + " is not valid!");
+                System.err.println("A valid mop name should respect Java's naming convention, " +
+                        "described by the regular expression (enclosed inside the double quotes)" +
+                        " \"[a-zA-Z_][A-Za-z0-9_]*\"");
                 System.exit(1);
             }
         }
