@@ -47,25 +47,31 @@ public class EventManager {
                 if (!event.isEndObject() && !event.isEndProgram() && !event.isEndThread() && 
                         !event.isStartThread()) {
                     boolean added = false;
+                    PointCut cachedPointCut = null;
                     for (AdviceAndPointCut advice : advices) {
+                        PointcutComparator comparator = new PointcutComparator();
+                        PointCut p1 = event.getPointCut().accept(
+                                new ConvertPointcutToCNFVisitor(), null);
+                        PointCut p2 = advice.getPointCut().accept(
+                                new ConvertPointcutToCNFVisitor(), null);
+
+                        if (comparator.compare(p1, p2))
+                            cachedPointCut = p2;
+
                         if (advice.isAround != event.getPos().equals("around"))
                             continue;
                         if (advice.isAround) {
                             if (!advice.retType.equals(event.getRetType().toString()))
                                 continue;
                         }
+
                         if (!advice.pos.equals(event.getPos()))
                             continue;
+
                         if (!advice.retVal.equals(event.getRetVal()))
                             continue;
                         if (!advice.throwVal.equals(event.getThrowVal()))
                             continue;
-                        
-                        PointcutComparator comparator = new PointcutComparator();
-                        PointCut p1 = event.getPointCut().accept(
-                            new ConvertPointcutToCNFVisitor(), null);
-                        PointCut p2 = advice.getPointCut().accept(
-                            new ConvertPointcutToCNFVisitor(), null);
                         
                         if (comparator.compare(p1, p2)) {
                             added = advice.addEvent(spec, event, combinedAspect);
@@ -75,7 +81,15 @@ public class EventManager {
                     }
                     
                     if (!added) {
-                        advices.add(new AdviceAndPointCut(spec, event, combinedAspect));
+                        //using the existing pointcut if there is any
+                        if (cachedPointCut != null) {
+                            event.getPointCut()
+                        }
+
+                        AdviceAndPointCut newAdvice = new AdviceAndPointCut(spec, event,
+                                combinedAspect);
+
+                        advices.add(newAdvice);
                     }
                 }
                 

@@ -1,28 +1,9 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event;
 
-import java.util.ArrayList;
+import javamop.parser.ast.aspectj.*;
 
-import javamop.parser.ast.aspectj.ArgsPointCut;
-import javamop.parser.ast.aspectj.CFlowPointCut;
-import javamop.parser.ast.aspectj.CombinedPointCut;
-import javamop.parser.ast.aspectj.ConditionPointCut;
-import javamop.parser.ast.aspectj.EndObjectPointCut;
-import javamop.parser.ast.aspectj.EndProgramPointCut;
-import javamop.parser.ast.aspectj.EndThreadPointCut;
-import javamop.parser.ast.aspectj.FieldPointCut;
-import javamop.parser.ast.aspectj.IDPointCut;
-import javamop.parser.ast.aspectj.IFPointCut;
-import javamop.parser.ast.aspectj.MethodPointCut;
-import javamop.parser.ast.aspectj.NotPointCut;
-import javamop.parser.ast.aspectj.PointCut;
-import javamop.parser.ast.aspectj.StartThreadPointCut;
-import javamop.parser.ast.aspectj.TargetPointCut;
-import javamop.parser.ast.aspectj.ThisPointCut;
-import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
-import javamop.parser.ast.aspectj.ThreadNamePointCut;
-import javamop.parser.ast.aspectj.ThreadPointCut;
-import javamop.parser.ast.aspectj.WithinPointCut;
+import java.util.ArrayList;
 
 /**
  * Compares the various types of pointcuts with themselves. Unless otherwise specified, each
@@ -31,10 +12,16 @@ import javamop.parser.ast.aspectj.WithinPointCut;
 public class PointcutComparator {
     
     public boolean compare(PointCut p1, PointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
+
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(ArgsPointCut p1, ArgsPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
+
         return p1.toString().equals(p2.toString());
     }
     
@@ -79,42 +66,62 @@ public class PointcutComparator {
     }
     
     public boolean compare(NotPointCut p1, NotPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return compare(p1.getPointCut(), p2.getPointCut());
     }
     
     public boolean compare(ConditionPointCut p1, ConditionPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(FieldPointCut p1, FieldPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(MethodPointCut p1, MethodPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(TargetPointCut p1, TargetPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(ThisPointCut p1, ThisPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(CFlowPointCut p1, CFlowPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(IFPointCut p1, IFPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(IDPointCut p1, IDPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
     public boolean compare(WithinPointCut p1, WithinPointCut p2){
+        System.out.println("pointcut 1 is " + p1.toString());
+        System.out.println("pointcut 2 is " + p2.toString());
         return p1.toString().equals(p2.toString());
     }
     
