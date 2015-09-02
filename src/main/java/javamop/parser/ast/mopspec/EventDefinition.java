@@ -94,7 +94,7 @@ public class EventDefinition extends Node {
      * @return
      * @throws javamop.parser.main_parser.ParseException
      */
-    public EventDefinition clone(PointCut newPointCut) {
+    public EventDefinition clone(String newPointCut) {
         EventDefinition newEvent = null;
         try {
             newEvent = (EventDefinition) this.clone();

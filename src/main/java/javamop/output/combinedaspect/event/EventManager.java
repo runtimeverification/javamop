@@ -47,7 +47,7 @@ public class EventManager {
                 if (!event.isEndObject() && !event.isEndProgram() && !event.isEndThread() && 
                         !event.isStartThread()) {
                     boolean added = false;
-                    PointCut cachedPointCut = null;
+                    String cachedPointcut = null;
                     for (AdviceAndPointCut advice : advices) {
                         PointcutComparator comparator = new PointcutComparator();
                         PointCut p1 = event.getPointCut().accept(
@@ -60,7 +60,7 @@ public class EventManager {
                         //Based on other info attached to the event, different join points can be
                         //distinguished and new advice obj can be created if necessary.
                         if (comparator.compare(p1, p2))
-                            cachedPointCut = p2;
+                            cachedPointcut = advice.getPointCutName();
 
                         if (advice.isAround != event.getPos().equals("around"))
                             continue;
@@ -86,8 +86,8 @@ public class EventManager {
                     
                     if (!added) {
                         //using the existing pointcut if there is any
-                        if (cachedPointCut != null) {
-                            event = event.clone(cachedPointCut);
+                        if (cachedPointcut != null) {
+                            event = event.clone(cachedPointcut);
                         }
 
                         AdviceAndPointCut newAdvice = new AdviceAndPointCut(spec, event,

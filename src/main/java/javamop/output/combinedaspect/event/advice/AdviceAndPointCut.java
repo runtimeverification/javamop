@@ -31,6 +31,7 @@ public class AdviceAndPointCut {
     
     private final MOPVariable pointcutName;
     private final PointCut pointcut;
+    private boolean pointCutPrinted;
     private final MOPParameters parameters;
     private final String specName;
     private final String fileName;
