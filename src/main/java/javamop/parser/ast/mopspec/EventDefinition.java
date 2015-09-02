@@ -1,18 +1,17 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import javamop.parser.ast.Node;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.stmt.BlockStmt;
-import javamop.parser.ast.type.*;
+import javamop.parser.ast.type.Type;
 import javamop.parser.ast.visitor.*;
-
 import javamop.parser.main_parser.ParseException;
+
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventDefinition extends Node {
     
@@ -86,6 +85,24 @@ public class EventDefinition extends Node {
         this.mopParameters.addAll(this.retVal);
         this.mopParameters.addAll(this.throwVal);
         this.blockingEvent = blockingEvent;
+    }
+
+    /**
+     * A copy constructor that clone the current instance of event definition but with an
+     * updated pointcut object.
+     * @param newPointCut
+     * @return
+     * @throws javamop.parser.main_parser.ParseException
+     */
+    public EventDefinition clone(PointCut newPointCut) {
+        EventDefinition newEvent = null;
+        try {
+            newEvent = (EventDefinition) this.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        newEvent.pointCut = newPointCut;
+        return newEvent;
     }
     
     private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {

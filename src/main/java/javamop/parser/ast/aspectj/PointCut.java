@@ -8,7 +8,8 @@ import javamop.parser.ast.visitor.VoidVisitor;
 
 public abstract class PointCut extends Node {
     
-    private final String type;    
+    private final String type;
+    private boolean hasBeenPrinted;
     
     public PointCut(int line, int column, String type){
         super(line, column);
@@ -30,5 +31,12 @@ public abstract class PointCut extends Node {
     public <R, A> R accept(PointcutVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-    
+
+    public boolean hasBeenPrinted() {
+        return hasBeenPrinted;
+    }
+
+    public void setPrinted() {
+        this.hasBeenPrinted = true;
+    }
 }

@@ -1,25 +1,23 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event.advice;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-
-import javamop.util.MOPException;
-import javamop.JavaMOPMain;
 import javamop.output.MOPVariable;
 import javamop.output.combinedaspect.ActivatorManager;
 import javamop.output.combinedaspect.CombinedAspect;
 import javamop.output.combinedaspect.GlobalLock;
 import javamop.output.combinedaspect.MOPStatManager;
-import javamop.output.combinedaspect.MOPStatistics;
 import javamop.output.combinedaspect.event.EventManager;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.util.MOPException;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * A pointcut for where to place code and advice code to place in it.
@@ -62,6 +60,11 @@ public class AdviceAndPointCut {
 
     /**
      * Construct the advice and pointcut for a specific event.
+     *
+     * ###Problematic! An event is corresponding to a join point instead of pointcut!
+     * Different join points can share the same point cut.
+     * So the pointcut name should not be strongly related to event.
+     *
      * @param mopSpec The specification this is a part of.
      * @param event The event this advice is for.
      * @param combinedAspect The generated aspect that this is a part of.

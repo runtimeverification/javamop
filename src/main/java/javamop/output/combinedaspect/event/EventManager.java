@@ -55,6 +55,10 @@ public class EventManager {
                         PointCut p2 = advice.getPointCut().accept(
                                 new ConvertPointcutToCNFVisitor(), null);
 
+                        //if pointcut p1 and p2 are equal, then the program location they defined
+                        //are the same, in order to reuse it later, cache it now.
+                        //Based on other info attached to the event, different join points can be
+                        //distinguished and new advice obj can be created if necessary.
                         if (comparator.compare(p1, p2))
                             cachedPointCut = p2;
 
@@ -83,7 +87,7 @@ public class EventManager {
                     if (!added) {
                         //using the existing pointcut if there is any
                         if (cachedPointCut != null) {
-                            event.getPointCut()
+                            event = event.clone(cachedPointCut);
                         }
 
                         AdviceAndPointCut newAdvice = new AdviceAndPointCut(spec, event,
