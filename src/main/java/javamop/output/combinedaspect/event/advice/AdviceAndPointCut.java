@@ -25,17 +25,17 @@ import java.util.LinkedList;
 public class AdviceAndPointCut {
     private final MOPStatManager statManager;
     private final ActivatorManager activatorsManager = null;
-    
+
     private final MOPVariable inlineFuncName;
     private final MOPParameters inlineParameters;
-    
+
     private final MOPVariable pointcutName;
     private final PointCut pointcut;
     private boolean pointCutPrinted;
     private final MOPParameters parameters;
     private final String specName;
     private final String fileName;
-    
+
     private final boolean hasThisJoinPoint;
     public boolean isAround = false;
     public boolean beCounted = false;
@@ -46,38 +46,40 @@ public class AdviceAndPointCut {
     private final MOPParameters threadVars = new MOPParameters();
     private final GlobalLock globalLock;
     private final boolean isSync;
-    
+
     private final LinkedList<EventDefinition> events = new LinkedList<EventDefinition>();
     private final HashSet<JavaMOPSpec> specsForActivation = new HashSet<JavaMOPSpec>();
     private final HashSet<JavaMOPSpec> specsForChecking = new HashSet<JavaMOPSpec>();
-    
-    private final HashMap<EventDefinition, AdviceBody> advices = 
-        new HashMap<EventDefinition, AdviceBody>();
-    
+
+    private final HashMap<EventDefinition, AdviceBody> advices =
+            new HashMap<EventDefinition, AdviceBody>();
+
     private final MOPVariable commonPointcut = new MOPVariable("MOP_CommonPointCut");
-    
+
     private AroundAdviceLocalDecl aroundLocalDecl = null;
     private AroundAdviceReturn aroundAdviceReturn = null;
 
+    private boolean isPointCutPrinted;
+
     /**
      * Construct the advice and pointcut for a specific event.
-     *
+     * <p/>
      * ###Problematic! An event is corresponding to a join point instead of pointcut!
      * Different join points can share the same point cut.
      * So the pointcut name should not be strongly related to event.
      *
-     * @param mopSpec The specification this is a part of.
-     * @param event The event this advice is for.
+     * @param mopSpec        The specification this is a part of.
+     * @param event          The event this advice is for.
      * @param combinedAspect The generated aspect that this is a part of.
      */
-    public AdviceAndPointCut(final JavaMOPSpec mopSpec, final EventDefinition event, 
-            final CombinedAspect combinedAspect) throws MOPException {
+    public AdviceAndPointCut(final JavaMOPSpec mopSpec, final EventDefinition event,
+                             final CombinedAspect combinedAspect) throws MOPException {
         this.hasThisJoinPoint = mopSpec.hasThisJoinPoint();
-        
+
         this.specName = mopSpec.getName();
         this.pointcutName = new MOPVariable(mopSpec.getName() + "_" + event.getUniqueId());
-        this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" + 
-            event.getUniqueId());
+        this.inlineFuncName = new MOPVariable("MOPInline" + mopSpec.getName() + "_" +
+                event.getUniqueId());
         this.parameters = event.getParametersWithoutThreadVar();
         this.inlineParameters = event.getMOPParametersWithoutThreadVar();
         this.fileName = combinedAspect.getFileName();
@@ -86,109 +88,156 @@ public class AdviceAndPointCut {
             isAround = true;
             retType = event.getRetType().toString();
         }
-        
+
         this.pos = event.getPos();
         this.retVal = event.getRetVal();
         this.throwVal = event.getThrowVal();
-        
+
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             if (event.getParameters().getParam(event.getThreadVar()) == null)
                 throw new MOPException("thread variable is not included in the event definition.");
-            
+
             this.threadVars.add(event.getParameters().getParam(event.getThreadVar()));
         }
-        
+
         this.statManager = combinedAspect.statManager;
-        
+
         //this.activatorsManager = combinedAspect.activatorsManager;
-        
+
         this.globalLock = combinedAspect.lockManager.getLock();
         this.isSync = mopSpec.isSync();
-        
+
         this.advices.put(event, new AdviceBody(mopSpec, event, combinedAspect));
-        
+
         this.events.add(event);
         if (event.getCountCond() != null && event.getCountCond().length() != 0) {
             this.beCounted = true;
         }
-        
+
         this.pointcut = event.getPointCut();
-        
+
         if (mopSpec.has__SKIP() || event.getPos().equals("around"))
             aroundLocalDecl = new AroundAdviceLocalDecl();
         if (event.getPos().equals("around"))
             aroundAdviceReturn = new AroundAdviceReturn(event.getRetType(),
-                event.getParametersWithoutThreadVar());
-        
-        if(event.isStartEvent())
+                    event.getParametersWithoutThreadVar());
+
+        if (event.isStartEvent())
             specsForActivation.add(mopSpec);
         else
             specsForChecking.add(mopSpec);
     }
-    
+
+    /**
+     * A copy constructor.
+     */
+    public AdviceAndPointCut(boolean hasThisJoinPoint, final String specName,
+                             final MOPVariable pointcutName, final MOPVariable inlineFuncName,
+                             final MOPParameters parameters, final MOPParameters inlineParameters,
+                             final String fileName, boolean isAround, final String retType,
+                             final String pos, final MOPParameters retVal, final MOPParameters throwVal,
+                             final MOPParameters threadVars, final MOPStatManager statManager,
+                             final GlobalLock globalLock, boolean isSync,
+                             final HashMap<EventDefinition, AdviceBody> advices,
+                             final LinkedList<EventDefinition> events,
+                             boolean beCounted, final PointCut pointCut,
+                             final AroundAdviceLocalDecl aroundLocalDecl,
+                             final AroundAdviceReturn aroundAdviceReturn,
+                             final HashSet<JavaMOPSpec> specsForActivation,
+                             final HashSet<JavaMOPSpec> specsForChecking) {
+        this.hasThisJoinPoint = hasThisJoinPoint;
+        this.specName = specName;
+        this.pointcutName = pointcutName;
+        this.inlineFuncName = inlineFuncName;
+        this.parameters = parameters;
+        this.inlineParameters = inlineParameters;
+        this.fileName = fileName;
+        this.isAround = isAround;
+        this.retType = retType;
+        this.pos = pos;
+        this.retVal = retVal;
+        this.throwVal = throwVal;
+        this.threadVars.addAll(threadVars);
+        this.statManager = statManager;
+        this.globalLock = globalLock;
+        this.isSync = isSync;
+        this.advices.putAll(advices);
+        this.events.addAll(events);
+        this.beCounted = beCounted;
+        this.pointcut = pointCut;
+        this.aroundLocalDecl = aroundLocalDecl;
+        this.aroundAdviceReturn = aroundAdviceReturn;
+        this.specsForActivation.addAll(specsForActivation);
+        this.specsForChecking.addAll(specsForChecking);
+    }
+
     /**
      * The pointcut object where the code is placed.
+     *
      * @return The pointcut.
      */
     public PointCut getPointCut() {
         return pointcut;
     }
-    
+
     /**
      * The name of the pointcut object for the event.
+     *
      * @return The pointcut's name.
      */
     public String getPointCutName() {
         return pointcutName.getVarName();
     }
-    
+
     /**
      * Add an additional event to be managed by this class.
-     * @param mopSpec The specification of the new event.
-     * @param event The new event to manage.
+     *
+     * @param mopSpec        The specification of the new event.
+     * @param event          The new event to manage.
      * @param combinedAspect The generated aspect that includes the event.
      */
-    public boolean addEvent(final JavaMOPSpec mopSpec, final EventDefinition event, 
-            final CombinedAspect combinedAspect) throws MOPException {
-        
+    public boolean addEvent(final JavaMOPSpec mopSpec, final EventDefinition event,
+                            final CombinedAspect combinedAspect) throws MOPException {
+
         // Parameter Conflict Check
-        for(MOPParameter param : event.getParametersWithoutThreadVar()){
+        for (MOPParameter param : event.getParametersWithoutThreadVar()) {
             MOPParameter param2 = parameters.getParam(param.getName());
-            
-            if(param2 == null)
+
+            if (param2 == null)
                 continue;
-            
-            if(!param.getType().equals(param2.getType())){
+
+            if (!param.getType().equals(param2.getType())) {
                 return false;
             }
         }
-        
+
         parameters.addAll(event.getParametersWithoutThreadVar());
-        
+
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
             if (event.getParameters().getParam(event.getThreadVar()) == null)
                 throw new MOPException("thread variable is not included in the event definition.");
-            
+
             this.threadVars.add(event.getParameters().getParam(event.getThreadVar()));
         }
-        
+
         // add an advice body.
         this.advices.put(event, new AdviceBody(mopSpec, event, combinedAspect));
-        
+
         this.events.add(event);
         if (event.getCountCond() != null && event.getCountCond().length() != 0) {
             this.beCounted = true;
         }
-        if(event.isStartEvent())
+        if (event.isStartEvent())
             specsForActivation.add(mopSpec);
         else
             specsForChecking.add(mopSpec);
         return true;
     }
-    
+
     /**
      * Generated Java/AspectJ complete source code for this advice and pointcut as code that works
      * together with RV-Monitor generated code.
+     *
      * @return Java/AspectJ source code.
      */
     @Override
@@ -209,26 +258,26 @@ public class AdviceAndPointCut {
             ret += " && ";
         }
         ret += commonPointcut + "();\n";
-        
+
         if (isAround)
             ret += retType + " ";
-        
+
         ret += pos + " (" + parameters.parameterDeclString() + ") ";
-        
+
         if (retVal != null && retVal.size() > 0) {
             ret += "returning (";
             ret += retVal.parameterDeclString();
             ret += ") ";
         }
-        
+
         if (throwVal != null && throwVal.size() > 0) {
             ret += "throwing (";
             ret += throwVal.parameterDeclString();
             ret += ") ";
         }
-        
+
         ret += ": " + pointcutName + "(" + parameters.parameterString() + ") {\n";
-        
+
         if (aroundLocalDecl != null)
             ret += aroundLocalDecl;
 
@@ -319,9 +368,27 @@ public class AdviceAndPointCut {
 
         if (aroundAdviceReturn != null)
             ret += aroundAdviceReturn;
-        
+
         ret += "}\n";
-        
+
         return ret;
+    }
+
+    public AdviceAndPointCut clone(String cachedPointcut) {
+        MOPVariable newPointcutName = new MOPVariable(cachedPointcut);
+        return new AdviceAndPointCut(this.hasThisJoinPoint, this.specName,
+                newPointcutName, this.inlineFuncName, this.parameters, this.inlineParameters,
+                this.fileName, this.isAround, this.retType, this.pos, this.retVal, this
+                .throwVal, this.threadVars, this.statManager, this.globalLock, this.isSync, this
+                .advices, this.events, this.beCounted, this.getPointCut(), this.aroundLocalDecl,
+                this.aroundAdviceReturn, this.specsForActivation, this.specsForChecking);
+    }
+
+    public boolean isPointCutPrinted() {
+        return isPointCutPrinted;
+    }
+
+    public void setPointCutPrinted() {
+        this.isPointCutPrinted = true;
     }
 }
