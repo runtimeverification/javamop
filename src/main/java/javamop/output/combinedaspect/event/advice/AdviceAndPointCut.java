@@ -260,7 +260,9 @@ public class AdviceAndPointCut {
                 ret += " && ";
             }
             ret += commonPointcut + "();\n";
+            this.setPointCutPrinted();
         }
+
         if (isAround)
             ret += retType + " ";
 
