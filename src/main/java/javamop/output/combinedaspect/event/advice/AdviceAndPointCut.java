@@ -59,7 +59,7 @@ public class AdviceAndPointCut {
     private AroundAdviceLocalDecl aroundLocalDecl = null;
     private AroundAdviceReturn aroundAdviceReturn = null;
 
-    private boolean isPointCutPrinted;
+    private boolean[] isPointCutPrinted = new boolean[1];
 
     /**
      * Construct the advice and pointcut for a specific event.
@@ -144,7 +144,8 @@ public class AdviceAndPointCut {
                              final AroundAdviceLocalDecl aroundLocalDecl,
                              final AroundAdviceReturn aroundAdviceReturn,
                              final HashSet<JavaMOPSpec> specsForActivation,
-                             final HashSet<JavaMOPSpec> specsForChecking) {
+                             final HashSet<JavaMOPSpec> specsForChecking,
+                             final boolean[] isPointCutPrinted) {
         this.hasThisJoinPoint = hasThisJoinPoint;
         this.specName = specName;
         this.pointcutName = pointcutName;
@@ -169,6 +170,7 @@ public class AdviceAndPointCut {
         this.aroundAdviceReturn = aroundAdviceReturn;
         this.specsForActivation.addAll(specsForActivation);
         this.specsForChecking.addAll(specsForChecking);
+        this.isPointCutPrinted = isPointCutPrinted;
     }
 
     /**
@@ -245,20 +247,20 @@ public class AdviceAndPointCut {
         String ret = "";
         String pointcutStr = pointcut.toString();
 
-
-        ret += "pointcut " + pointcutName;
-        ret += "(";
-        ret += parameters.parameterDeclString();
-        ret += ")";
-        ret += " : ";
-        if (pointcutStr != null && pointcutStr.length() != 0) {
+        if (!isPointCutPrinted()) {
+            ret += "pointcut " + pointcutName;
             ret += "(";
-            ret += pointcutStr;
+            ret += parameters.parameterDeclString();
             ret += ")";
-            ret += " && ";
+            ret += " : ";
+            if (pointcutStr != null && pointcutStr.length() != 0) {
+                ret += "(";
+                ret += pointcutStr;
+                ret += ")";
+                ret += " && ";
+            }
+            ret += commonPointcut + "();\n";
         }
-        ret += commonPointcut + "();\n";
-
         if (isAround)
             ret += retType + " ";
 
@@ -374,21 +376,29 @@ public class AdviceAndPointCut {
         return ret;
     }
 
-    public AdviceAndPointCut clone(String cachedPointcut) {
-        MOPVariable newPointcutName = new MOPVariable(cachedPointcut);
+    /**
+     * Clone the current object with the specified pointcutName, so that all fields except the
+     * pointcutName are the same as original.
+     *
+     * @param cachedAdvice
+     * @return
+     */
+    public AdviceAndPointCut clone(AdviceAndPointCut cachedAdvice) {
+        MOPVariable newPointcutName = new MOPVariable(cachedAdvice.getPointCutName());
         return new AdviceAndPointCut(this.hasThisJoinPoint, this.specName,
                 newPointcutName, this.inlineFuncName, this.parameters, this.inlineParameters,
                 this.fileName, this.isAround, this.retType, this.pos, this.retVal, this
                 .throwVal, this.threadVars, this.statManager, this.globalLock, this.isSync, this
                 .advices, this.events, this.beCounted, this.getPointCut(), this.aroundLocalDecl,
-                this.aroundAdviceReturn, this.specsForActivation, this.specsForChecking);
+                this.aroundAdviceReturn, this.specsForActivation, this.specsForChecking,
+                cachedAdvice.isPointCutPrinted);
     }
 
     public boolean isPointCutPrinted() {
-        return isPointCutPrinted;
+        return isPointCutPrinted[0];
     }
 
     public void setPointCutPrinted() {
-        this.isPointCutPrinted = true;
+        this.isPointCutPrinted[0] = true;
     }
 }
