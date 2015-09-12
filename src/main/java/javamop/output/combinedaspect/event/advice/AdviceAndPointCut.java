@@ -403,4 +403,13 @@ public class AdviceAndPointCut {
     public void setPointCutPrinted() {
         this.isPointCutPrinted[0] = true;
     }
+
+    /**
+     * Return the parameters of the pointcut in string form.
+     * This is useful for comparing two pointcuts and decide whether a pointcut should be reused.
+     * @return
+     */
+    public String getParametersDeclStr() {
+        return parameters.parameterDeclString();
+    }
 }
