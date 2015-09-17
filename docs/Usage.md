@@ -40,17 +40,17 @@ from a terminal at any time: `javamop -h`)
 
 ### Static Weaving Using AspectJ
 
-#### Generating Instrumentation File and Java Library
+#### Generating Instrumentation File and RVM Specification
 
-With this mode, you can generate an instrumentation (.aj) file and a
-Java library (.java) file to be weaved into the target program. The
-instrumentation file includes the pointcuts and advice which will be
-used by ajc to instrument the code. The advice in the instrumentation
-file will call the functions provided in the Java library. For
-simplicity, JavaMOP appends the Java library file to the
-instrumentation file and generates a single .aj file in the end. Once
-JavaMOP is correctly installed, this can be achieved by running the
-following command:
+With this mode, you can generate instrumentation (.aj) file(s) and 
+RV-Monitor specification(s). The instrumentation file includes the
+pointcuts and advice which will be used by ajc to instrument the code.
+The RV-Monitor specification (.rvm file) is transformed from .mop 
+specification by removing all the aspectJ related annotations, and
+when it is fed to [RV-Monitor](https://runtimeverification.com/monitor/), a Java library that performs the actual
+monitoring task will be generated. The advice in the instrumentation
+file will call the functions provided in the generated monitoring library.
+Once JavaMOP is correctly installed, this can be achieved by running the following command:
 
 ```javamop [-v] [-d <target directory>] [-merge] <properties>```
 
