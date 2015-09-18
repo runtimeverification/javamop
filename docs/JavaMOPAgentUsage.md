@@ -35,9 +35,8 @@ jars in the CLASSPATH before running the agent.
 
 ### Example of Building an Agent
 
-Assuming only two .mop files, `A.mop` and `B.mop`, exist in the
-current directory, a JavaMOP agent to monitor the properties specified
-in these ```.mop``` files can be generated as follows:
+The following procedure shows how to build an agent from two .mop files
+on a Unix-like system:
 
 1. ```git clone https://github.com/runtimeverification/javamop.git```
 
@@ -51,7 +50,7 @@ property files: SafeFile.mop and SafeFileWriter.mop.
    ```MultiSpec_1MonitorAspect.aj, SafeFile.rvm and
    SafeFileWriter.rvm```):
 
-	```javamop -merge -keepRVFiles *.mop```
+	```javamop -merge *.mop```
 
 5. Create directories for storing the monitor libraries:
 
@@ -66,8 +65,9 @@ property files: SafeFile.mop and SafeFileWriter.mop.
 
 7. (Optional) Compile the monitor library file and remove Java file:
 
-	```javac classes/mop/MultiSpec_1RuntimeMonitor.java
-	rm classes/mop/MultiSpec_1RuntimeMonitor.java```
+	```javac classes/mop/MultiSpec_1RuntimeMonitor.java```
+	
+	```rm classes/mop/MultiSpec_1RuntimeMonitor.java```
 
 8. Build a JavaMOP agent which does not contain AspectJ Weaver and
 RV-Monitor jars:
