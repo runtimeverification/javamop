@@ -25,20 +25,19 @@ public class DuplicatePointcutIT {
             command += ".bat";
         }
 
-        helper.testCommand(null, false, true, command, "-merge", ".." + File.separator +
-                "Pointcut");
+        String testName = "Pointcut";
+        String output = testName + File.separator + "output";
+        helper.testCommand(null, false, true, command, "-merge", testName);
 
-        String ajName = "MultiSpec_1MonitorAspect.aj";
-        File combinedAJ = new File(ajName);
-
-        Assert.assertTrue(ajName + " not generated", combinedAJ.exists());
-
-        String classpath = "." + File.separator + System.getProperty("java.class.path");
+        File combinedAJ = helper.getPath(testName + File.separator + "MultiSpec_1MonitorAspect" +
+                ".aj").toFile();
+        Assert.assertTrue(combinedAJ.getAbsolutePath() + " not generated", combinedAJ.exists());
 
         // AJC has nonzero return codes with just warnings, not errors.
-        helper.testCommand(null, false, true, "java", "-cp", classpath,
-                "org.aspectj.tools.ajc.Main", "-1.6", ajName);
+        helper.testCommand(null, false, true, "java",
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d", output, combinedAJ.getAbsolutePath());
 
-        helper.deleteFiles(true, ajName);
+        helper.deleteFiles(true, testName + File.separator + combinedAJ.getName());
+        helper.deleteFiles(true, output);
     }
 }
