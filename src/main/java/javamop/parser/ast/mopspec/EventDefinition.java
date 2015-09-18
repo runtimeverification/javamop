@@ -87,7 +87,7 @@ public class EventDefinition extends Node {
         this.mopParameters.addAll(this.throwVal);
         this.blockingEvent = blockingEvent;
     }
-    
+
     private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
         // create a token for exceptions
         javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
