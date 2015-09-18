@@ -1,0 +1,29 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a comparable object does not throw a NullPointerException when compared to null.
+ * 
+ * According to the manual, compareTo(null) should throw a NullPointerException. 
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Comparable.html#compareTo%28T%29
+ * 
+ * @severity error
+ */
+
+Comparable_CompareToNullException() {
+
+	event badexception after(Object o) throwing(Exception e) : call(* Comparable+.compareTo(..)) 
+		&& args(o) && if(o == null) && condition(!(e instanceof NullPointerException)) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "NullPointerException should be thrown when an object is compared to null");
+		}
+	event badcompare after(Object o) returning(int i) : call(* Comparable+.compareTo(..)) 
+		&& args(o) && if(o == null) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "NullPointerException should be thrown when an object is compared to null");
+		}
+}

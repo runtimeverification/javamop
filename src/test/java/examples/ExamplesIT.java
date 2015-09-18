@@ -50,7 +50,7 @@ public class ExamplesIT {
             String subcasePathI = subcasePath + i;
             String specificClasspath = classpath + File.pathSeparator + subcasePathI + 
                     File.pathSeparator + subcasePathI + File.separator + "mop";
-            // AJC has nonzero return codes with just warnings, not errorss.
+            // AJC has nonzero return codes with just warnings, not errors.
             helper.testCommand(null, false, true, "java", "-cp", specificClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI + 
                 File.separator + subcasePathI + ".java", testName + "MonitorAspect.aj");
