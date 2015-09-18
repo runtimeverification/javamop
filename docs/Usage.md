@@ -54,21 +54,24 @@ Once JavaMOP is correctly installed, this can be achieved by running the followi
 
 ```javamop [-v] [-d <target directory>] [-merge] <properties>```
 
-The option ```[-v]``` generates the file and the library in verbose
-mode and ```[-d <target directory>]``` stores all output files to the
+The option ```[-v]``` generates the output in verbose mode and 
+```[-d <target directory>]``` stores all output files to the 
 user-specified directory which must exist prior to issuing the command
 above.  ```<properties>``` refers to one or more property (i.e. *.mop)
 files, or a directory containing such property files. By default, one
-.aj file is generated for each JavaMOP specification. When
-```[-merge]``` is set, JavaMOP will generate a combined .aj file for
-monitoring multiple properties simultaneously.
+.aj file is generated for each JavaMOP specification. When ```[-merge]```
+is set, JavaMOP will generate a combined .aj file for monitoring
+multiple properties simultaneously.
+
+#### Generate Monitoring Library using [RV-Monitor](https://runtimeverification.com/monitor/)
+Please follow the instructions of [RV-Monitor's online documentation](https://runtimeverification.com/monitor/1.3/docs/) for how to use RV-Monitor.  
 
 #### Weaving the code using ajc
 
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6  -d <target directory> <aj file path> <java file path>```
+```ajc -1.6  -d <target directory> <aj file path> <monitor path> <java file path>```
 
 ```-1.6``` indicates the output bytecode version. ```-d <target
 directory>``` specifies the directory to which the weaved code will be
@@ -77,12 +80,13 @@ that ajc can put the binary code in the right place. Without ```-d```,
 ajc will output all the bytecode files in the current directory,
 failing to keep the necessary package layout. You can simply use ```-d
 .``` to output binary code in the current
-directory. ```<aj file path>``` and ```<java file path>``` refer
-to the path to the generated instrumentation file and the path to the
-target program (i.e the program to be weaved) respectively. Given this
-command, ajc will instrument and compile the original Java file and
-store the generated .class file(s) in ```<target directory>```. If
-there is no error reported, you can directly run the weaved code in
+directory. ```<aj file path>``` and ```<monitor path>``` refer
+to the path to the generated instrumentation file and the monitoring 
+library (in the form of .java file) respectively; ```<java file path>```
+is the path to the target program (i.e the program to be weaved). 
+Given this command, ajc will instrument and compile the original 
+Java file and store the generated .class file(s) in ```<target directory>```.
+If there is no error reported, you can directly run the weaved code in
 the ```<target directory>```.
 
 #### Running the Weaved Code
@@ -91,6 +95,8 @@ To run the weaved program, simply type:
 ```java Main```
 
 where `Main` is assumed to be the entry point to the application.
+(Don't forget to have the monitoring library on the classpath when
+running the weaved code.)
 
 ##Troubleshooting
 
