@@ -70,7 +70,7 @@ public class ExamplesIT {
             helper.testCommand(null, false, true, "java",
                     "com.runtimeverification.rvmonitor.java.rvj.Main", testName + ".rvm");
 
-            // AJC has nonzero return codes with just warnings, not errorss.
+            // AJC has nonzero return codes with just warnings, not errors.
             helper.testCommand(null, false, true, "java", "-cp", specificClasspath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d",  subcasePathI, subcasePathI +
                 File.separator + subcasePathI + ".java", testName + "RuntimeMonitor.java",
