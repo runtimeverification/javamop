@@ -29,15 +29,25 @@ public class DuplicatePointcutIT {
         String output = testName + File.separator + "output";
         helper.testCommand(null, false, true, command, "-merge", testName);
 
+        //generate monitor library code
+        helper.testCommand(null, false, true, "java",
+                "com.runtimeverification.rvmonitor.java.rvj.Main", "-merge", testName);
+
         File combinedAJ = helper.getPath(testName + File.separator + "MultiSpec_1MonitorAspect" +
                 ".aj").toFile();
+        File monitorLib = helper.getPath(testName + File.separator + "MultiSpec_1RuntimeMonitor" +
+                ".java")  .toFile();
         Assert.assertTrue(combinedAJ.getAbsolutePath() + " not generated", combinedAJ.exists());
 
         // AJC has nonzero return codes with just warnings, not errors.
         helper.testCommand(null, false, true, "java",
-                "org.aspectj.tools.ajc.Main", "-1.6", "-d", output, combinedAJ.getAbsolutePath());
+                "org.aspectj.tools.ajc.Main", "-1.6", "-d", output, monitorLib.getAbsolutePath(),
+                combinedAJ.getAbsolutePath());
 
         helper.deleteFiles(true, testName + File.separator + combinedAJ.getName());
+        helper.deleteFiles(true, testName + File.separator + "Comparable_CompareToNull.rvm");
+        helper.deleteFiles(true, testName + File.separator + "Comparable_CompareToNullException.rvm");
+        helper.deleteFiles(true, testName + File.separator + monitorLib.getName());
         helper.deleteFiles(true, output);
     }
 }

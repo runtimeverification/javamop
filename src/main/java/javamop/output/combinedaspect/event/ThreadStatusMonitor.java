@@ -213,7 +213,7 @@ public class ThreadStatusMonitor extends EndThread{
         ret += "while (!" + globalLock.getName() + ".tryLock()) {\n";
         ret += "Thread.yield();\n";
         ret += "}\n";
-        ret += threadSet + ".add(t);\n";
+        ret += JavaMOPMain.options.aspectname + "RuntimeMonitor." + threadSet + ".add(t);\n";
         ret += globalLock.getName() + "_cond.signalAll();\n";
         ret += globalLock.getName() + ".unlock();\n";
         ret += "}\n";

@@ -62,12 +62,6 @@ public class JavaMOPOptions {
             "is invoked by the corresponding advice.")
     public boolean inline = false;
 
-    @Parameter(names="-keepRVFiles",description = "By default, JavaMOP deletes the generated" +
-            " .java file after combining the generated libraries with the associated pointcuts. " +
-            "This is because the user should not have to care about this intermediate file. " +
-            "If this option is enabled, however, the file is preserved.")
-    public boolean keepRVFiles = false;
-
     @Parameter(names="-baseaspect",description = "Optionally provide a BaseAspect.aj file " +
             "for use in generating an agent.", converter = FileConverter.class)
     public File baseAspect;

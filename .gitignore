@@ -8,3 +8,6 @@ release/
 .idea
 *.iml
 *~
+*.rvm
+*.actual.err
+*.actual.out
