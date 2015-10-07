@@ -67,7 +67,8 @@ public final class SeparateAgentGenerator {
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
         // Change aspect name
-        String completeClassPath = baseClasspath + File.pathSeparator + classDir.getAbsolutePath();
+        String completeClassPath = "\"" + baseClasspath + File.pathSeparator + 
+			classDir.getAbsolutePath() + "\"";
         final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", completeClassPath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d", agentDir.getAbsolutePath(),
                 "-outxml", agentAspect.getAbsolutePath());
