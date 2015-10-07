@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -67,8 +68,13 @@ public final class SeparateAgentGenerator {
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
         // Change aspect name
-        String completeClassPath = "\"" + baseClasspath + File.pathSeparator + 
-			classDir.getAbsolutePath() + "\"";
+        String completeClassPath = baseClasspath + File.pathSeparator +
+			classDir.getAbsolutePath();
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            completeClassPath = "\"" + completeClassPath + "\"";
+        }
+
         final int ajcReturn = runCommandDir(outputDir, verbose, "java", "-cp", completeClassPath,
                 "org.aspectj.tools.ajc.Main", "-1.6", "-d", agentDir.getAbsolutePath(),
                 "-outxml", agentAspect.getAbsolutePath());
