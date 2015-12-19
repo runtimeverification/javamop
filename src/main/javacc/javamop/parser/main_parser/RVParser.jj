@@ -90,7 +90,7 @@ public class RVParser {
     }
     
     /**
-     * Reads a segment from the character stream with matching open and close characters, 
+     * Reads a segment from the character stream with matching open and close characters,
      * e.g. (((--)--(--))--).
      * @param open The opening character.
      * @param close The closing character.
@@ -100,6 +100,9 @@ public class RVParser {
     private String parseMatchingSegment(final char open, final char close, int depth)
             throws ParseException {
         try {
+            boolean inStr = false;
+            boolean escaped = false;
+
             StringBuilder innerSegment = new StringBuilder();
             for(int i = 0; i < depth; i++) {
                 innerSegment.append(open);
@@ -107,6 +110,20 @@ public class RVParser {
             while(depth > 0) {
                 char c = jj_input_stream.readChar();
                 innerSegment.append(c);
+                if (escaped) {
+                    escaped = false;
+                    continue;
+                } else {
+                    if (c == '\\') {
+                        escaped = true;
+                    } else if (c == '"'){
+                        inStr = !inStr; //flip the state of inStr
+                    }
+                }
+
+                if (inStr)  //the curly braces inside string should not be counted.
+                    continue;
+
                 if(c == open) {
                     depth++;
                 } else if(c == close) {
@@ -119,7 +136,7 @@ public class RVParser {
             return "";
         }
     }
-    
+
     /**
      * Parse matching parentheses from the character stream, assuming one is already read.
      * @return The string read, including the first and last parentheses.
