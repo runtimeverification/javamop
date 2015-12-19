@@ -2,6 +2,8 @@
 package javamop.util;
 
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -289,41 +291,13 @@ public final class Tool {
     }
 
     /**
-     * Delete a directory and all its contents. Every file has to be individually deleted, since
-     * there is no built-in java function to delete an entire directory and its contents
-     * recursively.
+     * Delete a directory and all its contents.
      *
      * @param path The path of the directory to delete.
-     * @throws java.io.IOException If it cannot traverse the directories or the files cannot be deleted.
+     * @throws java.io.IOException If the underlying FileUtils throws IOException.
      */
     public static void deleteDirectory(final Path path) throws IOException {
         // http://stackoverflow.com/a/8685959
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                // try to delete the file anyway, even if its attributes
-                // could not be read, since delete-only access is
-                // theoretically possible
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                if (exc == null) {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                } else {
-                    // directory iteration failed; propagate exception
-                    throw exc;
-                }
-            }
-        });
+        FileUtils.deleteDirectory(path.toFile());
     }
 }

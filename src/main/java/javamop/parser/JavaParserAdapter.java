@@ -1,8 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser;
 
-import com.runtimeverification.rvmonitor.core.ast.*;
-import com.runtimeverification.rvmonitor.core.parser.RVParser;
+import javamop.parser.rvm.core.ast.*;
+import javamop.parser.main_parser.RVParser;
 import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;

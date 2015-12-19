@@ -85,7 +85,7 @@ public class BaseAspectIT {
                     "com.runtimeverification.rvmonitor.java.rvj.Main",
                     "-d", ".", rvmFile);
 
-            // AJC has nonzero return codes with just warnings, not errorss.
+            // AJC has nonzero return codes with just warnings, not errors.
             helper_default.testCommand(null, false, true, "java",
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", javaOutputPrefix,
                     javaOutputPrefix + File.separator + javaOutputPrefix + ".java",
@@ -154,7 +154,7 @@ public class BaseAspectIT {
                     "com.runtimeverification.rvmonitor.java.rvj.Main",
                     "-d", ".", rvmFile);
 
-            // AJC has nonzero return codes with just warnings, not errorss.
+            // AJC has nonzero return codes with just warnings, not errors.
             //First, test whether Has_Next.java was instrumented as usual
             helper_userSpecified.testCommand(null, false, true, "java",
                     "org.aspectj.tools.ajc.Main", "-1.6", "-d", prefix1,

@@ -1,0 +1,345 @@
+options {
+ STATIC = false;
+}
+
+PARSER_BEGIN(RVParser)
+package javamop.parser.main_parser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.*;
+
+import javamop.parser.rvm.core.ast.Event;
+import javamop.parser.rvm.core.ast.MonitorFile;
+import javamop.parser.rvm.core.ast.Property;
+import javamop.parser.rvm.core.ast.PropertyHandler;
+import javamop.parser.rvm.core.ast.Specification;
+
+/**
+ * Language-agnostic RVM file parser.
+ * @author A. Cody Schuffelen
+ */
+public class RVParser {
+    
+    /**
+     * Parse a complete RVM file specification.
+     * @param s The text of the file.
+     * @return The parsed file as a Java object.
+     */
+    public static MonitorFile parse(final String s) {
+        return parse(new BufferedReader(new StringReader(s)));
+    }
+    
+    /**
+     * Parse a complete RVM file specification.
+     * @param reader The place to read the specification from.
+     * @return The parsed file as a Java object.
+     */
+    public static MonitorFile parse(final Reader reader) {
+        RVParser parser = new RVParser(reader);
+        try {
+            return parser.rvmFile();
+        } catch(ParseException e) {
+            throw new RuntimeException(e);
+        } catch(TokenMgrError e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    /**
+     * Read a backtick segment with matched backticks, e.g. `a`, ``a``, ```a```, or ``a`b``.
+     * Assumes the first backtick has already been read.
+     * @return The text inside the backticks.
+     */
+    private String parseBacktickSegment() throws ParseException {
+        try {
+            int backtickDepth = 1;
+            char c;
+            while((c =jj_input_stream.readChar()) == '`') {
+                backtickDepth++;
+            }
+            StringBuilder innerSegment = new StringBuilder();
+            innerSegment.append(c);
+            while(true) {
+                while((c = jj_input_stream.readChar()) != '`') {
+                    innerSegment.append(c);
+                }
+                int endingTicks;
+                for(endingTicks = 1; endingTicks < backtickDepth; endingTicks++) {
+                    c = jj_input_stream.readChar();
+                    if(c != '`') {
+                        for(int i = 0; i < endingTicks; i++) {
+                            innerSegment.append('`');
+                        }
+                        innerSegment.append(c);
+                        break;
+                    }
+                }
+                if(endingTicks == backtickDepth) {
+                    return innerSegment.toString();
+                }
+            }
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            return "";
+        }
+    }
+    
+    /**
+     * Reads a segment from the character stream with matching open and close characters,
+     * e.g. (((--)--(--))--).
+     * @param open The opening character.
+     * @param close The closing character.
+     * @param depth The number of open parentheses already parsed.
+     * @return The full text, including the first open and close parentheses.
+     */
+    private String parseMatchingSegment(final char open, final char close, int depth)
+            throws ParseException {
+        try {
+            boolean inStr = false;
+            boolean escaped = false;
+
+            StringBuilder innerSegment = new StringBuilder();
+            for(int i = 0; i < depth; i++) {
+                innerSegment.append(open);
+            }
+            while(depth > 0) {
+                char c = jj_input_stream.readChar();
+                innerSegment.append(c);
+                if (escaped) {
+                    escaped = false;
+                    continue;
+                } else {
+                    if (c == '\\') {
+                        escaped = true;
+                    } else if (c == '"'){
+                        inStr = !inStr; //flip the state of inStr
+                    }
+                }
+
+                if (inStr)  //the curly braces inside string should not be counted.
+                    continue;
+
+                if(c == open) {
+                    depth++;
+                } else if(c == close) {
+                    depth--;
+                }
+            }
+            return innerSegment.toString();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * Parse matching parentheses from the character stream, assuming one is already read.
+     * @return The string read, including the first and last parentheses.
+     */
+    private String parseMatchingParens() throws ParseException {
+        return parseMatchingSegment('(', ')', 1);
+    }
+    
+    /**
+     * Parse matching curly brackets from the character stream, assuming one is already read.
+     * @return The string read, including the first and last curly brackets.
+     */
+    private String parseMatchingCurlyBrackets() throws ParseException {
+        return parseMatchingSegment('{', '}', 1);
+    }
+    
+    /**
+     * Read characters from the character stream until a string is exactly matched. Pushes the
+     * matched text back onto the character stream.
+     * @param end The string to match.
+     * @return All the text until the matched string.
+     */
+    private String parseUntil(final String end) throws ParseException {
+        try {
+            StringBuilder innerSegment = new StringBuilder();
+            while(true) {
+                char c;
+                while((c = jj_input_stream.readChar()) != end.charAt(0)) {
+                    innerSegment.append(c);
+                }
+                StringBuilder partialMatch = new StringBuilder();
+                partialMatch.append(c);
+                for(int i = 1; i < end.length(); i++) {
+                    c = jj_input_stream.readChar();
+                    if(c == end.charAt(i)) {
+                        partialMatch.append(c);
+                    } else {
+                        break;
+                    }
+                }
+                if(partialMatch.toString().equals(end)) {
+                    jj_input_stream.backup(end.length());
+                    return innerSegment.toString();
+                } else {
+                    innerSegment.append(partialMatch);
+                }
+            }
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            return "";
+        }
+    }
+    
+    /**
+     * Read lines from the character stream until a regular expression matches the line. Pushes
+     * the matching line back into the character stream.
+     * @param pattern The regular expression to match against each line.
+     * @return The text until the matching line.
+     */
+    private String parseUntilLineMatches(final Pattern pattern) {
+        try {
+            StringBuilder allText = new StringBuilder();
+            StringBuilder line = new StringBuilder();
+            while(!pattern.matcher(line.toString()).find()) {
+                allText.append(line);
+                line = new StringBuilder();
+                char c;
+                while((c = jj_input_stream.readChar()) != '\n') {
+                    line.append(c);
+                }
+                line.append(c);
+            }
+            jj_input_stream.backup(line.length());
+            return allText.toString();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            return "";
+        }
+    }
+}
+PARSER_END(RVParser)
+
+SKIP : {
+    <WHITESPACE: [" ","\t","\r","\n"]>
+    | <LINECOMMENT: "//" (~["\n"])* "\n">
+    | <BLOCKCOMMENT: "/*"(~["*"])* "*"(~["/"] (~["*"])* "*")* "/" >
+}
+
+TOKEN : {
+    <LBRACE : "{">
+    | <RBRACE : "}">
+    | <LPAREN : "(">
+    | <RPAREN : ")">
+    | <COLON : ":">
+    | <AT : "@">
+    | <EVENT : ("event")>
+    | <ID : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_"|"."|"-")*>
+    | <DIGIT : ["0"-"9"]>
+    | <LETTER : ["a"-"z","A"-"Z"]>
+    | <BACKTICK : "`">
+}
+
+MonitorFile rvmFile() : {
+    String preamble;
+    ArrayList<Specification> specs = new ArrayList<Specification>();
+    Specification spec;
+}
+{
+    {preamble = parseUntilLineMatches(Pattern.compile("^([0-9_a-zA-Z\\s-]+)((\\()|(\\{))"));}
+    (spec = specification() { specs.add(spec); })+
+    {
+        return new MonitorFile(preamble, specs);
+    }
+}
+
+Specification specification() : {
+    String preDeclarations = "";
+    ArrayList<String> languageModifiers = new ArrayList<String>();
+    Token modifier;
+    String languageParameters = "";
+    String languageDeclarations = "";
+    ArrayList<Event> events = new ArrayList<Event>();
+    Event myEvent;
+    ArrayList<Property> properties = new ArrayList<Property>();
+    Property myProperty;
+}
+{
+    (modifier = <ID> {languageModifiers.add(modifier.image);})+
+    (languageParameters = delimitedNoCurly())?
+    "{"
+        {languageDeclarations = parseUntilLineMatches(Pattern.compile(
+            "^([-a-zA-Z\\s_]*)event([a-zA-Z_\\s0-9]+)\\("));}
+        (LOOKAHEAD( 2 ) myEvent = event() { events.add(myEvent); })+
+        (myProperty = propertyAndHandlers() {properties.add(myProperty);})*
+    "}"
+    {
+        String name = languageModifiers.get(languageModifiers.size() - 1);
+        languageModifiers.remove(languageModifiers.size() - 1);
+        return new Specification(preDeclarations, languageModifiers, name, languageParameters,
+            languageDeclarations, events, properties);
+    }
+}
+
+Event event() : {
+    ArrayList<String> modifiers = new ArrayList<String>();
+    Token modifier;
+    Token name;
+    ArrayList<String> definitionModifiers = new ArrayList<String>();
+    Token definitionModifier;
+    String eventDefinition = "";
+    String eventPointcut = "";
+    String eventAction = "";
+}
+{
+    (modifier = <ID> { modifiers.add(modifier.image); })*
+    <EVENT>
+    (name = <ID>)
+    (definitionModifier = <ID> { definitionModifiers.add(definitionModifier.image); })*
+    (eventDefinition = delimitedSegment())
+    {eventPointcut = parseUntil("{");}
+    "{" {eventAction = parseMatchingCurlyBrackets();}
+    {return new Event(modifiers, name.image, definitionModifiers, eventDefinition, eventPointcut, 
+        eventAction);}
+}
+
+Property propertyAndHandlers() : {
+    Token name;
+    Token notAt;
+    String syntax = "";
+    ArrayList<PropertyHandler> propertyHandlers = new ArrayList<PropertyHandler>();
+    PropertyHandler handler;
+}
+{
+    (name = <ID>)
+    ":"
+    {syntax = parseUntil("@");}
+    (handler = propertyHandler() {propertyHandlers.add(handler);})+
+    {return new Property(name.image, syntax, propertyHandlers);}
+}
+
+PropertyHandler propertyHandler() : {
+    Token name;
+    String languageAction = "";
+}
+{
+    "@"
+    (name = <ID>)
+    (languageAction = delimitedSegment())
+    {return new PropertyHandler(name.image, languageAction);}
+}
+
+String delimitedSegment() : {
+    String other;
+}
+{
+    (other = delimitedNoCurly() { return other; }) |
+    ("{" { return parseMatchingCurlyBrackets(); })
+}
+
+String delimitedNoCurly() : {
+
+}
+{
+    ("`" { return parseBacktickSegment(); }) |
+    ("(" { return parseMatchingParens(); })
+}
