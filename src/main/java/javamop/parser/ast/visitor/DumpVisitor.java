@@ -386,8 +386,10 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	public void visit(EventDefinition e, Object arg) {
-		if (e.isCreationEvent()) {
+        if (e.isCreationEvent()) {
 			printer.print("creation ");
+		} else if (e.isStaticEvent()) {
+			printer.print("static ");
 		}
 		printer.print("event " + e.getId() + " " + e.getPos());
 		printSpecParameters(e.getParameters(), arg);

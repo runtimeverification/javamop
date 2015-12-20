@@ -20,6 +20,8 @@ public class RVDumpVisitor extends DumpVisitor {
 			printer.print("creation ");
 		} else if (e.isBlockingEvent()) {
 			printer.print("blocking ");
+		} else if (e.isStaticEvent()) {
+			printer.print("static ");
 		}
 		printer.print("event " + e.getId());
 		// linjus: I fixed this.

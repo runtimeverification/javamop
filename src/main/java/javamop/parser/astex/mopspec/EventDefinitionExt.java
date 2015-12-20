@@ -51,6 +51,7 @@ public class EventDefinitionExt extends ExtNode {
     private boolean endThread = false;
     private boolean startThread = false;
     private boolean endObject = false;
+    private boolean staticEvent = false;
 
     // things that should be defined afterward
     int idnum; // will be defined in JavaMOPSpec
@@ -62,7 +63,7 @@ public class EventDefinitionExt extends ExtNode {
 
     public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
             List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
-            boolean isBlockingEvent)
+            boolean isBlockingEvent, boolean staticEvent)
             throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.id = id;
@@ -87,6 +88,7 @@ public class EventDefinitionExt extends ExtNode {
         this.mopParameters.addAll(this.throwVal);
         this.abstractEvent = abstractEvent;
         this.blockingEvent = isBlockingEvent;
+        this.staticEvent = staticEvent;
     }
 
     public EventDefinitionExt(int line, int column, EventDefinitionExt e) {
@@ -291,7 +293,11 @@ public class EventDefinitionExt extends ExtNode {
     public boolean isEndObject() {
         return this.endObject;
     }
-    
+
+    public boolean isStaticEvent() {
+        return staticEvent;
+    }
+
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
         v.visit(this, arg);
