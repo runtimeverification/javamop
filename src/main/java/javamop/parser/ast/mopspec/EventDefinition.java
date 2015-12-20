@@ -54,6 +54,7 @@ public class EventDefinition extends Node {
     private boolean endThread = false;
     private boolean startThread = false;
     private boolean endObject = false;
+    private boolean staticEvent = false;
     private String countCond;
     
     // things that should be defined afterward
@@ -64,7 +65,7 @@ public class EventDefinition extends Node {
     
     public EventDefinition(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
                            boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent,
-                           boolean blockingEvent)
+                           boolean blockingEvent, boolean staticEvent)
     throws ParseException {
         super(line, column);
         this.id = id;
@@ -86,6 +87,7 @@ public class EventDefinition extends Node {
         this.mopParameters.addAll(this.retVal);
         this.mopParameters.addAll(this.throwVal);
         this.blockingEvent = blockingEvent;
+        this.staticEvent = staticEvent;
     }
 
     private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
@@ -402,7 +404,11 @@ public class EventDefinition extends Node {
     public boolean isStartThread() {
         return this.startThread;
     }
-    
+
+    public boolean isStaticEvent() {
+        return staticEvent;
+    }
+
     public boolean hasSpecialModifier(String modifier) {
         return getAction().toString().contains(modifier);
     }

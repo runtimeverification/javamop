@@ -1402,6 +1402,7 @@ EventDefinitionExt Event():
 	boolean startEvent = false;
 	boolean abstractEvent = false;
 	boolean blockingEvent = false;
+	boolean staticEvent = false;
 }
 {
    (
@@ -1422,7 +1423,8 @@ EventDefinitionExt Event():
    | 
     ( //old syntax of events: Soha
       ["creation" {startEvent = true;}
-      | "blocking"  {blockingEvent = true;}]
+      | "blocking"  {blockingEvent = true;}
+      | "static" {staticEvent = true;}]
 	"event" {line = token.beginLine; column = token.beginColumn;}
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
@@ -1438,7 +1440,8 @@ EventDefinitionExt Event():
 	":" {pointCut = getStringUntil('{');} 
 	(block = Block() | ";")))
 	
-	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning, retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent); } 
+	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning,
+	retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent, staticEvent); }
 }
 
 String Position():

@@ -14,7 +14,6 @@ import java.util.HashMap;
  * Created by xiaohe on 1/6/15.
  */
 public class BaseAspectIT {
-    private final FileSystem fileSystem = FileSystems.getDefault();
 
     private final String inputMOP = ".." + File.separator + "HasNext.mop";
 

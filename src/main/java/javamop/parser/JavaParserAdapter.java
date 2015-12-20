@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * MOPSpecFileExt objects.
  * @author A. Cody Schuffelen
  */
-final class JavaParserAdapter {
+final public class JavaParserAdapter {
 
     /**
      * Private constructor to prevent instantiation.
