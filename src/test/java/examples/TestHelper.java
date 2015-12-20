@@ -14,6 +14,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.function.Predicate;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Helper class for testing the output of external commands against the expected output.
@@ -132,7 +135,26 @@ public class TestHelper {
             }
         }
     }
-    
+
+    public void testPredicate(String relativePath, Path outputUnderTest, String errMsg,
+                              Predicate<String> property, String... command) throws IOException, InterruptedException {
+        ProcessBuilder processBuilder = new ProcessBuilder(command).inheritIO();
+        processBuilder.directory(new File(basePathFile.toString() + File.separator + relativePath));
+        processBuilder.environment().put("CLASSPATH",
+                System.getProperty("java.class.path") + File.pathSeparator +
+                        processBuilder.environment().get("CLASSPATH"));
+
+        processBuilder.environment().putAll(this.envVars);
+
+        Process process = processBuilder.start();
+        int returnCode = process.waitFor();
+
+        assertTrue("Output does not exist!", outputUnderTest != null &&
+                                            outputUnderTest.toFile().exists());
+
+        assertTrue("Given property does not hold on output " + outputUnderTest.getFileName().toString(),
+                property.test(new String(Files.readAllBytes(outputUnderTest))));
+    }
     /**
      * Assert two files have equal content.
      * @param expectedFile The path to the file with the expected result.
