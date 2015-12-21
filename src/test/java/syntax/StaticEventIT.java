@@ -19,7 +19,7 @@ public class StaticEventIT {
 
     private final TestHelper helper = new TestHelper(path + File.separator + testName + ".mop");
 
-//    @Test
+    @Test
     public void StaticEventTest() throws Exception {
         String command = System.getProperty("user.dir") + File.separator + "bin" + File.separator + "javamop";
         if (SystemUtils.IS_OS_WINDOWS) {
