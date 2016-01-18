@@ -1,0 +1,26 @@
+package mop;
+
+enforce EnforceTest() {
+    event oneBegin before():
+        execution(* Runnable.run(..)) && threadName("T1") {
+        }
+   event oneEnd after():
+        execution(* Runnable.run(..)) && threadName("T1") {
+		System.out.println("1 end");
+        }
+    event twoBegin before():
+        execution(* Runnable.run(..)) && threadName("T2") {
+        }
+    event twoEnd after():
+        execution(* Runnable.run(..)) && threadName("T2") {
+		System.out.println("2 end");
+        }
+    ere : twoBegin+ twoEnd+ oneBegin+ oneEnd+ 
+
+    @nonfail {
+//        System.out.println("success!");
+    }
+@deadlock {
+        System.out.println("deadlock!");
+    }
+}
