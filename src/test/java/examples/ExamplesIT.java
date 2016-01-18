@@ -95,7 +95,12 @@ public class ExamplesIT {
                     prefix + "MonitorAspect.class", prefix + "RuntimeMonitor.class",
                     prefix + "SuffixMonitor.class", prefix + "Monitor$IntStack.class",
                     prefix + "SuffixMonitor_Set.class", prefix  + "DisableHolder.class",
-                    prefix + "MonitorAspect$" + testName + "_DummyHookThread.class"
+                    prefix + "MonitorAspect$" + testName + "_DummyHookThread.class",
+                    prefix + "RuntimeMonitor$" + testName + "_DummyHookThread.class",
+                    prefix + "EnforcementMonitor.class",
+                    prefix + "EnforcementMonitor$" + testName +
+                            "EnforcementMonitorDeadlockCallback.class",
+                    prefix + "EnforcementMonitor_Set.class"
                 );
                 helper.deleteFiles(false, subcasePathI + File.separator + "mop" + File.separator +
                     "I" + testName + "Monitor.class");
@@ -112,6 +117,10 @@ public class ExamplesIT {
     @Parameterized.Parameters(name="{0}")
     public static Collection<Object[]> data() {
         ArrayList<Object[]> data = new ArrayList<Object[]>();
+        //enforcement test
+        data.add(new Object[]{"examples" + File.separator + "MOPSyntax" + File.separator +
+                "EnforceTest" + File.separator + "EnforceTest.mop"});
+
         //from examples/runall.txt
         data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
         data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "SafeFile" + File.separator + "SafeFile.mop"});
