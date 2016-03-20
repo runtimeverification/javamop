@@ -18,10 +18,10 @@ public class BaseAspectIT {
 
     private final String ajName = testName + "MonitorAspect.aj";
 
-    private final String defaultTestBasePath = "system/examples" + File.separator + "BaseAspect"
+    private final String defaultTestBasePath = "examples" + File.separator + "BaseAspect"
             + File.separator + "default-baseaspect";
 
-    private final String userSpecifiedTestBasePath = "system/examples" + File.separator + "BaseAspect"
+    private final String userSpecifiedTestBasePath = "examples" + File.separator + "BaseAspect"
             + File.separator + "user-specified-baseaspect";
 
     private final String aj_default = this.defaultTestBasePath + File.separator +

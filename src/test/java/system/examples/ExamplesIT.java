@@ -118,36 +118,36 @@ public class ExamplesIT {
     public static Collection<Object[]> data() {
         ArrayList<Object[]> data = new ArrayList<Object[]>();
         //enforcement test
-        data.add(new Object[]{"system/examples" + File.separator + "MOPSyntax" + File.separator +
+        data.add(new Object[]{"examples" + File.separator + "MOPSyntax" + File.separator +
                 "EnforceTest" + File.separator + "EnforceTest.mop"});
 
         //from examples/runall.txt
-        data.add(new Object[]{"system/examples" + File.separator + "CFG" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "CFG" + File.separator + "SafeFile" + File.separator + "SafeFile.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "CFG" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
+        data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "SafeFile" + File.separator + "SafeFile.mop"});
+        data.add(new Object[]{"examples" + File.separator + "CFG" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
 
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
         //#SuffixHasNext, hasnext2, hashset, passwordlogic require to change mop/directoy name
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "SafeSyncCollection" + File.separator + "SafeSyncCollection.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "SafeSyncMap" + File.separator + "SafeSyncMap.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeSyncCollection" + File.separator + "SafeSyncCollection.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeSyncMap" + File.separator + "SafeSyncMap.mop"});
         //Pending Issue 5
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "SafeEnum" + File.separator + "SafeEnum.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "UnsafeIterator" + File.separator + "UnsafeIterator.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "ERE" + File.separator + "UnsafeMapIterator" + File.separator + "UnsafeMapIterator.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "SafeEnum" + File.separator + "SafeEnum.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "UnsafeIterator" + File.separator + "UnsafeIterator.mop"});
+        data.add(new Object[]{"examples" + File.separator + "ERE" + File.separator + "UnsafeMapIterator" + File.separator + "UnsafeMapIterator.mop"});
 
-        data.add(new Object[]{"system/examples" + File.separator + "FSM" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "FSM" + File.separator + "HasNext2" + File.separator + "HasNext2.mop"});
+        data.add(new Object[]{"examples" + File.separator + "FSM" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "FSM" + File.separator + "HasNext2" + File.separator + "HasNext2.mop"});
 
         //Pending Issue 5
-        data.add(new Object[]{"system/examples" + File.separator + "LTL" + File.separator + "SafeEnum" + File.separator + "SafeEnum.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "LTL" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "LTL" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "LTL" + File.separator + "SafeIterator" + File.separator + "SafeIterator.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "LTL" + File.separator + "SafeMapIterator" + File.separator + "SafeMapIterator.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeEnum" + File.separator + "SafeEnum.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "HasNext" + File.separator + "HasNext.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeFileWriter" + File.separator + "SafeFileWriter.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeIterator" + File.separator + "SafeIterator.mop"});
+        data.add(new Object[]{"examples" + File.separator + "LTL" + File.separator + "SafeMapIterator" + File.separator + "SafeMapIterator.mop"});
 
-        data.add(new Object[]{"system/examples" + File.separator + "MOPSyntax" + File.separator + "Creation" + File.separator + "Creation.mop"});
-        data.add(new Object[]{"system/examples" + File.separator + "EndProgram" + File.separator + "FileClose" + File.separator + "FileClose.mop"});
+        data.add(new Object[]{"examples" + File.separator + "MOPSyntax" + File.separator + "Creation" + File.separator + "Creation.mop"});
+        data.add(new Object[]{"examples" + File.separator + "EndProgram" + File.separator + "FileClose" + File.separator + "FileClose.mop"});
         //# Think about sth similar to handle countCond
         return data;
     }

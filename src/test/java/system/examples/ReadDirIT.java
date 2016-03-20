@@ -10,7 +10,7 @@ import java.io.File;
  * Created by xiaohe on 5/6/15.
  */
 public class ReadDirIT {
-    private final String path = "system/examples" + File.separator + "agent" + File.separator + "many"
+    private final String path = "examples" + File.separator + "agent" + File.separator + "many"
             + File.separator + "rvm" + File.separator + "cfg";
 
     private final TestHelper helper = new TestHelper(path);
