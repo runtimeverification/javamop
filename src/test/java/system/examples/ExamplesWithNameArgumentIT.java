@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package examples;
+package system.examples;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import java.io.File;
 
 public class ExamplesWithNameArgumentIT {
     private final String mopFile = "rvm" + File.separator + "HasNext.mop";
-    private final String path = "examples" + File.separator + "agent" + File.separator + "HasNext";
+    private final String path = "system/examples" + File.separator + "agent" + File.separator + "HasNext";
 
     private final TestHelper helper = new TestHelper(path + File.separator + mopFile);
 

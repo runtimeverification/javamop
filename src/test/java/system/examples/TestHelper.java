@@ -1,5 +1,5 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
-package examples;
+package system.examples;
 
 import javamop.util.Tool;
 import org.apache.commons.lang3.SystemUtils;

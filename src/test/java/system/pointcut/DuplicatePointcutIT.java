@@ -1,6 +1,6 @@
-package pointcut;
+package system.pointcut;
 
-import examples.TestHelper;
+import system.examples.TestHelper;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
