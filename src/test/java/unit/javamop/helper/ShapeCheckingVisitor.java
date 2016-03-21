@@ -78,7 +78,9 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
 
     @Override
     public Boolean visit(JavaMOPSpec s, Node arg) {
-        return null;
+        //TODO
+
+        return true;
     }
 
     @Override
@@ -238,12 +240,16 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
 
     @Override
     public Boolean visit(PackageDeclaration n, Node arg) {
-        return null;
+        //TODO
+
+        return true;
     }
 
     @Override
     public Boolean visit(ImportDeclaration n, Node arg) {
-        return null;
+        //TODO
+
+        return true;
     }
 
     @Override
