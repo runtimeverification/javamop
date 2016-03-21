@@ -9,8 +9,12 @@ import javamop.parser.ast.stmt.*;
 import javamop.parser.ast.type.*;
 import javamop.parser.ast.visitor.GenericVisitor;
 
+import java.util.List;
+
 /**
  * Created by He Xiao on 3/20/2016.
+ * The shape analysis checks whether two ast have the 'same' structure
+ * without comparing concrete values at each node.
  */
 public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     @Override
@@ -18,13 +22,58 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         return true;
     }
 
+    /**
+     * Check whether the mop spec file f has the same shape as arg.
+     *
+     * @param f
+     * @param arg
+     * @return Whether nodes f and arg have the same shape.
+     */
     @Override
     public Boolean visit(MOPSpecFile f, Node arg) {
         if (!(arg instanceof MOPSpecFile))
             return false;
 
         //TODO
-        return null;
+        if (f == arg)
+            return true;
+        if (f == null || arg == null)
+            return false;
+
+        //neither f nor arg is null
+        MOPSpecFile other = (MOPSpecFile) arg;
+
+        List<ImportDeclaration> importDeclarationList = f.getImports();
+        PackageDeclaration packageDeclaration = f.getPakage();
+        List<JavaMOPSpec> specs = f.getSpecs();
+
+        List<ImportDeclaration> importDeclarationList2 = other.getImports();
+        PackageDeclaration packageDeclaration2 = other.getPakage();
+        List<JavaMOPSpec> specs2 = other.getSpecs();
+
+        if (importDeclarationList.size() != importDeclarationList2.size()
+                || specs.size() != specs2.size())
+            return false;
+
+        if (!visit(packageDeclaration, packageDeclaration2))
+            return false;
+
+        for (int i = 0; i < importDeclarationList.size(); i++) {
+            ImportDeclaration importDeclaration = importDeclarationList.get(i);
+            ImportDeclaration importDeclaration2 = importDeclarationList2.get(i);
+
+            if (!visit(importDeclaration, importDeclaration2))
+                return false;
+        }
+
+        for (int i = 0; i < specs.size(); i++) {
+            JavaMOPSpec spec = specs.get(i);
+            JavaMOPSpec spec2 = specs2.get(i);
+            if (!visit(spec, spec2))
+                return false;
+        }
+
+        return true;
     }
 
     @Override
