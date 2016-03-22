@@ -1,3 +1,8 @@
+***Should not add new function code to the code base: that'll add more 
+   uncovered code and increase the burden of testing.
+
+***add helper code in the test folder if necessary.
+
 For each eg used in unit-testing we should have:
 
 1. mop spec file
@@ -13,6 +18,10 @@ trusted ast for the spec file.
 core: compare whether two ast are the same.
 two steps~
 i) check shape (same structure)
+ *too time consuming if we fully explored the ast.
+ *may perform a bounded depths checking
+ *increment the depth of exploration in the future
+
 ii) compare the equality of dumped strings
 
 
