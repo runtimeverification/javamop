@@ -1,9 +1,9 @@
-package unit.javamop;
+package javamop;
 
 import javamop.parser.SpecExtractor;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.MOPException;
-import unit.javamop.helper.ShapeCheckingVisitor;
+import javamop.helper.ShapeCheckingVisitor;
 
 import java.io.File;
 

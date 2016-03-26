@@ -1,4 +1,4 @@
-package unit.javamop.util;
+package javamop.util;
 
 import org.junit.Before;
 import org.junit.Test;

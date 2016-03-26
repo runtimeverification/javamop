@@ -1,4 +1,4 @@
-package unit.javamop.parser;
+package javamop.parser;
 
 import org.junit.Before;
 import org.junit.Test;

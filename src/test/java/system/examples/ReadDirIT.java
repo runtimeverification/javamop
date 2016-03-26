@@ -1,4 +1,4 @@
-package system.examples;
+package examples;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;

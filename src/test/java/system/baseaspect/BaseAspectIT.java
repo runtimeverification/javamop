@@ -1,6 +1,6 @@
-package system.baseaspect;
+package baseaspect;
 
-import system.examples.TestHelper;
+import examples.TestHelper;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 

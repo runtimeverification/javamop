@@ -1,4 +1,4 @@
-package unit.javamop.helper;
+package javamop.helper;
 
 import javamop.parser.ast.*;
 import javamop.parser.ast.aspectj.*;
