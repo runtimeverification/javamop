@@ -90,7 +90,7 @@ public class EndProgram {
                 ret += "{\n";
             }
             
-            ret += EventManager.EventMethodHelper.methodName(eventBody.specName, eventBody.event, 
+            ret += EventManager.EventMethodHelper.methodName(eventBody.getMOPSpec(), eventBody.event,
                 eventBody.fileName);
             ret += "();\n";
             
