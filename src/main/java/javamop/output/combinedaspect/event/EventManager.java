@@ -221,10 +221,10 @@ public class EventManager {
          * Construct a method name for a particular event.
          *
          * @param specName The name of the specification the event is a part of.
-         * @param event         The event the method is being generated for.
+         * @param eventId  The id of the target event from which the method name will be generated.
          * @param aspectName    The aspect the method will be a part of.
          */
-        protected static String methodName(String specName, EventDefinition event,
+        protected static String methodName(String specName, String eventId,
                                            String aspectName) {
             boolean mangle = false;
             if (JavaMOPMain.options.merge && JavaMOPMain.options.aspectname != null &&
@@ -244,7 +244,7 @@ public class EventManager {
                 s.append(specName);
                 s.append('_');
             }
-            s.append(event.getId());
+            s.append(eventId);
             s.append("Event");
             return s.toString();
         }
@@ -258,7 +258,7 @@ public class EventManager {
          */
         public static String methodName(JavaMOPSpec enclosing, EventDefinition evt,
                                         String aspectName) {
-            return methodName(enclosing.getName(), evt, aspectName);
+            return methodName(enclosing.getName(), evt.getId(), aspectName);
         }
     }
 }
