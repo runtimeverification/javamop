@@ -100,7 +100,7 @@ public class StartThread {
             ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
         }
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+        ret += EventManager.EventMethodHelper.methodName(eventBody.getMOPSpec(), event,
             eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -134,7 +134,7 @@ public class StartThread {
             ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
         }
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+        ret += EventManager.EventMethodHelper.methodName(eventBody.getMOPSpec(), event,
             eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
@@ -165,7 +165,7 @@ public class StartThread {
             ret += "Thread " + event.getThreadVar() + " = Thread.currentThread();\n";
         }
         
-        ret += EventManager.EventMethodHelper.methodName(eventBody.specName, event, 
+        ret += EventManager.EventMethodHelper.methodName(eventBody.getMOPSpec(), event,
             eventBody.fileName);
         ret += "(";
         if (event.getThreadVar() != null && event.getThreadVar().length() != 0) {
