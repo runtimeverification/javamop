@@ -21,4 +21,10 @@ public class JavaMOPMainTest {
         JavaMOPMain.main(args);
     }
 
+    @Test
+    public void testInputFileWithNonMOPExtension() {
+        String[] args = new String[]{"./src/test/java/unit/javamop/input/HasNext.mo"};
+        JavaMOPMain.main(args);
+    }
+
 }
