@@ -1,7 +1,9 @@
 package javamop.input;
 
 import javamop.JavaMOPMain;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +12,9 @@ import static org.junit.Assert.*;
  * Test different inputs to javamop.
  */
 public class JavaMOPMainTest {
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
     @Test(expected = NullPointerException.class)
     public void testNull() throws Exception {
         JavaMOPMain.main(null);
@@ -18,6 +23,8 @@ public class JavaMOPMainTest {
     @Test
     public void testEmptyStringArr() {
         String[] args = new String[0];
+        exit.expectSystemExitWithStatus(1);
+
         JavaMOPMain.main(args);
     }
 
