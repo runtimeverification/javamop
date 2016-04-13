@@ -31,7 +31,7 @@ public class JavaMOPMainTest {
     @Test
     public void testInputFileWithNonMOPExtension() {
         String[] args = new String[]{"./src/test/java/unit/javamop/input/HasNext.mo"};
-        JavaMOPMain.main(args);
+        JavaMOPMain.main(args); //expect normal exit.
     }
 
 }
