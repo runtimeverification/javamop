@@ -34,7 +34,6 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         if (!(arg instanceof MOPSpecFile))
             return false;
 
-        //TODO
         if (f == arg)
             return true;
         if (f == null || arg == null)
@@ -43,21 +42,22 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         //neither f nor arg is null
         MOPSpecFile other = (MOPSpecFile) arg;
 
-        List<ImportDeclaration> importDeclarationList = f.getImports();
         PackageDeclaration packageDeclaration = f.getPakage();
+        List<ImportDeclaration> importDeclarationList = f.getImports();
         List<JavaMOPSpec> specs = f.getSpecs();
 
-        List<ImportDeclaration> importDeclarationList2 = other.getImports();
         PackageDeclaration packageDeclaration2 = other.getPakage();
+        List<ImportDeclaration> importDeclarationList2 = other.getImports();
         List<JavaMOPSpec> specs2 = other.getSpecs();
+
+        if (!visit(packageDeclaration, packageDeclaration2))
+            return false;
 
         if (importDeclarationList.size() != importDeclarationList2.size()
                 || specs.size() != specs2.size())
             return false;
 
-        if (!visit(packageDeclaration, packageDeclaration2))
-            return false;
-
+        //compare each import stmts
         for (int i = 0; i < importDeclarationList.size(); i++) {
             ImportDeclaration importDeclaration = importDeclarationList.get(i);
             ImportDeclaration importDeclaration2 = importDeclarationList2.get(i);
@@ -66,6 +66,7 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
                 return false;
         }
 
+        //compare each javamop spec contained in the mop spec file.
         for (int i = 0; i < specs.size(); i++) {
             JavaMOPSpec spec = specs.get(i);
             JavaMOPSpec spec2 = specs2.get(i);
@@ -240,16 +241,56 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
 
     @Override
     public Boolean visit(PackageDeclaration n, Node arg) {
-        //TODO
+        if (!(arg instanceof PackageDeclaration))
+            return false;
+
+        if (n == arg) {
+            return true;
+        }
+
+        if (n == null || arg == null)
+            return false;
+
+        PackageDeclaration other = (PackageDeclaration) arg;
+        NameExpr ne1 = n.getName();
+        NameExpr ne2 = other.getName();
+
+        if (!visit(ne1, ne2))
+            return false;
+
+        List<AnnotationExpr> annotationExprs1 = n.getAnnotations();
+        List<AnnotationExpr> annotationExprs2 = other.getAnnotations();
+
+        if (annotationExprs1.size() != annotationExprs2.size())
+            return false;
+
+        for (int i = 0; i < annotationExprs1.size(); i++) {
+            if (!annotationExprs1.get(i).equals(annotationExprs2.get(i))) {
+               return false;
+            }
+        }
 
         return true;
     }
 
     @Override
     public Boolean visit(ImportDeclaration n, Node arg) {
-        //TODO
+        if (!(arg instanceof ImportDeclaration))
+            return false;
 
-        return true;
+        if (n == arg) {
+            return true;
+        }
+
+        if (n == null || arg == null)
+            return false;
+
+        ImportDeclaration other = (ImportDeclaration) arg;
+        if (!visit(n.getName(), other.getName()))
+            return false;
+
+        return n.isAsterisk() == other.isAsterisk()
+                && n.isStatic() == other.isStatic();
     }
 
     @Override
@@ -459,7 +500,26 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
 
     @Override
     public Boolean visit(NameExpr n, Node arg) {
-        return null;
+        if (!(arg instanceof NameExpr))
+            return false;
+
+        if (n == arg) {
+            return true;
+        }
+
+        if (n == null || arg == null)
+            return false;
+
+        String name1 = n.getName();
+        String name2 = ((NameExpr) arg).getName();
+
+        if (name1 == name2)
+            return true;
+
+        if (name1 == null || name2 == null)
+            return false;
+
+        return name1.equals(name2);
     }
 
     @Override
