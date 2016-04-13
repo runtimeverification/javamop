@@ -141,7 +141,21 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
                 return false;
         }
 
-        //TODO: more
+        //prop and handlers
+        if (s.getPropertiesAndHandlers().size() != other.getPropertiesAndHandlers().size())
+            return false;
+
+        for (int i = 0; i < s.getPropertiesAndHandlers().size(); i++) {
+            if (!visit(s.getPropertiesAndHandlers().get(i),
+                    other.getPropertiesAndHandlers().get(i)))
+                return false;
+        }
+
+        if (!visit(s.getCommonParamInEvents(), other.getCommonParamInEvents()))
+            return false;
+
+        if (!visit(s.getVarsToSave(), other.getVarsToSave()))
+            return false;
 
         return true;
     }
@@ -245,7 +259,46 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
 
     @Override
     public Boolean visit(PropertyAndHandlers p, Node arg) {
+        if (p == arg)
+            return true;
+
+        if (p == null || arg == null)
+            return false;
+
+        if (!(arg instanceof PropertyAndHandlers))
+            return false;
+
+        PropertyAndHandlers other = (PropertyAndHandlers) arg;
+        if (!visit(p.getProperty(), other.getProperty()))
+            return false;
+
+        if (p.getPropertyId() != other.getPropertyId())
+            return false;
+
+        if (p.getVersionedStack() != other.getVersionedStack())
+            return false;
+
+        if (p.getHandlers().size() != other.getHandlers().size())
+            return false;
+
+        for (String key :
+                p.getHandlers().keySet()) {
+            BlockStmt b1 = p.getHandlers().get(key);
+            BlockStmt b2 = other.getHandlers().get(key);
+            if (!visit(b1, b2))
+                return false;
+        }
+
+        //TODO
+
         return null;
+    }
+
+    public Boolean visit(Property p1, Property p2) {
+        if (p1 == p2) return true;
+        if (p1 == null || p2 == null) return false;
+
+        return (p1.getType().equals(p2.getType()));
     }
 
     @Override
