@@ -89,6 +89,16 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         return true;
     }
 
+    public Boolean visit(String a, String b) {
+        if (a == b)
+            return true;
+
+        if (a == null || b == null)
+            return false;
+
+        return a.equals(b);
+    }
+
     @Override
     public Boolean visit(JavaMOPSpec s, Node arg) {
         if (!(arg instanceof JavaMOPSpec))
@@ -105,8 +115,8 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         //compare each primitive field
         if (!s.getName().equals(other.getName()) ||
                 s.getModifiers() != other.getModifiers() ||
-                !s.getInMethod().equals(other.getInMethod()) ||
-                !s.getRawLogic().equals(other.getRawLogic()))
+                !visit(s.getInMethod(), other.getInMethod()) ||
+                !visit(s.getRawLogic(), other.getRawLogic()))
             return false;
 
         if (!visit(s.getPackage(), other.getPackage()))
@@ -180,16 +190,16 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     public Boolean visit(EventDefinition e, Node arg) {
         EventDefinition other = (EventDefinition) arg;
         boolean primitiveEq =
-                e.getCondition().equals(other.getCondition())
-                        && e.getCountCond().equals(other.getCountCond())
-                        && e.getEndObjectVar().equals(other.getEndObjectVar())
-                        && e.getId().equals(other.getId())
+                visit(e.getCondition(), other.getCondition())
+                        && visit(e.getCountCond(), other.getCountCond())
+                        && visit(e.getEndObjectVar(), other.getEndObjectVar())
+                        && visit(e.getId(), other.getId())
                         && e.getIdNum() == other.getIdNum()
-                        && e.getPointCutString().equals(other.getPointCutString())
-                        && e.getPos().equals(other.getPos())
-                        && e.getPurePointCutString().equals(other.getPurePointCutString())
-                        && e.getThreadVar().equals(other.getThreadVar())
-                        && e.getUniqueId().equals(other.getUniqueId())
+                        && visit(e.getPointCutString(), other.getPointCutString())
+                        && visit(e.getPos(), other.getPos())
+                        && visit(e.getPurePointCutString(), other.getPurePointCutString())
+                        && visit(e.getThreadVar(), other.getThreadVar())
+                        && visit(e.getUniqueId(), other.getUniqueId())
                         && e.getBeginColumn() == other.getBeginColumn()
                         && e.getBeginLine() == other.getBeginLine()
                         && e.getEndColumn() == other.getEndColumn()
@@ -217,7 +227,7 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             return false;
 
         //compare some other sub-structures
-        if (!e.getRetType().equals(other.getRetType()))
+        if (!visit(e.getRetType(), other.getRetType()))
             return false;
 
         if (!e.getPointCut().getType().equals(other.getPointCut().getType()))
@@ -243,16 +253,37 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             return false;
 
         //thread blocked vars
-        if (e.getThreadBlockedVar().size() != other.getThreadBlockedVar().size())
-            return false;
-
-        for (int i = 0; i < e.getThreadBlockedVar().size(); i++) {
-            if (!e.getThreadBlockedVar().get(i).equals(other.getThreadBlockedVar().get(i)))
+        if (e.getThreadBlockedVar() != other.getThreadBlockedVar()) {
+            if (e.getThreadBlockedVar() == null || other.getThreadBlockedVar() == null)
                 return false;
+
+            else {
+                if (e.getThreadBlockedVar().size() != other.getThreadBlockedVar().size())
+                    return false;
+
+                for (int i = 0; i < e.getThreadBlockedVar().size(); i++) {
+                    if (!e.getThreadBlockedVar().get(i).equals(other.getThreadBlockedVar().get(i)))
+                        return false;
+                }
+            }
         }
 
-        if (!e.getEndObjectType().getOp().equals(other.getEndObjectType().getOp()))
-            return false;
+        if (e.getEndObjectType() != other.getEndObjectType()) {
+            if (e.getEndObjectType() == null || other.getEndObjectType() == null)
+                return false;
+
+            else {
+                String op1 = e.getEndObjectType().getOp();
+                String op2 = other.getEndObjectType().getOp();
+
+                if (op1 != op2) {
+                    if (op1 == null || op2 == null)
+                        return false;
+                    else
+                        return op1.equals(op2);
+                }
+            }
+        }
 
         return true;
     }
@@ -289,9 +320,7 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
                 return false;
         }
 
-        //TODO
-
-        return null;
+        return true;
     }
 
     public Boolean visit(Property p1, Property p2) {
@@ -463,14 +492,22 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         List<AnnotationExpr> annotationExprs1 = n.getAnnotations();
         List<AnnotationExpr> annotationExprs2 = other.getAnnotations();
 
-        if (annotationExprs1.size() != annotationExprs2.size())
-            return false;
-
-        for (int i = 0; i < annotationExprs1.size(); i++) {
-            if (!annotationExprs1.get(i).equals(annotationExprs2.get(i))) {
+        if (annotationExprs1 != annotationExprs2) {
+            if (annotationExprs1 == null || annotationExprs2 == null)
                 return false;
+
+            else {
+                if (annotationExprs1.size() != annotationExprs2.size())
+                    return false;
+
+                for (int i = 0; i < annotationExprs1.size(); i++) {
+                    if (!annotationExprs1.get(i).equals(annotationExprs2.get(i))) {
+                        return false;
+                    }
+                }
             }
         }
+
 
         return true;
     }
@@ -807,15 +844,23 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             return false;
 
         BlockStmt other = (BlockStmt) arg;
-        if (n.getStmts().size() != other.getStmts().size())
-            return false;
-
-        for (int i = 0; i < n.getStmts().size(); i++) {
-            Statement s1 = n.getStmts().get(i);
-            Statement s2 = other.getStmts().get(i);
-
-            if (!s1.equals(s2))
+        if (n.getStmts() != other.getStmts()) {
+            if (n.getStmts() == null || other.getStmts() == null)
                 return false;
+
+            else {
+                if (n.getStmts().size() != other.getStmts().size())
+                    return false;
+
+                for (int i = 0; i < n.getStmts().size(); i++) {
+                    Statement s1 = n.getStmts().get(i);
+                    Statement s2 = other.getStmts().get(i);
+
+                    if (!s1.equals(s2))
+                        return false;
+                }
+
+            }
         }
 
         return true;

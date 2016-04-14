@@ -20,6 +20,14 @@ public class NodeEquivalenceChecker {
         MOPSpecFile mopSpecFile2 = SpecExtractor.parse(new File
                 ("A:\\UIUC-SW\\javamop\\target\\release\\javamop\\javamop\\examples\\ERE\\HashSet\\HashSet.mop"));
 
-        mopSpecFile.accept(scv, mopSpecFile2);
+        MOPSpecFile mopSpecFile3 = SpecExtractor.parse(new File
+                ("A:\\UIUC-SW\\Debugging\\testMe.mop"));
+
+        System.out.println("mop file one and 2 are the same? " +
+                mopSpecFile.accept(scv, mopSpecFile2));
+
+        System.out.println("mop file one and 3 are the same? " +
+                mopSpecFile.accept(scv, mopSpecFile3));;
+
     }
 }
