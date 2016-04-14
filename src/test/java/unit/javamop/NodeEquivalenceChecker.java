@@ -57,10 +57,10 @@ public class NodeEquivalenceChecker {
 
         System.out.println("mop file one and 3 are the same? " +
                 equalMOPSpecFiles(restoredSpec1, mopSpecFile3));
-        ;
+
 
         System.out.println("mop file one and 4 are the same? " +
                 equalMOPSpecFiles(restoredSpec1, mopSpecFile4));
-        ;
+
     }
 }
