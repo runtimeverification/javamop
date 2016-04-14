@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by He Xiao on 3/20/2016.
  * The shape analysis checks whether two ast have the 'same' structure
- * without comparing concrete values at each node.
+ * without comparing every concrete values at each node.
  */
 public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     @Override
