@@ -856,7 +856,7 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
                     Statement s1 = n.getStmts().get(i);
                     Statement s2 = other.getStmts().get(i);
 
-                    if (!s1.equals(s2))
+                    if (!s1.toString().equals(s2.toString()))
                         return false;
                 }
 
