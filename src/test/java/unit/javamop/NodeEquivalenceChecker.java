@@ -31,32 +31,18 @@ public class NodeEquivalenceChecker {
 
     public static void main(String[] args) throws MOPException {
         File file1 = new File
-                ("A:\\UIUC-SW\\javamop\\target\\release\\javamop\\javamop\\examples\\ERE" +
-                        "\\HasNext\\HasNext.mop");
+                ("examples\\EndProgram\\FileClose\\FileClose.mop");
         MOPSpecFile mopSpecFile = SpecExtractor.parse(file1);
 
         MOP_Serialization.writeMOPSpecObject2File(mopSpecFile,
-                file1.getParent() + "\\HasNext.ser");
+                file1.getParent() + "\\FileClose.ser");
 
         MOPSpecFile restoredSpec1 =
                 MOP_Serialization.readMOPSpecObjectFromFile
-                        (file1.getParent() + "\\HasNext.ser");
-
-        MOPSpecFile mopSpecFile2 = SpecExtractor.parse(new File
-                ("A:\\UIUC-SW\\javamop\\target\\release\\javamop\\javamop\\examples\\ERE\\HashSet\\HashSet.mop"));
-
-        MOPSpecFile mopSpecFile3 = SpecExtractor.parse(new File
-                ("A:\\UIUC-SW\\Debugging\\testMe.mop"));
+                        (file1.getParent() + "\\FileClose.ser");
 
         MOPSpecFile mopSpecFile4 = SpecExtractor.parse(new File
-                ("A:\\UIUC-SW\\javamop\\target\\release\\javamop\\javamop\\examples\\ERE" +
-                        "\\HasNext\\HasNext.mop"));
-
-        System.out.println("mop file one and 2 are the same? " +
-                equalMOPSpecFiles(restoredSpec1, mopSpecFile2));
-
-        System.out.println("mop file one and 3 are the same? " +
-                equalMOPSpecFiles(restoredSpec1, mopSpecFile3));
+                ("C:\\Users\\hx312\\Documents\\jmop-tmp\\resources\\FileClose.mop"));
 
 
         System.out.println("mop file one and 4 are the same? " +

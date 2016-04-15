@@ -19,7 +19,14 @@ import java.util.List;
 public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     @Override
     public Boolean visit(Node n, Node arg) {
-        return true;
+        if (n == arg)
+            return true;
+
+        if (n == null || arg == null)
+            return false;
+
+        return n.getBeginLine() == arg.getBeginLine()
+                && n.getBeginColumn() == arg.getBeginColumn();
     }
 
     /**
@@ -135,8 +142,7 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             BodyDeclaration bodyDeclaration = s.getDeclarations().get(i);
             BodyDeclaration bodyDeclaration2 = other.getDeclarations().get(i);
 
-            //TODO: need to evaluate this code carefully, may omit it if necessary.
-            if (!bodyDeclaration.equals(bodyDeclaration2))
+            if (!visit(bodyDeclaration, bodyDeclaration2))
                 return false;
         }
 
