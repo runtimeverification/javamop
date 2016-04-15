@@ -1,5 +1,6 @@
 package javamop.helper;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -8,7 +9,7 @@ import java.nio.file.*;
  */
 public class IOUtils {
     public static String readFile(String path) throws IOException {
-        Path inputPath = Paths.get(path);
+        Path inputPath = Paths.get(System.getProperty("user.dir") + File.separator + path);
         return new String(Files.readAllBytes(inputPath));
     }
 
