@@ -60,6 +60,19 @@ public class MOP_Serialization {
         return mopSpecFile;
     }
 
+
+    public static final int[] selectedTestCases = new int[]{2, 10, 11, 15, 18, 19};
+
+    private static boolean contains(int[] arr, int elem) {
+        if (arr == null) return false;
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == elem)
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Generate the trusted AST files, invoked once in version 4.4;
      *
@@ -73,8 +86,7 @@ public class MOP_Serialization {
         Object[] inputList = ExamplesIT.data().toArray();
 
         for (int i = 0; i < inputList.length; i++) {
-            if (i == 2 || i == 10 || i == 11 ||
-                    i == 15 || i == 18 || i == 19) {
+            if (contains(selectedTestCases, i)) {
                 Object[] inputI = (Object[]) inputList[i];
                 String path = (String) inputI[0];
 
