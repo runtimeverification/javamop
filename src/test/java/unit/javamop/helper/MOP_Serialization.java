@@ -63,7 +63,7 @@ public class MOP_Serialization {
 
     public static final int[] selectedTestCases = new int[]{2, 10, 11, 15, 18, 19};
 
-    private static boolean contains(int[] arr, int elem) {
+    public static boolean contains(int[] arr, int elem) {
         if (arr == null) return false;
 
         for (int i = 0; i < arr.length; i++) {
