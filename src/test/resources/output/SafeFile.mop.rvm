@@ -1,0 +1,22 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+SafeFile(FileReader f, Thread t) {
+	event open(Thread t, FileReader f){
+	}
+	event close(FileReader f, Thread t){
+	}
+	event begin(Thread t){
+	}
+	event end(Thread t){
+	}
+	cfg:
+	S -> A S | epsilon,
+	A -> A begin A end | A open A close | epsilon
+
+	@fail
+	{
+		System.out.println("improper use of files");
+	}
+}
