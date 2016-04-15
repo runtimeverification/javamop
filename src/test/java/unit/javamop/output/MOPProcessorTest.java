@@ -2,10 +2,12 @@ package javamop.output;
 
 import examples.ExamplesIT;
 import javamop.JavaMOPMain;
+import javamop.JavaMOPOptions;
 import javamop.helper.IOUtils;
 import javamop.helper.MOP_Serialization;
 import javamop.parser.SpecExtractorTest;
 import javamop.parser.ast.MOPSpecFile;
+import javamop.util.MOPNameSpace;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,12 +32,20 @@ public class MOPProcessorTest {
     private String output_RVM_FilePath;
 
     private String mopFilePath;
+    private String aspectName;
+
+    static {
+        JavaMOPMain.options = new JavaMOPOptions();
+    }
 
 
     public MOPProcessorTest(int testId) {
         this.mopFilePath = (String) ((ArrayList<Object[]>) ExamplesIT.data()).get(testId)[0];
         String testName = mopFilePath.substring
                 (mopFilePath.lastIndexOf(File.separator) + 1);
+
+        this.aspectName = testName.substring(0, testName.lastIndexOf("."));
+
         String inputASTPath = inputASTPrefix + testName + ".ser";
 
         this.inputAST = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
@@ -55,7 +65,9 @@ public class MOPProcessorTest {
 
     @Test
     public void generateRVFile() throws Exception {
-        MOPProcessor processor = new MOPProcessor("");
+        MOPProcessor processor = new MOPProcessor(this.aspectName);
+        MOPNameSpace.init();
+
         String actualRVString = processor.generateRVFile(this.inputAST);
         String expectedRVString = IOUtils.readFile(this.output_RVM_FilePath);
         assertTrue("The generated RV String for spec " + this.mopFilePath +
@@ -67,7 +79,9 @@ public class MOPProcessorTest {
 
     @Test
     public void generateAJFile() throws Exception {
-        MOPProcessor processor = new MOPProcessor("");
+        MOPProcessor processor = new MOPProcessor(this.aspectName);
+        MOPNameSpace.init();
+
         String actualAJString = processor.generateAJFile(this.inputAST);
         String expectedAJString = IOUtils.readFile(this.output_AJ_FilePath);
         assertTrue("The generated AJ String for spec " + this.mopFilePath +
