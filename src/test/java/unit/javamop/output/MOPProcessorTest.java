@@ -3,6 +3,7 @@ package javamop.output;
 import examples.ExamplesIT;
 import javamop.JavaMOPMain;
 import javamop.JavaMOPOptions;
+import javamop.NodeEquivalenceChecker;
 import javamop.helper.IOUtils;
 import javamop.helper.MOP_Serialization;
 import javamop.parser.SpecExtractorTest;
@@ -28,6 +29,8 @@ public class MOPProcessorTest {
     public static final String expectedOutputPrefix = inputASTPrefix + "output" + File.separator;
 
     private MOPSpecFile inputAST;
+    private String inputASTPath;
+
     private String output_AJ_FilePath;
     private String output_RVM_FilePath;
 
@@ -46,7 +49,7 @@ public class MOPProcessorTest {
 
         this.aspectName = testName.substring(0, testName.lastIndexOf("."));
 
-        String inputASTPath = inputASTPrefix + testName + ".ser";
+        this.inputASTPath = inputASTPrefix + testName + ".ser";
 
         this.inputAST = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
         this.output_AJ_FilePath = expectedOutputPrefix + testName + ".aj";
@@ -73,8 +76,9 @@ public class MOPProcessorTest {
         assertTrue("The generated RV String for spec " + this.mopFilePath +
                 " is not as expected", expectedRVString.equals(actualRVString));
 
-        //TODO check for side effects
-
+        MOPSpecFile originalSpecFile = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
+        assertTrue("The method for generating .rvm spec should not alter the MOPSpecFile object",
+                NodeEquivalenceChecker.equalMOPSpecFiles(originalSpecFile, this.inputAST));
     }
 
     @Test
@@ -87,8 +91,9 @@ public class MOPProcessorTest {
         assertTrue("The generated AJ String for spec " + this.mopFilePath +
                 " is not as expected", expectedAJString.equals(actualAJString));
 
-        //TODO check for side effects
-
+        MOPSpecFile originalSpecFile = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
+        assertTrue("The method for generating .aj code should not alter the MOPSpecFile object",
+                NodeEquivalenceChecker.equalMOPSpecFiles(originalSpecFile, this.inputAST));
     }
 
 }
