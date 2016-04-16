@@ -18,7 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by xiaohe on 4/15/16.
@@ -71,10 +72,12 @@ public class MOPProcessorTest {
         MOPProcessor processor = new MOPProcessor(this.aspectName);
         MOPNameSpace.init();
 
-        String actualRVString = processor.generateRVFile(this.inputAST);
-        String expectedRVString = IOUtils.readFile(this.output_RVM_FilePath);
-        assertTrue("The generated RV String for spec " + this.mopFilePath +
-                " is not as expected", expectedRVString.equals(actualRVString));
+        String actualRVString = processor.generateRVFile(this.inputAST)
+                .replaceAll("[\r\n]", "");
+        String expectedRVString = IOUtils.readFile(this.output_RVM_FilePath)
+                .replaceAll("[\r\n]", "");
+        assertEquals("The generated RV String for spec " + this.mopFilePath +
+                " is not as expected", expectedRVString, actualRVString);
 
         MOPSpecFile originalSpecFile = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
         assertTrue("The method for generating .rvm spec should not alter the MOPSpecFile object",
@@ -86,10 +89,12 @@ public class MOPProcessorTest {
         MOPProcessor processor = new MOPProcessor(this.aspectName);
         MOPNameSpace.init();
 
-        String actualAJString = processor.generateAJFile(this.inputAST);
-        String expectedAJString = IOUtils.readFile(this.output_AJ_FilePath);
-        assertTrue("The generated AJ String for spec " + this.mopFilePath +
-                " is not as expected", expectedAJString.equals(actualAJString));
+        String actualAJString = processor.generateAJFile(this.inputAST)
+                .replaceAll("[\r\n]", "");
+        String expectedAJString = IOUtils.readFile(this.output_AJ_FilePath)
+                .replaceAll("[\r\n]", "");
+        assertEquals("The generated AJ String for spec " + this.mopFilePath +
+                " is not as expected", expectedAJString, actualAJString);
 
         MOPSpecFile originalSpecFile = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
         assertTrue("The method for generating .aj code should not alter the MOPSpecFile object",
