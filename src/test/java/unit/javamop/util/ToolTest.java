@@ -1,18 +1,24 @@
 package javamop.util;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by hx312 on 3/20/2016.
  */
 public class ToolTest {
-
-    @Before
-    public void setUp() throws Exception {
-
+    @Test
+    public void privateConstructorTest() throws NoSuchMethodException {
+        Constructor[] constructors = Tool.class.getConstructors();
+        for (int i = 0; i < constructors.length; i++) {
+            Constructor constructor = constructors[i];
+            assertTrue("The constructor of the class Tool should be private",
+                    Modifier.isPrivate(constructor.getModifiers()));
+        }
     }
 
     @Test

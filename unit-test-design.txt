@@ -12,8 +12,7 @@ For each eg used in unit-testing we should have:
 ==
 Implement function to test:
 1) whether the untrusted implementation of parse function 
-can derive the same ast from the given mop spec file as the
-trusted ast for the spec file.
+can derive the same ast as the trusted one from a mop spec.
 
 core: compare whether two ast are the same.
 two steps~
