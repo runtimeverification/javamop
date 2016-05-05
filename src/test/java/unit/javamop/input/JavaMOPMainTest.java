@@ -41,7 +41,7 @@ public class JavaMOPMainTest {
 
     //TODO: multiple specs
     //TODO: With Invalid option
-    //TODO: valid option
+    //TODO: valid option: -merge
 
     @Test
     public void testMultiPropertyInSingleSpec() throws IOException {
