@@ -7,6 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -44,16 +45,22 @@ public class JavaMOPMainTest {
 
     @Test
     public void testMultiPropertyInSingleSpec() throws IOException {
-        String[] args = new String[] {"./src/test/resources/multi-property/UnsafeIterator.mop"};
+        String testOutDir = System.getProperty("testOutDir");
+        String mopOutDir = testOutDir + File.separator + "multi-property";
+
+        String[] args = new String[]{"./src/test/resources/multi-property/UnsafeIterator.mop",
+        "-d",  mopOutDir};
         JavaMOPMain.main(args);
 
-        examples.TestHelper.assertEqualUnorderedFiles(
-                "./src/test/resources/multi-property/UnsafeIterator.rvm",
-                "./target/test-classes/multi-property/UnsafeIterator.rvm");
 
         examples.TestHelper.assertEqualUnorderedFiles(
-                "./src/test/resources/multi-property/UnsafeIteratorMonitorAspect.aj",
-                "./target/test-classes/multi-property/UnsafeIteratorMonitorAspect.aj"
+                "./src/test/resources/multi-property/UnsafeIterator.rvm.expected",
+                mopOutDir + "/UnsafeIterator.rvm");
+
+
+        examples.TestHelper.assertEqualUnorderedFiles(
+                "./src/test/resources/multi-property/UnsafeIteratorMonitorAspect.aj.expected",
+                mopOutDir + "/UnsafeIteratorMonitorAspect.aj"
         );
 
     }
