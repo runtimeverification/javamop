@@ -1,0 +1,24 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+UnsafeIterator(Collection c, Iterator i) {
+	event create(Collection c, Iterator i){
+	}
+	event updatesource(Collection c){
+	}
+	event next(Iterator i){
+	}
+	ere:  create next* updatesource updatesource* next
+
+	@match
+	{
+		System.out.println("improper iterator usage");
+	}
+	ere:  create
+
+	@match
+	{
+		System.out.println("collection created");
+	}
+}

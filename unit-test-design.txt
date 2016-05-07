@@ -1,0 +1,33 @@
+***Should not add new function code to the code base: that'll add more 
+   uncovered code and increase the burden of testing.
+
+***add helper code in the test folder if necessary.
+
+For each eg used in unit-testing we should have:
+
+1. mop spec file
+2. trusted ast for the mop spec file
+3. trusted .aj output string and .rvm output string
+
+==
+Implement function to test:
+1) whether the untrusted implementation of parse function 
+can derive the same ast as the trusted one from a mop spec.
+
+core: compare whether two ast are the same.
+two steps~
+i) check shape (same structure)
+ *too time consuming if we fully explored the ast.
+ *may perform a bounded depths checking
+ *increment the depth of exploration in the future
+
+ii) compare the equality of dumped strings
+
+
+2) whether the same output will be generated from the same ast
+for the system under test:
+input: the trusted ast
+read the ast, then generate actual .aj and .rvm
+
+compare with the expected ones: equality of strings.
+

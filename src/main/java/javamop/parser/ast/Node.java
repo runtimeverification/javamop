@@ -27,10 +27,12 @@ import javamop.parser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.visitor.RVDumpVisitor;
 import javamop.parser.ast.visitor.VoidVisitor;
 
+import java.io.Serializable;
+
 /**
  * @author Julio Vilmar Gesser
  */
-public abstract class Node {
+public abstract class Node implements Serializable {
 
     protected final int beginLine;
 

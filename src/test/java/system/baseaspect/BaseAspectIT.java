@@ -5,9 +5,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 /**

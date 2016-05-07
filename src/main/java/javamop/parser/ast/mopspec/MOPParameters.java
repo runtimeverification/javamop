@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,7 +10,7 @@ import java.util.List;
 
 import javamop.parser.ast.aspectj.BaseTypePattern;
 
-public class MOPParameters implements Iterable<MOPParameter> {
+public class MOPParameters implements Iterable<MOPParameter>, Serializable {
     
     private final ArrayList<MOPParameter> parameters;
     
