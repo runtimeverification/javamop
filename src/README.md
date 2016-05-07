@@ -18,6 +18,8 @@ v.3.0 or higher
 v.1.8 or higher
  * Check Git is installed properly: run `git` from a terminal.
 
+P.S. JDK 8 is required to run the tests of JavaMOP.
+
 ## Build and Install
 
 1. Run `git clone https://github.com/runtimeverification/javamop.git`
