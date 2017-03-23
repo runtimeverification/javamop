@@ -68,8 +68,7 @@ public final class SeparateAgentGenerator {
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
         // Change aspect name
-        String completeClassPath = baseClasspath + File.pathSeparator +
-			classDir.getAbsolutePath();
+        String completeClassPath = baseClasspath + File.pathSeparator + classDir.getAbsolutePath();
 
         if (SystemUtils.IS_OS_WINDOWS) {
             completeClassPath = "\"" + completeClassPath + "\"";
@@ -98,8 +97,8 @@ public final class SeparateAgentGenerator {
             return;
         }
 
-        // Step 3: suppress aspectJ warnings
-        suppress_warnings(aopAjc);
+        // Step 3: set options for Load-Time Weaving in the aop-ajc.xml file
+        setWeaverOptions(aopAjc);
 
         // Also need to copy all the .class files from classDir to outputDir
         FileUtils.copyDirectory(classDir, agentDir, new OrFileFilter(DirectoryFileFilter.INSTANCE,
@@ -208,15 +207,20 @@ public final class SeparateAgentGenerator {
     }
 
     /**
-     * Add a line to the aop-ajc.xml file in order to suppress warnings from the AspectJ compiler
+     * Add a line to the aop-ajc.xml file in order to set options for the load-time weaving
      *
-     * @param aopAjc A reference to the aop-ajc.xml file
+     * @param aopAjc An object reference to the aop-ajc.xml file
      */
-    private static void suppress_warnings(File aopAjc) {
+    private static void setWeaverOptions(File aopAjc) {
         try {
             List<String> lines = FileUtils.readLines(aopAjc, Charsets.UTF_8);
             int index = lines.indexOf("</aspects>") + 1;
-            lines.add(index, "<weaver options=\"-nowarn -Xlint:ignore\"></weaver>");
+            String makeVerboseAgentOptions = " -verbose -showWeaveInfo";
+            String suppressWarningOptions = "-nowarn -Xlint:ignore";
+            String weaverOptions = "<weaver options=\"" + suppressWarningOptions;
+            weaverOptions = JavaMOPAgentMain.makeVerboseAgent ? weaverOptions + makeVerboseAgentOptions : weaverOptions;
+            weaverOptions += "\"></weaver>";
+            lines.add(index, weaverOptions);
             FileUtils.writeLines(aopAjc, lines);
         } catch (IOException e) {
             System.err.println("(ajc) There was a problem reading aop-ajc.xml");
