@@ -29,6 +29,10 @@ public class JavaMOPAgentOptions {
             converter = FileConverter.class)
     public File outputDir;
 
+    @Parameter(names={"-m", "-makeVerboseAgent"},description = "When set to \"true\", the generated agent will run in" +
+            " verbose mode, i.e., AspectJ will print more information on Load-Time Weaving via the -verbose and " +
+            "-showWeaveInfo options")
+    public boolean makeVerboseAgent;
 
     @Parameter(names={"-h","-help"}, description = "Show this help message.", help = true)
     private boolean help = false;

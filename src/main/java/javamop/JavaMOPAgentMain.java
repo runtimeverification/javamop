@@ -19,6 +19,8 @@ public class JavaMOPAgentMain {
 
     public static boolean excludeJars = false;
 
+    public static boolean makeVerboseAgent = false;
+
     public static String agentName = null;
 
     public static File agentAspect = null;
@@ -89,6 +91,7 @@ public class JavaMOPAgentMain {
         JavaMOPAgentMain.excludeJars = options.excludeJars;
         JavaMOPAgentMain.agentName = options.agentName;
         JavaMOPAgentMain.verboseMode = options.verbose;
+        JavaMOPAgentMain.makeVerboseAgent = options.makeVerboseAgent;
         if (JavaMOPAgentMain.agentName == null) {
             JavaMOPAgentMain.agentName = "agent";
         }
