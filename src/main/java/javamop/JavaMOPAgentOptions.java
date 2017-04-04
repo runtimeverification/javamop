@@ -29,6 +29,9 @@ public class JavaMOPAgentOptions {
             converter = FileConverter.class)
     public File outputDir;
 
+    @Parameter(names={"-emop"}, description = "Aspects dir for emop.", converter = FileConverter.class)
+    public File aspectDir;
+
     @Parameter(names={"-m", "-makeVerboseAgent"},description = "When set to \"true\", the generated agent will run in" +
             " verbose mode, i.e., AspectJ will print more information on Load-Time Weaving via the -verbose and " +
             "-showWeaveInfo options")

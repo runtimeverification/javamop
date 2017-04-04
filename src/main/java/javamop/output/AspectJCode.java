@@ -98,8 +98,11 @@ class AspectJCode {
         ret += imports.toString().replaceAll("import javamoprt.*", "");
 
         ret += "\n";
+        
+        if(!JavaMOPMain.options.emop) {
+            ret += this.baseAspect + "\n\n";
+        }
 
-        ret += this.baseAspect + "\n\n";
         // The order of these two is really important.
         if (systemAspect != null) {
             ret += "aspect " + name + "OrderAspect {\n";

@@ -147,6 +147,20 @@ public final class JavaMOPMain {
         } else {
             if (specFiles.size() == 1) {
                 aspectName = Tool.getFileName(specFiles.get(0).getAbsolutePath());
+                if(options.emop) {
+                    int suffixNumber = 0;
+                    // generate auto name like 'MultiMonitorAspect.aj'
+                    File aspectFile;
+                    do {
+                        suffixNumber++;
+                        aspectFile = new File(options.outputDir.getAbsolutePath() + File.separator +
+                            "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
+                    } while (aspectFile.exists());
+                    String mergeName = "MultiSpec_" + suffixNumber;
+                    options.aspectname = mergeName;
+                } else {
+                    options.aspectname = aspectName;
+                }
             } else {
                 int suffixNumber = 0;
                 // generate auto name like 'MultiMonitorAspect.aj'
@@ -157,8 +171,8 @@ public final class JavaMOPMain {
                             "JavaMOPAgent" + suffixNumber + AJ_FILE_SUFFIX);
                 } while (aspectFile.exists());
                 aspectName = "MultiSpec_" + suffixNumber;
+                options.aspectname = aspectName;
             }
-            options.aspectname = aspectName;
         }
 
         MOPProcessor processor = new MOPProcessor(aspectName);
@@ -300,7 +314,7 @@ public final class JavaMOPMain {
         //ensure every spec file has a valid name (according to Java's identifier naming convention)
         areValidNames(specFiles);
 
-        if (options.merge) {
+        if (options.merge || options.emop) {
             System.out.println("-Processing " + specFiles.size()
                     + " specification(s)");
             processMultipleFiles(specFiles);

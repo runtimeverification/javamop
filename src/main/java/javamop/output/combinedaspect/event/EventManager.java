@@ -235,12 +235,14 @@ public class EventManager {
             StringBuilder s = new StringBuilder();
             if (mangle && JavaMOPMain.specifiedAJName) {
                 s.append(JavaMOPMain.options.aspectname);
+            } else if (JavaMOPMain.options.emop){
+                s.append(JavaMOPMain.options.aspectname);
             } else {
                 s.append(aspectName);
             }
             s.append("RuntimeMonitor");
             s.append('.');
-            if (mangle) {
+            if (mangle || JavaMOPMain.options.emop) {
                 s.append(specName);
                 s.append('_');
             }

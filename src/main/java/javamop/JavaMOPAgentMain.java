@@ -30,6 +30,8 @@ public class JavaMOPAgentMain {
     public static File outputDir = null;
 
     public static boolean verboseMode = false;
+   
+    public static File emopAspectDir = null;
 
     public static void main(String[] args) {
         options = new JavaMOPAgentOptions();
@@ -57,11 +59,20 @@ public class JavaMOPAgentMain {
         handleOptions(options, args, jc);
 
         // Generate agent with SeparateAgentGenerator
-        try {
-            SeparateAgentGenerator.generate(JavaMOPAgentMain.outputDir, JavaMOPAgentMain.agentName,
+        if(emopAspectDir != null) {
+            try {
+                SeparateAgentGenerator.eMOPGenerate(JavaMOPAgentMain.outputDir, JavaMOPAgentMain.agentName,
+                    JavaMOPAgentMain.emopAspectDir, JavaMOPAgentMain.classDir, verboseMode);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                SeparateAgentGenerator.generate(JavaMOPAgentMain.outputDir, JavaMOPAgentMain.agentName,
                     JavaMOPAgentMain.agentAspect, JavaMOPAgentMain.classDir, verboseMode);
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         if (createdTempOutput) {
@@ -83,7 +94,7 @@ public class JavaMOPAgentMain {
      *                JavaMOP with
      */
     private static void handleOptions(JavaMOPAgentOptions options, String[] args, JCommander jc) {
-        if (args.length == 0 || options.files.size() < 2) {
+        if (args.length == 0 || (options.files.size() < 2 && options.aspectDir == null)) {
             jc.usage();
             System.exit(1);
         }
@@ -92,6 +103,7 @@ public class JavaMOPAgentMain {
         JavaMOPAgentMain.agentName = options.agentName;
         JavaMOPAgentMain.verboseMode = options.verbose;
         JavaMOPAgentMain.makeVerboseAgent = options.makeVerboseAgent;
+        JavaMOPAgentMain.emopAspectDir = options.aspectDir;
         if (JavaMOPAgentMain.agentName == null) {
             JavaMOPAgentMain.agentName = "agent";
         }
@@ -102,13 +114,16 @@ public class JavaMOPAgentMain {
                 j++;
             } else if ("-d".equals(args[j])) {
                 j++;
+            } else if ("-emop".equals(args[j])) {
+                j++;
             } else if (args[j].endsWith(".aj")) {
                 JavaMOPAgentMain.agentAspect = new File(args[j]);
             } else if (!"-excludeJars".equals(args[j]) &&
                     !"-h".equals(args[j]) &&
                     !"-help".equals(args[j]) &&
                     !"-v".equals(args[j]) &&
-                    !"-verbose".equals(args[j])) {
+                    !"-verbose".equals(args[j])&&
+                    !"-m".equals(args[j])) {
                 // class directory
                 JavaMOPAgentMain.classDir = new File(args[j]);
             }

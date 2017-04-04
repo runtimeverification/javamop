@@ -66,6 +66,9 @@ public class JavaMOPOptions {
             "for use in generating an agent.", converter = FileConverter.class)
     public File baseAspect;
 
+    @Parameter(names={"-emop"}, description = "Flag for emop.")
+    public boolean emop = false;
+
     @Parameter(names={"-h","-help"}, description = "Show this help message.", help = true)
     private boolean help = false;
 
