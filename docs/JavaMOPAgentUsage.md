@@ -46,8 +46,7 @@ property files: SafeFile.mop and SafeFileWriter.mop.
 
 4. Generate the single .aj file and .rvm files from the properties (
    After this step, these files will be generated:
-   ```MultiSpec_1MonitorAspect.aj, SafeFile.rvm and
-   SafeFileWriter.rvm```):
+   `MultiSpec_1MonitorAspect.aj`, `SafeFile.rvm` and `SafeFileWriter.rvm`):
 
 	```javamop -merge *.mop```
 
