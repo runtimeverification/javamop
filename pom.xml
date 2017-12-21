@@ -28,14 +28,14 @@
     </repositories>
     <distributionManagement>
         <repository>
-            <id>runtime-verification</id>
+            <id>runtime.verification</id>
             <name>JavaMop Repository</name>
-            <url>http://office.runtimeverification.com:8888/repository/internal</url>
+            <url>s3://repo.runtime.verification/repository/internal</url>
        </repository>
        <snapshotRepository>
-            <id>runtime-verification.snapshots</id>
+            <id>runtime.verification.snapshots</id>
             <name>JavaMop Snapshot Repository</name>
-            <url>http://office.runtimeverification.com:8888/repository/snapshots</url>
+            <url>s3://repo.runtime.verification/repository/snapshots</url>
        </snapshotRepository>
     </distributionManagement>
     <dependencies>
@@ -92,6 +92,13 @@
     </dependencies>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.springframework.build</groupId>
+                <artifactId>aws-maven</artifactId>
+                <version>5.0.0.RELEASE</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
