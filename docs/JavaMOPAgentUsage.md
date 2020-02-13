@@ -48,7 +48,7 @@ property files: SafeFile.mop and SafeFileWriter.mop.
    After this step, these files will be generated:
    `MultiSpec_1MonitorAspect.aj`, `SafeFile.rvm` and `SafeFileWriter.rvm`):
 
-	```javamop -merge *.mop```
+	```javamop -merge -keepRVFiles *.mop```
 
 5. Create directories for storing the monitor libraries:
 
