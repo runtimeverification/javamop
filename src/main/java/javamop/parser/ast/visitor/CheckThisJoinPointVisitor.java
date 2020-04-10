@@ -153,6 +153,10 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
+    public Boolean visit(WithincodePointCut p, Object arg) {
+        return Boolean.FALSE;
+    }
+
 	public Boolean visit(ThreadPointCut p, Object arg) {
 		return Boolean.FALSE;
 	}

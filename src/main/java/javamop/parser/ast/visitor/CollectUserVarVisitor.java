@@ -125,6 +125,10 @@ public class CollectUserVarVisitor implements GenericVisitor<List<String>, Objec
 		return null;
 	}
 
+    public List<String> visit(WithincodePointCut p, Object arg) {
+        return null;
+    }
+
 	public List<String> visit(ThreadPointCut p, Object arg) {
 		return null;
 	}

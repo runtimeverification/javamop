@@ -160,6 +160,10 @@ public class RemoveThreadVisitor implements GenericVisitor<PointCut, Integer>{
 		return p;
 	}
 
+    public PointCut visit(WithincodePointCut p, Integer arg){
+        return p;
+    }
+
 	public PointCut visit(ThreadPointCut p, Integer arg){
 		return null;
 	}
