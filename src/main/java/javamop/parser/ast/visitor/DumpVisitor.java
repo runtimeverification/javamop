@@ -364,6 +364,9 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		} else if (e.isStaticEvent()) {
 			printer.print("static ");
 		}
+        if (e.isAsyncEvent()) {
+            printer.print("async ");
+        }
 		printer.print("event " + e.getId() + " " + e.getPos());
 		printSpecParameters(e.getParameters(), arg);
 		if (e.hasReturning()) {

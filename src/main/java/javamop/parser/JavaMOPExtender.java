@@ -243,10 +243,14 @@ class JavaMOPExtender {
 
 		pointCutStr = pointCut.toString();
 		try {
-			ret = new EventDefinition(event.getBeginLine(), event.getBeginColumn(), event.getId(), event.getRetType(), event.getPos(), event
-					.getParameters().toList(), pointCutStr, event.getBlock(), event.getHasRetruning(), event.getRetVal().toList(),
-					event.getHasThrowing(), event.getThrowVal().toList(), event.isStartEvent(), event.isCreationEvent(), event.isBlockingEvent()
-			        , event.isStaticEvent());
+            ret = new EventDefinition(event.getBeginLine(), event.getBeginColumn(),
+                    event.getId(), event.getRetType(), event.getPos(),
+                    event.getParameters().toList(), pointCutStr, event.getBlock(),
+                    event.getHasRetruning(), event.getRetVal().toList(),
+                    event.getHasThrowing(), event.getThrowVal().toList(),
+                    event.isStartEvent(), event.isCreationEvent(),
+                    event.isBlockingEvent(), event.isStaticEvent(),
+                    event.isAsyncEvent());
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
 		}

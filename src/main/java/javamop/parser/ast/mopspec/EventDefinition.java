@@ -55,6 +55,7 @@ public class EventDefinition extends Node {
     private boolean startThread = false;
     private boolean endObject = false;
     private boolean staticEvent = false;
+    private boolean asyncEvent = false;
     private String countCond;
     
     // things that should be defined afterward
@@ -63,9 +64,12 @@ public class EventDefinition extends Node {
     String uniqueId = null; // will be defined in JavaMOPSpec
     MOPParameters mopParametersOnSpec; // will be defined in JavaMOPSpec
     
-    public EventDefinition(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
-                           boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent,
-                           boolean blockingEvent, boolean staticEvent)
+    public EventDefinition(int line, int column, String id, Type retType,
+            String pos, List<MOPParameter> parameters, String pointCutStr,
+            BlockStmt block, boolean hasReturning, List<MOPParameter> retVal,
+            boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent,
+            boolean creationEvent, boolean blockingEvent, boolean staticEvent,
+            boolean asyncEvent)
     throws ParseException {
         super(line, column);
         this.id = id;
@@ -88,6 +92,7 @@ public class EventDefinition extends Node {
         this.mopParameters.addAll(this.throwVal);
         this.blockingEvent = blockingEvent;
         this.staticEvent = staticEvent;
+        this.asyncEvent = asyncEvent;
     }
 
     private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
@@ -406,7 +411,11 @@ public class EventDefinition extends Node {
     }
 
     public boolean isStaticEvent() {
-        return staticEvent;
+        return this.staticEvent;
+    }
+
+    public boolean isAsyncEvent() {
+        return this.asyncEvent;
     }
 
     public boolean hasSpecialModifier(String modifier) {

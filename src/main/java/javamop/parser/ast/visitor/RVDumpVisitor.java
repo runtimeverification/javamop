@@ -23,6 +23,9 @@ public class RVDumpVisitor extends DumpVisitor {
 		} else if (e.isStaticEvent()) {
 			printer.print("static ");
 		}
+        if (e.isAsyncEvent()) {
+            printer.print("async ");
+        }
 		printer.print("event " + e.getId());
 		// linjus: I fixed this.
 		// The following is wrong. First of all, it is unnatural that a dump visitor has a side-effect.
