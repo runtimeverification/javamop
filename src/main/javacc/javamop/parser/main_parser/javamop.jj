@@ -346,6 +346,8 @@ TOKEN :
 	<EVENT: "event">
 |	<BLOCKINGEVENT: "blocking">
 | 	<CREATION: "creation">
+|   <SYNCBEGIN: "syncBegin">
+|   <SYNCEND: "syncEnd">
 |	<UNSYNC: "unsynchronized">
 |	<DECENT: "decentralized">
 |	<FULLBIND: "full-binding">
@@ -1424,6 +1426,8 @@ EventDefinitionExt Event():
 	boolean abstractEvent = false;
 	boolean blockingEvent = false;
 	boolean staticEvent = false;
+    boolean syncBeginEvent = false;
+    boolean syncEndEvent = false;
 }
 {
    (
@@ -1443,9 +1447,11 @@ EventDefinitionExt Event():
 	
    | 
     ( //old syntax of events: Soha
-      ["creation" {startEvent = true;}
+      [ "creation"  {startEvent = true;}
       | "blocking"  {blockingEvent = true;}
-      | "static" {staticEvent = true;}]
+      | "static"    {staticEvent = true;}
+      | "syncBegin" {syncBeginEvent = true;}
+      | "syncEnd"   {syncEndEvent = true;}]
 	"event" {line = token.beginLine; column = token.beginColumn;}
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
@@ -1462,7 +1468,8 @@ EventDefinitionExt Event():
 	(block = Block() | ";")))
 	
 	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning,
-	retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent, staticEvent); }
+	retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent, staticEvent,
+    syncBeginEvent, syncEndEvent); }
 }
 
 String Position():

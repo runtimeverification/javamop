@@ -52,6 +52,8 @@ public class EventDefinitionExt extends ExtNode {
     private boolean startThread = false;
     private boolean endObject = false;
     private boolean staticEvent = false;
+    private boolean syncBeginEvent = false;
+    private boolean syncEndEvent = false;
 
     // things that should be defined afterward
     int idnum; // will be defined in JavaMOPSpec
@@ -63,7 +65,7 @@ public class EventDefinitionExt extends ExtNode {
 
     public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
             List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
-            boolean isBlockingEvent, boolean staticEvent)
+            boolean isBlockingEvent, boolean staticEvent, boolean syncBeginEvent, boolean syncEndEvent)
             throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.id = id;
@@ -89,6 +91,8 @@ public class EventDefinitionExt extends ExtNode {
         this.abstractEvent = abstractEvent;
         this.blockingEvent = isBlockingEvent;
         this.staticEvent = staticEvent;
+        this.syncBeginEvent = syncBeginEvent;
+        this.syncEndEvent = syncEndEvent;
     }
 
     public EventDefinitionExt(int line, int column, EventDefinitionExt e) {
@@ -107,6 +111,8 @@ public class EventDefinitionExt extends ExtNode {
         this.startEvent = e.isStartEvent();
         this.creationEvent = e.isCreationEvent();
         this.blockingEvent = e.isBlockingEvent();
+        this.syncBeginEvent = e.isSyncBeginEvent();
+        this.syncEndEvent = e.isSyncEndEvent();
         this.mopParameters = e.getMOPParameters();
         this.condition = e.getCondition();
         this.threadVar = e.getThreadVar();
@@ -296,6 +302,14 @@ public class EventDefinitionExt extends ExtNode {
 
     public boolean isStaticEvent() {
         return staticEvent;
+    }
+
+    public boolean isSyncBeginEvent() {
+        return this.syncBeginEvent;
+    }
+
+    public boolean isSyncEndEvent() {
+        return this.syncEndEvent;
     }
 
     @Override
