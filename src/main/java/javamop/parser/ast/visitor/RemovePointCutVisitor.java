@@ -165,6 +165,10 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return removePointCut(p, arg);
 	}
 
+    public PointCut visit(WithincodePointCut p, Integer arg) {
+        return removePointCut(p, arg);
+    }
+
 	public PointCut visit(ThreadPointCut p, Integer arg) {
 		return removePointCut(p, arg);
 	}

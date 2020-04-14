@@ -215,6 +215,7 @@ TOKEN :
 | < SET : "set" >
 | < TARGET : "target" >
 | < WITHIN : "within" >
+| < WITHINCODE : "withincode" >
 | < ARGS : "args" >
 | < THREAD : "thread" >
 | < THREADNAME: "threadName" >
@@ -1098,6 +1099,7 @@ PositionString AnyIDPatternWithoutDot() :
   | < SET >
   | < TARGET >
   | < WITHIN >
+  | < WITHINCODE>
   | < ARGS >
   | < THREAD >
   | < THREADNAME >
@@ -1209,6 +1211,7 @@ PointCut BasePointCut() :
   | ret = ArgsPointCut()
   | ret = TargetPointCut()
   | ret = WithinPointCut()
+  | ret = WithincodePointCut()
   | ret = ThreadPointCut()
   | ret = ThreadNamePointCut()
   | ret = ThreadBlockedPointCut()
@@ -1448,6 +1451,25 @@ PointCut WithinPointCut() :
   "(" pattern = TypePattern() ")"
   {
     return new WithinPointCut(line, column, type, pattern);
+  }
+}
+
+PointCut WithincodePointCut() :
+{
+  String type;
+  int line, column;
+  MethodPattern methodSig;
+}
+{
+  "withincode"
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    type = token.image;
+  }
+  "(" methodSig = MethodPattern() ")"
+  {
+    return new WithincodePointCut(line, column, type, methodSig);
   }
 }
 
@@ -2136,6 +2158,7 @@ PositionString AnyIdPattern() :
   | < SET >
   | < TARGET >
   | < WITHIN >
+  | < WITHINCODE>
   | < ARGS >
   | < THREAD >
   | < THREADNAME >
@@ -2183,6 +2206,7 @@ PositionString AnyIdPattern() :
     | < SET >
     | < TARGET >
     | < WITHIN >
+    | < WITHINCODE>
     | < ARGS >
     | < THREAD >
     | < THREADNAME >

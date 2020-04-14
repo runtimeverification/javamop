@@ -29,34 +29,7 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.PackageDeclaration;
 import javamop.parser.ast.TypeParameter;
-import javamop.parser.ast.aspectj.ArgsPointCut;
-import javamop.parser.ast.aspectj.BaseTypePattern;
-import javamop.parser.ast.aspectj.CFlowPointCut;
-import javamop.parser.ast.aspectj.CombinedPointCut;
-import javamop.parser.ast.aspectj.CombinedTypePattern;
-import javamop.parser.ast.aspectj.ConditionPointCut;
-import javamop.parser.ast.aspectj.CountCondPointCut;
-import javamop.parser.ast.aspectj.EndObjectPointCut;
-import javamop.parser.ast.aspectj.EndProgramPointCut;
-import javamop.parser.ast.aspectj.EndThreadPointCut;
-import javamop.parser.ast.aspectj.FieldPattern;
-import javamop.parser.ast.aspectj.FieldPointCut;
-import javamop.parser.ast.aspectj.IDPointCut;
-import javamop.parser.ast.aspectj.IFPointCut;
-import javamop.parser.ast.aspectj.MethodPattern;
-import javamop.parser.ast.aspectj.MethodPointCut;
-import javamop.parser.ast.aspectj.NotPointCut;
-import javamop.parser.ast.aspectj.NotTypePattern;
-import javamop.parser.ast.aspectj.PointCut;
-import javamop.parser.ast.aspectj.StartThreadPointCut;
-import javamop.parser.ast.aspectj.TargetPointCut;
-import javamop.parser.ast.aspectj.ThisPointCut;
-import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
-import javamop.parser.ast.aspectj.ThreadNamePointCut;
-import javamop.parser.ast.aspectj.ThreadPointCut;
-import javamop.parser.ast.aspectj.TypePattern;
-import javamop.parser.ast.aspectj.WildcardParameter;
-import javamop.parser.ast.aspectj.WithinPointCut;
+import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.body.AnnotationDeclaration;
 import javamop.parser.ast.body.AnnotationMemberDeclaration;
 import javamop.parser.ast.body.BodyDeclaration;
@@ -578,6 +551,12 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		p.getPattern().accept(this, arg);
 		printer.print(")");
 	}
+
+    public void visit(WithincodePointCut p, Object arg) {
+        printer.print("withincode(");
+        p.getSignature().accept(this, arg);
+        printer.print(")");
+    }
 
 	public void visit(FieldPattern p, Object arg) {
 		printModifiers(p.getModifiers());

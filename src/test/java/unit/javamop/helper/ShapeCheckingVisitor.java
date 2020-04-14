@@ -412,6 +412,11 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     }
 
     @Override
+    public Boolean visit(WithincodePointCut p, Node arg) {
+        return null;
+    }
+
+    @Override
     public Boolean visit(ThreadPointCut p, Node arg) {
         return null;
     }

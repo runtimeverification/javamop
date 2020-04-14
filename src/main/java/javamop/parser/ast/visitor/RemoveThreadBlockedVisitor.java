@@ -156,6 +156,10 @@ public class RemoveThreadBlockedVisitor implements GenericVisitor<PointCut, Inte
 		return p;
 	}
 
+    public PointCut visit(WithincodePointCut p, Integer arg){
+        return p;
+    }
+
 	public PointCut visit(ThreadPointCut p, Integer arg){
 		return p;
 	}

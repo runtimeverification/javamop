@@ -3,26 +3,7 @@ package javamop.parser.ast.visitor;
 
 import java.util.ArrayList;
 
-import javamop.parser.ast.aspectj.ArgsPointCut;
-import javamop.parser.ast.aspectj.CFlowPointCut;
-import javamop.parser.ast.aspectj.CombinedPointCut;
-import javamop.parser.ast.aspectj.ConditionPointCut;
-import javamop.parser.ast.aspectj.EndObjectPointCut;
-import javamop.parser.ast.aspectj.EndProgramPointCut;
-import javamop.parser.ast.aspectj.EndThreadPointCut;
-import javamop.parser.ast.aspectj.FieldPointCut;
-import javamop.parser.ast.aspectj.IDPointCut;
-import javamop.parser.ast.aspectj.IFPointCut;
-import javamop.parser.ast.aspectj.MethodPointCut;
-import javamop.parser.ast.aspectj.NotPointCut;
-import javamop.parser.ast.aspectj.PointCut;
-import javamop.parser.ast.aspectj.StartThreadPointCut;
-import javamop.parser.ast.aspectj.TargetPointCut;
-import javamop.parser.ast.aspectj.ThisPointCut;
-import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
-import javamop.parser.ast.aspectj.ThreadNamePointCut;
-import javamop.parser.ast.aspectj.ThreadPointCut;
-import javamop.parser.ast.aspectj.WithinPointCut;
+import javamop.parser.ast.aspectj.*;
 
 public class ConvertPointcutToCNFVisitor implements PointcutVisitor<PointCut, Object> {
 
@@ -138,6 +119,10 @@ public class ConvertPointcutToCNFVisitor implements PointcutVisitor<PointCut, Ob
 	public PointCut visit(WithinPointCut p, Object arg){
 		return p;
 	}
+
+    public PointCut visit(WithincodePointCut p, Object arg){
+        return p;
+    }
 
 	public PointCut visit(ThreadPointCut p, Object arg){
 		return p;

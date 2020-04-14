@@ -141,6 +141,10 @@ public class EndProgramVisitor implements GenericVisitor<String, Object>{
 		return "";
 	}
 
+    public String visit(WithincodePointCut p, Object arg){
+        return "";
+    }
+
 	public String visit(ThreadPointCut p, Object arg){
 		return "";
 	}
