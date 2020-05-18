@@ -83,6 +83,7 @@ import javamop.parser.ast.expr.ThisExpr;
 import javamop.parser.ast.expr.UnaryExpr;
 import javamop.parser.ast.expr.VariableDeclarationExpr;
 import javamop.parser.ast.mopspec.EventDefinition;
+import javamop.parser.ast.mopspec.InternalEvent;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
@@ -343,6 +344,12 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			}
 		}
 
+		if (s.getInternalEvents() != null) {
+			for (InternalEvent ie : s.getInternalEvents()) {
+				ie.accept(this, arg);
+			}
+		}
+
 		if (s.getPropertiesAndHandlers() != null) {
 			for (PropertyAndHandlers p : s.getPropertiesAndHandlers()) {
 				p.accept(this, arg);
@@ -384,6 +391,13 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		if (e.getAction() != null) {
 			e.getAction().accept(this, arg);
 		}
+		printer.printLn();
+	}
+
+	public void visit(InternalEvent ie, Object arg) {
+		printer.print("internal " + ie.getName() + " ");
+		printSpecParameters(ie.getParameters(), arg);
+		ie.getBlock().accept(this, arg);
 		printer.printLn();
 	}
 

@@ -325,6 +325,7 @@ TOKEN :
 TOKEN :
 {
 	<EVENT: "event">
+|   <INTERNAL: "internal">
 |	<BLOCKINGEVENT: "blocking">
 | 	<CREATION: "creation">
 |	<UNSYNC: "unsynchronized">
@@ -1255,6 +1256,8 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 	List<BodyDeclaration> declarations = null;
 	List<EventDefinitionExt> events = new ArrayList<EventDefinitionExt>();
 	EventDefinitionExt event = null;
+	List<InternalEventExt> internalEvents = new ArrayList<InternalEventExt>();
+	InternalEventExt internalEvent = null;
 	List<PropertyAndHandlersExt> props = new ArrayList<PropertyAndHandlersExt>();
 	PropertyAndHandlersExt prop = null;
 	int line = -1;
@@ -1276,9 +1279,11 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 	"{"
 	 declarations = ClassOrInterfaceBody(false)
 	(event = Event() { events.add(event); } )+
+	(internalEvent = InternalEvent() {internalEvents.add(internalEvent);})*
 	(prop = PropertyAndHandlers(propId++) {props.add(prop);})*
 	"}"
-	{return new JavaMOPSpecExt(packageName, line, column, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
+	{return new JavaMOPSpecExt(packageName, line, column, isPublic, modifiers, name, parameters, inMethod,
+	                           extendedSpecList, declarations, events, internalEvents, props);}
 }
 
 int SpecModifier():
@@ -1415,7 +1420,7 @@ EventDefinitionExt Event():
 	 rettype = ResultType()
 	 "around" { pos = token.image; }
 	)
-	 [parameters = AdviceParameters()]		
+	[parameters = AdviceParameters()]
 	["returning" {hasReturning = true;} [retVal = AdviceParameters()]]
 	["throwing" {hasThrowing = true; } [throwVal = AdviceParameters()]]
 	";"
@@ -1544,6 +1549,21 @@ PropertyExt Property(int propId):
 | ( (<IDENTIFIER> | "get" | "set") {line = token.beginLine; column = token.beginColumn; logicId = token.image; propertyName = "defaultProp" + propId;} ":"))
 	{f = getFormula();}
 	{ return new FormulaExt(line, column, logicId, f, propertyName); }
+}
+
+InternalEventExt InternalEvent():
+{
+    int line, column;
+    String name;
+    List<MOPParameter> parameters = null;
+    BlockStmt block = null;
+}
+{
+    <INTERNAL> { line = token.beginLine; column = token.beginColumn; }
+    <IDENTIFIER> { name = token.image; }
+    parameters = MOPParameters()
+    block = Block()
+    { return new InternalEventExt(line, column, name, parameters, block); }
 }
 
 /***********************************************

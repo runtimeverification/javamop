@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import java.io.*;
 
 import javamop.parser.rvm.core.ast.Event;
+import javamop.parser.rvm.core.ast.InternalEvent;
 import javamop.parser.rvm.core.ast.MonitorFile;
 import javamop.parser.rvm.core.ast.Property;
 import javamop.parser.rvm.core.ast.PropertyHandler;
@@ -233,6 +234,7 @@ TOKEN : {
     | <COLON : ":">
     | <AT : "@">
     | <EVENT : ("event")>
+    | <INTERNAL: "internal">
     | <ID : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_"|"."|"-")*>
     | <DIGIT : ["0"-"9"]>
     | <LETTER : ["a"-"z","A"-"Z"]>
@@ -260,6 +262,8 @@ Specification specification() : {
     String languageDeclarations = "";
     ArrayList<Event> events = new ArrayList<Event>();
     Event myEvent;
+    ArrayList<InternalEvent> internalEvents = new ArrayList<InternalEvent>();
+    InternalEvent myInternalEvent;
     ArrayList<Property> properties = new ArrayList<Property>();
     Property myProperty;
 }
@@ -270,13 +274,14 @@ Specification specification() : {
         {languageDeclarations = parseUntilLineMatches(Pattern.compile(
             "^([-a-zA-Z\\s_]*)event([a-zA-Z_\\s0-9]+)\\("));}
         (LOOKAHEAD( 2 ) myEvent = event() { events.add(myEvent); })+
-        (myProperty = propertyAndHandlers() {properties.add(myProperty);})*
+        (myInternalEvent = internalEvent() { internalEvents.add(myInternalEvent); })*
+        (myProperty = propertyAndHandlers() { properties.add(myProperty); })*
     "}"
     {
         String name = languageModifiers.get(languageModifiers.size() - 1);
         languageModifiers.remove(languageModifiers.size() - 1);
         return new Specification(preDeclarations, languageModifiers, name, languageParameters,
-            languageDeclarations, events, properties);
+            languageDeclarations, events, internalEvents, properties);
     }
 }
 
@@ -300,6 +305,19 @@ Event event() : {
     "{" {eventAction = parseMatchingCurlyBrackets();}
     {return new Event(modifiers, name.image, definitionModifiers, eventDefinition, eventPointcut, 
         eventAction);}
+}
+
+InternalEvent internalEvent() : {
+    Token name;
+    String parameters = "";
+    String body = "";
+}
+{
+    <INTERNAL>
+    (name = <ID>)
+    (parameters = delimitedSegment())
+    "{" {body = parseMatchingCurlyBrackets();}
+    {return new InternalEvent(name.image, parameters, body);}
 }
 
 Property propertyAndHandlers() : {

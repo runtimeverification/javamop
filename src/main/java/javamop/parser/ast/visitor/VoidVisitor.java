@@ -118,6 +118,8 @@ public interface VoidVisitor<A> {
     public void visit(MOPParameter p, A arg);
     
     public void visit(EventDefinition e, A arg);
+
+    public void visit(InternalEvent ie, A arg);
     
     public void visit(PropertyAndHandlers p, A arg);
     

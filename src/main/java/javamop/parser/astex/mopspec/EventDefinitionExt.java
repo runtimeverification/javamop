@@ -61,9 +61,10 @@ public class EventDefinitionExt extends ExtNode {
 
     private MOPParameters parametersWithoutThreadVar = null;
 
-    public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
-            List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
-            boolean isBlockingEvent, boolean staticEvent)
+    public EventDefinitionExt(int line, int column, String id, Type retType, String pos,
+                              List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
+                              List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal,
+                              boolean startEvent, boolean abstractEvent, boolean isBlockingEvent, boolean staticEvent)
             throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.id = id;

@@ -26,6 +26,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     private final String inMethod;
     private final List<BodyDeclaration> declarations;
     private final List<EventDefinition> events;
+    private final List<InternalEvent> internalEvents;
     private final List<PropertyAndHandlers> properties;
     private final List<String> eventNames;
     
@@ -33,8 +34,10 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     private final MOPParameters varsToSave;
     private String rawLogic;
     
-    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
-                       List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
+    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name,
+                       List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
+                       List<EventDefinition> events, List<InternalEvent> internalEvents,
+                       List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.packageDeclaration = packageDeclaration;
         this.modifiers = modifiers;
@@ -43,6 +46,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         this.inMethod = inMethod;
         this.declarations = declarations;
         this.events = events;
+        this.internalEvents = internalEvents;
         this.properties = properties;
         this.eventNames = new ArrayList<String>();
         this.commonParamInEvents = new MOPParameters(this.parameters);
@@ -189,6 +193,8 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     public List<EventDefinition> getEvents() {
         return events;
     }
+
+    public List<InternalEvent> getInternalEvents() { return internalEvents; }
     
     private String cachedEventStr = null;
     

@@ -263,18 +263,22 @@ final public class JavaParserAdapter {
         final List<ExtendedSpec> extensions = null;
         final List<BodyDeclaration> declarations =
             convertDeclarations(spec.getLanguageDeclarations());
-        final List<EventDefinitionExt> events = new ArrayList<EventDefinitionExt>();
+        final List<EventDefinitionExt> events = new ArrayList<>();
         for(Event e : spec.getEvents()) {
             events.add(convert(e));
         }
-        final List<PropertyAndHandlersExt> properties = new ArrayList<PropertyAndHandlersExt>();
+        final List<InternalEventExt> internalEvents = new ArrayList<>();
+        for(InternalEvent ie : spec.getInternalEvents()) {
+            internalEvents.add(convert(ie));
+        }
+        final List<PropertyAndHandlersExt> properties = new ArrayList<>();
         int index = 0;
         for(Property property : spec.getProperties()) {
             properties.add(convert(index, property));
             index++;
         }
         return new JavaMOPSpecExt(pack, 0, 0, isPublic, modifierBitfield, name, parameters,
-            inMethod, extensions, declarations, events, properties).setRawLogic(rawCode);
+            inMethod, extensions, declarations, events, internalEvents, properties).setRawLogic(rawCode);
     }
 
     /**
@@ -360,6 +364,14 @@ final public class JavaParserAdapter {
         eventString.append(event.getDefinition()).append(event.getPointcut());
         eventString.append(event.getAction());
         return parseJavaBubble(eventString.toString()).Event();
+    }
+
+    private static InternalEventExt convert(final InternalEvent ie) throws ParseException {
+        final StringBuilder ieSB = new StringBuilder();
+        ieSB.append("internal ").append(ie.getName());
+        ieSB.append(ie.getParameters());
+        ieSB.append(ie.getBody());
+        return parseJavaBubble(ieSB.toString()).InternalEvent();
     }
 
     /**

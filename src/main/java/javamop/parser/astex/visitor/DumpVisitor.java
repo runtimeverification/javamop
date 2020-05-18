@@ -26,6 +26,7 @@ import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
 import javamop.parser.astex.mopspec.EventDefinitionExt;
+import javamop.parser.astex.mopspec.InternalEventExt;
 import javamop.parser.astex.mopspec.ExtendedSpec;
 import javamop.parser.astex.mopspec.FormulaExt;
 import javamop.parser.astex.mopspec.HandlerExt;
@@ -146,6 +147,13 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 		} else
 			printer.print(";");
 
+		printer.printLn();
+	}
+
+	public void visit(InternalEventExt ie, Object arg) {
+		printer.print("internal " + ie.getName() + " ");
+		printSpecParameters(ie.getParameters(), arg);
+		ie.getBlock().accept(this, arg);
 		printer.printLn();
 	}
 

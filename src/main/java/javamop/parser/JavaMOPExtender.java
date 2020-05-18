@@ -14,6 +14,7 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.EventDefinition;
+import javamop.parser.ast.mopspec.InternalEvent;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
@@ -25,6 +26,7 @@ import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
 import javamop.parser.astex.mopspec.EventDefinitionExt;
+import javamop.parser.astex.mopspec.InternalEventExt;
 import javamop.parser.astex.mopspec.ExtendedSpec;
 import javamop.parser.astex.mopspec.FormulaExt;
 import javamop.parser.astex.mopspec.HandlerExt;
@@ -82,6 +84,7 @@ class JavaMOPExtender {
 			throws MOPException {
 		List<BodyDeclaration> declarations;
 		List<EventDefinition> events;
+		List<InternalEvent> internalEvents;
 		List<PropertyAndHandlers> props = new ArrayList<PropertyAndHandlers>();
 
 		// collect all monitor variable declarations
@@ -104,13 +107,16 @@ class JavaMOPExtender {
 		// collect and translate event definitions
 		events = collectAndTranslateEvents(new SpecContext(spec, currentFile, depFiles));
 
+		internalEvents = translateInternalEvents(new SpecContext(spec, currentFile, depFiles));
+
 		// collect and translate properties and handlers
 		props = collectAndTranslateProps(new SpecContext(spec, currentFile, depFiles));
 
 		JavaMOPSpec ret;
 		try {
-			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getBeginLine(), spec.getBeginColumn(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
-					spec.getInMethod(), declarations, events, props).setRawLogic(spec.getRawLogic());
+			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getBeginLine(), spec.getBeginColumn(),
+					spec.getModifiers(), spec.getName(), spec.getParameters().toList(), spec.getInMethod(),
+					declarations, events, internalEvents, props).setRawLogic(spec.getRawLogic());
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
 		}
@@ -140,6 +146,19 @@ class JavaMOPExtender {
 
 			EventDefinition translatedEvent = translateEvent(event, context);
 			ret.add(translatedEvent);
+		}
+
+		return ret;
+	}
+
+	private static List<InternalEvent> translateInternalEvents(SpecContext context) {
+		List<InternalEvent> ret = new ArrayList<>();
+
+		for (InternalEventExt ie : context.spec.getInternalEvents()) {
+
+			InternalEvent translatedIe = new InternalEvent(ie.getBeginLine(), ie.getBeginColumn(), ie.getName(),
+					ie.getParameters().toList(), ie.getBlock());
+			ret.add(translatedIe);
 		}
 
 		return ret;

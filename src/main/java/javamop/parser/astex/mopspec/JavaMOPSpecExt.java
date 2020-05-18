@@ -25,13 +25,17 @@ public class JavaMOPSpecExt extends ExtNode {
     private final PackageDeclaration packageDeclaration;
     private final List<BodyDeclaration> declarations;
     private final List<EventDefinitionExt> events;
+    private final List<InternalEventExt> internalEvents;
     private final List<PropertyAndHandlersExt> properties;
     private final List<String> eventNames;
     private final List<ExtendedSpec> extendedSpecs;
     private String rawLogic;
 
-    public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
-                          List<BodyDeclaration> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
+    public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers,
+                          String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
+                          List<BodyDeclaration> declarations, List<EventDefinitionExt> events,
+                          List<InternalEventExt> internalEvents, List<PropertyAndHandlersExt> properties)
+            throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.packageDeclaration = packagedeclaration;   
         this.modifiers = modifiers;
@@ -40,6 +44,7 @@ public class JavaMOPSpecExt extends ExtNode {
         this.inMethod = inMethod;
         this.declarations = declarations;
         this.events = events;
+        this.internalEvents = internalEvents;
         this.properties = properties;
         this.eventNames = new ArrayList<String>();
         this.extendedSpecs = extendedSpecs;
@@ -148,6 +153,8 @@ public class JavaMOPSpecExt extends ExtNode {
     public List<EventDefinitionExt> getEvents() {
         return events;
     }
+
+    public List<InternalEventExt> getInternalEvents() { return this.internalEvents; }
     
     private String cachedEventStr = null;
     

@@ -16,9 +16,7 @@ import javamop.parser.ast.MOPSpecFile;
 import javamop.specfiltering.SpecFilter;
 import javamop.util.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;

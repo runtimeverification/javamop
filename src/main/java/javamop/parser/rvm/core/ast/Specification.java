@@ -17,6 +17,7 @@ public class Specification {
     private final String languageParameters;
     private final String languageDeclarations;
     private final List<Event> events;
+    private final List<InternalEvent> internalEvents;
     private final List<Property> properties;
 
     /**
@@ -32,17 +33,21 @@ public class Specification {
     public Specification(final String preDeclarations,
                          final List<String> languageModifiers, final String name,
                          final String languageParameters, final String languageDeclarations,
-                         final List<Event> events, final List<Property> properties) {
+                         final List<Event> events,
+                         final List<InternalEvent> internalEvents,
+                         final List<Property> properties) {
         this.preDeclarations = preDeclarations;
         this.languageModifiers = Collections
                 .unmodifiableList(new ArrayList<String>(languageModifiers));
         this.name = name;
         this.languageParameters = languageParameters;
         this.languageDeclarations = languageDeclarations;
-        this.events = Collections
-                .unmodifiableList(new ArrayList<javamop.parser.rvm.core.ast.Event>(events));
-        this.properties = Collections.unmodifiableList(new ArrayList<Property>(
-                properties));
+        this.events = Collections.unmodifiableList(
+                new ArrayList<javamop.parser.rvm.core.ast.Event>(events));
+        this.internalEvents = Collections.unmodifiableList(
+                new ArrayList<InternalEvent>(internalEvents));
+        this.properties = Collections.unmodifiableList(
+                new ArrayList<Property>(properties));
     }
 
     /**
@@ -89,6 +94,8 @@ public class Specification {
     public List<javamop.parser.rvm.core.ast.Event> getEvents() {
         return events;
     }
+
+    public List<InternalEvent> getInternalEvents() { return internalEvents; }
 
     /**
      * An unmodifiable list with the logic properties and their handlers.
