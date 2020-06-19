@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+AdviceParamsWithGenericsIllegal() {
+
+        event basicGeneric before(List<fizz<> foo):
+              call(* bar(..)) && target(foo) {}
+
+        ere : basicGeneric
+
+        @match {
+           System.out.println("illegal generics test");
+        }
+
+}

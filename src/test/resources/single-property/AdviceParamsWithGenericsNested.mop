@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+AdviceParamsWithGenericsNested() {
+
+        event basicGeneric before(List<Map<List<Foo>>> foo):
+              call(* bar(..)) && args(foo) {}
+
+        ere : basicGeneric
+
+        @match {
+           System.out.println("basic generics test");
+        }
+
+}
