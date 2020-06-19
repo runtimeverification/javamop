@@ -20,7 +20,6 @@ public class AdviceParamsWithGenericsTest {
     private static final String errIncorrectArgNum = "Unexpected number of parameters";
     private static final String errIncorrectGenericType = "Unexpected number of parameters";
 
-
     private InputStream fromResources(Path filePath) {
         ClassLoader classLoader = getClass().getClassLoader();
 
