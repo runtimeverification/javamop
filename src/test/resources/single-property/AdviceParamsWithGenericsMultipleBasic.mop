@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+AdviceParamsWithGenericsMultipleBasic() {
+
+        event basicGeneric before(List<Foo> foo, List<Bar> bar):
+              call(* bar(..)) && args(foo, bar) {}
+
+        ere : basicGeneric
+
+        @match {
+           System.out.println("basic generics test");
+        }
+
+}

@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+AdviceParamsWithGenericsWildcard() {
+
+        event basicGeneric before(List<? extends Foo<Buzz>> bar):
+              call(* fun(..)) && target(bar) {}
+
+        ere : basicGeneric
+
+        @match {
+           System.out.println("illegal generics test");
+        }
+
+}
