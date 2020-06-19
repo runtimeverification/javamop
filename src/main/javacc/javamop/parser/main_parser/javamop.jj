@@ -181,6 +181,25 @@ public final class JavaMOPParser {
     	return buf.toString().trim();
     }
 
+    private String toTypeArgsString(List<Type> typeArgs) {
+        if(typeArgs == null) {
+            return "";
+        }
+
+        int i = 0;
+        String typeArgString = "<";
+        for(Type typeArg : typeArgs) {
+            if(i == 0) {
+               typeArgString += typeArg.toString();
+            } else {
+               typeArgString += ", " + typeArg.toString();
+            }
+            i += 1;
+        }
+        typeArgString += ">";
+        return typeArgString;
+    }
+
 	private class Modifier {
 		
 		final int modifiers;
@@ -1348,6 +1367,7 @@ List<MOPParameter> MOPParameters():
   { return parameters; }
 }
 
+// TODO: This class is redundant. Needs cleanup.
 List<MOPParameter> AdviceParameters():
 {
 	List<MOPParameter> parameters = new ArrayList<MOPParameter>();
@@ -1458,10 +1478,15 @@ BaseTypePattern SimpleTypePattern():
 {
 	String id;
 	int line, column;
+	List<Type> typeArgs = null;
 }
 {
 	(<IDENTIFIER> | "get" | "set" ) {line = token.beginLine; column = token.beginColumn; id = token.image;}
-	("." {id += token.image;} (<IDENTIFIER> | "get" | "set") {id += token.image;})*
+	[LOOKAHEAD(2) typeArgs = TypeArguments() ] { id += toTypeArgsString(typeArgs); typeArgs = null;}
+	(
+	    LOOKAHEAD(2) "." (<IDENTIFIER> | "get" | "set") {id += "." + token.image;}
+	    [ LOOKAHEAD(2) typeArgs = TypeArguments() ] {id += toTypeArgsString(typeArgs); typeArgs = null;}
+	)*
 	("[" {id += token.image;} "]" {id += token.image;})*
 	["+" {id += token.image;}]
 	{ return new BaseTypePattern(line, column, id); }
@@ -1472,13 +1497,18 @@ BaseTypePattern TypePattern():
 {
 	String id;
 	int line, column;
+	List<Type> typeArgs = null;
 }
 {    
 	(<IDENTIFIER> | "get"| "set" | "byte" | "short" | "int" 
          | "long" | "float" | "double" | "boolean" | "char") 
-        { 
+        {
           line = token.beginLine; column = token.beginColumn; id = token.image;}
-	("." {id += token.image;} (<IDENTIFIER> | "get" | "set") {id += token.image;})*
+	[LOOKAHEAD(2) typeArgs = TypeArguments() ] { id += toTypeArgsString(typeArgs); typeArgs = null;}
+	(
+	    LOOKAHEAD(2) "." (<IDENTIFIER> | "get" | "set") {id += "." + token.image;}
+	    [ LOOKAHEAD(2) typeArgs = TypeArguments() ] {id += toTypeArgsString(typeArgs); typeArgs = null;}
+	)*
 	("[" {id += token.image;} "]" {id += token.image;})*
 	["+" {id += token.image;}]
 	{ return new BaseTypePattern(line, column, id); }
