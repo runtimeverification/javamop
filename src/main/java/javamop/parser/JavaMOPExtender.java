@@ -250,7 +250,8 @@ class JavaMOPExtender {
                     event.getHasThrowing(), event.getThrowVal().toList(),
                     event.isStartEvent(), event.isCreationEvent(),
                     event.isBlockingEvent(), event.isStaticEvent(),
-                    event.isSyncBeginEvent(), event.isSyncEndEvent());
+                    event.isSyncBeginEvent(), event.isSyncEndEvent(),
+                    event.isUnsyncedEvent());
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
 		}

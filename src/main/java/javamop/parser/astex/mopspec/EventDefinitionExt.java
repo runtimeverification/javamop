@@ -54,6 +54,7 @@ public class EventDefinitionExt extends ExtNode {
     private boolean staticEvent = false;
     private boolean syncBeginEvent = false;
     private boolean syncEndEvent = false;
+    private boolean unsyncedEvent = false;
 
     // things that should be defined afterward
     int idnum; // will be defined in JavaMOPSpec
@@ -63,9 +64,11 @@ public class EventDefinitionExt extends ExtNode {
 
     private MOPParameters parametersWithoutThreadVar = null;
 
-    public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
-            List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
-            boolean isBlockingEvent, boolean staticEvent, boolean syncBeginEvent, boolean syncEndEvent)
+    public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters,
+                              String pointCutStr, BlockStmt block, boolean hasReturning, List<MOPParameter> retVal,
+                              boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent,
+                              boolean abstractEvent, boolean isBlockingEvent, boolean staticEvent,
+                              boolean syncBeginEvent, boolean syncEndEvent, boolean unsyncedEvent)
             throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.id = id;
@@ -93,6 +96,7 @@ public class EventDefinitionExt extends ExtNode {
         this.staticEvent = staticEvent;
         this.syncBeginEvent = syncBeginEvent;
         this.syncEndEvent = syncEndEvent;
+        this.unsyncedEvent = unsyncedEvent;
     }
 
     public EventDefinitionExt(int line, int column, EventDefinitionExt e) {
@@ -311,6 +315,8 @@ public class EventDefinitionExt extends ExtNode {
     public boolean isSyncEndEvent() {
         return this.syncEndEvent;
     }
+
+    public boolean isUnsyncedEvent() { return this.unsyncedEvent; }
 
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {

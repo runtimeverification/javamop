@@ -348,6 +348,7 @@ TOKEN :
 | 	<CREATION: "creation">
 |   <SYNCBEGIN: "syncBegin">
 |   <SYNCEND: "syncEnd">
+|   <UNSYNCED: "unsynced">
 |	<UNSYNC: "unsynchronized">
 |	<DECENT: "decentralized">
 |	<FULLBIND: "full-binding">
@@ -1428,6 +1429,7 @@ EventDefinitionExt Event():
 	boolean staticEvent = false;
     boolean syncBeginEvent = false;
     boolean syncEndEvent = false;
+    boolean unsyncedEvent = false;
 }
 {
    (
@@ -1444,14 +1446,16 @@ EventDefinitionExt Event():
 	["throwing" {hasThrowing = true; } [throwVal = AdviceParameters()]]
 	";"
 	)
-	
    | 
     ( //old syntax of events: Soha
-      [ "creation"  {startEvent = true;}
-      | "blocking"  {blockingEvent = true;}
-      | "static"    {staticEvent = true;}
-      | "syncBegin" {syncBeginEvent = true;}
-      | "syncEnd"   {syncEndEvent = true;}]
+      [   "creation"  {startEvent = true;}
+        | "blocking"  {blockingEvent = true;}
+        | "static"    {staticEvent = true;}
+      ]
+      [   "syncBegin" {syncBeginEvent = true;}
+        | "syncEnd"   {syncEndEvent = true;}
+        | "unsynced"  {unsyncedEvent = true;}
+      ]
 	"event" {line = token.beginLine; column = token.beginColumn;}
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
@@ -1467,9 +1471,10 @@ EventDefinitionExt Event():
 	":" {pointCut = getStringUntil('{');} 
 	(block = Block() | ";")))
 	
-	{ return new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning,
-	retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent, staticEvent,
-    syncBeginEvent, syncEndEvent); }
+	{ return
+	    new EventDefinitionExt(line, column, id, rettype, pos, parameters, pointCut, block, hasReturning,
+	                           retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent,
+	                           staticEvent, syncBeginEvent, syncEndEvent, unsyncedEvent); }
 }
 
 String Position():

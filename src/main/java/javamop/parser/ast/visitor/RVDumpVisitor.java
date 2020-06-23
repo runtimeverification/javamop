@@ -13,7 +13,7 @@ import javamop.parser.ast.mopspec.MOPParameters;
  */
 
 public class RVDumpVisitor extends DumpVisitor {
-	
+
 	@Override
 	public void visit(EventDefinition e, Object arg) {
 		if (e.isCreationEvent()) {
@@ -23,12 +23,15 @@ public class RVDumpVisitor extends DumpVisitor {
 		} else if (e.isStaticEvent()) {
 			printer.print("static ");
 		}
+
         if (e.isSyncBeginEvent()) {
             printer.print("syncBegin ");
-        }
-        if (e.isSyncEndEvent()) {
+        } else if (e.isSyncEndEvent()) {
             printer.print("syncEnd ");
+        } else if (e.isUnsyncedEvent()) {
+            printer.print("unsynced ");
         }
+
 		printer.print("event " + e.getId());
 		// linjus: I fixed this.
 		// The following is wrong. First of all, it is unnatural that a dump visitor has a side-effect.
@@ -37,7 +40,7 @@ public class RVDumpVisitor extends DumpVisitor {
 		// in duplicated parameters.
 //		MOPParameters parameters = e.getParameters();
 		MOPParameters parameters = new MOPParameters(e.getParameters());
-		
+
 		if (e.hasReturning()) {
 			parameters.addAll(e.getRetVal().toList());
 		}
@@ -56,7 +59,7 @@ public class RVDumpVisitor extends DumpVisitor {
 			printer.print("return false;\n");
 			printer.print("}\n");
 		}
-		
+
 		if (e.getAction() != null) {
 			e.getAction().accept(this, arg);
 		}
@@ -65,7 +68,7 @@ public class RVDumpVisitor extends DumpVisitor {
 			printer.print("}\n");
 		}
 	}
-	
+
 	@Override
 	public void visit(NameExpr n, Object arg) {
 		String name = n.getName();

@@ -57,6 +57,7 @@ public class EventDefinition extends Node {
     private boolean staticEvent = false;
     private boolean syncBeginEvent = false;
     private boolean syncEndEvent = false;
+    private boolean unsyncedEvent = false;
     private String countCond;
     
     // things that should be defined afterward
@@ -70,7 +71,7 @@ public class EventDefinition extends Node {
             BlockStmt block, boolean hasReturning, List<MOPParameter> retVal,
             boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent,
             boolean creationEvent, boolean blockingEvent, boolean staticEvent,
-            boolean syncBeginEvent, boolean syncEndEvent)
+            boolean syncBeginEvent, boolean syncEndEvent, boolean unsyncedEvent)
     throws ParseException {
         super(line, column);
         this.id = id;
@@ -95,6 +96,7 @@ public class EventDefinition extends Node {
         this.staticEvent = staticEvent;
         this.syncBeginEvent = syncBeginEvent;
         this.syncEndEvent = syncEndEvent;
+        this.unsyncedEvent = unsyncedEvent;
     }
 
     private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
@@ -423,6 +425,8 @@ public class EventDefinition extends Node {
     public boolean isSyncEndEvent() {
         return this.syncEndEvent;
     }
+
+    public boolean isUnsyncedEvent() { return this.unsyncedEvent; }
 
     public boolean hasSpecialModifier(String modifier) {
         return getAction().toString().contains(modifier);

@@ -364,12 +364,15 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		} else if (e.isStaticEvent()) {
 			printer.print("static ");
 		}
+
         if (e.isSyncBeginEvent()) {
             printer.print("syncBegin ");
-        }
-        if (e.isSyncEndEvent()) {
+        } else if (e.isSyncEndEvent()) {
             printer.print("syncEnd ");
+        } else if (e.isUnsyncedEvent()) {
+            printer.print("unsynced ");
         }
+
 		printer.print("event " + e.getId() + " " + e.getPos());
 		printSpecParameters(e.getParameters(), arg);
 		if (e.hasReturning()) {
