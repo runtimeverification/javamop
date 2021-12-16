@@ -237,12 +237,12 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(LineComment n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(BlockComment n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	public Boolean visit(ImportDeclaration n, Object arg) {
@@ -251,72 +251,72 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(ModuleDeclaration n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ModuleRequiresDirective n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ModuleExportsDirective n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ModuleProvidesDirective n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ModuleUsesDirective n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ModuleOpensDirective n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(UnparsableStmt n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ReceiverParameter n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(VarType n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(Modifier n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(SwitchExpr n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(YieldStmt n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(TextBlockLiteralExpr n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(PatternExpr n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	public Boolean visit(TypeParameter n, Object arg) {
@@ -334,12 +334,12 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(RecordDeclaration n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(CompactConstructorDeclaration n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	public Boolean visit(EnumDeclaration n, Object arg) {
@@ -414,7 +414,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(JavadocComment n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	// - Type ----------------------------------------------
@@ -429,22 +429,22 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(ArrayType n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(ArrayCreationLevel n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(IntersectionType n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(UnionType n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	public Boolean visit(ReferenceType n, Object arg) {
@@ -461,7 +461,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(UnknownType n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	// - Expression ----------------------------------------
@@ -660,12 +660,12 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(LocalClassDeclarationStmt n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(LocalRecordDeclarationStmt n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	public Boolean visit(AssertStmt n, Object arg) {
@@ -796,31 +796,31 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(LambdaExpr n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(MethodReferenceExpr n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(TypeExpr n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(NodeList n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(Name n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 
 	@Override
 	public Boolean visit(SimpleName n, Object arg) {
-		return null;
+		return Boolean.FALSE;
 	}
 }
