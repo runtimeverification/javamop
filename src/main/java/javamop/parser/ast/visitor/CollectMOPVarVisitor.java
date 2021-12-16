@@ -111,7 +111,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getAnnotations(), arg);
-		process(ret, n.getArgs(), arg);
+		process(ret, n.getArguments(), arg);
 		process(ret, n.getClassBody(), arg);
 
 		return ret;
@@ -146,7 +146,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(VariableDeclarator n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getInit(), arg);
+		process(ret, n.getInitializer(), arg);
 
 		return ret;
 	}
@@ -156,8 +156,8 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 
 		process(ret, n.getAnnotations(), arg);
 		process(ret, n.getParameters(), arg);
-		process(ret, n.getThrows(), arg);
-		process(ret, n.getBlock(), arg);
+		process(ret, n.getThrownExceptions(), arg);
+		process(ret, n.getBody(), arg);
 
 		return ret;
 	}
@@ -167,7 +167,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 
 		process(ret, n.getAnnotations(), arg);
 		process(ret, n.getParameters(), arg);
-		process(ret, n.getThrows(), arg);
+		process(ret, n.getThrownExceptions(), arg);
 		process(ret, n.getBody(), arg);
 
 		return ret;
@@ -184,7 +184,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(InitializerDeclaration n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getBlock(), arg);
+		process(ret, n.getBody(), arg);
 
 		return ret;
 	}
@@ -202,7 +202,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getInitializer(), arg);
-		process(ret, n.getDimensions(), arg);
+		process(ret, n.getLevels(), arg);
 
 		return ret;
 	}
@@ -236,7 +236,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(CastExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
+		process(ret, n.getExpression(), arg);
 
 		return ret;
 	}
@@ -262,7 +262,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(InstanceOfExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
+		process(ret, n.getExpression(), arg);
 
 		return ret;
 	}
@@ -270,7 +270,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(MethodCallExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getArgs(), arg);
+		process(ret, n.getArguments(), arg);
 
 		return ret;
 	}
@@ -278,8 +278,8 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(NameExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		if (arg.getParam(n.getName()) != null) {
-			ret.add(arg.getParam(n.getName()));
+		if (arg.getParam(n.getName().asString()) != null) {
+			ret.add(arg.getParam(n.getName().asString()));
 		}
 
 		return ret;
@@ -288,7 +288,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(ObjectCreationExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getArgs(), arg);
+		process(ret, n.getArguments(), arg);
 		process(ret, n.getAnonymousClassBody(), arg);
 
 		return ret;
@@ -305,7 +305,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(ThisExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getClassExpr(), arg);
+		process(ret, n.asThisExpr(), arg);
 
 		return ret;
 	}
@@ -313,7 +313,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(SuperExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getClassExpr(), arg);
+		process(ret, n.asSuperExpr(), arg);
 
 		return ret;
 	}
@@ -321,7 +321,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(UnaryExpr n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
+		process(ret, n.getExpression(), arg);
 
 		return ret;
 	}
@@ -330,7 +330,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getAnnotations(), arg);
-		process(ret, n.getVars(), arg);
+		process(ret, n.getVariables(), arg);
 
 		return ret;
 	}
@@ -362,8 +362,8 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(ExplicitConstructorInvocationStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
-		process(ret, n.getArgs(), arg);
+		process(ret, n.getExpression(), arg);
+		process(ret, n.getArguments(), arg);
 
 		return ret;
 	}
@@ -380,7 +380,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(BlockStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getStmts(), arg);
+		process(ret, n.getStatements(), arg);
 
 		return ret;
 	}
@@ -388,7 +388,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(LabeledStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getStmt(), arg);
+		process(ret, n.getStatement(), arg);
 
 		return ret;
 	}
@@ -414,8 +414,8 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(SwitchEntry n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getLabel(), arg);
-		process(ret, n.getStmts(), arg);
+		process(ret, n.getLabels(), arg);
+		process(ret, n.getStatements(), arg);
 
 		return ret;
 	}
@@ -423,7 +423,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(ReturnStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
+		process(ret, n.getExpression(), arg);
 
 		return ret;
 	}
@@ -470,7 +470,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(ForStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getInit(), arg);
+		process(ret, n.getInitialization(), arg);
 		process(ret, n.getCompare(), arg);
 		process(ret, n.getUpdate(), arg);
 		process(ret, n.getBody(), arg);
@@ -481,7 +481,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(ThrowStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
+		process(ret, n.getExpression(), arg);
 
 		return ret;
 	}
@@ -489,8 +489,8 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(SynchronizedStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExpr(), arg);
-		process(ret, n.getBlock(), arg);
+		process(ret, n.getExpression(), arg);
+		process(ret, n.getBody(), arg);
 
 		return ret;
 	}
@@ -499,7 +499,7 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getTryBlock(), arg);
-		process(ret, n.getCatchs(), arg);
+		process(ret, n.getCatchClauses(), arg);
 		process(ret, n.getFinallyBlock(), arg);
 
 		return ret;
@@ -508,8 +508,8 @@ public class CollectMOPVarVisitor extends BaseVisitor<MOPParameters, MOPParamete
 	public MOPParameters visit(CatchClause n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
-		process(ret, n.getExcept(), arg);
-		process(ret, n.getCatchBlock(), arg);
+		process(ret, n.getParameter(), arg);
+		process(ret, n.getBody(), arg);
 
 		return ret;
 	}

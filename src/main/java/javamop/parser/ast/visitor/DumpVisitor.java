@@ -44,6 +44,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.ReceiverParameter;
 import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.JavadocComment;
@@ -197,9 +198,9 @@ public class DumpVisitor implements VoidVisitor<Object> {
 
 	protected void printMembers(List<BodyDeclaration> members, Object arg) {
 		for (BodyDeclaration member : members) {
-			printer.printLn();
+			printer.println();
 			member.accept(this, arg);
-			printer.printLn();
+			printer.println();
 		}
 	}
 
@@ -207,7 +208,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		if (annotations != null) {
 			for (AnnotationExpr a : annotations) {
 				a.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 		}
 	}
@@ -276,12 +277,12 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			for (ImportDeclaration i : f.getImports()) {
 				i.accept(this, arg);
 			}
-			printer.printLn();
+			printer.println();
 		}
 		if (f.getSpecs() != null) {
 			for (JavaMOPSpec i : f.getSpecs()) {
 				i.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 		}
 
@@ -296,7 +297,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print(s.getInMethod());
 			// s.getInMethod().accept(this, arg);
 		}
-		printer.printLn(" {");
+		printer.println(" {");
 		printer.indent();
 
 		if (s.getDeclarations() != null) {
@@ -316,7 +317,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 
 		printer.unindent();
-		printer.printLn("}");
+		printer.println("}");
 	}
 
 	public void visit(MOPParameter p, Object arg) {
@@ -350,19 +351,19 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		if (e.getAction() != null) {
 			e.getAction().accept(this, arg);
 		}
-		printer.printLn();
+		printer.println();
 	}
 
 	public void visit(PropertyAndHandlers p, Object arg) {
 		p.getProperty().accept(this, arg);
-		printer.printLn();
+		printer.println();
 		for (String event : p.getHandlers().keySet()) {
 			BlockStmt stmt = p.getHandlers().get(event);
-			printer.printLn("@" + event);
+			printer.println("@" + event);
 			printer.indent();
 			stmt.accept(this, arg);
 			printer.unindent();
-			printer.printLn();
+			printer.println();
 		}
 	}
 
@@ -585,19 +586,19 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	/** visit functions for Java components */
 
 	public void visit(CompilationUnit n, Object arg) {
-		if (n.getPakage() != null) {
-			n.getPakage().accept(this, arg);
+		if (n.getPackageDeclaration() != null) {
+			n.getPackageDeclaration().get().accept(this, arg);
 		}
 		if (n.getImports() != null) {
 			for (ImportDeclaration i : n.getImports()) {
 				i.accept(this, arg);
 			}
-			printer.printLn();
+			printer.println();
 		}
 		if (n.getTypes() != null) {
 			for (TypeDeclaration i : n.getTypes()) {
 				i.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 		}
 	}
@@ -606,12 +607,12 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printAnnotations(n.getAnnotations(), arg);
 		printer.print("package ");
 		n.getName().accept(this, arg);
-		printer.printLn(";");
-		printer.printLn();
+		printer.println(";");
+		printer.println();
 	}
 
 	public void visit(NameExpr n, Object arg) {
-		printer.print(n.getName());
+		printer.print(n.getName().asString());
 	}
 
 	@Override
@@ -634,7 +635,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		if (n.isAsterisk()) {
 			printer.print(".*");
 		}
-		printer.printLn(";");
+		printer.println(";");
 	}
 
 	public void visit(ClassOrInterfaceDeclaration n, Object arg) {
@@ -647,7 +648,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print("class ");
 		}
 
-		printer.print(n.getName());
+		printer.print(n.getName().asString());
 
 		printTypeParameters(n.getTypeParameters(), arg);
 
@@ -673,7 +674,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			}
 		}
 
-		printer.printLn(" {");
+		printer.println(" {");
 		printer.indent();
 		if (n.getMembers() != null) {
 			printMembers(n.getMembers(), arg);
@@ -1174,7 +1175,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printer.print(")");
 
 		if (n.getAnonymousClassBody() != null) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			printMembers(n.getAnonymousClassBody(), arg);
 			printer.unindent();
@@ -1380,11 +1381,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	public void visit(BlockStmt n, Object arg) {
 		printer.print("{");
 		if (n.getStmts() != null) {
-			printer.printLn();
+			printer.println();
 			printer.indent();
 			for (Statement s : n.getStmts()) {
 				s.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 			printer.unindent();
 		} else {
@@ -1432,7 +1433,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	public void visit(SwitchStmt n, Object arg) {
 		printer.print("switch(");
 		n.getSelector().accept(this, arg);
-		printer.printLn(") {");
+		printer.println(") {");
 		if (n.getEntries() != null) {
 			printer.indent();
 			for (SwitchEntry e : n.getEntries()) {
@@ -1452,12 +1453,12 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		} else {
 			printer.print("default:");
 		}
-		printer.printLn();
+		printer.println();
 		printer.indent();
 		if (n.getStmts() != null) {
 			for (Statement s : n.getStmts()) {
 				s.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 		}
 		printer.unindent();
@@ -1504,10 +1505,10 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			}
 		}
 
-		printer.printLn(" {");
+		printer.println(" {");
 		printer.indent();
 		if (n.getEntries() != null) {
-			printer.printLn();
+			printer.println();
 			for (Iterator<EnumConstantDeclaration> i = n.getEntries().iterator(); i.hasNext();) {
 				EnumConstantDeclaration e = i.next();
 				e.accept(this, arg);
@@ -1517,10 +1518,10 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			}
 		}
 		if (n.getMembers() != null) {
-			printer.printLn(";");
+			printer.println(";");
 			printMembers(n.getMembers(), arg);
 		} else {
-			printer.printLn();
+			printer.println();
 		}
 		printer.unindent();
 		printer.print("}");
@@ -1543,11 +1544,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 
 		if (n.getClassBody() != null) {
-			printer.printLn(" {");
+			printer.println(" {");
 			printer.indent();
 			printMembers(n.getClassBody(), arg);
 			printer.unindent();
-			printer.printLn("}");
+			printer.println("}");
 		}
 	}
 
@@ -1685,7 +1686,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 
 		printer.print("@interface ");
 		printer.print(n.getName());
-		printer.printLn(" {");
+		printer.println(" {");
 		printer.indent();
 		if (n.getMembers() != null) {
 			printMembers(n.getMembers(), arg);

@@ -350,7 +350,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(EnumConstantDeclaration n, Object arg) {
-		if(process(n.getAnnotations(), arg) || process(n.getArgs(), arg) || process(n.getClassBody(), arg))
+		if(process(n.getAnnotations(), arg) || process(n.getArguments(), arg) || process(n.getClassBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -378,21 +378,21 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(VariableDeclarator n, Object arg) {
-		if(process(n.getInit(), arg))
+		if(process(n.getInitializer(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(ConstructorDeclaration n, Object arg) {
-		if(process(n.getAnnotations(), arg) || process(n.getParameters(), arg) || process(n.getThrows(), arg) || process(n.getBlock(), arg))
+		if(process(n.getAnnotations(), arg) || process(n.getParameters(), arg) || process(n.getThrownExceptions(), arg) || process(n.getBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(MethodDeclaration n, Object arg) {
-		if(process(n.getAnnotations(), arg) || process(n.getParameters(), arg) || process(n.getThrows(), arg) || process(n.getBody(), arg))
+		if(process(n.getAnnotations(), arg) || process(n.getParameters(), arg) || process(n.getThrownExceptions(), arg) || process(n.getBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -406,7 +406,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(InitializerDeclaration n, Object arg) {
-		if(process(n.getBlock(), arg))
+		if(process(n.getBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -474,7 +474,8 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(ArrayCreationExpr n, Object arg) {
-		if(process(n.getInitializer(), arg) || process(n.getDimensions(), arg))
+		//TODO: is getLevels a good replacement for getDimensions?
+		if(process(n.getInitializer(), arg) || process(n.getLevels(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -502,7 +503,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(CastExpr n, Object arg) {
-		if(process(n.getExpr(), arg))
+		if(process(n.getExpression(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -531,7 +532,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(InstanceOfExpr n, Object arg) {
-		if(process(n.getExpr(), arg))
+		if(process(n.getExpression(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -566,7 +567,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(MethodCallExpr n, Object arg) {
-		if(process(n.getScope(), arg) || process(n.getArgs(), arg))
+		if(process(n.getScope(), arg) || process(n.getArguments(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -580,7 +581,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(ObjectCreationExpr n, Object arg) {
-		if(process(n.getArgs(), arg) || process(n.getAnonymousClassBody(), arg))
+		if(process(n.getArguments(), arg) || process(n.getAnonymousClassBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -597,28 +598,28 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(ThisExpr n, Object arg) {
-		if(process(n.getClassExpr(), arg))
+		if(process(n.asThisExpr(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(SuperExpr n, Object arg) {
-		if(process(n.getClassExpr(), arg))
+		if(process(n.asSuperExpr(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(UnaryExpr n, Object arg) {
-		if(process(n.getExpr(), arg))
+		if(process(n.getExpression(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(VariableDeclarationExpr n, Object arg) {
-		if(process(n.getAnnotations(), arg) || process(n.getVars(), arg))
+		if(process(n.getAnnotations(), arg) || process(n.getVariables(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -652,7 +653,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	// - Statements ----------------------------------------
 
 	public Boolean visit(ExplicitConstructorInvocationStmt n, Object arg) {
-		if(process(n.getExpr(), arg) || process(n.getArgs(), arg))
+		if(process(n.getExpression(), arg) || process(n.getArguments(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -676,14 +677,14 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(BlockStmt n, Object arg) {
-		if(process(n.getStmts(), arg))
+		if(process(n.getStatements(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(LabeledStmt n, Object arg) {
-		if(process(n.getStmt(), arg))
+		if(process(n.getStatement(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -709,7 +710,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	@Override
 	public Boolean visit(SwitchEntry n, Object arg) {
-		if(process(n.getLabel(), arg) || process(n.getStmts(), arg))
+		if(process(n.getLabels(), arg) || process(n.getStatements(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -720,7 +721,7 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(ReturnStmt n, Object arg) {
-		if(process(n.getExpr(), arg))
+		if(process(n.getExpression(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
@@ -760,35 +761,35 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 	}
 
 	public Boolean visit(ForStmt n, Object arg) {
-		if(process(n.getInit(), arg) || process(n.getCompare(), arg) || process(n.getUpdate(), arg) || process(n.getBody(), arg))
+		if(process(n.getInitialization(), arg) || process(n.getCompare(), arg) || process(n.getUpdate(), arg) || process(n.getBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(ThrowStmt n, Object arg) {
-		if(process(n.getExpr(), arg))
+		if(process(n.getExpression(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(SynchronizedStmt n, Object arg) {
-		if(process(n.getExpr(), arg) || process(n.getBlock(), arg))
+		if(process(n.getExpression(), arg) || process(n.getBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(TryStmt n, Object arg) {
-		if(process(n.getTryBlock(), arg) || process(n.getCatchs(), arg) || process(n.getFinallyBlock(), arg))
+		if(process(n.getTryBlock(), arg) || process(n.getCatchClauses(), arg) || process(n.getFinallyBlock(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
 	}
 
 	public Boolean visit(CatchClause n, Object arg) {
-		if(process(n.getExcept(), arg) || process(n.getCatchBlock(), arg))
+		if(process(n.getParameter(), arg) || process(n.getBody(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;

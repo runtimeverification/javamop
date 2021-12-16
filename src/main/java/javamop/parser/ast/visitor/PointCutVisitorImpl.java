@@ -5,6 +5,17 @@ import javamop.parser.ast.aspectj.*;
 
 public class PointCutVisitorImpl<R, A> implements PointcutVisitor<R, A> {
 
+	//TODO: This is being added to work with Legacy code. Should be removed eventually.
+	private int getBeginColumn(PointCut p) {
+		return p.getRange().get().begin.column;
+	}
+
+
+	//TODO: This is being added to work with Legacy code. Should be removed eventually.
+	private int getBeginLine(PointCut p) {
+		return p.getRange().get().begin.line;
+	}
+
 	public R visit(PointCut p, A arg){
 		return null;
 	}
@@ -20,7 +31,7 @@ public class PointCutVisitorImpl<R, A> implements PointcutVisitor<R, A> {
 	public R visit(NotPointCut p, A arg){
 		PointCut p2 = p.getPointCut().accept(this, arg);
 
-		return new NotPointCut(p.getBeginLine(), p.getBeginColumn(), p2);
+		return new NotPointCut(getBeginLine(p), getBeginColumn(p), p2);
 	}
 
 	public R visit(ConditionPointCut p, A arg){
@@ -46,7 +57,7 @@ public class PointCutVisitorImpl<R, A> implements PointcutVisitor<R, A> {
 	public R visit(CFlowPointCut p, A arg){
 		PointCut p2 = p.getPointCut().accept(this, arg);
 
-		return new CFlowPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), p2);
+		return new CFlowPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), p2);
 	}
 
 	public R visit(IFPointCut p, A arg){
