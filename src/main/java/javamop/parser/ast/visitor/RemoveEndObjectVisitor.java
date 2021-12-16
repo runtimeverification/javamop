@@ -15,7 +15,7 @@ public class RemoveEndObjectVisitor extends BasePointCutVisitor{
 			return null;
 		} else {
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
-			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", pointcuts);
+			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), "&&", pointcuts);
 		}
 	}
 

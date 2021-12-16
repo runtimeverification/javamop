@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.javaparser.JavaToken;
+import com.github.javaparser.Position;
+import com.github.javaparser.Range;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
@@ -19,6 +23,8 @@ public class MOPSpecFile extends Node {
     
     public MOPSpecFile(final int line, final int column, final PackageDeclaration pakage, 
             final List<ImportDeclaration> imports, final List<JavaMOPSpec> specList) {
+
+        Position p = new Position(line, column);
         super(line, column);
         this.pakage = pakage;
         this.imports = Collections.unmodifiableList(new ArrayList<ImportDeclaration>(imports));

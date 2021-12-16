@@ -54,7 +54,7 @@ public class RVDumpVisitor extends DumpVisitor {
 		if (e.getAction() != null) {
 			e.getAction().accept(this, arg);
 		}
-		printer.printLn();
+		printer.println();
 		if (e.getCondition() != null && e.getCondition().length() > 0) {
 			printer.print("}\n");
 		}
@@ -62,7 +62,7 @@ public class RVDumpVisitor extends DumpVisitor {
 	
 	@Override
 	public void visit(NameExpr n, Object arg) {
-		String name = n.getName();
+		String name = n.getName().asString();
 		if (name.equals("__STATICSIG"))
 			name = "staticsig";
 		printer.print(name);

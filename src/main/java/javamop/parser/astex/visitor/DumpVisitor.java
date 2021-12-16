@@ -20,8 +20,8 @@
 
 package javamop.parser.astex.visitor;
 
-import javamop.parser.ast.ImportDeclaration;
-import javamop.parser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
@@ -50,12 +50,12 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 			for (ImportDeclaration i : f.getImports()) {
 				i.accept(this, arg);
 			}
-			printer.printLn();
+			printer.println();
 		}
 		if (f.getSpecs() != null) {
 			for (JavaMOPSpecExt i : f.getSpecs()) {
 				i.accept(this, arg);
-				printer.printLn();
+				printer.println();
 			}
 		}
 	}
@@ -94,7 +94,7 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 			}
 		}
 
-		printer.printLn(" {");
+		printer.println(" {");
 		printer.indent();
 
 		if (s.getDeclarations() != null) {
@@ -114,7 +114,7 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 		}
 
 		printer.unindent();
-		printer.printLn("}");
+		printer.println("}");
 	}
 
 	public void visit(EventDefinitionExt e, Object arg) {
@@ -146,13 +146,13 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 		} else
 			printer.print(";");
 
-		printer.printLn();
+		printer.println();
 	}
 
 	public void visit(PropertyAndHandlersExt p, Object arg) {
 		if (p.getProperty() != null)
 			p.getProperty().accept(this, arg);
-		printer.printLn();
+		printer.println();
 		for (String event : p.getHandlers().keySet()) {
 			for (HandlerExt h : p.getHandlerList()) { // i need to remove that
 														// later, i'm using it
@@ -169,11 +169,11 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 				}
 			}
 			BlockStmt stmt = p.getHandlers().get(event);
-			printer.printLn("@" + event);
+			printer.println("@" + event);
 			printer.indent();
 			stmt.accept(this, arg);
 			printer.unindent();
-			printer.printLn();
+			printer.println();
 		}
 	}
 	

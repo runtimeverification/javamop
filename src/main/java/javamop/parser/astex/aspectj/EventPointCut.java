@@ -3,10 +3,10 @@ package javamop.parser.astex.aspectj;
 
 import java.util.List;
 
+import com.github.javaparser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.astex.mopspec.ReferenceSpec;
 import javamop.parser.astex.visitor.DumpVisitor;
-import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
 
 public class EventPointCut extends PointCut {

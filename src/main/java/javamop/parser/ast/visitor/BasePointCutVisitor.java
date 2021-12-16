@@ -13,13 +13,13 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 	}
 
 	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	private int getBeginColumn(PointCut p) {
+	int getBeginColumn(PointCut p) {
 		return p.getRange().get().begin.column;
 	}
 
 	
 	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	private int getBeginLine(PointCut p) {
+	int getBeginLine(PointCut p) {
 		return p.getRange().get().begin.line;
 	}
 	
