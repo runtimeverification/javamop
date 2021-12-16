@@ -5,135 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javamop.parser.ast.CompilationUnit;
-import javamop.parser.ast.ImportDeclaration;
-import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.aspectj.ArgsPointCut;
-import javamop.parser.ast.aspectj.BaseTypePattern;
-import javamop.parser.ast.aspectj.CFlowPointCut;
-import javamop.parser.ast.aspectj.CombinedPointCut;
-import javamop.parser.ast.aspectj.CombinedTypePattern;
-import javamop.parser.ast.aspectj.ConditionPointCut;
-import javamop.parser.ast.aspectj.CountCondPointCut;
-import javamop.parser.ast.aspectj.EndObjectPointCut;
-import javamop.parser.ast.aspectj.EndProgramPointCut;
-import javamop.parser.ast.aspectj.EndThreadPointCut;
-import javamop.parser.ast.aspectj.FieldPattern;
-import javamop.parser.ast.aspectj.FieldPointCut;
-import javamop.parser.ast.aspectj.IDPointCut;
-import javamop.parser.ast.aspectj.IFPointCut;
-import javamop.parser.ast.aspectj.MethodPattern;
-import javamop.parser.ast.aspectj.MethodPointCut;
-import javamop.parser.ast.aspectj.NotPointCut;
-import javamop.parser.ast.aspectj.NotTypePattern;
-import javamop.parser.ast.aspectj.PointCut;
-import javamop.parser.ast.aspectj.StartThreadPointCut;
-import javamop.parser.ast.aspectj.TargetPointCut;
-import javamop.parser.ast.aspectj.ThisPointCut;
-import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
-import javamop.parser.ast.aspectj.ThreadNamePointCut;
-import javamop.parser.ast.aspectj.ThreadPointCut;
-import javamop.parser.ast.aspectj.TypePattern;
-import javamop.parser.ast.aspectj.WildcardParameter;
-import javamop.parser.ast.aspectj.WithinPointCut;
-import javamop.parser.ast.body.AnnotationDeclaration;
-import javamop.parser.ast.body.AnnotationMemberDeclaration;
-import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
-import javamop.parser.ast.body.ConstructorDeclaration;
-import javamop.parser.ast.body.EmptyMemberDeclaration;
-import javamop.parser.ast.body.EmptyTypeDeclaration;
-import javamop.parser.ast.body.EnumConstantDeclaration;
-import javamop.parser.ast.body.EnumDeclaration;
-import javamop.parser.ast.body.FieldDeclaration;
-import javamop.parser.ast.body.InitializerDeclaration;
-import javamop.parser.ast.body.MethodDeclaration;
-import javamop.parser.ast.body.Parameter;
-import javamop.parser.ast.body.VariableDeclarator;
-import javamop.parser.ast.body.VariableDeclaratorId;
-import javamop.parser.ast.expr.ArrayAccessExpr;
-import javamop.parser.ast.expr.ArrayCreationExpr;
-import javamop.parser.ast.expr.ArrayInitializerExpr;
-import javamop.parser.ast.expr.AssignExpr;
-import javamop.parser.ast.expr.BinaryExpr;
-import javamop.parser.ast.expr.BooleanLiteralExpr;
-import javamop.parser.ast.expr.CastExpr;
-import javamop.parser.ast.expr.CharLiteralExpr;
-import javamop.parser.ast.expr.ClassExpr;
-import javamop.parser.ast.expr.ConditionalExpr;
-import javamop.parser.ast.expr.DoubleLiteralExpr;
-import javamop.parser.ast.expr.EnclosedExpr;
-import javamop.parser.ast.expr.Expression;
-import javamop.parser.ast.expr.FieldAccessExpr;
-import javamop.parser.ast.expr.InstanceOfExpr;
-import javamop.parser.ast.expr.IntegerLiteralExpr;
-import javamop.parser.ast.expr.IntegerLiteralMinValueExpr;
-import javamop.parser.ast.expr.LongLiteralExpr;
-import javamop.parser.ast.expr.LongLiteralMinValueExpr;
-import javamop.parser.ast.expr.MarkerAnnotationExpr;
-import javamop.parser.ast.expr.MemberValuePair;
-import javamop.parser.ast.expr.MethodCallExpr;
-import javamop.parser.ast.expr.NameExpr;
-import javamop.parser.ast.expr.NormalAnnotationExpr;
-import javamop.parser.ast.expr.NullLiteralExpr;
-import javamop.parser.ast.expr.ObjectCreationExpr;
-import javamop.parser.ast.expr.QualifiedNameExpr;
-import javamop.parser.ast.expr.SingleMemberAnnotationExpr;
-import javamop.parser.ast.expr.StringLiteralExpr;
-import javamop.parser.ast.expr.SuperExpr;
-import javamop.parser.ast.expr.SuperMemberAccessExpr;
-import javamop.parser.ast.expr.ThisExpr;
-import javamop.parser.ast.expr.UnaryExpr;
-import javamop.parser.ast.expr.VariableDeclarationExpr;
-import javamop.parser.ast.mopspec.EventDefinition;
-import javamop.parser.ast.mopspec.Formula;
-import javamop.parser.ast.mopspec.JavaMOPSpec;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.*;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
+import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.mopspec.MOPParameter;
-import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.AssertStmt;
-import javamop.parser.ast.stmt.BlockStmt;
-import javamop.parser.ast.stmt.BreakStmt;
-import javamop.parser.ast.stmt.CatchClause;
-import javamop.parser.ast.stmt.ContinueStmt;
-import javamop.parser.ast.stmt.DoStmt;
-import javamop.parser.ast.stmt.EmptyStmt;
-import javamop.parser.ast.stmt.ExplicitConstructorInvocationStmt;
-import javamop.parser.ast.stmt.ExpressionStmt;
-import javamop.parser.ast.stmt.ForStmt;
-import javamop.parser.ast.stmt.ForeachStmt;
-import javamop.parser.ast.stmt.IfStmt;
-import javamop.parser.ast.stmt.LabeledStmt;
-import javamop.parser.ast.stmt.ReturnStmt;
-import javamop.parser.ast.stmt.SwitchEntryStmt;
-import javamop.parser.ast.stmt.SwitchStmt;
-import javamop.parser.ast.stmt.SynchronizedStmt;
-import javamop.parser.ast.stmt.ThrowStmt;
-import javamop.parser.ast.stmt.TryStmt;
-import javamop.parser.ast.stmt.TypeDeclarationStmt;
-import javamop.parser.ast.stmt.WhileStmt;
-import javamop.parser.ast.type.ClassOrInterfaceType;
-import javamop.parser.ast.type.PrimitiveType;
-import javamop.parser.ast.type.ReferenceType;
-import javamop.parser.ast.type.VoidType;
-import javamop.parser.ast.type.WildcardType;
+import javamop.parser.ast.visitor.BaseVisitor;
 
-public class RenameVariableVisitor implements javamop.parser.ast.visitor.GenericVisitor<Node, HashMap<String, MOPParameter>> {
-
-	@Override
-	public Node visit(Node n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(MOPSpecFile f, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(JavaMOPSpec s, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
+public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOPParameter>> {
 
 	@Override
 	public Node visit(MOPParameter p, HashMap<String, MOPParameter> arg) {
@@ -143,21 +23,6 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 			return new MOPParameter(p.getBeginLine(), p.getBeginColumn(), p.getType(), param.getName());
 
 		return p;
-	}
-
-	@Override
-	public Node visit(EventDefinition e, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(PropertyAndHandlers p, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(Formula f, HashMap<String, MOPParameter> arg) {
-		return null;
 	}
 
 	@Override
@@ -376,121 +241,6 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	}
 
 	@Override
-	public Node visit(CompilationUnit n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(PackageDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(ImportDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(TypeParameter n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(ClassOrInterfaceDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(EnumDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(EmptyTypeDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(EnumConstantDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(AnnotationDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(AnnotationMemberDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(FieldDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(VariableDeclarator n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(VariableDeclaratorId n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(ConstructorDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(MethodDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(Parameter n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(EmptyMemberDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(InitializerDeclaration n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(ClassOrInterfaceType n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(PrimitiveType n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(ReferenceType n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(VoidType n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(WildcardType n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
 	public Node visit(ArrayAccessExpr n, HashMap<String, MOPParameter> arg) {
 		Expression name = (Expression)n.getName().accept(this, arg);
 		Expression index = (Expression)n.getIndex().accept(this, arg);
@@ -629,16 +379,6 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	}
 
 	@Override
-	public Node visit(IntegerLiteralMinValueExpr n, HashMap<String, MOPParameter> arg) {
-		return n;
-	}
-
-	@Override
-	public Node visit(LongLiteralMinValueExpr n, HashMap<String, MOPParameter> arg) {
-		return n;
-	}
-
-	@Override
 	public Node visit(CharLiteralExpr n, HashMap<String, MOPParameter> arg) {
 		return n;
 	}
@@ -707,11 +447,6 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	}
 
 	@Override
-	public Node visit(SuperMemberAccessExpr n, HashMap<String, MOPParameter> arg) {
-		return n;
-	}
-
-	@Override
 	public Node visit(ThisExpr n, HashMap<String, MOPParameter> arg) {
 		Expression classExpr = (Expression)n.getClassExpr().accept(this, arg);
 		
@@ -748,32 +483,7 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	}
 
 	@Override
-	public Node visit(MarkerAnnotationExpr n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(SingleMemberAnnotationExpr n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(NormalAnnotationExpr n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
-	public Node visit(MemberValuePair n, HashMap<String, MOPParameter> arg) {
-		return null;
-	}
-
-	@Override
 	public Node visit(ExplicitConstructorInvocationStmt n, HashMap<String, MOPParameter> arg) {
-		return n;
-	}
-
-	@Override
-	public Node visit(TypeDeclarationStmt n, HashMap<String, MOPParameter> arg) {
 		return n;
 	}
 
@@ -808,7 +518,7 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	}
 
 	@Override
-	public Node visit(SwitchEntryStmt n, HashMap<String, MOPParameter> arg) {
+	public Node visit(SwitchEntry n, HashMap<String, MOPParameter> arg) {
 		return n;
 	}
 
@@ -843,7 +553,7 @@ public class RenameVariableVisitor implements javamop.parser.ast.visitor.Generic
 	}
 
 	@Override
-	public Node visit(ForeachStmt n, HashMap<String, MOPParameter> arg) {
+	public Node visit(ForEachStmt n, HashMap<String, MOPParameter> arg) {
 		return n;
 	}
 

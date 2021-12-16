@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.visitor.GenericVisitor;
 import javamop.parser.astex.mopspec.JavaMOPSpecExt;
-import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
 
 public class MOPSpecFileExt extends ExtNode {
@@ -45,7 +45,12 @@ public class MOPSpecFileExt extends ExtNode {
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-    
+
+    @Override
+    public <A> void accept(com.github.javaparser.ast.visitor.VoidVisitor<A> v, A arg) {
+
+    }
+
     /**
      * Search the specifications for one with a particular name.
      * @param name The name of the desired specification

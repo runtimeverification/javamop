@@ -27,17 +27,7 @@ import javamop.parser.ast.aspectj.WithinPointCut;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
 
-public class CollectHandlerPointCutVisitor implements PointcutVisitor<List<HandlerPointCut>, Object> {
-
-	@Override
-	public List<HandlerPointCut> visit(PointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(ArgsPointCut p, Object arg) {
-		return null;
-	}
+public class CollectHandlerPointCutVisitor extends MOPPointcutVisitorImpl<List<HandlerPointCut>, Object> {
 
 	@Override
 	public List<HandlerPointCut> visit(CombinedPointCut p, Object arg) {
@@ -58,88 +48,8 @@ public class CollectHandlerPointCutVisitor implements PointcutVisitor<List<Handl
 	}
 
 	@Override
-	public List<HandlerPointCut> visit(ConditionPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(FieldPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(MethodPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(TargetPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(ThisPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
 	public List<HandlerPointCut> visit(CFlowPointCut p, Object arg) {
 		return p.getPointCut().accept(this, arg);
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(IFPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(IDPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(WithinPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(ThreadPointCut p, Object arg) {
-		return null;
-	}
-	
-	@Override
-	public List<HandlerPointCut> visit(ThreadBlockedPointCut p, Object arg) {
-		return null;
-	}
-	
-	@Override
-	public List<HandlerPointCut> visit(ThreadNamePointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(EndProgramPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(EndThreadPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(EndObjectPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(StartThreadPointCut p, Object arg) {
-		return null;
-	}
-
-	@Override
-	public List<HandlerPointCut> visit(EventPointCut p, Object arg) {
-		return null;
 	}
 
 	@Override

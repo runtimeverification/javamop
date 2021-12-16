@@ -32,7 +32,7 @@ import javamop.parser.astex.mopspec.ReferenceSpec;
 /**
  * @author Julio Vilmar Gesser
  */
-public interface VoidVisitor<A> extends javamop.parser.ast.visitor.VoidVisitor<A> {
+public interface VoidVisitor<A> extends com.github.javaparser.ast.visitor.VoidVisitor<A> {
 
 	// All extended componenets
 	

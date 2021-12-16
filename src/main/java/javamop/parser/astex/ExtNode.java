@@ -23,8 +23,8 @@
 package javamop.parser.astex;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.DumpVisitor;
-import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
 
 /**

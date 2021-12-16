@@ -24,8 +24,8 @@ package javamop.parser.astex.mopspec;
 
 import java.util.List;
 
+import com.github.javaparser.ast.visitor.GenericVisitor;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
 
 /**
@@ -67,5 +67,10 @@ public final class ExtendedSpec extends ExtNode {
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
-    
+
+    @Override
+    public <A> void accept(com.github.javaparser.ast.visitor.VoidVisitor<A> v, A arg) {
+
+    }
+
 }
