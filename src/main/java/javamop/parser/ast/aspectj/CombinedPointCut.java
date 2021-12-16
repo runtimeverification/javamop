@@ -2,9 +2,9 @@
 package javamop.parser.ast.aspectj;
 
 
-import javamop.parser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.visitor.PointcutVisitor;
-import javamop.parser.ast.visitor.VoidVisitor;
 
 import java.util.List;
 

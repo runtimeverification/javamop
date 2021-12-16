@@ -10,7 +10,6 @@ import javamop.parser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.Node;
 import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.TypeParameter;
 import javamop.parser.ast.aspectj.ArgsPointCut;
 import javamop.parser.ast.aspectj.BaseTypePattern;
 import javamop.parser.ast.aspectj.CFlowPointCut;

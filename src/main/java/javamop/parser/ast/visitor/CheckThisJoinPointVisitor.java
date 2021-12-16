@@ -1,37 +1,61 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.visitor;
 
-import javamop.parser.ast.CompilationUnit;
-import javamop.parser.ast.ImportDeclaration;
+import com.github.javaparser.ast.type.TypeParameter;
 import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.TypeParameter;
-import javamop.parser.ast.body.AnnotationDeclaration;
-import javamop.parser.ast.body.AnnotationMemberDeclaration;
-import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
-import javamop.parser.ast.body.ConstructorDeclaration;
-import javamop.parser.ast.body.EmptyMemberDeclaration;
-import javamop.parser.ast.body.EmptyTypeDeclaration;
-import javamop.parser.ast.body.EnumConstantDeclaration;
-import javamop.parser.ast.body.EnumDeclaration;
-import javamop.parser.ast.body.FieldDeclaration;
-import javamop.parser.ast.body.InitializerDeclaration;
-import javamop.parser.ast.body.MethodDeclaration;
-import javamop.parser.ast.body.Parameter;
-import javamop.parser.ast.body.VariableDeclarator;
-import javamop.parser.ast.body.VariableDeclaratorId;
-import javamop.parser.ast.expr.*;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
 import javamop.parser.ast.aspectj.*;
 
 import java.util.Collection;
+
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.CompactConstructorDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.ReceiverParameter;
+import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleExportsDirective;
+import com.github.javaparser.ast.modules.ModuleOpensDirective;
+import com.github.javaparser.ast.modules.ModuleProvidesDirective;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.ArrayType;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.IntersectionType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.UnionType;
+import com.github.javaparser.ast.type.UnknownType;
+import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 
 public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object> {
 
@@ -157,12 +181,10 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 	
-	@Override
 	public Boolean visit(ThreadNamePointCut p, Object arg) {
 		return Boolean.FALSE;
 	}
 	
-	@Override
 	public Boolean visit(ThreadBlockedPointCut p, Object arg) {
 		return Boolean.FALSE;
 	}
@@ -213,8 +235,88 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public Boolean visit(LineComment n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(BlockComment n, Object arg) {
+		return null;
+	}
+
 	public Boolean visit(ImportDeclaration n, Object arg) {
 		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean visit(ModuleDeclaration n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ModuleRequiresDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ModuleExportsDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ModuleProvidesDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ModuleUsesDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ModuleOpensDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(UnparsableStmt n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ReceiverParameter n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(VarType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(Modifier n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(SwitchExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(YieldStmt n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(TextBlockLiteralExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(PatternExpr n, Object arg) {
+		return null;
 	}
 
 	public Boolean visit(TypeParameter n, Object arg) {
@@ -230,14 +332,20 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public Boolean visit(RecordDeclaration n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(CompactConstructorDeclaration n, Object arg) {
+		return null;
+	}
+
 	public Boolean visit(EnumDeclaration n, Object arg) {
 		if(process(n.getAnnotations(), arg) || process(n.getEntries(), arg))
 			return Boolean.TRUE;
 
-		return Boolean.FALSE;
-	}
-
-	public Boolean visit(EmptyTypeDeclaration n, Object arg) {
 		return Boolean.FALSE;
 	}
 
@@ -276,10 +384,6 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
-	public Boolean visit(VariableDeclaratorId n, Object arg) {
-		return Boolean.FALSE;
-	}
-
 	public Boolean visit(ConstructorDeclaration n, Object arg) {
 		if(process(n.getAnnotations(), arg) || process(n.getParameters(), arg) || process(n.getThrows(), arg) || process(n.getBlock(), arg))
 			return Boolean.TRUE;
@@ -301,15 +405,16 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
-	public Boolean visit(EmptyMemberDeclaration n, Object arg) {
-		return Boolean.FALSE;
-	}
-
 	public Boolean visit(InitializerDeclaration n, Object arg) {
 		if(process(n.getBlock(), arg))
 			return Boolean.TRUE;
 
 		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean visit(JavadocComment n, Object arg) {
+		return null;
 	}
 
 	// - Type ----------------------------------------------
@@ -322,6 +427,26 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public Boolean visit(ArrayType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(ArrayCreationLevel n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(IntersectionType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(UnionType n, Object arg) {
+		return null;
+	}
+
 	public Boolean visit(ReferenceType n, Object arg) {
 		return Boolean.FALSE;
 	}
@@ -332,6 +457,11 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 
 	public Boolean visit(WildcardType n, Object arg) {
 		return Boolean.FALSE;
+	}
+
+	@Override
+	public Boolean visit(UnknownType n, Object arg) {
+		return null;
 	}
 
 	// - Expression ----------------------------------------
@@ -419,14 +549,6 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
-	public Boolean visit(IntegerLiteralMinValueExpr n, Object arg) {
-		return Boolean.FALSE;
-	}
-
-	public Boolean visit(LongLiteralMinValueExpr n, Object arg) {
-		return Boolean.FALSE;
-	}
-
 	public Boolean visit(CharLiteralExpr n, Object arg) {
 		return Boolean.FALSE;
 	}
@@ -471,10 +593,6 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		if(process(n.getQualifier(), arg))
 			return Boolean.TRUE;
 		
-		return Boolean.FALSE;
-	}
-
-	public Boolean visit(SuperMemberAccessExpr n, Object arg) {
 		return Boolean.FALSE;
 	}
 
@@ -540,11 +658,14 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
-	public Boolean visit(TypeDeclarationStmt n, Object arg) {
-		if(process(n.getTypeDeclaration(), arg))
-			return Boolean.TRUE;
+	@Override
+	public Boolean visit(LocalClassDeclarationStmt n, Object arg) {
+		return null;
+	}
 
-		return Boolean.FALSE;
+	@Override
+	public Boolean visit(LocalRecordDeclarationStmt n, Object arg) {
+		return null;
 	}
 
 	public Boolean visit(AssertStmt n, Object arg) {
@@ -586,7 +707,8 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
-	public Boolean visit(SwitchEntryStmt n, Object arg) {
+	@Override
+	public Boolean visit(SwitchEntry n, Object arg) {
 		if(process(n.getLabel(), arg) || process(n.getStmts(), arg))
 			return Boolean.TRUE;
 
@@ -629,7 +751,8 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
-	public Boolean visit(ForeachStmt n, Object arg) {
+	@Override
+	public Boolean visit(ForEachStmt n, Object arg) {
 		if(process(n.getVariable(), arg) || process(n.getIterable(), arg) || process(n.getBody(), arg))
 			return Boolean.TRUE;
 
@@ -671,4 +794,33 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public Boolean visit(LambdaExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(MethodReferenceExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(TypeExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(NodeList n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(Name n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public Boolean visit(SimpleName n, Object arg) {
+		return null;
+	}
 }

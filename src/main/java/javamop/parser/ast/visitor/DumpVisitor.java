@@ -23,92 +23,57 @@ package javamop.parser.ast.visitor;
 import java.util.Iterator;
 import java.util.List;
 
-import javamop.parser.ast.CompilationUnit;
-import javamop.parser.ast.ImportDeclaration;
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.CompactConstructorDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.ReceiverParameter;
+import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleExportsDirective;
+import com.github.javaparser.ast.modules.ModuleOpensDirective;
+import com.github.javaparser.ast.modules.ModuleProvidesDirective;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.ArrayType;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.IntersectionType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.ast.type.UnionType;
+import com.github.javaparser.ast.type.UnknownType;
+import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.printer.SourcePrinter;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.TypeParameter;
-import javamop.parser.ast.aspectj.ArgsPointCut;
-import javamop.parser.ast.aspectj.BaseTypePattern;
-import javamop.parser.ast.aspectj.CFlowPointCut;
-import javamop.parser.ast.aspectj.CombinedPointCut;
-import javamop.parser.ast.aspectj.CombinedTypePattern;
-import javamop.parser.ast.aspectj.ConditionPointCut;
-import javamop.parser.ast.aspectj.CountCondPointCut;
-import javamop.parser.ast.aspectj.EndObjectPointCut;
-import javamop.parser.ast.aspectj.EndProgramPointCut;
-import javamop.parser.ast.aspectj.EndThreadPointCut;
-import javamop.parser.ast.aspectj.FieldPattern;
-import javamop.parser.ast.aspectj.FieldPointCut;
-import javamop.parser.ast.aspectj.IDPointCut;
-import javamop.parser.ast.aspectj.IFPointCut;
-import javamop.parser.ast.aspectj.MethodPattern;
-import javamop.parser.ast.aspectj.MethodPointCut;
-import javamop.parser.ast.aspectj.NotPointCut;
-import javamop.parser.ast.aspectj.NotTypePattern;
-import javamop.parser.ast.aspectj.PointCut;
-import javamop.parser.ast.aspectj.StartThreadPointCut;
-import javamop.parser.ast.aspectj.TargetPointCut;
-import javamop.parser.ast.aspectj.ThisPointCut;
-import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
-import javamop.parser.ast.aspectj.ThreadNamePointCut;
-import javamop.parser.ast.aspectj.ThreadPointCut;
-import javamop.parser.ast.aspectj.TypePattern;
-import javamop.parser.ast.aspectj.WildcardParameter;
-import javamop.parser.ast.aspectj.WithinPointCut;
-import javamop.parser.ast.body.AnnotationDeclaration;
-import javamop.parser.ast.body.AnnotationMemberDeclaration;
-import javamop.parser.ast.body.BodyDeclaration;
-import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
-import javamop.parser.ast.body.ConstructorDeclaration;
-import javamop.parser.ast.body.EmptyMemberDeclaration;
-import javamop.parser.ast.body.EmptyTypeDeclaration;
-import javamop.parser.ast.body.EnumConstantDeclaration;
-import javamop.parser.ast.body.EnumDeclaration;
-import javamop.parser.ast.body.FieldDeclaration;
-import javamop.parser.ast.body.InitializerDeclaration;
-import javamop.parser.ast.body.MethodDeclaration;
+import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.body.ModifierSet;
-import javamop.parser.ast.body.Parameter;
-import javamop.parser.ast.body.TypeDeclaration;
-import javamop.parser.ast.body.VariableDeclarator;
-import javamop.parser.ast.body.VariableDeclaratorId;
-import javamop.parser.ast.expr.AnnotationExpr;
-import javamop.parser.ast.expr.ArrayAccessExpr;
-import javamop.parser.ast.expr.ArrayCreationExpr;
-import javamop.parser.ast.expr.ArrayInitializerExpr;
-import javamop.parser.ast.expr.AssignExpr;
-import javamop.parser.ast.expr.BinaryExpr;
-import javamop.parser.ast.expr.BooleanLiteralExpr;
-import javamop.parser.ast.expr.CastExpr;
-import javamop.parser.ast.expr.CharLiteralExpr;
-import javamop.parser.ast.expr.ClassExpr;
-import javamop.parser.ast.expr.ConditionalExpr;
-import javamop.parser.ast.expr.DoubleLiteralExpr;
-import javamop.parser.ast.expr.EnclosedExpr;
-import javamop.parser.ast.expr.Expression;
-import javamop.parser.ast.expr.FieldAccessExpr;
-import javamop.parser.ast.expr.InstanceOfExpr;
-import javamop.parser.ast.expr.IntegerLiteralExpr;
-import javamop.parser.ast.expr.IntegerLiteralMinValueExpr;
-import javamop.parser.ast.expr.LongLiteralExpr;
-import javamop.parser.ast.expr.LongLiteralMinValueExpr;
-import javamop.parser.ast.expr.MarkerAnnotationExpr;
-import javamop.parser.ast.expr.MemberValuePair;
-import javamop.parser.ast.expr.MethodCallExpr;
-import javamop.parser.ast.expr.NameExpr;
-import javamop.parser.ast.expr.NormalAnnotationExpr;
-import javamop.parser.ast.expr.NullLiteralExpr;
-import javamop.parser.ast.expr.ObjectCreationExpr;
-import javamop.parser.ast.expr.QualifiedNameExpr;
-import javamop.parser.ast.expr.SingleMemberAnnotationExpr;
-import javamop.parser.ast.expr.StringLiteralExpr;
-import javamop.parser.ast.expr.SuperExpr;
-import javamop.parser.ast.expr.SuperMemberAccessExpr;
-import javamop.parser.ast.expr.ThisExpr;
-import javamop.parser.ast.expr.UnaryExpr;
-import javamop.parser.ast.expr.VariableDeclarationExpr;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
@@ -116,34 +81,6 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.mopspec.SpecModifierSet;
-import javamop.parser.ast.stmt.AssertStmt;
-import javamop.parser.ast.stmt.BlockStmt;
-import javamop.parser.ast.stmt.BreakStmt;
-import javamop.parser.ast.stmt.CatchClause;
-import javamop.parser.ast.stmt.ContinueStmt;
-import javamop.parser.ast.stmt.DoStmt;
-import javamop.parser.ast.stmt.EmptyStmt;
-import javamop.parser.ast.stmt.ExplicitConstructorInvocationStmt;
-import javamop.parser.ast.stmt.ExpressionStmt;
-import javamop.parser.ast.stmt.ForStmt;
-import javamop.parser.ast.stmt.ForeachStmt;
-import javamop.parser.ast.stmt.IfStmt;
-import javamop.parser.ast.stmt.LabeledStmt;
-import javamop.parser.ast.stmt.ReturnStmt;
-import javamop.parser.ast.stmt.Statement;
-import javamop.parser.ast.stmt.SwitchEntryStmt;
-import javamop.parser.ast.stmt.SwitchStmt;
-import javamop.parser.ast.stmt.SynchronizedStmt;
-import javamop.parser.ast.stmt.ThrowStmt;
-import javamop.parser.ast.stmt.TryStmt;
-import javamop.parser.ast.stmt.TypeDeclarationStmt;
-import javamop.parser.ast.stmt.WhileStmt;
-import javamop.parser.ast.type.ClassOrInterfaceType;
-import javamop.parser.ast.type.PrimitiveType;
-import javamop.parser.ast.type.ReferenceType;
-import javamop.parser.ast.type.Type;
-import javamop.parser.ast.type.VoidType;
-import javamop.parser.ast.type.WildcardType;
 
 /**
  * @author Julio Vilmar Gesser
@@ -152,6 +89,8 @@ import javamop.parser.ast.type.WildcardType;
 public class DumpVisitor implements VoidVisitor<Object> {
 
 	protected final SourcePrinter printer = new SourcePrinter();
+	private CountCondPointCut p;
+	private Object arg;
 
 	public String getSource() {
 		return printer.getSource();
@@ -526,6 +465,8 @@ public class DumpVisitor implements VoidVisitor<Object> {
 	}
 	
 	public void visit(CountCondPointCut p, Object arg) {
+		this.p = p;
+		this.arg = arg;
 		printer.print("countCond(");
 		p.getExpression().accept(this, arg);
 		// printer.print("/* moved to the event definition */");
@@ -673,6 +614,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printer.print(n.getName());
 	}
 
+	@Override
+	public void visit(Name n, Object arg) {
+
+	}
+
 	public void visit(QualifiedNameExpr n, Object arg) {
 		n.getQualifier().accept(this, arg);
 		printer.print(".");
@@ -736,10 +682,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printer.print("}");
 	}
 
-	public void visit(EmptyTypeDeclaration n, Object arg) {
-		printer.print(";");
-	}
-
 	public void visit(ClassOrInterfaceType n, Object arg) {
 		if (n.getScope() != null) {
 			n.getScope().accept(this, arg);
@@ -792,6 +734,16 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
+	@Override
+	public void visit(RecordDeclaration n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(CompactConstructorDeclaration n, Object arg) {
+
+	}
+
 	public void visit(ReferenceType n, Object arg) {
 		n.getType().accept(this, arg);
 		for (int i = 0; i < n.getArrayCount(); i++) {
@@ -809,6 +761,76 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print(" super ");
 			n.getSuper().accept(this, arg);
 		}
+	}
+
+	@Override
+	public void visit(ModuleDeclaration n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(ModuleRequiresDirective n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(ModuleExportsDirective n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(ModuleProvidesDirective n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(ModuleUsesDirective n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(ModuleOpensDirective n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(UnparsableStmt n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(ReceiverParameter n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(VarType n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(Modifier n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(SwitchExpr switchExpr, Object arg) {
+
+	}
+
+	@Override
+	public void visit(TextBlockLiteralExpr n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(YieldStmt yieldStmt, Object arg) {
+
+	}
+
+	@Override
+	public void visit(PatternExpr n, Object arg) {
+
 	}
 
 	public void visit(FieldDeclaration n, Object arg) {
@@ -836,13 +858,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	public void visit(VariableDeclaratorId n, Object arg) {
-		printer.print(n.getName());
-		for (int i = 0; i < n.getArrayCount(); i++) {
-			printer.print("[]");
-		}
-	}
-
 	public void visit(ArrayInitializerExpr n, Object arg) {
 		printer.print("{");
 		if (n.getValues() != null) {
@@ -857,6 +872,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print(" ");
 		}
 		printer.print("}");
+	}
+
+	@Override
+	public void visit(ArrayType n, Object arg) {
+
 	}
 
 	public void visit(VoidType n, Object arg) {
@@ -891,6 +911,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print(" ");
 			n.getInitializer().accept(this, arg);
 		}
+	}
+
+	@Override
+	public void visit(ArrayCreationLevel n, Object arg) {
+
 	}
 
 	public void visit(AssignExpr n, Object arg) {
@@ -1004,6 +1029,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		n.getRight().accept(this, arg);
 	}
 
+	@Override
+	public void visit(BlockComment n, Object arg) {
+
+	}
+
 	public void visit(CastExpr n, Object arg) {
 		printer.print("(");
 		n.getType().accept(this, arg);
@@ -1056,15 +1086,17 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printer.print(n.getValue());
 	}
 
+	@Override
+	public void visit(IntersectionType n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(JavadocComment n, Object arg) {
+
+	}
+
 	public void visit(LongLiteralExpr n, Object arg) {
-		printer.print(n.getValue());
-	}
-
-	public void visit(IntegerLiteralMinValueExpr n, Object arg) {
-		printer.print(n.getValue());
-	}
-
-	public void visit(LongLiteralMinValueExpr n, Object arg) {
 		printer.print(n.getValue());
 	}
 
@@ -1150,11 +1182,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	public void visit(SuperMemberAccessExpr n, Object arg) {
-		printer.print("super.");
-		printer.print(n.getName());
-	}
-
 	public void visit(UnaryExpr n, Object arg) {
 		switch (n.getOperator()) {
 		case positive:
@@ -1187,6 +1214,16 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			printer.print("--");
 			break;
 		}
+	}
+
+	@Override
+	public void visit(UnionType n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(UnknownType n, Object arg) {
+
 	}
 
 	public void visit(ConstructorDeclaration n, Object arg) {
@@ -1272,6 +1309,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
+	@Override
+	public void visit(MethodReferenceExpr n, Object arg) {
+
+	}
+
 	public void visit(Parameter n, Object arg) {
 		printAnnotations(n.getAnnotations(), arg);
 		printModifiers(n.getModifiers());
@@ -1325,10 +1367,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	public void visit(TypeDeclarationStmt n, Object arg) {
-		n.getTypeDeclaration().accept(this, arg);
-	}
-
 	public void visit(AssertStmt n, Object arg) {
 		printer.print("assert ");
 		n.getCheck().accept(this, arg);
@@ -1362,6 +1400,26 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		n.getStmt().accept(this, arg);
 	}
 
+	@Override
+	public void visit(LambdaExpr n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(LineComment n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(LocalClassDeclarationStmt n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(LocalRecordDeclarationStmt n, Object arg) {
+
+	}
+
 	public void visit(EmptyStmt n, Object arg) {
 		printer.print(";");
 	}
@@ -1377,7 +1435,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printer.printLn(") {");
 		if (n.getEntries() != null) {
 			printer.indent();
-			for (SwitchEntryStmt e : n.getEntries()) {
+			for (SwitchEntry e : n.getEntries()) {
 				e.accept(this, arg);
 			}
 			printer.unindent();
@@ -1386,7 +1444,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 
 	}
 
-	public void visit(SwitchEntryStmt n, Object arg) {
+	public void visit(SwitchEntry n, Object arg) {
 		if (n.getLabel() != null) {
 			printer.print("case ");
 			n.getLabel().accept(this, arg);
@@ -1421,6 +1479,11 @@ public class DumpVisitor implements VoidVisitor<Object> {
 			n.getExpr().accept(this, arg);
 		}
 		printer.print(";");
+	}
+
+	@Override
+	public void visit(SimpleName n, Object arg) {
+
 	}
 
 	public void visit(EnumDeclaration n, Object arg) {
@@ -1488,10 +1551,6 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
-	public void visit(EmptyMemberDeclaration n, Object arg) {
-		printer.print(";");
-	}
-
 	public void visit(InitializerDeclaration n, Object arg) {
 		printer.print("static ");
 		n.getBlock().accept(this, arg);
@@ -1532,7 +1591,7 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		printer.print(");");
 	}
 
-	public void visit(ForeachStmt n, Object arg) {
+	public void visit(ForEachStmt n, Object arg) {
 		printer.print("for (");
 		n.getVariable().accept(this, arg);
 		printer.print(" : ");
@@ -1597,11 +1656,26 @@ public class DumpVisitor implements VoidVisitor<Object> {
 		}
 	}
 
+	@Override
+	public void visit(TypeExpr n, Object arg) {
+
+	}
+
+	@Override
+	public void visit(TypeParameter n, Object arg) {
+
+	}
+
 	public void visit(CatchClause n, Object arg) {
 		printer.print(" catch (");
 		n.getExcept().accept(this, arg);
 		printer.print(") ");
 		n.getCatchBlock().accept(this, arg);
+
+	}
+
+	@Override
+	public void visit(NodeList n, Object arg) {
 
 	}
 

@@ -1,8 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.mopspec;
 
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.SpecModifierSet;

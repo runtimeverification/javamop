@@ -1,7 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.mopspec;
 
-import javamop.parser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
 import javamop.parser.astex.ExtNode;

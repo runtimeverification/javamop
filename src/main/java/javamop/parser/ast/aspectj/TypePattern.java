@@ -1,7 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.aspectj;
 
-import javamop.parser.ast.Node;
+import com.github.javaparser.ast.Node;
 
 public abstract class TypePattern extends Node {
     

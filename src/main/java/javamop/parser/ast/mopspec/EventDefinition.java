@@ -5,11 +5,13 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javamop.parser.ast.Node;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.TypePattern;
-import javamop.parser.ast.stmt.BlockStmt;
-import javamop.parser.ast.type.*;
 import javamop.parser.ast.visitor.*;
 
 import javamop.parser.main_parser.ParseException;

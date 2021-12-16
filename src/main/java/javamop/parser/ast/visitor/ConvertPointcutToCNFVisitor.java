@@ -166,6 +166,4 @@ public class ConvertPointcutToCNFVisitor implements PointcutVisitor<PointCut, Ob
 	public PointCut visit(StartThreadPointCut p, Object arg){
 		return p;
 	}
-
-	
 }

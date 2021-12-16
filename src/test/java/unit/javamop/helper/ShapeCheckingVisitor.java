@@ -2,12 +2,10 @@ package javamop.helper;
 
 import javamop.parser.ast.*;
 import javamop.parser.ast.aspectj.*;
-import javamop.parser.ast.body.*;
 import javamop.parser.ast.expr.*;
 import javamop.parser.ast.mopspec.*;
 import javamop.parser.ast.stmt.*;
 import javamop.parser.ast.type.*;
-import javamop.parser.ast.visitor.GenericVisitor;
 
 import java.util.List;
 

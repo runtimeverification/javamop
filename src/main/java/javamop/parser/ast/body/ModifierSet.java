@@ -20,7 +20,6 @@
 package javamop.parser.ast.body;
 
 import javamop.parser.main_parser.ParseException;
-import javamop.parser.main_parser.Token;
 
 /**
  * Class to hold modifiers.

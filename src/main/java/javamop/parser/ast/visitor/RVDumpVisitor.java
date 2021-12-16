@@ -1,9 +1,9 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.visitor;
 
+import com.github.javaparser.ast.expr.NameExpr;
 import javamop.parser.ast.aspectj.BaseTypePattern;
 import javamop.parser.ast.aspectj.TypePattern;
-import javamop.parser.ast.expr.NameExpr;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;

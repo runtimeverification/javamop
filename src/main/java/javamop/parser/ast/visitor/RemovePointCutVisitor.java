@@ -1,39 +1,59 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.visitor;
 
-import javamop.parser.ast.CompilationUnit;
-import javamop.parser.ast.ImportDeclaration;
+import java.util.ArrayList;
+import java.util.List;import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.CompactConstructorDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.ReceiverParameter;
+import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleExportsDirective;
+import com.github.javaparser.ast.modules.ModuleOpensDirective;
+import com.github.javaparser.ast.modules.ModuleProvidesDirective;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.ArrayType;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.IntersectionType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.ast.type.UnionType;
+import com.github.javaparser.ast.type.UnknownType;
+import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.TypeParameter;
-import javamop.parser.ast.body.AnnotationDeclaration;
-import javamop.parser.ast.body.AnnotationMemberDeclaration;
-import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
-import javamop.parser.ast.body.ConstructorDeclaration;
-import javamop.parser.ast.body.EmptyMemberDeclaration;
-import javamop.parser.ast.body.EmptyTypeDeclaration;
-import javamop.parser.ast.body.EnumConstantDeclaration;
-import javamop.parser.ast.body.EnumDeclaration;
-import javamop.parser.ast.body.FieldDeclaration;
-import javamop.parser.ast.body.InitializerDeclaration;
-import javamop.parser.ast.body.MethodDeclaration;
-import javamop.parser.ast.body.Parameter;
-import javamop.parser.ast.body.VariableDeclarator;
-import javamop.parser.ast.body.VariableDeclaratorId;
-import javamop.parser.ast.expr.*;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.*;
 import javamop.parser.ast.aspectj.*;
-import javamop.parser.ast.type.ClassOrInterfaceType;
-import javamop.parser.ast.type.PrimitiveType;
-import javamop.parser.ast.type.ReferenceType;
-import javamop.parser.ast.type.VoidType;
-import javamop.parser.ast.type.WildcardType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +264,87 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
+	@Override
+	public PointCut visit(ModuleDeclaration n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ModuleRequiresDirective n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ModuleExportsDirective n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ModuleProvidesDirective n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ModuleUsesDirective n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ModuleOpensDirective n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(UnparsableStmt n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ReceiverParameter n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(VarType n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(Modifier n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(SwitchExpr n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(YieldStmt n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(TextBlockLiteralExpr n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(PatternExpr n, Integer arg) {
+		return null;
+	}
+
 	public PointCut visit(TypeParameter n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(LineComment n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(BlockComment n, Integer arg) {
 		return null;
 	}
 
@@ -254,11 +354,17 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(EnumDeclaration n, Integer arg) {
+	@Override
+	public PointCut visit(RecordDeclaration n, Integer arg) {
 		return null;
 	}
 
-	public PointCut visit(EmptyTypeDeclaration n, Integer arg) {
+	@Override
+	public PointCut visit(CompactConstructorDeclaration n, Integer arg) {
+		return null;
+	}
+
+	public PointCut visit(EnumDeclaration n, Integer arg) {
 		return null;
 	}
 
@@ -282,10 +388,6 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(VariableDeclaratorId n, Integer arg) {
-		return null;
-	}
-
 	public PointCut visit(ConstructorDeclaration n, Integer arg) {
 		return null;
 	}
@@ -298,11 +400,12 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(EmptyMemberDeclaration n, Integer arg) {
+	public PointCut visit(InitializerDeclaration n, Integer arg) {
 		return null;
 	}
 
-	public PointCut visit(InitializerDeclaration n, Integer arg) {
+	@Override
+	public PointCut visit(JavadocComment n, Integer arg) {
 		return null;
 	}
 
@@ -316,6 +419,26 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
+	@Override
+	public PointCut visit(ArrayType n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(ArrayCreationLevel n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(IntersectionType n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(UnionType n, Integer arg) {
+		return null;
+	}
+
 	public PointCut visit(ReferenceType n, Integer arg) {
 		return null;
 	}
@@ -325,6 +448,11 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 	}
 
 	public PointCut visit(WildcardType n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(UnknownType n, Integer arg) {
 		return null;
 	}
 
@@ -386,14 +514,6 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(IntegerLiteralMinValueExpr n, Integer arg) {
-		return null;
-	}
-
-	public PointCut visit(LongLiteralMinValueExpr n, Integer arg) {
-		return null;
-	}
-
 	public PointCut visit(CharLiteralExpr n, Integer arg) {
 		return null;
 	}
@@ -423,10 +543,6 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 	}
 
 	public PointCut visit(QualifiedNameExpr n, Integer arg) {
-		return null;
-	}
-
-	public PointCut visit(SuperMemberAccessExpr n, Integer arg) {
 		return null;
 	}
 
@@ -468,7 +584,13 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(TypeDeclarationStmt n, Integer arg) {
+	@Override
+	public PointCut visit(LocalClassDeclarationStmt n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(LocalRecordDeclarationStmt n, Integer arg) {
 		return null;
 	}
 
@@ -496,7 +618,8 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(SwitchEntryStmt n, Integer arg) {
+	@Override
+	public PointCut visit(SwitchEntry n, Integer arg) {
 		return null;
 	}
 
@@ -524,7 +647,8 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
-	public PointCut visit(ForeachStmt n, Integer arg) {
+	@Override
+	public PointCut visit(ForEachStmt n, Integer arg) {
 		return null;
 	}
 
@@ -548,4 +672,33 @@ public class RemovePointCutVisitor implements GenericVisitor<PointCut, Integer> 
 		return null;
 	}
 
+	@Override
+	public PointCut visit(LambdaExpr n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(MethodReferenceExpr n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(TypeExpr n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(NodeList n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(Name n, Integer arg) {
+		return null;
+	}
+
+	@Override
+	public PointCut visit(SimpleName n, Integer arg) {
+		return null;
+	}
 }

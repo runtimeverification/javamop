@@ -2,38 +2,61 @@
 package javamop.parser.ast.visitor;
 
 
-import javamop.parser.ast.CompilationUnit;
-import javamop.parser.ast.ImportDeclaration;
+import java.util.Collection;
+
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.CompactConstructorDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.ReceiverParameter;
+import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleExportsDirective;
+import com.github.javaparser.ast.modules.ModuleOpensDirective;
+import com.github.javaparser.ast.modules.ModuleProvidesDirective;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.ArrayType;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.IntersectionType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.ast.type.UnionType;
+import com.github.javaparser.ast.type.UnknownType;
+import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.TypeParameter;
-import javamop.parser.ast.body.AnnotationDeclaration;
-import javamop.parser.ast.body.AnnotationMemberDeclaration;
-import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
-import javamop.parser.ast.body.ConstructorDeclaration;
-import javamop.parser.ast.body.EmptyMemberDeclaration;
-import javamop.parser.ast.body.EmptyTypeDeclaration;
-import javamop.parser.ast.body.EnumConstantDeclaration;
-import javamop.parser.ast.body.EnumDeclaration;
-import javamop.parser.ast.body.FieldDeclaration;
-import javamop.parser.ast.body.InitializerDeclaration;
-import javamop.parser.ast.body.MethodDeclaration;
-import javamop.parser.ast.body.Parameter;
-import javamop.parser.ast.body.VariableDeclarator;
-import javamop.parser.ast.body.VariableDeclaratorId;
-import javamop.parser.ast.expr.*;
+import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
-import javamop.parser.ast.aspectj.*;
-
-import java.util.Collection;
 
 public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPParameters> {
 
@@ -212,7 +235,87 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return null;
 	}
 
+	@Override
+	public MOPParameters visit(LineComment n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(BlockComment n, MOPParameters arg) {
+		return null;
+	}
+
 	public MOPParameters visit(ImportDeclaration n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ModuleDeclaration n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ModuleRequiresDirective n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ModuleExportsDirective n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ModuleProvidesDirective n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ModuleUsesDirective n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ModuleOpensDirective n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(UnparsableStmt n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ReceiverParameter n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(VarType n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(Modifier n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(SwitchExpr n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(YieldStmt n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(TextBlockLiteralExpr n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(PatternExpr n, MOPParameters arg) {
 		return null;
 	}
 
@@ -230,6 +333,16 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return ret;
 	}
 
+	@Override
+	public MOPParameters visit(RecordDeclaration n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(CompactConstructorDeclaration n, MOPParameters arg) {
+		return null;
+	}
+
 	public MOPParameters visit(EnumDeclaration n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
@@ -237,10 +350,6 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		process(ret, n.getEntries(), arg);
 
 		return ret;
-	}
-
-	public MOPParameters visit(EmptyTypeDeclaration n, MOPParameters arg) {
-		return null;
 	}
 
 	public MOPParameters visit(EnumConstantDeclaration n, MOPParameters arg) {
@@ -287,10 +396,6 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return ret;
 	}
 
-	public MOPParameters visit(VariableDeclaratorId n, MOPParameters arg) {
-		return null;
-	}
-
 	public MOPParameters visit(ConstructorDeclaration n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
@@ -321,16 +426,17 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return ret;
 	}
 
-	public MOPParameters visit(EmptyMemberDeclaration n, MOPParameters arg) {
-		return null;
-	}
-
 	public MOPParameters visit(InitializerDeclaration n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getBlock(), arg);
 
 		return ret;
+	}
+
+	@Override
+	public MOPParameters visit(JavadocComment n, MOPParameters arg) {
+		return null;
 	}
 
 	// - Type ----------------------------------------------
@@ -343,6 +449,26 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return null;
 	}
 
+	@Override
+	public MOPParameters visit(ArrayType n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(ArrayCreationLevel n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(IntersectionType n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(UnionType n, MOPParameters arg) {
+		return null;
+	}
+
 	public MOPParameters visit(ReferenceType n, MOPParameters arg) {
 		return null;
 	}
@@ -352,6 +478,11 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 	}
 
 	public MOPParameters visit(WildcardType n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(UnknownType n, MOPParameters arg) {
 		return null;
 	}
 
@@ -455,14 +586,6 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return null;
 	}
 
-	public MOPParameters visit(IntegerLiteralMinValueExpr n, MOPParameters arg) {
-		return null;
-	}
-
-	public MOPParameters visit(LongLiteralMinValueExpr n, MOPParameters arg) {
-		return null;
-	}
-
 	public MOPParameters visit(CharLiteralExpr n, MOPParameters arg) {
 		return null;
 	}
@@ -512,10 +635,6 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		process(ret, n.getQualifier(), arg);
 
 		return ret;
-	}
-
-	public MOPParameters visit(SuperMemberAccessExpr n, MOPParameters arg) {
-		return null;
 	}
 
 	public MOPParameters visit(ThisExpr n, MOPParameters arg) {
@@ -590,12 +709,14 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return ret;
 	}
 
-	public MOPParameters visit(TypeDeclarationStmt n, MOPParameters arg) {
-		MOPParameters ret = new MOPParameters();
+	@Override
+	public MOPParameters visit(LocalClassDeclarationStmt n, MOPParameters arg) {
+		return null;
+	}
 
-		process(ret, n.getTypeDeclaration(), arg);
-
-		return ret;
+	@Override
+	public MOPParameters visit(LocalRecordDeclarationStmt n, MOPParameters arg) {
+		return null;
 	}
 
 	public MOPParameters visit(AssertStmt n, MOPParameters arg) {
@@ -644,7 +765,8 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return ret;
 	}
 
-	public MOPParameters visit(SwitchEntryStmt n, MOPParameters arg) {
+	@Override
+	public MOPParameters visit(SwitchEntry n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getLabel(), arg);
@@ -697,7 +819,8 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		return ret;
 	}
 
-	public MOPParameters visit(ForeachStmt n, MOPParameters arg) {
+	@Override
+	public MOPParameters visit(ForEachStmt n, MOPParameters arg) {
 		MOPParameters ret = new MOPParameters();
 
 		process(ret, n.getVariable(), arg);
@@ -752,6 +875,36 @@ public class CollectMOPVarVisitor implements GenericVisitor<MOPParameters, MOPPa
 		process(ret, n.getCatchBlock(), arg);
 
 		return ret;
+	}
+
+	@Override
+	public MOPParameters visit(LambdaExpr n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(MethodReferenceExpr n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(TypeExpr n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(NodeList n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(Name n, MOPParameters arg) {
+		return null;
+	}
+
+	@Override
+	public MOPParameters visit(SimpleName n, MOPParameters arg) {
+		return null;
 	}
 
 }

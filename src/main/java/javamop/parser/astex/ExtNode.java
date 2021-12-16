@@ -22,7 +22,7 @@
  */
 package javamop.parser.astex;
 
-import javamop.parser.ast.Node;
+import com.github.javaparser.ast.Node;
 import javamop.parser.astex.visitor.DumpVisitor;
 import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;
@@ -30,7 +30,7 @@ import javamop.parser.astex.visitor.VoidVisitor;
 /**
  * @author Julio Vilmar Gesser
  */
-public abstract class ExtNode extends Node{
+public abstract class ExtNode extends Node {
 
     public ExtNode(int line, int column) {
     	super(line, column);

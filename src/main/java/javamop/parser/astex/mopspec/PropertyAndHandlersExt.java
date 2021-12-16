@@ -7,8 +7,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.javaparser.ast.stmt.BlockStmt;
 import javamop.parser.ast.mopspec.MOPParameters;
-import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.ast.visitor.CollectMOPVarVisitor;
 import javamop.parser.astex.ExtNode;
 import javamop.parser.astex.visitor.GenericVisitor;

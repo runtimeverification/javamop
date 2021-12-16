@@ -1,8 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
-import javamop.parser.ast.visitor.GenericVisitor;
-import javamop.parser.ast.visitor.VoidVisitor;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class Formula extends Property {
     

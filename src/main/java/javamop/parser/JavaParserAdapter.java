@@ -1,14 +1,13 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser;
 
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import javamop.parser.rvm.core.ast.*;
 import javamop.parser.main_parser.RVParser;
-import javamop.parser.ast.ImportDeclaration;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.SpecModifierSet;
-import javamop.parser.ast.stmt.BlockStmt;
 import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.mopspec.*;
 import javamop.parser.main_parser.JavaMOPParser;

@@ -6,11 +6,11 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javamop.parser.ast.Node;
-import javamop.parser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.visitor.CollectMOPVarVisitor;
-import javamop.parser.ast.visitor.GenericVisitor;
-import javamop.parser.ast.visitor.VoidVisitor;
 
 public class PropertyAndHandlers extends Node {
     

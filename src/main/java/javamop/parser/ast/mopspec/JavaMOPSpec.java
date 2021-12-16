@@ -1,13 +1,13 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.body.BodyDeclaration;
-import javamop.parser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
-import javamop.parser.ast.visitor.GenericVisitor;
-import javamop.parser.ast.visitor.VoidVisitor;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
 

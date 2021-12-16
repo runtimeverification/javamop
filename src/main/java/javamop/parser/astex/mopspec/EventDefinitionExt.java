@@ -4,12 +4,12 @@ package javamop.parser.astex.mopspec;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.Type;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
-import javamop.parser.ast.stmt.BlockStmt;
-import javamop.parser.ast.type.Type;
 import javamop.parser.astex.ExtNode;
 import javamop.parser.astex.visitor.GenericVisitor;
 import javamop.parser.astex.visitor.VoidVisitor;

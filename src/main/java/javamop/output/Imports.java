@@ -3,7 +3,7 @@ package javamop.output;
 
 import java.util.ArrayList;
 
-import javamop.parser.ast.ImportDeclaration;
+import com.github.javaparser.ast.ImportDeclaration;
 import javamop.parser.ast.MOPSpecFile;
 
 /**

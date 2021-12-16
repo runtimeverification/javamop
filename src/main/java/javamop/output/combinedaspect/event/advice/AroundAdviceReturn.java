@@ -1,11 +1,11 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.output.combinedaspect.event.advice;
 
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.VoidType;
 import javamop.output.MOPVariable;
 import javamop.parser.ast.mopspec.MOPParameters;
-import javamop.parser.ast.type.PrimitiveType;
-import javamop.parser.ast.type.Type;
-import javamop.parser.ast.type.VoidType;
 
 /**
  * Generates the return statements used in around advice.

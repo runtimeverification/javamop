@@ -9,9 +9,9 @@ package javamop.output;
 import java.io.IOException;
 import java.util.List;
 
-import javamop.parser.ast.ImportDeclaration;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;

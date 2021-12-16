@@ -1,10 +1,10 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.aspectj;
 
-import javamop.parser.ast.expr.Expression;
-import javamop.parser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.visitor.PointcutVisitor;
-import javamop.parser.ast.visitor.VoidVisitor;
 
 public class CountCondPointCut extends PointCut {
     

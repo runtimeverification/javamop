@@ -1,35 +1,58 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.visitor;
 
-import javamop.parser.ast.CompilationUnit;
-import javamop.parser.ast.ImportDeclaration;
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.CompactConstructorDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.ReceiverParameter;
+import com.github.javaparser.ast.body.RecordDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
+import com.github.javaparser.ast.modules.ModuleExportsDirective;
+import com.github.javaparser.ast.modules.ModuleOpensDirective;
+import com.github.javaparser.ast.modules.ModuleProvidesDirective;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.ArrayType;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.IntersectionType;
+import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.ReferenceType;
+import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.ast.type.UnionType;
+import com.github.javaparser.ast.type.UnknownType;
+import com.github.javaparser.ast.type.VarType;
+import com.github.javaparser.ast.type.VoidType;
+import com.github.javaparser.ast.type.WildcardType;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.Node;
-import javamop.parser.ast.PackageDeclaration;
-import javamop.parser.ast.TypeParameter;
-import javamop.parser.ast.body.AnnotationDeclaration;
-import javamop.parser.ast.body.AnnotationMemberDeclaration;
-import javamop.parser.ast.body.ClassOrInterfaceDeclaration;
-import javamop.parser.ast.body.ConstructorDeclaration;
-import javamop.parser.ast.body.EmptyMemberDeclaration;
-import javamop.parser.ast.body.EmptyTypeDeclaration;
-import javamop.parser.ast.body.EnumConstantDeclaration;
-import javamop.parser.ast.body.EnumDeclaration;
-import javamop.parser.ast.body.FieldDeclaration;
-import javamop.parser.ast.body.InitializerDeclaration;
-import javamop.parser.ast.body.MethodDeclaration;
-import javamop.parser.ast.body.Parameter;
-import javamop.parser.ast.body.VariableDeclarator;
-import javamop.parser.ast.body.VariableDeclaratorId;
-import javamop.parser.ast.expr.*;
+import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.mopspec.EventDefinition;
 import javamop.parser.ast.mopspec.Formula;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.PropertyAndHandlers;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
-import javamop.parser.ast.aspectj.*;
 
 public class ConditionVisitor implements GenericVisitor<String, Object> {
 
@@ -196,11 +219,92 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
+	@Override
+	public String visit(TypeParameter n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(LineComment n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(BlockComment n, Object arg) {
+		return null;
+	}
+
 	public String visit(ImportDeclaration n, Object arg) {
 		return null;
 	}
 
-	public String visit(TypeParameter n, Object arg) {
+	@Override
+	public String visit(ModuleDeclaration n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ModuleRequiresDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ModuleExportsDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ModuleProvidesDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ModuleUsesDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ModuleOpensDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(UnparsableStmt n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ReceiverParameter n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(VarType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(Modifier n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(SwitchExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(YieldStmt n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(TextBlockLiteralExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(PatternExpr n, Object arg) {
 		return null;
 	}
 
@@ -210,11 +314,17 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(EnumDeclaration n, Object arg) {
+	@Override
+	public String visit(RecordDeclaration n, Object arg) {
 		return null;
 	}
 
-	public String visit(EmptyTypeDeclaration n, Object arg) {
+	@Override
+	public String visit(CompactConstructorDeclaration n, Object arg) {
+		return null;
+	}
+
+	public String visit(EnumDeclaration n, Object arg) {
 		return null;
 	}
 
@@ -238,10 +348,6 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(VariableDeclaratorId n, Object arg) {
-		return null;
-	}
-
 	public String visit(ConstructorDeclaration n, Object arg) {
 		return null;
 	}
@@ -254,11 +360,12 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(EmptyMemberDeclaration n, Object arg) {
+	public String visit(InitializerDeclaration n, Object arg) {
 		return null;
 	}
 
-	public String visit(InitializerDeclaration n, Object arg) {
+	@Override
+	public String visit(JavadocComment n, Object arg) {
 		return null;
 	}
 
@@ -272,6 +379,26 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
+	@Override
+	public String visit(ArrayType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(ArrayCreationLevel n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(IntersectionType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(UnionType n, Object arg) {
+		return null;
+	}
+
 	public String visit(ReferenceType n, Object arg) {
 		return null;
 	}
@@ -281,6 +408,11 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 	}
 
 	public String visit(WildcardType n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(UnknownType n, Object arg) {
 		return null;
 	}
 
@@ -342,14 +474,6 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(IntegerLiteralMinValueExpr n, Object arg) {
-		return null;
-	}
-
-	public String visit(LongLiteralMinValueExpr n, Object arg) {
-		return null;
-	}
-
 	public String visit(CharLiteralExpr n, Object arg) {
 		return null;
 	}
@@ -379,10 +503,6 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 	}
 
 	public String visit(QualifiedNameExpr n, Object arg) {
-		return null;
-	}
-
-	public String visit(SuperMemberAccessExpr n, Object arg) {
 		return null;
 	}
 
@@ -424,7 +544,13 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(TypeDeclarationStmt n, Object arg) {
+	@Override
+	public String visit(LocalClassDeclarationStmt n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(LocalRecordDeclarationStmt n, Object arg) {
 		return null;
 	}
 
@@ -452,7 +578,7 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(SwitchEntryStmt n, Object arg) {
+	public String visit(SwitchEntry n, Object arg) {
 		return null;
 	}
 
@@ -480,7 +606,7 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 		return null;
 	}
 
-	public String visit(ForeachStmt n, Object arg) {
+	public String visit(ForEachStmt n, Object arg) {
 		return null;
 	}
 
@@ -501,6 +627,36 @@ public class ConditionVisitor implements GenericVisitor<String, Object> {
 	}
 
 	public String visit(CatchClause n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(LambdaExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(MethodReferenceExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(TypeExpr n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(NodeList n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(Name n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(SimpleName n, Object arg) {
 		return null;
 	}
 
