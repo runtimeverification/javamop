@@ -5,43 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.github.javaparser.ast.Node;
-import javamop.parser.ast.aspectj.ArgsPointCut;
-import javamop.parser.ast.aspectj.CFlowPointCut;
-import javamop.parser.ast.aspectj.CombinedPointCut;
-import javamop.parser.ast.aspectj.ConditionPointCut;
-import javamop.parser.ast.aspectj.EndObjectPointCut;
-import javamop.parser.ast.aspectj.EndProgramPointCut;
-import javamop.parser.ast.aspectj.EndThreadPointCut;
-import javamop.parser.ast.aspectj.FieldPointCut;
-import javamop.parser.ast.aspectj.IDPointCut;
-import javamop.parser.ast.aspectj.IFPointCut;
-import javamop.parser.ast.aspectj.MethodPointCut;
-import javamop.parser.ast.aspectj.NotPointCut;
-import javamop.parser.ast.aspectj.PointCut;
-import javamop.parser.ast.aspectj.StartThreadPointCut;
-import javamop.parser.ast.aspectj.TargetPointCut;
-import javamop.parser.ast.aspectj.ThisPointCut;
-import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
-import javamop.parser.ast.aspectj.ThreadNamePointCut;
-import javamop.parser.ast.aspectj.ThreadPointCut;
-import javamop.parser.ast.aspectj.WithinPointCut;
+import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.visitor.PointcutVisitor;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
 
 public class ReplacePointCutVisitor extends BaseMOPVisitor<PointCut, HashMap<PointCut, PointCut>> implements PointcutVisitor<PointCut, HashMap<PointCut, PointCut>> {
-
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	int getBeginColumn(Node p) {
-		return p.getRange().get().begin.column;
-	}
-
-
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	int getBeginLine(Node p) {
-		return p.getRange().get().begin.line;
-	}
 
 	@Override
 	public PointCut visit(PointCut p, HashMap<PointCut, PointCut> arg) {
@@ -71,7 +40,7 @@ public class ReplacePointCutVisitor extends BaseMOPVisitor<PointCut, HashMap<Poi
 		if(!changed)
 			return p;
 		else
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 	}
 
 	@Override
@@ -81,7 +50,7 @@ public class ReplacePointCutVisitor extends BaseMOPVisitor<PointCut, HashMap<Poi
 		if(p.getPointCut() == sub)
 			return p;
 		
-		return new NotPointCut(getBeginLine(p), getBeginColumn(p), sub);
+		return new NotPointCut(p.getTokenRange().get(), sub);
 	}
 
 	@Override
@@ -116,7 +85,7 @@ public class ReplacePointCutVisitor extends BaseMOPVisitor<PointCut, HashMap<Poi
 		if(p.getPointCut() == sub)
 			return p;
 		
-		return new CFlowPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), sub);
+		return new CFlowPointCut(p.getTokenRange().get(), p.getType(), sub);
 	}
 
 	@Override

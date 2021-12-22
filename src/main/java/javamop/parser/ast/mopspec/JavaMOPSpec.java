@@ -24,7 +24,7 @@ public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
     private final PackageDeclaration packageDeclaration;
     private final MOPParameters parameters;
     private final String inMethod;
-    private final NodeList<BodyDeclaration> declarations;
+    private final NodeList<BodyDeclaration<?>> declarations;
     private final List<EventDefinition> events;
     private final List<PropertyAndHandlers> properties;
     private final List<String> eventNames;
@@ -33,7 +33,7 @@ public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
     private final MOPParameters varsToSave;
     private String rawLogic;
     
-    public JavaMOPSpec(PackageDeclaration packageDeclaration, TokenRange tokenRange, int modifiers, String name, List<MOPParameter> parameters, String inMethod, NodeList<BodyDeclaration> declarations,
+    public JavaMOPSpec(PackageDeclaration packageDeclaration, TokenRange tokenRange, int modifiers, String name, List<MOPParameter> parameters, String inMethod, NodeList<BodyDeclaration<?>> declarations,
                        List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
         super(tokenRange);
         this.packageDeclaration = packageDeclaration;
@@ -170,7 +170,7 @@ public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
         return inMethod;
     }
     
-    public NodeList<BodyDeclaration> getDeclarations() {
+    public NodeList<BodyDeclaration<?>> getDeclarations() {
         return declarations;
     }
     

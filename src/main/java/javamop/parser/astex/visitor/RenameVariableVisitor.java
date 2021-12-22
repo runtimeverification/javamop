@@ -16,23 +16,12 @@ import javamop.parser.ast.visitor.BaseVisitor;
 
 public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOPParameter>> {
 
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	int getBeginColumn(Node p) {
-		return p.getRange().get().begin.column;
-	}
-
-
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	int getBeginLine(Node p) {
-		return p.getRange().get().begin.line;
-	}
-
 	@Override
 	public Node visit(MOPParameter p, HashMap<String, MOPParameter> arg) {
 		MOPParameter param = arg.get(p.getName());
 		
 		if(param != null)
-			return new MOPParameter(getBeginLine(p), getBeginColumn(p), p.getType(), param.getName());
+			return new MOPParameter(p.getTokenRange().get(), p.getType(), param.getName());
 
 		return p;
 	}
@@ -52,7 +41,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 			list.add((TypePattern)type.accept(this, arg));
 		}
 		
-		return new ArgsPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), list);
+		return new ArgsPointCut(p.getTokenRange().get(), p.getType(), list);
 	}
 
 	@Override
@@ -65,7 +54,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 			pointcuts.add(p3);
 		}
 		
-		return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
+		return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 	}
 
 	@Override
@@ -75,7 +64,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getPointCut() == sub)
 			return p;
 		
-		return new NotPointCut(getBeginLine(p), getBeginColumn(p), sub);
+		return new NotPointCut(p.getTokenRange().get(), sub);
 	}
 
 	@Override
@@ -85,7 +74,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getExpression() == expr)
 			return p;
 		
-		return new ConditionPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), expr);
+		return new ConditionPointCut(p.getTokenRange().get(), p.getType(), expr);
 	}
 	
 	@Override
@@ -95,7 +84,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getExpression() == expr)
 			return p;
 		
-		return new CountCondPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), expr);
+		return new CountCondPointCut(p.getTokenRange().get(), p.getType(), expr);
 	}
 
 	@Override
@@ -115,7 +104,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getTarget() == target)
 			return p;
 		
-		return new TargetPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), target);
+		return new TargetPointCut(p.getTokenRange().get(), p.getType(), target);
 	}
 
 	@Override
@@ -125,7 +114,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getTarget() == target)
 			return p;
 		
-		return new ThisPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), target);
+		return new ThisPointCut(p.getTokenRange().get(), p.getType(), target);
 	}
 
 	@Override
@@ -135,7 +124,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getPointCut() == sub)
 			return p;
 		
-		return new CFlowPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), sub);
+		return new CFlowPointCut(p.getTokenRange().get(), p.getType(), sub);
 	}
 
 	@Override
@@ -145,7 +134,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getExpression() == expr)
 			return p;
 		
-		return new IFPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), expr);
+		return new IFPointCut(p.getTokenRange().get(), p.getType(), expr);
 	}
 
 	@Override
@@ -158,7 +147,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 			list.add((TypePattern)type.accept(this, arg));
 		}
 		
-		return new IDPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), list);
+		return new IDPointCut(p.getTokenRange().get(), p.getType(), list);
 	}
 
 	@Override
@@ -171,7 +160,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		MOPParameter param = arg.get(p.getId());
 		
 		if(param != null)
-			return new ThreadPointCut(getBeginLine(p), getBeginColumn(p), param.getName());
+			return new ThreadPointCut(p.getTokenRange().get(), param.getName());
 
 		return p;
 	}
@@ -201,7 +190,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		MOPParameter param = arg.get(p.getId());
 		
 		if(param != null)
-			return new EndObjectPointCut(getBeginLine(p), getBeginColumn(p), p.getTargetType(), param.getName());
+			return new EndObjectPointCut(p.getTokenRange().get(), p.getTargetType(), param.getName());
 
 		return p;
 	}
@@ -229,7 +218,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 			subTypes.add((TypePattern)p.getSubTypes().get(i).accept(this, arg));
 		}
 
-		return new CombinedTypePattern(getBeginLine(p), getBeginColumn(p), p.getOp(), subTypes);
+		return new CombinedTypePattern(p.getTokenRange().get(), p.getOp(), subTypes);
 	}
 
 	@Override
@@ -239,7 +228,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(p.getType() == type)
 			return p;
 		
-		return new NotTypePattern(getBeginLine(p), getBeginColumn(p), type);
+		return new NotTypePattern(p.getTokenRange().get(), type);
 	}
 
 	@Override
@@ -247,7 +236,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		MOPParameter param = arg.get(p.getOp());
 		
 		if(param != null)
-			return new BaseTypePattern(getBeginLine(p), getBeginColumn(p), param.getName());
+			return new BaseTypePattern(p.getTokenRange().get(), param.getName());
 
 		return p;
 	}

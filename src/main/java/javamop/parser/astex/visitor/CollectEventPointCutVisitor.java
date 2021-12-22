@@ -17,7 +17,7 @@ public class CollectEventPointCutVisitor extends MOPPointcutVisitorImpl<List<Eve
 		List<EventPointCut> ret = new ArrayList<EventPointCut>();
 		
 		for(PointCut p2 : p.getPointcuts()){
-			List<EventPointCut> temp = p2.accept(this, arg);
+			List<EventPointCut> temp = (List<EventPointCut>)p2.accept(this, arg);
 			if(temp != null){
 				ret.addAll(temp);
 			}
@@ -27,12 +27,12 @@ public class CollectEventPointCutVisitor extends MOPPointcutVisitorImpl<List<Eve
 
 	@Override
 	public List<EventPointCut> visit(NotPointCut p, Object arg) {
-		return p.getPointCut().accept(this, arg);
+		return (List<EventPointCut>) p.getPointCut().accept(this, arg);
 	}
 
 	@Override
 	public List<EventPointCut> visit(CFlowPointCut p, Object arg) {
-		return p.getPointCut().accept(this, arg);
+		return (List<EventPointCut>) p.getPointCut().accept(this, arg);
 	}
 
 	@Override

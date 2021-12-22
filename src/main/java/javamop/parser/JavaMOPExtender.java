@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import javamop.util.MOPException;
@@ -74,13 +75,13 @@ class JavaMOPExtender {
 		}
 
 		// return as an original AST
-		return new MOPSpecFile(currentFile.getBeginLine(), currentFile.getBeginColumn(), currentFile.getPakage(),
+		return new MOPSpecFile(currentFile.getTokenRange().get(), currentFile.getPakage(),
 				currentFile.getImports(), specList);
 	}
 
 	protected static JavaMOPSpec translateJavaMopSpec(JavaMOPSpecExt spec, MOPSpecFileExt currentFile, HashMap<String, MOPSpecFileExt> depFiles)
 			throws MOPException {
-		List<BodyDeclaration> declarations;
+		NodeList<BodyDeclaration<?>> declarations;
 		List<EventDefinition> events;
 		List<PropertyAndHandlers> props = new ArrayList<PropertyAndHandlers>();
 
@@ -109,7 +110,7 @@ class JavaMOPExtender {
 
 		JavaMOPSpec ret;
 		try {
-			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getBeginLine(), spec.getBeginColumn(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
+			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getTokenRange().get(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
 					spec.getInMethod(), declarations, events, props).setRawLogic(spec.getRawLogic());
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
@@ -156,7 +157,7 @@ class JavaMOPExtender {
 			FormulaExt f = (FormulaExt) prop;
 			HashMap<String, HandlerExt> handlers = propAndHandlers.get(prop);
 
-			Property translatedProp = new Formula(prop.getBeginLine(), prop.getBeginColumn(), prop.getType(), f.getFormula());
+			Property translatedProp = new Formula(prop.getTokenRange().get(), prop.getType(), f.getFormula());
 			HashMap<String, BlockStmt> translatedHandlers = new HashMap<String, BlockStmt>();
 			for (String state : handlers.keySet()) {
 				HandlerExt handler = handlers.get(state);
@@ -164,7 +165,7 @@ class JavaMOPExtender {
 				translatedHandlers.put(state, handler.getBlockStmt());
 			}
 
-			PropertyAndHandlers translatedPropAndHandlers = new PropertyAndHandlers(prop.getBeginLine(), prop.getBeginColumn(), translatedProp,
+			PropertyAndHandlers translatedPropAndHandlers = new PropertyAndHandlers(prop.getTokenRange().get(), translatedProp,
 					translatedHandlers);
 
 			ret.add(translatedPropAndHandlers);
@@ -243,7 +244,7 @@ class JavaMOPExtender {
 
 		pointCutStr = pointCut.toString();
 		try {
-			ret = new EventDefinition(event.getBeginLine(), event.getBeginColumn(), event.getId(), event.getRetType(), event.getPos(), event
+			ret = new EventDefinition(event.getTokenRange().get(), event.getId(), event.getRetType(), event.getPos(), event
 					.getParameters().toList(), pointCutStr, event.getBlock(), event.getHasRetruning(), event.getRetVal().toList(),
 					event.getHasThrowing(), event.getThrowVal().toList(), event.isStartEvent(), event.isCreationEvent(), event.isBlockingEvent()
 			        , event.isStaticEvent());
@@ -255,7 +256,7 @@ class JavaMOPExtender {
 
 	private static PointCut resolveEventPointCuts(PointCut pointCut, EventDefinitionExt event, SpecContext context) throws MOPException {
 		// collect all event pointcuts
-		List<EventPointCut> eventPointCuts = pointCut.accept(new CollectEventPointCutVisitor(), null);
+		List<EventPointCut> eventPointCuts = (List<EventPointCut>) pointCut.accept(new CollectEventPointCutVisitor(), null);
 
 		// if there is no event pointcut, return the original pointcut
 		if (eventPointCuts == null || eventPointCuts.size() == 0)
@@ -300,7 +301,7 @@ class JavaMOPExtender {
 
 	private static PointCut resolveHandlerPointCuts(PointCut pointCut, EventDefinitionExt event, SpecContext context) throws MOPException {
 		// collect all handler pointcuts
-		List<HandlerPointCut> handlerPointCuts = pointCut.accept(new CollectHandlerPointCutVisitor(), null);
+		List<HandlerPointCut> handlerPointCuts = (List<HandlerPointCut>)pointCut.accept(new CollectHandlerPointCutVisitor(), null);
 
 		// if there is no handler pointcut, return the original pointcut
 		if (handlerPointCuts == null || handlerPointCuts.size() == 0)
@@ -424,14 +425,14 @@ class JavaMOPExtender {
 		throw new MOPException("cannot find a parent specification: " + name);
 	}
 
-	private static List<BodyDeclaration> collectDeclarations(JavaMOPSpecExt spec, MOPSpecFileExt currentFile, HashMap<String, MOPSpecFileExt> depFiles)
+	private static NodeList<BodyDeclaration<?>> collectDeclarations(JavaMOPSpecExt spec, MOPSpecFileExt currentFile, HashMap<String, MOPSpecFileExt> depFiles)
 			throws MOPException {
-		List<BodyDeclaration> ret;
+		NodeList<BodyDeclaration<?>> ret;
 
 		if (!spec.hasExtend())
 			return spec.getDeclarations();
 
-		ret = new ArrayList<BodyDeclaration>();
+		ret = new NodeList<>();
 
 		for (ExtendedSpec parentSpecName : spec.getExtendedSpec()) {
 			Pair<JavaMOPSpecExt, MOPSpecFileExt> parentSpecPair = findJavaMOPSpec(parentSpecName.getName(), currentFile, depFiles);
@@ -439,7 +440,7 @@ class JavaMOPExtender {
 			JavaMOPSpecExt parentSpec = parentSpecPair.getLeft();
 			MOPSpecFileExt parentSpecFile = parentSpecPair.getRight();
 
-			List<BodyDeclaration> declOfParents = collectDeclarations(parentSpec, parentSpecFile, depFiles);
+			NodeList<BodyDeclaration<?>> declOfParents = collectDeclarations(parentSpec, parentSpecFile, depFiles);
 
 			ret.addAll(declOfParents);
 		}

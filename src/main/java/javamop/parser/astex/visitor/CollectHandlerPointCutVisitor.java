@@ -31,10 +31,10 @@ public class CollectHandlerPointCutVisitor extends MOPPointcutVisitorImpl<List<H
 
 	@Override
 	public List<HandlerPointCut> visit(CombinedPointCut p, Object arg) {
-		List<HandlerPointCut> ret = new ArrayList<HandlerPointCut>();
+		List<HandlerPointCut> ret = new ArrayList<>();
 		
 		for(PointCut p2 : p.getPointcuts()){
-			List<HandlerPointCut> temp = p2.accept(this, arg);
+			List<HandlerPointCut> temp = (List<HandlerPointCut>) p2.accept(this, arg);
 			if(temp != null){
 				ret.addAll(temp);
 			}
@@ -44,12 +44,12 @@ public class CollectHandlerPointCutVisitor extends MOPPointcutVisitorImpl<List<H
 
 	@Override
 	public List<HandlerPointCut> visit(NotPointCut p, Object arg) {
-		return p.getPointCut().accept(this, arg);
+		return (List<HandlerPointCut>) p.getPointCut().accept(this, arg);
 	}
 
 	@Override
 	public List<HandlerPointCut> visit(CFlowPointCut p, Object arg) {
-		return p.getPointCut().accept(this, arg);
+		return (List<HandlerPointCut>) p.getPointCut().accept(this, arg);
 	}
 
 	@Override

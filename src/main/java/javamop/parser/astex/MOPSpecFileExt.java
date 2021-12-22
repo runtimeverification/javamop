@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.astex.mopspec.JavaMOPSpecExt;
 import javamop.parser.astex.visitor.DumpVisitor;
 
@@ -18,12 +16,12 @@ public class MOPSpecFileExt extends ExtNode {
     private final List<ImportDeclaration> imports;
     private final List<JavaMOPSpecExt> specList;
     
-    public MOPSpecFileExt(final int line, final int column, final PackageDeclaration pakage, 
-            final List<ImportDeclaration> imports, final List<JavaMOPSpecExt> specList) {
-        super(line, column);
+    public MOPSpecFileExt(TokenRange tokenRange, final PackageDeclaration pakage,
+                          final List<ImportDeclaration> imports, final List<JavaMOPSpecExt> specList) {
+        super(tokenRange);
         this.pakage = pakage;
-        this.imports = Collections.unmodifiableList(new ArrayList<ImportDeclaration>(imports));
-        this.specList = Collections.unmodifiableList(new ArrayList<JavaMOPSpecExt>(specList));
+        this.imports = Collections.unmodifiableList(new ArrayList<>(imports));
+        this.specList = Collections.unmodifiableList(new ArrayList<>(specList));
     }
     
     public PackageDeclaration getPakage() {
@@ -38,17 +36,7 @@ public class MOPSpecFileExt extends ExtNode {
         return specList;
     }
 
-//    @Override
-//    public <A> void accept(VoidVisitor<A> v, A arg) {
-//        v.visit(this, arg);
-//    }
-//
-//    @Override
-//    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-//        return v.visit(this, arg);
-//    }
-
-        public <A> void accept(DumpVisitor v, A arg) {
+    public <A> void accept(DumpVisitor v, A arg) {
             v.visit(this, arg);
         }
 

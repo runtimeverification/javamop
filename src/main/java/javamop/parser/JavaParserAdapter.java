@@ -1,20 +1,10 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser;
 
-import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.BodyDeclaration;
-import javamop.parser.rvm.core.ast.*;
-import javamop.parser.main_parser.RVParser;
-import javamop.parser.ast.mopspec.MOPParameter;
-import javamop.parser.ast.mopspec.SpecModifierSet;
-import javamop.parser.astex.MOPSpecFileExt;
-import javamop.parser.astex.mopspec.*;
-import javamop.parser.main_parser.JavaMOPParser;
-import javamop.parser.main_parser.ParseException;
-import javamop.util.MOPException;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,6 +12,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import javamop.parser.ast.mopspec.MOPParameter;
+import javamop.parser.ast.mopspec.SpecModifierSet;
+import javamop.parser.astex.MOPSpecFileExt;
+import javamop.parser.astex.mopspec.EventDefinitionExt;
+import javamop.parser.astex.mopspec.ExtendedSpec;
+import javamop.parser.astex.mopspec.FormulaExt;
+import javamop.parser.astex.mopspec.HandlerExt;
+import javamop.parser.astex.mopspec.JavaMOPSpecExt;
+import javamop.parser.astex.mopspec.PropertyAndHandlersExt;
+import javamop.parser.astex.mopspec.PropertyExt;
+import javamop.parser.main_parser.JavaMOPParser;
+import javamop.parser.main_parser.ParseException;
+import javamop.parser.main_parser.RVParser;
+import javamop.parser.rvm.core.ast.Event;
+import javamop.parser.rvm.core.ast.MonitorFile;
+import javamop.parser.rvm.core.ast.Property;
+import javamop.parser.rvm.core.ast.PropertyHandler;
+import javamop.parser.rvm.core.ast.Specification;
+import javamop.util.MOPException;
 
 /**
  * A class with static methods to convert the language-independent syntax into Java-specific
@@ -180,7 +195,7 @@ final public class JavaParserAdapter {
                     // requires a raw logic plugin.
                                 ));
         }
-        return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
+        return new MOPSpecFileExt(null, filePackage, imports, specs);
     }
 
     /**
@@ -195,7 +210,7 @@ final public class JavaParserAdapter {
         for(Specification spec : file.getSpecifications()) {
             specs.add(convert(filePackage, spec, null));
         }
-        return new MOPSpecFileExt(0, 0, filePackage, imports, specs);
+        return new MOPSpecFileExt(null, filePackage, imports, specs);
     }
 
     private static JavaMOPParser parseJavaBubble(String bubble) {
@@ -260,7 +275,7 @@ final public class JavaParserAdapter {
         final List<MOPParameter> parameters = convertParameters(spec.getLanguageParameters());
         final String inMethod = null;
         final List<ExtendedSpec> extensions = null;
-        final List<BodyDeclaration> declarations =
+        final NodeList<BodyDeclaration<?>> declarations =
             convertDeclarations(spec.getLanguageDeclarations());
         final List<EventDefinitionExt> events = new ArrayList<EventDefinitionExt>();
         for(Event e : spec.getEvents()) {
@@ -272,7 +287,7 @@ final public class JavaParserAdapter {
             properties.add(convert(index, property));
             index++;
         }
-        return new JavaMOPSpecExt(pack, 0, 0, isPublic, modifierBitfield, name, parameters,
+        return new JavaMOPSpecExt(pack, null, isPublic, modifierBitfield, name, parameters,
             inMethod, extensions, declarations, events, properties).setRawLogic(rawCode);
     }
 
@@ -331,7 +346,7 @@ final public class JavaParserAdapter {
      * @param declarations A language-specific bubble with declarations.
      * @return A list of Java declaration objects.
      */
-    private static List<BodyDeclaration> convertDeclarations(final String declarations) {
+    private static NodeList<BodyDeclaration<?>> convertDeclarations(final String declarations) {
         try {
             return parseJavaBubble(declarations).ClassOrInterfaceBody(false);
         } catch(Exception e) {
@@ -371,16 +386,16 @@ final public class JavaParserAdapter {
         final String logicId = property.getName();
         final String propertyName = "defaultProp" + index;
         final String formula = property.getSyntax();
-        final PropertyExt propertyExt = new FormulaExt(0, 0, logicId, formula, propertyName);
+        final PropertyExt propertyExt = new FormulaExt(null, logicId, formula, propertyName);
 
         final List<HandlerExt> handlerList = new ArrayList<HandlerExt>();
-        final HashMap<String, BlockStmt> handlerMap = new HashMap<String, BlockStmt>();
+        final HashMap<String, BlockStmt> handlerMap = new HashMap<>();
         for(PropertyHandler handler : property.getHandlers()) {
             HandlerExt converted = convert(handler);
             handlerList.add(converted);
             handlerMap.put(handler.getState().toLowerCase(), converted.getBlockStmt());
         }
-        return new PropertyAndHandlersExt(0, 0, propertyExt, handlerMap, handlerList);
+        return new PropertyAndHandlersExt(null, propertyExt, handlerMap, handlerList);
     }
 
     /**
@@ -398,6 +413,6 @@ final public class JavaParserAdapter {
         } catch(Exception e) {
             //e.printStackTrace();
         }
-        return new HandlerExt(0, 0, id, action, propertyReference, specReference);
+        return new HandlerExt(null, id, action, propertyReference, specReference);
     }
 }
