@@ -15,7 +15,7 @@ public class RemoveEndThreadVisitor extends BasePointCutVisitor {
 			return null;
 		} else {
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), "&&", pointcuts);
+			return new CombinedPointCut(p.getTokenRange().get(), "&&", pointcuts);
 		}
 	}
 

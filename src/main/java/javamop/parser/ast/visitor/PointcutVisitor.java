@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.visitor;
 
+import com.github.javaparser.ast.visitor.GenericVisitor;
 import javamop.parser.ast.aspectj.ArgsPointCut;
 import javamop.parser.ast.aspectj.CFlowPointCut;
 import javamop.parser.ast.aspectj.CombinedPointCut;
@@ -22,7 +23,7 @@ import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
 
-public interface PointcutVisitor<R, A> {
+public interface PointcutVisitor<R, A> extends GenericVisitor<R, A> {
 
 	public R visit(PointCut p, A arg);
 	

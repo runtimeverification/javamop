@@ -46,7 +46,7 @@ public class RemovePointCutVisitor extends BasePointCutVisitor {
 				else
 					return null;
 			}
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 		} else {
 			boolean andType = (p.getType().compareTo("&&") == 0);
 			boolean alreadySeen = false;
@@ -67,7 +67,7 @@ public class RemovePointCutVisitor extends BasePointCutVisitor {
 				else
 					return null;
 			}
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 		}
 	}
 
@@ -146,7 +146,7 @@ public class RemovePointCutVisitor extends BasePointCutVisitor {
 				return null;
 			} else {
 				List<PointCut> pointcuts = new ArrayList<PointCut>();
-				return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), "&&", pointcuts);
+				return new CombinedPointCut(p.getTokenRange().get(), "&&", pointcuts);
 			}
 		} else
 			return p;

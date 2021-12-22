@@ -26,7 +26,7 @@ public class ConvertPointcutToCNFVisitor extends PointCutVisitorImpl {
 			}
 			
 			//just return as it is.
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), list);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), list);
 		} else if(p.getType().equals("||")){
 			//flattening 
 			for (PointCut p2 : list) {
@@ -50,19 +50,19 @@ public class ConvertPointcutToCNFVisitor extends PointCutVisitorImpl {
 						list2.add(p3);
 						list2.addAll(list);
 						
-						PointCut p4 = new CombinedPointCut(getBeginLine(p2), getBeginColumn(p2), "||", list2);
+						PointCut p4 = new CombinedPointCut(p2.getTokenRange().get(), "||", list2);
 						p4 = p4.accept(this, arg);
 						
 						list_top.add(p4);
 					}
 					
-					PointCut ret = new CombinedPointCut(getBeginLine(p), getBeginColumn(p), "&&", list_top);
+					PointCut ret = new CombinedPointCut(p.getTokenRange().get(), "&&", list_top);
 					ret = ret.accept(this, arg);
 					return ret;
 				}
 			}
 			
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), list);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), list);
 		}
 		
 		return p; //it should not happen.

@@ -7,13 +7,9 @@ import java.util.List;
 
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.astex.visitor.MOPVoidVisitor;
 
 public class MOPSpecFile extends ExtNode {
     private final PackageDeclaration pakage;

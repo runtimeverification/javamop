@@ -44,7 +44,7 @@ public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
         this.declarations = declarations;
         this.events = events;
         this.properties = properties;
-        this.eventNames = new ArrayList<String>();
+        this.eventNames = new ArrayList<>();
         this.commonParamInEvents = new MOPParameters(this.parameters);
         
         for (EventDefinition event : this.events) {

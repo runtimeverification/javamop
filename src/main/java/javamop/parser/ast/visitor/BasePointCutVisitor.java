@@ -12,18 +12,6 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 		return p;
 	}
 
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	int getBeginColumn(PointCut p) {
-		return p.getRange().get().begin.column;
-	}
-
-	
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	int getBeginLine(PointCut p) {
-		return p.getRange().get().begin.line;
-	}
-	
-
 	public PointCut visit(CombinedPointCut p, Integer arg){
 		if(arg == 0){
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
@@ -35,7 +23,7 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 				else
 					return null;
 			}
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 		} else {
 			boolean andType = (p.getType().compareTo("&&") == 0);
 			boolean alreadySeen = false;
@@ -56,7 +44,7 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 				else
 					return null;
 			}
-			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
+			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 		}		
 	}
 
@@ -65,7 +53,7 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 	}
 
 	public PointCut visit(NotPointCut p, Integer arg){
-		return new NotPointCut(getBeginLine(p), getBeginColumn(p), p.getPointCut().accept(this, new Integer(0)));
+		return new NotPointCut(p.getTokenRange().get(), p.getPointCut().accept(this, new Integer(0)));
 	}
 
 	public PointCut visit(FieldPointCut p, Integer arg){
@@ -89,7 +77,7 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 	}
 
 	public PointCut visit(CFlowPointCut p, Integer arg){
-		return new CFlowPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), p.getPointCut().accept(this, new Integer(0)));
+		return new CFlowPointCut(p.getTokenRange().get(), p.getType(), p.getPointCut().accept(this, new Integer(0)));
 	}
 
 	public PointCut visit(IFPointCut p, Integer arg){

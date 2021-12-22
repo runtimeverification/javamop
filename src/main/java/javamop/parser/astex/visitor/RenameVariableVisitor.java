@@ -10,6 +10,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.NameExpr;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.visitor.BaseVisitor;
@@ -411,11 +412,11 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 	}
 
 	@Override
-	public Node visit(NameExpr n, HashMap<String, MOPParameter> arg) {
+	public Node visit(com.github.javaparser.ast.expr.NameExpr n, HashMap<String, MOPParameter> arg) {
 		MOPParameter param = arg.get(n.getName());
 
 		if(param != null)
-			return new NameExpr(param.getName());
+			return new com.github.javaparser.ast.expr.NameExpr(param.getName());
 		
 		return n;
 	}
@@ -434,16 +435,16 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 
 	}
 
-	@Override
-	public Node visit(QualifiedNameExpr n, HashMap<String, MOPParameter> arg) {
-		NameExpr qualifier = (NameExpr)n.getQualifier().accept(this, arg);
-		MOPParameter param = arg.get(n.getName());		
-		
-		if(n.getQualifier().equals(qualifier) && param == null)
-			return n;
-		
-		return new QualifiedNameExpr(n.getBeginLine(), n.getBeginColumn(), qualifier, param.getName());
-	}
+//	@Override
+//	public Node visit(QualifiedNameExpr n, HashMap<String, MOPParameter> arg) {
+//		NameExpr qualifier = (NameExpr)n.getQualifier().accept(this, arg);
+//		MOPParameter param = arg.get(n.getName());
+//
+//		if(n.getQualifier().equals(qualifier) && param == null)
+//			return n;
+//
+//		return new QualifiedNameExpr(n.getBeginLine(), n.getBeginColumn(), qualifier, param.getName());
+//	}
 
 	@Override
 	public Node visit(ThisExpr n, HashMap<String, MOPParameter> arg) {

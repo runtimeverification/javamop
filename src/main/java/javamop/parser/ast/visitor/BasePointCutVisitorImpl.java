@@ -5,17 +5,6 @@ import javamop.parser.ast.aspectj.*;
 
 public class BasePointCutVisitorImpl<R, A> implements PointcutVisitor<R, A> {
 
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	public int getBeginColumn(PointCut p) {
-		return p.getRange().get().begin.column;
-	}
-
-
-	//TODO: This is being added to work with Legacy code. Should be removed eventually.
-	public int getBeginLine(PointCut p) {
-		return p.getRange().get().begin.line;
-	}
-
 	public R visit(PointCut p, A arg){
 		return null;
 	}
