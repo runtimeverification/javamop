@@ -2,21 +2,17 @@
 package javamop.util;
 
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * @author fengchen

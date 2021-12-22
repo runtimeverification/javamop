@@ -1,20 +1,19 @@
 package javamop.helper;
 
-import examples.ExamplesIT;
-import javamop.JavaMOPMain;
-import javamop.JavaMOPOptions;
-import javamop.output.MOPProcessor;
-import javamop.parser.SpecExtractor;
-import javamop.parser.SpecExtractorTest;
-import javamop.parser.ast.MOPSpecFile;
-import javamop.util.MOPException;
-import javamop.util.MOPNameSpace;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
+import examples.ExamplesIT;
+import javamop.JavaMOPMain;
+import javamop.JavaMOPOptions;
+import javamop.output.MOPProcessor;
+import javamop.parser.SpecExtractorTest;
+import javamop.parser.ast.MOPSpecFile;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
 
 /**
  * Created by xiaohe on 4/15/16.

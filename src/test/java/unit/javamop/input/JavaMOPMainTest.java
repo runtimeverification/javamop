@@ -1,16 +1,12 @@
 package javamop.input;
 
-import javamop.JavaMOPMain;
-import javamop.helper.IOUtils;
-import org.eclipse.core.internal.dtree.TestHelper;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
-
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import javamop.JavaMOPMain;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 /**
  * Created by hx312 on 4/8/2016.

@@ -2,7 +2,9 @@ package javamop.helper;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by xiaohe on 4/15/16.

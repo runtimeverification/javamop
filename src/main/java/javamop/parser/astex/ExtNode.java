@@ -26,6 +26,8 @@ import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import javamop.parser.astex.visitor.RVDumpVisitor;
 
 /**
  * @author Julio Vilmar Gesser
@@ -34,6 +36,17 @@ public abstract class ExtNode extends Node {
 
     public ExtNode(TokenRange tokenRange) {
     	super(tokenRange);
+    }
+
+    /**
+     * Iterate through JavaMOP ast classes and output .rvm file
+     *
+     * @return .rvm file contents as a String
+     */
+    public String toRVString() {
+        RVDumpVisitor visitor = new RVDumpVisitor(new DefaultPrinterConfiguration());
+        accept(visitor, null);
+        return visitor.toString();
     }
 
     public <A> void accept(VoidVisitor<A> v, A arg) {

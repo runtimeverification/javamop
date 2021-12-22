@@ -36,7 +36,7 @@ public class FileCombiner {
             if(pakage == null)
                 pakage = pakage2;
             else {
-                if(!pakage2.getName().getName().equals(pakage.getName().getName()))
+                if(!pakage2.getName().asString().equals(pakage.getName().asString()))
                     throw new MOPException("Specifications need to be in the same package to " +
                             "be combined.");
             }
@@ -47,7 +47,7 @@ public class FileCombiner {
             for(ImportDeclaration imp2 : imports2){
                 boolean included = false;
                 for(ImportDeclaration imp : imports){
-                    if(imp2.getName().getName().equals(imp.getName().getName())){
+                    if(imp2.getName().asString().equals(imp.getName().asString())){
                         included = true;
                         break;
                     }
@@ -74,7 +74,7 @@ public class FileCombiner {
             }
         }
 
-        return new MOPSpecFile(0, 0, pakage, imports, specList);
+        return new MOPSpecFile(null, pakage, imports, specList);
     }
     
     private static List<String> combineList(List<String> one, List<String> two) {

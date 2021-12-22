@@ -1,20 +1,31 @@
 package javamop.helper;
 
-import javamop.parser.ast.*;
-import javamop.parser.ast.aspectj.*;
-import javamop.parser.ast.expr.*;
-import javamop.parser.ast.mopspec.*;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
-
 import java.util.List;
+
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.Statement;
+import javamop.parser.ast.MOPSpecFile;
+import javamop.parser.ast.mopspec.EventDefinition;
+import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.ast.mopspec.MOPParameter;
+import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.parser.ast.mopspec.Property;
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
+import javamop.parser.ast.visitor.BaseVisitor;
 
 /**
  * Created by He Xiao on 3/20/2016.
  * The shape analysis checks whether two ast have the 'same' structure
  * without comparing every concrete values at each node.
  */
-public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
+public class ShapeCheckingVisitor extends BaseVisitor<Boolean, Node> {
     @Override
     public Boolean visit(Node n, Node arg) {
         if (n == arg)
@@ -23,8 +34,8 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         if (n == null || arg == null)
             return false;
 
-        return n.getBeginLine() == arg.getBeginLine()
-                && n.getBeginColumn() == arg.getBeginColumn();
+        return n.getRange().get().begin.line == arg.getRange().get().begin.line
+                && n.getRange().get().begin.column == arg.getRange().get().begin.column;
     }
 
     /**
@@ -204,10 +215,10 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
                         && visit(e.getPurePointCutString(), other.getPurePointCutString())
                         && visit(e.getThreadVar(), other.getThreadVar())
                         && visit(e.getUniqueId(), other.getUniqueId())
-                        && e.getBeginColumn() == other.getBeginColumn()
-                        && e.getBeginLine() == other.getBeginLine()
-                        && e.getEndColumn() == other.getEndColumn()
-                        && e.getEndLine() == other.getEndLine();
+                        && e.getRange().get().begin.column == other.getRange().get().begin.column
+                        && e.getRange().get().begin.line == other.getRange().get().begin.line
+                        && e.getRange().get().end.column == other.getRange().get().end.column
+                        && e.getRange().get().end.line == other.getRange().get().end.line;
 
         if (!primitiveEq)
             return false;
@@ -335,146 +346,6 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     }
 
     @Override
-    public Boolean visit(Formula f, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(WildcardParameter w, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ArgsPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CombinedPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(NotPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ConditionPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CountCondPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(FieldPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(MethodPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(TargetPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ThisPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CFlowPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(IFPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(IDPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(WithinPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ThreadPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ThreadNamePointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ThreadBlockedPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EndProgramPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EndThreadPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EndObjectPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(StartThreadPointCut p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(FieldPattern p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(MethodPattern p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CombinedTypePattern p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(NotTypePattern p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(BaseTypePattern p, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CompilationUnit n, Node arg) {
-        return null;
-    }
-
-    @Override
     public Boolean visit(PackageDeclaration n, Node arg) {
         if (!(arg instanceof PackageDeclaration))
             return false;
@@ -487,8 +358,8 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             return false;
 
         PackageDeclaration other = (PackageDeclaration) arg;
-        NameExpr ne1 = n.getName();
-        NameExpr ne2 = other.getName();
+        Name ne1 = n.getName();
+        Name ne2 = other.getName();
 
         if (!visit(ne1, ne2))
             return false;
@@ -537,211 +408,6 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
     }
 
     @Override
-    public Boolean visit(TypeParameter n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ClassOrInterfaceDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EnumDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EmptyTypeDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EnumConstantDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(AnnotationDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(AnnotationMemberDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(FieldDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(VariableDeclarator n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(VariableDeclaratorId n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ConstructorDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(MethodDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(Parameter n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EmptyMemberDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(InitializerDeclaration n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ClassOrInterfaceType n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(PrimitiveType n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ReferenceType n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(VoidType n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(WildcardType n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ArrayAccessExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ArrayCreationExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ArrayInitializerExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(AssignExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(BinaryExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CastExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ClassExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ConditionalExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EnclosedExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(FieldAccessExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(InstanceOfExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(StringLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(IntegerLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(LongLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(IntegerLiteralMinValueExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(LongLiteralMinValueExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CharLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(DoubleLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(BooleanLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(NullLiteralExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(MethodCallExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
     public Boolean visit(NameExpr n, Node arg) {
         if (!(arg instanceof NameExpr))
             return false;
@@ -753,8 +419,8 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         if (n == null || arg == null)
             return false;
 
-        String name1 = n.getName();
-        String name2 = ((NameExpr) arg).getName();
+        String name1 = n.getName().asString();
+        String name2 = ((NameExpr) arg).getName().asString();
 
         if (name1 == name2)
             return true;
@@ -763,76 +429,6 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             return false;
 
         return name1.equals(name2);
-    }
-
-    @Override
-    public Boolean visit(ObjectCreationExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(QualifiedNameExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(SuperMemberAccessExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ThisExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(SuperExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(UnaryExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(VariableDeclarationExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(MarkerAnnotationExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(SingleMemberAnnotationExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(NormalAnnotationExpr n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(MemberValuePair n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ExplicitConstructorInvocationStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(TypeDeclarationStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(AssertStmt n, Node arg) {
-        return null;
     }
 
     @Override
@@ -848,17 +444,17 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
             return false;
 
         BlockStmt other = (BlockStmt) arg;
-        if (n.getStmts() != other.getStmts()) {
-            if (n.getStmts() == null || other.getStmts() == null)
+        if (n.getStatements() != other.getStatements()) {
+            if (n.getStatements() == null || other.getStatements() == null)
                 return false;
 
             else {
-                if (n.getStmts().size() != other.getStmts().size())
+                if (n.getStatements().size() != other.getStatements().size())
                     return false;
 
-                for (int i = 0; i < n.getStmts().size(); i++) {
-                    Statement s1 = n.getStmts().get(i);
-                    Statement s2 = other.getStmts().get(i);
+                for (int i = 0; i < n.getStatements().size(); i++) {
+                    Statement s1 = n.getStatements().get(i);
+                    Statement s2 = other.getStatements().get(i);
 
                     if (!s1.toString().equals(s2.toString()))
                         return false;
@@ -870,88 +466,4 @@ public class ShapeCheckingVisitor implements GenericVisitor<Boolean, Node> {
         return true;
     }
 
-    @Override
-    public Boolean visit(LabeledStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(EmptyStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ExpressionStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(SwitchStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(SwitchEntryStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(BreakStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ReturnStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(IfStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(WhileStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ContinueStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(DoStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ForeachStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ForStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(ThrowStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(SynchronizedStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(TryStmt n, Node arg) {
-        return null;
-    }
-
-    @Override
-    public Boolean visit(CatchClause n, Node arg) {
-        return null;
-    }
 }

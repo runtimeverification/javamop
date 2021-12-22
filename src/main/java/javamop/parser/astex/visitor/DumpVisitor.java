@@ -28,8 +28,13 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.DefaultPrettyPrinterVisitor;
 import com.github.javaparser.printer.MOPPrinter;
 import com.github.javaparser.printer.configuration.PrinterConfiguration;
+import javamop.parser.ast.MOPSpecFile;
+import javamop.parser.ast.mopspec.EventDefinition;
+import javamop.parser.ast.mopspec.Formula;
+import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.ast.mopspec.SpecModifierSet;
 import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.aspectj.EventPointCut;
@@ -46,15 +51,116 @@ import javamop.parser.astex.mopspec.ReferenceSpec;
  * @author Julio Vilmar Gesser
  */
 
-public final class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidVisitor<Object> {
+public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidVisitor<Object> {
 
 	public DumpVisitor(PrinterConfiguration configuration) {
 		super(configuration, new MOPPrinter());
 	}
 
-	// All extended componenets
-
 	// - JavaMOP components
+
+	public void visit(MOPSpecFile f, Object arg) {
+		if (f.getPakage() != null)
+			f.getPakage().accept((VoidVisitor)this, arg);
+		if (f.getImports() != null) {
+			for (ImportDeclaration i : f.getImports()) {
+				i.accept((VoidVisitor)this, arg);
+			}
+			printer.println();
+		}
+		if (f.getSpecs() != null) {
+			for (JavaMOPSpec i : f.getSpecs()) {
+				i.accept((VoidVisitor)this, arg);
+				printer.println();
+			}
+		}
+
+	}
+
+	public void visit(JavaMOPSpec s, Object arg) {
+		printSpecModifiers(s.getModifiers());
+		printer.print(s.getName());
+		printSpecParameters(s.getParameters(), arg);
+		if (s.getInMethod() != null) {
+			printer.print(" within ");
+			printer.print(s.getInMethod());
+			// s.getInMethod().accept(this, arg);
+		}
+		printer.println(" {");
+		printer.indent();
+
+		if (s.getDeclarations() != null) {
+			printMembers(s.getDeclarations(), (Void)arg);
+		}
+
+		if (s.getEvents() != null) {
+			for (EventDefinition e : s.getEvents()) {
+				e.accept((VoidVisitor)this, arg);
+			}
+		}
+
+		if (s.getPropertiesAndHandlers() != null) {
+			for (PropertyAndHandlers p : s.getPropertiesAndHandlers()) {
+				p.accept((VoidVisitor)this, arg);
+			}
+		}
+
+		printer.unindent();
+		printer.println("}");
+	}
+
+	public void visit(MOPParameter p, Object arg) {
+		p.getType().accept((VoidVisitor)this, arg);
+		printer.print(" " + p.getName());
+	}
+
+	public void visit(EventDefinition e, Object arg) {
+		if (e.isCreationEvent()) {
+			printer.print("creation ");
+		} else if (e.isStaticEvent()) {
+			printer.print("static ");
+		}
+		printer.print("event " + e.getId() + " " + e.getPos());
+		printSpecParameters(e.getParameters(), arg);
+		if (e.hasReturning()) {
+			printer.print("returning");
+			if (e.getRetVal() != null)
+				printSpecParameters(e.getRetVal(), arg);
+			printer.print(" ");
+		}
+		if (e.hasThrowing()) {
+			printer.print("throwing");
+			if (e.getThrowVal() != null)
+				printSpecParameters(e.getThrowVal(), arg);
+			printer.print(" ");
+		}
+		printer.print(":");
+		// e.getPointCut().accept(this, arg);
+		printer.print(e.getPointCutString());
+		if (e.getAction() != null) {
+			e.getAction().accept((VoidVisitor)this, arg);
+		}
+		printer.println();
+	}
+
+	public void visit(PropertyAndHandlers p, Object arg) {
+		p.getProperty().accept((VoidVisitor)this, arg);
+		printer.println();
+		for (String event : p.getHandlers().keySet()) {
+			BlockStmt stmt = p.getHandlers().get(event);
+			printer.println("@" + event);
+			printer.indent();
+			stmt.accept((VoidVisitor)this, arg);
+			printer.unindent();
+			printer.println();
+		}
+	}
+
+	public void visit(Formula f, Object arg) {
+		printer.print(f.getType() + ": " + f.getFormula());
+	}
+	
+	// All extended componenets
 
 	public void visit(MOPSpecFileExt f, Object arg) {
 		if (f.getPakage() != null)
