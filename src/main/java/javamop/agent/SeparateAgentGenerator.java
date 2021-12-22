@@ -311,11 +311,6 @@ public final class SeparateAgentGenerator {
 
     }
 
-
-
-
-
-
     /**
      * Takes an absolute path to a jar file and returns only the filename of the jar file
      *
