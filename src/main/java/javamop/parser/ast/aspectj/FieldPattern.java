@@ -4,7 +4,7 @@ package javamop.parser.ast.aspectj;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class FieldPattern extends Node {
     

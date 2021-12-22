@@ -2,10 +2,8 @@
 package javamop.parser.ast.aspectj;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 
-public class NotTypePattern extends TypePattern {
+public class NotTypePattern extends BaseTypePattern {
     
     private final TypePattern type;
     
@@ -15,15 +13,5 @@ public class NotTypePattern extends TypePattern {
     }
     
     public TypePattern getType() { return type; }
-
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
 
 }

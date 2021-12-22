@@ -4,11 +4,8 @@ package javamop.parser.ast.aspectj;
 import java.util.List;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 
-
-public class CombinedTypePattern extends TypePattern {
+public class CombinedTypePattern extends BaseTypePattern {
     
     private final List<TypePattern> sub_types;
     
@@ -18,15 +15,5 @@ public class CombinedTypePattern extends TypePattern {
     }
     
     public List<TypePattern> getSubTypes() { return sub_types; }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }   
     
 }
