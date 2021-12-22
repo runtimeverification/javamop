@@ -9,8 +9,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
-import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
-import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.NameExpr;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.visitor.BaseVisitor;

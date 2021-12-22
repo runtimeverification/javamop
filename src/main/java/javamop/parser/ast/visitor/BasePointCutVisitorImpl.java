@@ -3,7 +3,7 @@ package javamop.parser.ast.visitor;
 
 import javamop.parser.ast.aspectj.*;
 
-public class BasePointCutVisitorImpl<R, A> implements PointcutVisitor<R, A> {
+public class BasePointCutVisitorImpl<R, A> extends BaseVisitor<R, A> {
 
 	public R visit(PointCut p, A arg){
 		return null;

@@ -1,7 +1,6 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.visitor;
 
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.configuration.PrinterConfiguration;
 import javamop.parser.ast.aspectj.BaseTypePattern;

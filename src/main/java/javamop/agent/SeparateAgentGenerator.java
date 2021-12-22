@@ -178,7 +178,6 @@ public final class SeparateAgentGenerator {
      *
      * @param outputDir   The place to put all the intermediate generated files in.
      * @param aspectname  Generates {@code aspectname}.jar.
-     * @param agentAspect The aspect file to used in the agent
      * @param verbose     whether in verbose mode or not
      * @throws java.io.IOException If something goes wrong in the many filesystem operations.
      */
