@@ -7,12 +7,11 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.visitor.CollectMOPVarVisitor;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.astex.visitor.GenericVisitor;
-import javamop.parser.astex.visitor.VoidVisitor;
 
 public class PropertyAndHandlersExt extends ExtNode {
     
@@ -31,8 +30,8 @@ public class PropertyAndHandlersExt extends ExtNode {
     
     private boolean versionedStack = false;
     
-    public PropertyAndHandlersExt(int line, int column, PropertyExt property, HashMap<String, BlockStmt> handlers, List<HandlerExt> handlerList) {
-        super(line, column);
+    public PropertyAndHandlersExt(TokenRange tokenRange, PropertyExt property, HashMap<String, BlockStmt> handlers, List<HandlerExt> handlerList) {
+        super(tokenRange);
         this.property = property;
         this.handlers = handlers;
         this.handlerList = handlerList;
@@ -127,15 +126,4 @@ public class PropertyAndHandlersExt extends ExtNode {
     public boolean getVersionedStack(){
         return versionedStack;
     }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
-    
 }

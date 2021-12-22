@@ -6,8 +6,9 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.visitor.PointcutVisitor;
+import javamop.parser.astex.ExtNode;
 
-public abstract class PointCut extends Node {
+public abstract class PointCut extends ExtNode {
     
     private final String type;
     
@@ -17,16 +18,6 @@ public abstract class PointCut extends Node {
     }
     
     public String getType() { return type; }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
     
     public <R, A> R accept(PointcutVisitor<R, A> v, A arg) {
         return v.visit(this, arg);

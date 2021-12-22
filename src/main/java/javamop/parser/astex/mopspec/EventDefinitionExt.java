@@ -4,6 +4,7 @@ package javamop.parser.astex.mopspec;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
 import javamop.parser.ast.aspectj.PointCut;
@@ -11,8 +12,6 @@ import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.astex.visitor.GenericVisitor;
-import javamop.parser.astex.visitor.VoidVisitor;
 
 public class EventDefinitionExt extends ExtNode {
 
@@ -61,11 +60,11 @@ public class EventDefinitionExt extends ExtNode {
 
     private MOPParameters parametersWithoutThreadVar = null;
 
-    public EventDefinitionExt(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
-            List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
-            boolean isBlockingEvent, boolean staticEvent)
+    public EventDefinitionExt(TokenRange tokenRange, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
+                              List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
+                              boolean isBlockingEvent, boolean staticEvent)
             throws javamop.parser.main_parser.ParseException {
-        super(line, column);
+        super(tokenRange);
         this.id = id;
         this.retType = retType;
         this.pos = pos;
@@ -91,8 +90,8 @@ public class EventDefinitionExt extends ExtNode {
         this.staticEvent = staticEvent;
     }
 
-    public EventDefinitionExt(int line, int column, EventDefinitionExt e) {
-        super(line, column);
+    public EventDefinitionExt(TokenRange tokenRange, EventDefinitionExt e) {
+        super(tokenRange);
         this.id = e.getId();
         this.retType = e.getRetType();
         this.pos = e.getPos();
@@ -130,8 +129,8 @@ public class EventDefinitionExt extends ExtNode {
     private PointCut parsePointCutAsRaw(String input) throws javamop.parser.main_parser.ParseException {
         // create a token for exceptions
         javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
-        t.beginLine = super.getBeginLine();
-        t.beginColumn = super.getBeginColumn();
+        t.beginLine = super.getBegin().get().line;
+        t.beginColumn = super.getBegin().get().column;
 
         PointCut originalPointCut;
         PointCut resultPointCut;
@@ -296,16 +295,6 @@ public class EventDefinitionExt extends ExtNode {
 
     public boolean isStaticEvent() {
         return staticEvent;
-    }
-
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
     }
 
     public BlockStmt getBlock() {

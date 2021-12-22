@@ -24,9 +24,8 @@ package javamop.parser.astex.mopspec;
 
 import java.util.List;
 
-import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.TokenRange;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.astex.visitor.VoidVisitor;
 
 /**
  * @author Soha Hussein
@@ -39,8 +38,8 @@ public final class ExtendedSpec extends ExtNode {
     
     List<String> parameters = null;
     
-    public ExtendedSpec(int line, int column, String specName, boolean isParametric, List<String> parameters) {
-        super(line, column);
+    public ExtendedSpec(TokenRange tokenRange, String specName, boolean isParametric, List<String> parameters) {
+        super(tokenRange);
         this.specName = specName;
         this.isParametric = isParametric;
         this.parameters = parameters;
@@ -58,19 +57,4 @@ public final class ExtendedSpec extends ExtNode {
         return parameters;
     }
     
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
-
-    @Override
-    public <A> void accept(com.github.javaparser.ast.visitor.VoidVisitor<A> v, A arg) {
-
-    }
-
 }

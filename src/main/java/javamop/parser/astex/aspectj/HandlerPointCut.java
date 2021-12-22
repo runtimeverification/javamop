@@ -2,10 +2,8 @@
 package javamop.parser.astex.aspectj;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.astex.mopspec.ReferenceSpec;
-import javamop.parser.astex.visitor.DumpVisitor;
 
 public class HandlerPointCut extends PointCut{
     
@@ -28,17 +26,4 @@ public class HandlerPointCut extends PointCut{
         return state;
     }
     
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
-    
-    public String toString() {
-        DumpVisitor visitor = new DumpVisitor();
-        accept(visitor, null);
-        return visitor.toString();
-    }
 }

@@ -15,11 +15,11 @@ public class MOPParameters implements Iterable<MOPParameter>, Serializable {
     private final ArrayList<MOPParameter> parameters;
     
     public MOPParameters() {
-        this.parameters = new ArrayList<MOPParameter>();
+        this.parameters = new ArrayList<>();
     }
     
     public MOPParameters(List<MOPParameter> params) {
-        this.parameters = new ArrayList<MOPParameter>();
+        this.parameters = new ArrayList<>();
         
         if(params != null){
             for(MOPParameter param : params){
@@ -29,7 +29,7 @@ public class MOPParameters implements Iterable<MOPParameter>, Serializable {
     }
     
     public MOPParameters(MOPParameters params) {
-        this.parameters = new ArrayList<MOPParameter>();
+        this.parameters = new ArrayList<>();
         
         if(params != null){
             for(MOPParameter param : params){
@@ -42,9 +42,9 @@ public class MOPParameters implements Iterable<MOPParameter>, Serializable {
         if (this.getParam(p.getName()) == null) {
             MOPParameter p2 = p;
             if (p.getType().getOp().charAt(p.getType().getOp().length() - 1) == '+') {
-                BaseTypePattern t2 = new BaseTypePattern(p.getType().getBeginLine(), p.getType().getBeginColumn(), p.getType().getOp().substring(0,
-                                                                                                                                                 p.getType().getOp().length() - 1));
-                p2 = new MOPParameter(p.getBeginLine(), p.getBeginColumn(), t2, p.getName());
+                BaseTypePattern t2 = new BaseTypePattern(p.getType().getTokenRange().get(),
+                        p.getType().getOp().substring(0,p.getType().getOp().length() - 1));
+                p2 = new MOPParameter(p.getType().getTokenRange().get(), t2, p.getName());
             }
             this.parameters.add(p2);
         }
@@ -66,9 +66,9 @@ public class MOPParameters implements Iterable<MOPParameter>, Serializable {
             if (this.getParam(p.getName()) == null) {
                 MOPParameter p2 = p;
                 if (p.getType().getOp().charAt(p.getType().getOp().length() - 1) == '+') {
-                    BaseTypePattern t2 = new BaseTypePattern(p.getType().getBeginLine(), p.getType().getBeginColumn(), p.getType().getOp().substring(0,
-                                                                                                                                                     p.getType().getOp().length() - 1));
-                    p2 = new MOPParameter(p.getBeginLine(), p.getBeginColumn(), t2, p.getName());
+                    BaseTypePattern t2 = new BaseTypePattern(p.getType().getTokenRange().get(),
+                            p.getType().getOp().substring(0, p.getType().getOp().length() - 1));
+                    p2 = new MOPParameter(p.getTokenRange().get(), t2, p.getName());
                 }
                 this.parameters.add(p2);
             }

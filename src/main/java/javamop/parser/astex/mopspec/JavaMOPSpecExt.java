@@ -1,7 +1,11 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.mopspec;
 
-import com.github.javaparser.ast.Node;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
@@ -9,14 +13,8 @@ import javamop.parser.ast.mopspec.MOPParameter;
 import javamop.parser.ast.mopspec.MOPParameters;
 import javamop.parser.ast.mopspec.SpecModifierSet;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.astex.visitor.GenericVisitor;
-import javamop.parser.astex.visitor.VoidVisitor;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class JavaMOPSpecExt extends ExtNode {
     private final int modifiers;
@@ -32,9 +30,9 @@ public class JavaMOPSpecExt extends ExtNode {
     private final List<ExtendedSpec> extendedSpecs;
     private String rawLogic;
 
-    public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
+    public JavaMOPSpecExt(PackageDeclaration packagedeclaration, TokenRange tokenRange, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
                           NodeList<BodyDeclaration<?>> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
-        super(line, column);
+        super(tokenRange);
         this.packageDeclaration = packagedeclaration;   
         this.modifiers = modifiers;
         this.name = name;
@@ -238,16 +236,6 @@ public class JavaMOPSpecExt extends ExtNode {
             return false;
         else
             return (this.extendedSpecs.isEmpty() == false);
-    }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
     }
     
     public Boolean isCachedGeneral() {

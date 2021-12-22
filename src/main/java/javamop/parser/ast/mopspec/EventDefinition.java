@@ -5,18 +5,16 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.javaparser.ast.Node;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.visitor.*;
-
+import javamop.parser.astex.ExtNode;
 import javamop.parser.main_parser.ParseException;
 
-public class EventDefinition extends Node {
+public class EventDefinition extends ExtNode {
     
     private final String id;
     private final Type retType;
@@ -65,11 +63,11 @@ public class EventDefinition extends Node {
     String uniqueId = null; // will be defined in JavaMOPSpec
     MOPParameters mopParametersOnSpec; // will be defined in JavaMOPSpec
     
-    public EventDefinition(int line, int column, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
+    public EventDefinition(TokenRange tokenRange, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
                            boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent,
                            boolean blockingEvent, boolean staticEvent)
     throws ParseException {
-        super(line, column);
+        super(tokenRange);
         this.id = id;
         this.retType = retType;
         this.pos = pos;
@@ -95,8 +93,8 @@ public class EventDefinition extends Node {
     private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
         // create a token for exceptions
         javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
-        t.beginLine = super.getBeginLine();
-        t.beginColumn = super.getBeginColumn();
+        t.beginLine = super.getTokenRange().get().getBegin().getRange().get().begin.line;
+        t.beginColumn = super.getTokenRange().get().getBegin().getRange().get().begin.column;
         
         PointCut originalPointCut;
         PointCut resultPointCut;
@@ -425,16 +423,6 @@ public class EventDefinition extends Node {
     
     public boolean has__STATICSIG() {
         return hasSpecialModifier("__STATICSIG");
-    }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
     }
     
 }

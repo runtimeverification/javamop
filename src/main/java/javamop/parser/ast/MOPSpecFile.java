@@ -12,9 +12,10 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.astex.ExtNode;
 import javamop.parser.astex.visitor.MOPVoidVisitor;
 
-public class MOPSpecFile extends Node {
+public class MOPSpecFile extends ExtNode {
     private final PackageDeclaration pakage;
     private final List<ImportDeclaration> imports;
     private final List<JavaMOPSpec> specList;
@@ -38,13 +39,4 @@ public class MOPSpecFile extends Node {
         return specList;
     }
 
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
 }

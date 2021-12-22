@@ -2,11 +2,9 @@
 package javamop.parser.ast.aspectj;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
+import javamop.parser.astex.ExtNode;
 
-public class FieldPattern extends Node {
+public class FieldPattern extends ExtNode {
     
     private final int modifiers;
     private final int not_modifiers;
@@ -33,13 +31,4 @@ public class FieldPattern extends Node {
     public TypePattern getOwner() { return owner; }
     public String getMemberName() { return name; }
     
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
 }

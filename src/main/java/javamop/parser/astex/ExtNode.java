@@ -22,32 +22,19 @@
  */
 package javamop.parser.astex;
 
-import com.github.javaparser.JavaToken;
-import com.github.javaparser.Position;
-import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
-import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
-import javamop.parser.astex.visitor.DumpVisitor;
 
 /**
  * @author Julio Vilmar Gesser
  */
 public abstract class ExtNode extends Node {
 
-    public ExtNode(int line, int column) {
-    	super(line, column);
+    public ExtNode(TokenRange tokenRange) {
+    	super(tokenRange);
     }
-
-    public ExtNode(int beginLine, int beginColumn, int endLine, int endColumn) {
-    	super(beginLine, beginColumn, endLine, endColumn);
-        Position begin = new Position(beginLine, beginColumn);
-        Position end = new Position(endLine, endColumn);
-        TokenRange tr = new TokenRange(new JavaToken().setRange(new Range(begin, end)));
-    }
-
 
     public <A> void accept(VoidVisitor<A> v, A arg) {
         v.visit(this, arg);
@@ -55,13 +42,6 @@ public abstract class ExtNode extends Node {
 
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
-    }
-
-    @Override
-    public String toString() {
-        DumpVisitor visitor = new DumpVisitor(new DefaultPrinterConfiguration());
-        accept(visitor, null);
-        return visitor.toString();
     }
 
 }

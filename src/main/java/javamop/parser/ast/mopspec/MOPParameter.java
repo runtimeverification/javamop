@@ -1,17 +1,16 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-import javamop.parser.ast.aspectj.*;
+import com.github.javaparser.TokenRange;
+import javamop.parser.ast.aspectj.TypePattern;
+import javamop.parser.astex.ExtNode;
 
-public class MOPParameter extends Node {
+public class MOPParameter extends ExtNode {
     private final TypePattern type;
     private final String name;
     
-    public MOPParameter (int line, int column, TypePattern type, String name){
-        super(line, column);
+    public MOPParameter (TokenRange tokenRange, TypePattern type, String name){
+        super(tokenRange);
         this.type = type;
         this.name = name;
     }
@@ -23,18 +22,4 @@ public class MOPParameter extends Node {
         return type.equals(param.getType()) && name.equals(param.getName());
     }
     
-    @Override
-    public int hashCode(){
-        return name.hashCode();
-    }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
 }

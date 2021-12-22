@@ -1,25 +1,24 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.mopspec;
 
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
-import javamop.util.MOPException;
-import javamop.util.MOPNameSpace;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import com.github.javaparser.TokenRange;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
+import javamop.parser.astex.ExtNode;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
+
 ///TODO:  All this has__ methods are carbon copies with the names changed.
 // This should really be refactored.
 // -P
-public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
+public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
     private final int modifiers;
     private final String name;
     private final PackageDeclaration packageDeclaration;
@@ -34,9 +33,9 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     private final MOPParameters varsToSave;
     private String rawLogic;
     
-    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, NodeList<BodyDeclaration> declarations,
+    public JavaMOPSpec(PackageDeclaration packageDeclaration, TokenRange tokenRange, int modifiers, String name, List<MOPParameter> parameters, String inMethod, NodeList<BodyDeclaration> declarations,
                        List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
-        super(line, column);
+        super(tokenRange);
         this.packageDeclaration = packageDeclaration;
         this.modifiers = modifiers;
         this.name = name;
@@ -356,22 +355,11 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         cachedHasNoParamEvent = false;
         return false;
     }
-    
-    
+
     public int compareTo(JavaMOPSpec o){
         return getName().compareTo(o.getName());
     }
     
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
-
     public String getRawLogic() {
         return rawLogic;
     }
