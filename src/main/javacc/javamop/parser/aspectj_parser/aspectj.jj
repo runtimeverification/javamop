@@ -27,9 +27,11 @@ import java.util.*;
 import javamop.parser.ast.*;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.body.*;
-import javamop.parser.ast.expr.*;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
+import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.*;
 import javamop.parser.astex.aspectj.*;
 
 public class AspectJParser
@@ -2692,35 +2694,35 @@ PrimitiveType PrimitiveType() :
   (
     "boolean"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Boolean);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.BOOLEAN);
     }
   | "char"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Char);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.CHAR);
     }
   | "byte"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Byte);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.BYTE);
     }
   | "short"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Short);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.SHORT);
     }
   | "int"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Int);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.INT);
     }
   | "long"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Long);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.LONG);
     }
   | "float"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Float);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.FLOAT);
     }
   | "double"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.Double);
+      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.DOUBLE);
     }
   )
   {

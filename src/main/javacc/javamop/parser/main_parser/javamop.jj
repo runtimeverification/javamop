@@ -27,9 +27,11 @@ import java.io.*;
 import java.util.*;
 import javamop.parser.ast.*;
 import javamop.parser.ast.body.*;
-import javamop.parser.ast.expr.*;
-import javamop.parser.ast.stmt.*;
-import javamop.parser.ast.type.*;
+import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.*;
 import javamop.parser.ast.mopspec.*;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.astex.*;
@@ -69,11 +71,11 @@ public final class JavaMOPParser {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static MOPSpecFileExt parse(File file) throws ParseException {
 		return parse(file, null);
     }
-    
+
     private List add(List list, Object obj) {
     	if (list == null) {
     		list = new LinkedList();
@@ -81,11 +83,11 @@ public final class JavaMOPParser {
     	list.add(obj);
     	return list;
     }
-    
+
     private String getFormula() throws ParseException {
     	StringBuffer buf = new StringBuffer();
     	buf.append(jj_nt);
-    	
+
     	StringBuffer last_id = new StringBuffer();
     	try {
    			char next = jj_input_stream.readChar();
@@ -139,7 +141,7 @@ public final class JavaMOPParser {
     				jj_nt = token_source.getNextToken();
     				break;
     			}
-    			
+
     			if ( (next >= '0' && next <= '9') || (next >= 'a' && next <= 'z') || (next >= 'A' && next <= 'Z')){
     				last_id.append(next);
     			} else {
@@ -147,9 +149,9 @@ public final class JavaMOPParser {
     					buf.append(last_id);
     					last_id = new StringBuffer();
     				}
-		    		buf.append(next);			
+		    		buf.append(next);
     			}
-    			 
+
     			next = jj_input_stream.readChar();
     		}
     	} catch (Exception e) {
@@ -157,12 +159,12 @@ public final class JavaMOPParser {
 				throw (ParseException)e;
     		Token t = new Token();
     		t.beginLine = jj_input_stream.getBeginLine();
-    		t.beginColumn = jj_input_stream.getBeginColumn();    		
+    		t.beginColumn = jj_input_stream.getBeginColumn();
     		throw new ParseException("wrong formula");
     	}
-    	return buf.toString().trim();    	
+    	return buf.toString().trim();
     }
-    
+
     private String getStringUntil(char ch) throws ParseException {
     	StringBuffer buf = new StringBuffer();
     	buf.append(jj_nt);
@@ -173,7 +175,7 @@ public final class JavaMOPParser {
     	} catch (Exception e) {
     		Token t = new Token();
     		t.beginLine = jj_input_stream.getBeginLine();
-    		t.beginColumn = jj_input_stream.getBeginColumn();    		
+    		t.beginColumn = jj_input_stream.getBeginColumn();
     		throw new ParseException(ch + " is expected");
     	}
     	jj_input_stream.backup(1);
@@ -182,12 +184,12 @@ public final class JavaMOPParser {
     }
 
 	private class Modifier {
-		
+
 		final int modifiers;
 		final int not_modifiers;
 		final List annotations;
 		int line, column;
-		
+
 		public Modifier(int modifiers, List annotations) {
 			this.modifiers = modifiers;
 			this.not_modifiers = 0;
@@ -200,13 +202,13 @@ public final class JavaMOPParser {
 			this.line = line;
 			this.column = column;
 		}
-		
+
 	}
-	
+
 	private class PositionString {
 		int line, column;
 		String str;
-		
+
 		public PositionString(int line, int column, String str){
 			this.line = line;
 			this.column = column;
@@ -2937,7 +2939,7 @@ ExpressionStmt StatementExpression():
 SwitchStmt SwitchStatement():
 {
 	Expression selector;
-	SwitchEntryStmt entry;
+	SwitchEntry entry;
 	List entries = null;
 	int line;
 	int column;
@@ -2950,7 +2952,7 @@ SwitchStmt SwitchStatement():
   { return new SwitchStmt(line, column, selector, entries); }
 }
 
-SwitchEntryStmt SwitchEntry():
+SwitchEntry SwitchEntry():
 {
 	Expression label = null;
 	List stmts;
@@ -2965,7 +2967,7 @@ SwitchEntryStmt SwitchEntry():
   )
   ":" stmts = Statements()
   
-  { return new SwitchEntryStmt(line, column, label, stmts); }
+  { return new SwitchEntry(line, column, label, stmts); }
 }
 
 IfStmt IfStatement():
