@@ -1,6 +1,8 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.mopspec;
 
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import javamop.parser.ast.mopspec.MOPParameter;
@@ -23,7 +25,7 @@ public class JavaMOPSpecExt extends ExtNode {
     private final MOPParameters parameters;
     private final String inMethod;
     private final PackageDeclaration packageDeclaration;
-    private final List<BodyDeclaration> declarations;
+    private final NodeList<BodyDeclaration<?>> declarations;
     private final List<EventDefinitionExt> events;
     private final List<PropertyAndHandlersExt> properties;
     private final List<String> eventNames;
@@ -31,7 +33,7 @@ public class JavaMOPSpecExt extends ExtNode {
     private String rawLogic;
 
     public JavaMOPSpecExt(PackageDeclaration packagedeclaration, int line, int column, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
-                          List<BodyDeclaration> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
+                          NodeList<BodyDeclaration<?>> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.packageDeclaration = packagedeclaration;   
         this.modifiers = modifiers;
@@ -129,7 +131,7 @@ public class JavaMOPSpecExt extends ExtNode {
         return inMethod;
     }
     
-    public List<BodyDeclaration> getDeclarations() {
+    public NodeList<BodyDeclaration<?>> getDeclarations() {
         return declarations;
     }
     

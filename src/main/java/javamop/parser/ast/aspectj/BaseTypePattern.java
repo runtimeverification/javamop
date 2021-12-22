@@ -1,13 +1,14 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.aspectj;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class BaseTypePattern extends TypePattern {
     
-    public BaseTypePattern(int line, int column, String op) {
-        super(line, column, op);
+    public BaseTypePattern(TokenRange tokenRange, String op) {
+        super(tokenRange, op);
     }
     
     @Override

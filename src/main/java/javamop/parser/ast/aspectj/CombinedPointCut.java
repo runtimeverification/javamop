@@ -2,36 +2,21 @@
 package javamop.parser.ast.aspectj;
 
 
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-import javamop.parser.ast.visitor.PointcutVisitor;
-
 import java.util.List;
 
+import com.github.javaparser.TokenRange;
+
 public class CombinedPointCut extends PointCut {
-    
+
     private final List<PointCut> pointcuts;
-    
-    public CombinedPointCut(int line, int column, String type, List<PointCut> pointcuts){
-        super(line, column, type);
-        
+
+    public CombinedPointCut(TokenRange tokenRange, String type, List<PointCut> pointcuts) {
+        super(tokenRange, type);
+
         this.pointcuts = pointcuts;
     }
-    
-    public List<PointCut> getPointcuts() { return pointcuts; }
-    
-    @Override
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
-    }
-    
-    @Override
-    public <R, A> R accept(PointcutVisitor<R, A> v, A arg) {
-        return v.visit(this, arg);
+
+    public List<PointCut> getPointcuts() {
+        return pointcuts;
     }
 }

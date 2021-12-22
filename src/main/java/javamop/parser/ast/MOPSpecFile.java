@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.github.javaparser.JavaToken;
-import com.github.javaparser.Position;
-import com.github.javaparser.Range;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
@@ -15,20 +12,19 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
+import javamop.parser.astex.visitor.MOPVoidVisitor;
 
 public class MOPSpecFile extends Node {
     private final PackageDeclaration pakage;
     private final List<ImportDeclaration> imports;
     private final List<JavaMOPSpec> specList;
     
-    public MOPSpecFile(final int line, final int column, final PackageDeclaration pakage, 
+    public MOPSpecFile(TokenRange tokenRange, final PackageDeclaration pakage,
             final List<ImportDeclaration> imports, final List<JavaMOPSpec> specList) {
-
-        Position p = new Position(line, column);
-        super(line, column);
+        super(tokenRange);
         this.pakage = pakage;
-        this.imports = Collections.unmodifiableList(new ArrayList<ImportDeclaration>(imports));
-        this.specList = Collections.unmodifiableList(new ArrayList<JavaMOPSpec>(specList));
+        this.imports = Collections.unmodifiableList(new ArrayList<>(imports));
+        this.specList = Collections.unmodifiableList(new ArrayList<>(specList));
     }
     public PackageDeclaration getPakage() {
         return pakage;

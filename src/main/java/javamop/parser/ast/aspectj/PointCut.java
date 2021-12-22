@@ -1,6 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.aspectj;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
@@ -10,8 +11,8 @@ public abstract class PointCut extends Node {
     
     private final String type;
     
-    public PointCut(int line, int column, String type){
-        super(line, column);
+    public PointCut(TokenRange tokenRange, String type){
+        super(tokenRange);
         this.type = type;
     }
     

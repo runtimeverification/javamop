@@ -8,7 +8,7 @@ import javamop.parser.ast.aspectj.*;
 public class ConvertPointcutToCNFVisitor extends PointCutVisitorImpl {
 
 	public PointCut visit(CombinedPointCut p, Object arg){
-		ArrayList<PointCut> list = new ArrayList<PointCut>();
+		ArrayList<PointCut> list = new ArrayList<>();
 
 		for (PointCut p2 : p.getPointcuts()) {
 			list.add(p2.accept(this, arg));
@@ -26,7 +26,7 @@ public class ConvertPointcutToCNFVisitor extends PointCutVisitorImpl {
 			}
 			
 			//just return as it is.
-			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), list);
+			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), list);
 		} else if(p.getType().equals("||")){
 			//flattening 
 			for (PointCut p2 : list) {
@@ -50,19 +50,19 @@ public class ConvertPointcutToCNFVisitor extends PointCutVisitorImpl {
 						list2.add(p3);
 						list2.addAll(list);
 						
-						PointCut p4 = new CombinedPointCut(p2.getBeginLine(), p2.getBeginColumn(), "||", list2);
+						PointCut p4 = new CombinedPointCut(getBeginLine(p2), getBeginColumn(p2), "||", list2);
 						p4 = p4.accept(this, arg);
 						
 						list_top.add(p4);
 					}
 					
-					PointCut ret = new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), "&&", list_top);
+					PointCut ret = new CombinedPointCut(getBeginLine(p), getBeginColumn(p), "&&", list_top);
 					ret = ret.accept(this, arg);
 					return ret;
 				}
 			}
 			
-			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), list);
+			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), list);
 		}
 		
 		return p; //it should not happen.

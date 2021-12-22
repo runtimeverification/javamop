@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
@@ -259,26 +260,25 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(n.getName() == name && n.getIndex() == index)
 			return n;
 
-		return new ArrayAccessExpr(n.getBeginLine(), n.getBeginColumn(), name, index);
+		return new ArrayAccessExpr(name, index);
 	}
 
 	@Override
 	public Node visit(ArrayCreationExpr n, HashMap<String, MOPParameter> arg) {
-		if(n.getDimensions() != null){
-			List<Expression> dims = new ArrayList<Expression>();
+		if(n.getLevels() != null){
+			List<Expression> dims = new ArrayList<>();
 	
-			for(int i = 0; i < n.getDimensions().size(); i++){
-				dims.add((Expression)n.getDimensions().get(i).accept(this, arg));
+			for(int i = 0; i < n.getLevels().size(); i++){
+				dims.add((Expression)n.getLevels().get(i).accept(this, arg));
 			}
-			
-			return new ArrayCreationExpr(n.getBeginLine(), n.getBeginColumn(), n.getType(), n.getTypeArgs(), dims, n.getArrayCount());
+			return new ArrayCreationExpr(n.getElementType());
 		} if(n.getInitializer() != null){
-			ArrayInitializerExpr initializer = (ArrayInitializerExpr)n.getInitializer().accept(this, arg);
-			
-			if(n.getInitializer() == initializer)
+			ArrayInitializerExpr initializer = (ArrayInitializerExpr)n.getInitializer().get().asArrayInitializerExpr().accept(this, arg);
+
+			if(n.getInitializer().equals(initializer)) {
 				return n;
-			
-			return new ArrayCreationExpr(n.getBeginLine(), n.getBeginColumn(), n.getType(), n.getTypeArgs(), n.getArrayCount(), initializer);
+			}
+			return new ArrayCreationExpr(n.getElementType());
 		}
 		
 		return n;
@@ -286,13 +286,13 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 
 	@Override
 	public Node visit(ArrayInitializerExpr n, HashMap<String, MOPParameter> arg) {
-		List<Expression> values = new ArrayList<Expression>();
+		NodeList<Expression> values = new NodeList<>();
 		
 		for(int i = 0; i < n.getValues().size(); i++){
 			values.add((Expression)n.getValues().get(i).accept(this, arg));
 		}
 		
-		return new ArrayInitializerExpr(n.getBeginLine(), n.getBeginColumn(), values);
+		return new ArrayInitializerExpr(values);
 	}
 
 	@Override
@@ -303,7 +303,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(n.getTarget() == target && n.getValue() == value)
 			return n;
 
-		return new AssignExpr(n.getBeginLine(), n.getBeginColumn(), target, value, n.getOperator());
+		return new AssignExpr( target, value, n.getOperator());
 	}
 
 	@Override
@@ -314,17 +314,17 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(n.getLeft() == left && n.getRight() == right)
 			return n;
 		
-		return new BinaryExpr(n.getBeginLine(), n.getBeginColumn(), left, right, n.getOperator());
+		return new BinaryExpr(left, right, n.getOperator());
 	}
 
 	@Override
 	public Node visit(CastExpr n, HashMap<String, MOPParameter> arg) {
-		Expression expr = (Expression)n.getExpr().accept(this, arg);
+		Expression expr = (Expression)n.getExpression().accept(this, arg);
 		
-		if(n.getExpr() == expr)
+		if(n.getExpression() == expr)
 			return n;
 		
-		return new CastExpr(n.getBeginLine(), n.getBeginColumn(), n.getType(), expr);
+		return new CastExpr(n.getType(), expr);
 	}
 
 	@Override
@@ -341,7 +341,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(n.getCondition() == condition && n.getThenExpr() == thenExpr && n.getElseExpr() == elseExpr)
 			return n;
 		
-		return new ConditionalExpr(n.getBeginLine(), n.getBeginColumn(), condition, thenExpr, elseExpr);
+		return new ConditionalExpr(condition, thenExpr, elseExpr);
 	}
 
 	@Override
@@ -351,7 +351,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		if(n.getInner() == inner)
 			return n;
 		
-		return new EnclosedExpr(n.getBeginLine(), n.getBeginColumn(), inner);
+		return new EnclosedExpr(inner);
 	}
 
 	@Override
@@ -360,18 +360,17 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		
 		if(n.getScope() == scope)
 			return n;
-		
-		return new FieldAccessExpr(n.getBeginLine(), n.getBeginColumn(), scope, n.getTypeArgs(), n.getField());
+		return new FieldAccessExpr(scope, n.getTypeArguments().get(), n.getName());
 	}
 
 	@Override
 	public Node visit(InstanceOfExpr n, HashMap<String, MOPParameter> arg) {
-		Expression expr = (Expression)n.getExpr().accept(this, arg);
+		Expression expr = (Expression)n.getExpression().accept(this, arg);
 		
-		if(n.getExpr() == expr)
+		if(n.getExpression() == expr)
 			return n;
 
-		return new InstanceOfExpr(n.getBeginLine(), n.getBeginColumn(), n.getExpr(), n.getType());
+		return new InstanceOfExpr(n.getExpression(), n.getType());
 	}
 
 	@Override
@@ -411,15 +410,15 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 
 	@Override
 	public Node visit(MethodCallExpr n, HashMap<String, MOPParameter> arg) {
-		Expression scope = (Expression)n.getScope().accept(this, arg);
+		Expression scope = (Expression)n.getScope().get().accept(this, arg);
 		
-		List<Expression> args = new ArrayList<Expression>();
+		NodeList<Expression> args = new NodeList<>();
 
-		for(int i = 0; i < n.getArgs().size(); i++){
-			args.add((Expression)n.getArgs().get(i).accept(this, arg));
+		for(int i = 0; i < n.getArguments().size(); i++){
+			args.add((Expression)n.getArguments().get(i).accept(this, arg));
 		}
 
-		return new MethodCallExpr(n.getBeginLine(), n.getBeginColumn(), scope, n.getTypeArgs(), n.getName(), args);
+		return new MethodCallExpr(scope, n.getTypeArguments().get(), n.getName().asString(), args);
 	}
 
 	@Override
@@ -427,22 +426,22 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		MOPParameter param = arg.get(n.getName());
 
 		if(param != null)
-			return new NameExpr(n.getBeginLine(), n.getBeginColumn(), param.getName());
+			return new NameExpr(param.getName());
 		
 		return n;
 	}
 
 	@Override
 	public Node visit(ObjectCreationExpr n, HashMap<String, MOPParameter> arg) {
-		Expression scope = (Expression)n.getScope().accept(this, arg);
-		
-		List<Expression> args = new ArrayList<Expression>();
+		Expression scope = (Expression)n.getScope().get().accept(this, arg);
 
-		for(int i = 0; i < n.getArgs().size(); i++){
-			args.add((Expression)n.getArgs().get(i).accept(this, arg));
+		NodeList<Expression> args = new NodeList<>();
+
+		for(int i = 0; i < n.getArguments().size(); i++){
+			args.add((Expression)n.getArguments().get(i).accept(this, arg));
 		}
 
-		return new ObjectCreationExpr(n.getBeginLine(), n.getBeginColumn(), scope, n.getType(), n.getTypeArgs(), args, n.getAnonymousClassBody());
+		return new ObjectCreationExpr(scope, n.getType(), n.getTypeArguments().get(), args, n.getAnonymousClassBody().get());
 
 	}
 
@@ -451,7 +450,7 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 		NameExpr qualifier = (NameExpr)n.getQualifier().accept(this, arg);
 		MOPParameter param = arg.get(n.getName());		
 		
-		if(n.getQualifier() == qualifier && param == null)
+		if(n.getQualifier().equals(qualifier) && param == null)
 			return n;
 		
 		return new QualifiedNameExpr(n.getBeginLine(), n.getBeginColumn(), qualifier, param.getName());
@@ -459,32 +458,32 @@ public class RenameVariableVisitor extends BaseVisitor<Node, HashMap<String, MOP
 
 	@Override
 	public Node visit(ThisExpr n, HashMap<String, MOPParameter> arg) {
-		Expression classExpr = (Expression)n.getClassExpr().accept(this, arg);
+		Expression classExpr = (Expression)n.asThisExpr().accept(this, arg);
 		
-		if(n.getClassExpr() == classExpr)
+		if(n.asThisExpr() == classExpr)
 			return n;
 
-		return new ThisExpr(n.getBeginLine(), n.getBeginColumn(), classExpr);
+		return new ThisExpr(n.getTypeName().get());
 	}
 
 	@Override
 	public Node visit(SuperExpr n, HashMap<String, MOPParameter> arg) {
-		Expression classExpr = (Expression)n.getClassExpr().accept(this, arg);
+		Expression classExpr = (Expression)n.asSuperExpr().accept(this, arg);
 		
-		if(n.getClassExpr() == classExpr)
+		if(n.asSuperExpr() == classExpr)
 			return n;
 
-		return new SuperExpr(n.getBeginLine(), n.getBeginColumn(), classExpr);
+		return new SuperExpr(n.getTypeName().get());
 	}
 
 	@Override
 	public Node visit(UnaryExpr n, HashMap<String, MOPParameter> arg) {
-		Expression expr = (Expression)n.getExpr().accept(this, arg);
+		Expression expr = (Expression)n.asUnaryExpr().accept(this, arg);
 		
-		if(n.getExpr() == expr)
+		if(n.asUnaryExpr() == expr)
 			return n;
 
-		return new UnaryExpr(n.getBeginLine(), n.getBeginColumn(), expr, n.getOperator());
+		return new UnaryExpr(expr, n.getOperator());
 
 	}
 

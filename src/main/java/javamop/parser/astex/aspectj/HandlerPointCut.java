@@ -1,20 +1,20 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.aspectj;
 
+import com.github.javaparser.TokenRange;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.astex.mopspec.ReferenceSpec;
 import javamop.parser.astex.visitor.DumpVisitor;
-import javamop.parser.astex.visitor.GenericVisitor;
-import javamop.parser.astex.visitor.VoidVisitor;
 
 public class HandlerPointCut extends PointCut{
     
     private ReferenceSpec r;
     private final String state;
     
-    public HandlerPointCut(int line, int column, String type, String specName, String referenceElement, String state) {
-        super(line, column, type);
-        this.r = new ReferenceSpec(line,column, specName, referenceElement, "property") ;
+    public HandlerPointCut(TokenRange tokenRange, String type, String specName, String referenceElement, String state) {
+        super(tokenRange, type);
+        this.r = new ReferenceSpec(tokenRange, specName, referenceElement, "property") ;
         this.state = state;
     }
     
@@ -39,6 +39,6 @@ public class HandlerPointCut extends PointCut{
     public String toString() {
         DumpVisitor visitor = new DumpVisitor();
         accept(visitor, null);
-        return visitor.getSource();
+        return visitor.toString();
     }
 }

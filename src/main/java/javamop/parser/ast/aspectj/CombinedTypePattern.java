@@ -3,6 +3,7 @@ package javamop.parser.ast.aspectj;
 
 import java.util.List;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
@@ -11,8 +12,8 @@ public class CombinedTypePattern extends TypePattern {
     
     private final List<TypePattern> sub_types;
     
-    public CombinedTypePattern(int line, int column, String op, List<TypePattern> sub_types){
-        super(line, column, op);
+    public CombinedTypePattern(TokenRange tokenRange, String op, List<TypePattern> sub_types){
+        super(tokenRange, op);
         this.sub_types = sub_types;
     }
     

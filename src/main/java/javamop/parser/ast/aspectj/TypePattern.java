@@ -1,14 +1,15 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.ast.aspectj;
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 
 public abstract class TypePattern extends Node {
     
     private final String op;
     
-    public TypePattern(int line, int column, String op) {
-        super(line, column);
+    public TypePattern(TokenRange tokenRange, String op) {
+        super(tokenRange);
         this.op = op;
     }
     

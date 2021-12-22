@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.github.javaparser.ast.Node;
 import javamop.parser.ast.aspectj.ArgsPointCut;
 import javamop.parser.ast.aspectj.CFlowPointCut;
 import javamop.parser.ast.aspectj.CombinedPointCut;
@@ -25,10 +26,22 @@ import javamop.parser.ast.aspectj.ThreadBlockedPointCut;
 import javamop.parser.ast.aspectj.ThreadNamePointCut;
 import javamop.parser.ast.aspectj.ThreadPointCut;
 import javamop.parser.ast.aspectj.WithinPointCut;
+import javamop.parser.ast.visitor.PointcutVisitor;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
 
-public class ReplacePointCutVisitor implements PointcutVisitor<PointCut, HashMap<PointCut, PointCut>> {
+public class ReplacePointCutVisitor extends BaseMOPVisitor<PointCut, HashMap<PointCut, PointCut>> implements PointcutVisitor<PointCut, HashMap<PointCut, PointCut>> {
+
+	//TODO: This is being added to work with Legacy code. Should be removed eventually.
+	int getBeginColumn(Node p) {
+		return p.getRange().get().begin.column;
+	}
+
+
+	//TODO: This is being added to work with Legacy code. Should be removed eventually.
+	int getBeginLine(Node p) {
+		return p.getRange().get().begin.line;
+	}
 
 	@Override
 	public PointCut visit(PointCut p, HashMap<PointCut, PointCut> arg) {
@@ -47,7 +60,7 @@ public class ReplacePointCutVisitor implements PointcutVisitor<PointCut, HashMap
 		List<PointCut> pointcuts = new ArrayList<PointCut>();
 		
 		for(PointCut p2 : p.getPointcuts()){
-			PointCut p3 = p2.accept(this, arg);
+			PointCut p3 = p2.accept((PointcutVisitor<PointCut, HashMap<PointCut, PointCut>>) this, arg);
 			
 			if(p2 != p3)
 				changed = true;
@@ -58,17 +71,17 @@ public class ReplacePointCutVisitor implements PointcutVisitor<PointCut, HashMap
 		if(!changed)
 			return p;
 		else
-			return new CombinedPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), pointcuts);
+			return new CombinedPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), pointcuts);
 	}
 
 	@Override
 	public PointCut visit(NotPointCut p, HashMap<PointCut, PointCut> arg) {
-		PointCut sub = p.getPointCut().accept(this, arg);
+		PointCut sub = p.getPointCut().accept((PointcutVisitor<PointCut, HashMap<PointCut, PointCut>>) this, arg);
 		
 		if(p.getPointCut() == sub)
 			return p;
 		
-		return new NotPointCut(p.getBeginLine(), p.getBeginColumn(), sub);
+		return new NotPointCut(getBeginLine(p), getBeginColumn(p), sub);
 	}
 
 	@Override
@@ -98,12 +111,12 @@ public class ReplacePointCutVisitor implements PointcutVisitor<PointCut, HashMap
 
 	@Override
 	public PointCut visit(CFlowPointCut p, HashMap<PointCut, PointCut> arg) {
-		PointCut sub = p.getPointCut().accept(this, arg);
+		PointCut sub = p.getPointCut().accept((PointcutVisitor<PointCut, HashMap<PointCut, PointCut>>) this, arg);
 		
 		if(p.getPointCut() == sub)
 			return p;
 		
-		return new CFlowPointCut(p.getBeginLine(), p.getBeginColumn(), p.getType(), sub);
+		return new CFlowPointCut(getBeginLine(p), getBeginColumn(p), p.getType(), sub);
 	}
 
 	@Override

@@ -20,8 +20,17 @@
 
 package javamop.parser.astex.visitor;
 
+import java.util.Iterator;
+
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.printer.DefaultPrettyPrinterVisitor;
+import com.github.javaparser.printer.MOPPrinter;
+import com.github.javaparser.printer.configuration.PrinterConfiguration;
+import javamop.parser.ast.mopspec.MOPParameter;
+import javamop.parser.ast.mopspec.MOPParameters;
+import javamop.parser.ast.mopspec.SpecModifierSet;
 import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
@@ -37,7 +46,11 @@ import javamop.parser.astex.mopspec.ReferenceSpec;
  * @author Julio Vilmar Gesser
  */
 
-public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor implements VoidVisitor<Object> {
+public final class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidVisitor<Object> {
+
+	public DumpVisitor(PrinterConfiguration configuration) {
+		super(configuration, new MOPPrinter());
+	}
 
 	// All extended componenets
 
@@ -45,16 +58,16 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 
 	public void visit(MOPSpecFileExt f, Object arg) {
 		if (f.getPakage() != null)
-			f.getPakage().accept(this, arg);
+			f.getPakage().accept((VoidVisitor)this, arg);
 		if (f.getImports() != null) {
 			for (ImportDeclaration i : f.getImports()) {
-				i.accept(this, arg);
+				i.accept((VoidVisitor)this, arg);
 			}
 			printer.println();
 		}
 		if (f.getSpecs() != null) {
 			for (JavaMOPSpecExt i : f.getSpecs()) {
-				i.accept(this, arg);
+				i.accept((VoidVisitor)this, arg);
 				printer.println();
 			}
 		}
@@ -87,7 +100,7 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 			printer.print(" includes ");
 			int size = 1;
 			for (ExtendedSpec e : s.getExtendedSpec()) {
-				e.accept(this, arg);
+				e.accept((VoidVisitor)this, arg);
 				if (size != s.getExtendedSpec().size())
 					printer.print(",");
 				size++;
@@ -98,18 +111,18 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 		printer.indent();
 
 		if (s.getDeclarations() != null) {
-			printMembers(s.getDeclarations(), arg);
+			printMembers(s.getDeclarations(), (Void)arg);
 		}
 
 		if (s.getEvents() != null) {
 			for (EventDefinitionExt e : s.getEvents()) {
-				e.accept(this, arg);
+				e.accept((VoidVisitor)this, arg);
 			}
 		}
 
 		if (s.getPropertiesAndHandlers() != null) {
 			for (PropertyAndHandlersExt p : s.getPropertiesAndHandlers()) {
-				p.accept(this, arg);
+				p.accept((VoidVisitor)this, arg);
 			}
 		}
 
@@ -141,7 +154,7 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 			// e.getPointCut().accept(this, arg);
 			printer.print(e.getPointCutString());
 			if (e.getAction() != null) {
-				e.getAction().accept(this, arg);
+				e.getAction().accept((VoidVisitor)this, arg);
 			}
 		} else
 			printer.print(";");
@@ -151,7 +164,7 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 
 	public void visit(PropertyAndHandlersExt p, Object arg) {
 		if (p.getProperty() != null)
-			p.getProperty().accept(this, arg);
+			p.getProperty().accept((VoidVisitor)this, arg);
 		printer.println();
 		for (String event : p.getHandlers().keySet()) {
 			for (HandlerExt h : p.getHandlerList()) { // i need to remove that
@@ -165,13 +178,13 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 												// property
 					if ((h.getReferenceSpec().getSpecName() != null) || (h.getReferenceSpec().getReferenceElement() != null))
 						printer.print("@");
-					h.accept(this, arg);
+					h.accept((VoidVisitor)this, arg);
 				}
 			}
 			BlockStmt stmt = p.getHandlers().get(event);
 			printer.println("@" + event);
 			printer.indent();
-			stmt.accept(this, arg);
+			stmt.accept((VoidVisitor)this, arg);
 			printer.unindent();
 			printer.println();
 		}
@@ -182,7 +195,7 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 	}
 
 	public void visit(HandlerExt h, Object arg) {
-		h.getReferenceSpec().accept(this, arg);
+		h.getReferenceSpec().accept((VoidVisitor)this, arg);
 	}
 
 	public void visit(ExtendedSpec extendedSpec, Object arg) {
@@ -205,14 +218,55 @@ public final class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor im
 
 	public void visit(EventPointCut p, Object arg) {
 		printer.print("event" + "(");
-		p.getReferenceSpec().accept(this, arg);
+		p.getReferenceSpec().accept((VoidVisitor)this, arg);
 		printer.print(")");
 	}
 
 	public void visit(HandlerPointCut p, Object arg) {
 		printer.print("handler" + "(");
-		p.getReferenceSpec().accept(this, arg);
+		p.getReferenceSpec().accept((VoidVisitor)this, arg);
 		printer.print("@" + p.getState());
+		printer.print(")");
+	}
+
+	protected void printSpecModifiers(int modifiers) {
+		if (SpecModifierSet.isAvoid(modifiers)) {
+			printer.print("avoid ");
+		}
+		if (SpecModifierSet.isConnected(modifiers)) {
+			printer.print("connected ");
+		}
+		if (SpecModifierSet.isDecentralized(modifiers)) {
+			printer.print("decentralized ");
+		}
+		if (SpecModifierSet.isEnforce(modifiers)) {
+			printer.print("enforce ");
+		}
+		if (SpecModifierSet.isFullBinding(modifiers)) {
+			printer.print("full-binding ");
+		}
+		if (SpecModifierSet.isPerThread(modifiers)) {
+			printer.print("perthread ");
+		}
+		if (SpecModifierSet.isSuffix(modifiers)) {
+			printer.print("suffix ");
+		}
+		if (SpecModifierSet.isUnSync(modifiers)) {
+			printer.print("unsynchronized ");
+		}
+	}
+
+	protected void printSpecParameters(MOPParameters args, Object arg) {
+		printer.print("(");
+		if (args != null) {
+			for (Iterator<MOPParameter> i = args.iterator(); i.hasNext();) {
+				MOPParameter t = i.next();
+				t.accept((VoidVisitor)this, arg);
+				if (i.hasNext()) {
+					printer.print(", ");
+				}
+			}
+		}
 		printer.print(")");
 	}
 }

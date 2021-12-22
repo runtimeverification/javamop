@@ -2,14 +2,16 @@
 package javamop.parser.ast.aspectj;
 
 
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 
 public class WildcardParameter extends TypePattern {
     
-    public WildcardParameter(int line, int column) {
-        super(line, column, "..");
+    public WildcardParameter(TokenRange tokenRange) {
+        super(tokenRange, "..");
     }
+    
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
         v.visit(this, arg);

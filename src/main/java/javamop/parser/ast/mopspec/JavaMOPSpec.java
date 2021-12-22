@@ -2,6 +2,7 @@
 package javamop.parser.ast.mopspec;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -24,7 +25,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     private final PackageDeclaration packageDeclaration;
     private final MOPParameters parameters;
     private final String inMethod;
-    private final List<BodyDeclaration> declarations;
+    private final NodeList<BodyDeclaration> declarations;
     private final List<EventDefinition> events;
     private final List<PropertyAndHandlers> properties;
     private final List<String> eventNames;
@@ -33,7 +34,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
     private final MOPParameters varsToSave;
     private String rawLogic;
     
-    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<BodyDeclaration> declarations,
+    public JavaMOPSpec(PackageDeclaration packageDeclaration, int line, int column, int modifiers, String name, List<MOPParameter> parameters, String inMethod, NodeList<BodyDeclaration> declarations,
                        List<EventDefinition> events, List<PropertyAndHandlers> properties) throws javamop.parser.main_parser.ParseException {
         super(line, column);
         this.packageDeclaration = packageDeclaration;
@@ -170,7 +171,7 @@ public class JavaMOPSpec extends Node implements Comparable<JavaMOPSpec>{
         return inMethod;
     }
     
-    public List<BodyDeclaration> getDeclarations() {
+    public NodeList<BodyDeclaration> getDeclarations() {
         return declarations;
     }
     
