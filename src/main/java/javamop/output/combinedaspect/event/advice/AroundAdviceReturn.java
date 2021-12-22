@@ -45,22 +45,22 @@ public class AroundAdviceReturn {
             PrimitiveType pType = (PrimitiveType)type;
             ret += "if(" + skipAroundAdvice + "){\n";
             switch(pType.getType()){
-                case Int:
-                case Byte:
-                case Short:
-                case Char:
+                case INT:
+                case BYTE:
+                case SHORT:
+                case CHAR:
                     ret += "return 0;\n";
                     break;
-                case Long:
+                case LONG:
                     ret += "return 0L;\n";
                     break;
-                case Float:
+                case FLOAT:
                     ret += "return 0.0f;\n";
                     break;
-                case Double:
+                case DOUBLE:
                     ret += "return 0.0d;\n";
                     break;
-                case Boolean:
+                case BOOLEAN:
                     ret += "return false;\n";
                     break;
                     
