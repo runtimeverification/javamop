@@ -20,7 +20,7 @@ options {
   DEBUG_TOKEN_MANAGER=false;
 
   JDK_VERSION = "1.8";
-  COMMON_TOKEN_ACTION=true;
+//  COMMON_TOKEN_ACTION=true;
   TOKEN_EXTENDS ="TokenBase";
 //  JAVA_TEMPLATE_TYPE = "modern";
 }
@@ -30,9 +30,13 @@ package javamop.parser.main_parser;
 
 import java.io.*;
 import java.util.*;
+
 import javamop.parser.ast.*;
 import javamop.parser.ast.body.*;
+import com.github.javaparser.ast.comments.CommentsCollection;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.GeneratedParserBase;
+import com.github.javaparser.TokenTypes;
 import com.github.javaparser.JavaToken;
 import com.github.javaparser.MOPModifierHolder;
 import com.github.javaparser.TokenRange;
@@ -273,32 +277,6 @@ TOKEN_MGR_DECLS :
         this.storeTokens = storeTokens;
     }
 
-    private void CommonTokenAction(Token token) {
-        // Use an intermediary stack to avoid recursion, see issue 1003
-        do {
-            tokenWorkStack.push(token);
-            token = token.specialToken;
-        } while (token != null);
-
-        // The stack is now filled with tokens in left-to-right order. Process them.
-        while(!tokenWorkStack.empty()) {
-            token = tokenWorkStack.pop();
-            token.javaToken = new JavaToken(token, tokens);
-
-            if(storeTokens) {
-                tokens.add(token.javaToken);
-            }
-
-            if (homeToken == null) {
-                homeToken = token.javaToken;
-            }
-
-            if(TokenTypes.isComment(token.kind)) {
-                Comment comment = createCommentFromToken(token);
-                commentsCollection.addComment(comment);
-            }
-        }
-    }
 }
 
 /* COMMENTS */
