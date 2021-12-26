@@ -118,7 +118,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jdkVersion>1.6</jdkVersion>
+                    <jdkVersion>1.8</jdkVersion>
                 </configuration>
             </plugin>
             <plugin>

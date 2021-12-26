@@ -348,7 +348,7 @@ final public class JavaParserAdapter {
      */
     private static NodeList<BodyDeclaration<?>> convertDeclarations(final String declarations) {
         try {
-            return parseJavaBubble(declarations).ClassOrInterfaceBody(false);
+            return parseJavaBubble(declarations).ClassOrInterfaceBody();
         } catch(Exception e) {
             //e.printStackTrace();
             return null;
