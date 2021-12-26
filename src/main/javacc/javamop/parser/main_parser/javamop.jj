@@ -2888,7 +2888,7 @@ Expression PrimarySuffix(Expression scope):
   	LOOKAHEAD(2)
 	ret = PrimarySuffixWithoutSuper(scope)
 	|
-  	"." "super" { ret = new SuperExpr(range(scope, token()), scope); }
+  	"." "super" { ret = new SuperExpr(range(scope, token()), new Name(scope.asNameExpr().getName().getIdentifier())); }
   )
   { return ret; }
 }
@@ -2905,7 +2905,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope):
   (
   	"."
   	(
-		"this" { ret = new ThisExpr(range(scope, token()), scope); }
+		"this" { ret = new ThisExpr(range(scope, token()), new Name(scope.asNameExpr().getName().getIdentifier())); }
 	  |
 	  	ret = AllocationExpression(scope)
 	  |

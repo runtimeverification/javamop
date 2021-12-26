@@ -1,5 +1,7 @@
 package com.github.javaparser;
 
+import static com.github.javaparser.GeneratedJavaParserConstants.EOF;
+
 import java.util.List;
 
 import com.github.javaparser.ast.Node;
@@ -41,8 +43,26 @@ public abstract class GeneratedParserBase extends GeneratedJavaParserBase {
         return new NodeList<>();
     }
 
-    public TokenRange recover(int recoveryTokenType, ParseException p) {
-        return super.recover(recoveryTokenType, p);
+    /** TODO: This code is copied from JavaParser; is there a better way to reuse? */
+    public TokenRange recover(int recoveryTokenType, javamop.parser.main_parser.ParseException p) {
+        JavaToken begin = null;
+        if (p.currentToken != null) {
+            begin = token();
+        }
+        Token t;
+        do {
+            t = getNextToken();
+        } while (t.kind != recoveryTokenType && t.kind != EOF);
+
+        JavaToken end = token();
+
+        TokenRange tokenRange = null;
+        if (begin != null && end != null) {
+            tokenRange = range(begin, end);
+        }
+
+        problems.add(new Problem(p.getMessage(), tokenRange, p));
+        return tokenRange;
     }
 
     public JavaToken orIfInvalid(JavaToken firstChoice, JavaToken secondChoice) {
