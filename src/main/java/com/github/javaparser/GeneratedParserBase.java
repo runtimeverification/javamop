@@ -15,7 +15,7 @@ import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 
 //TODO: This is a hack!
-public abstract class GeneratedParserBase extends GeneratedJavaParserBase {
+public class GeneratedParserBase extends GeneratedJavaParserBase {
 
     public boolean storeTokens = super.storeTokens;
 
@@ -114,6 +114,26 @@ public abstract class GeneratedParserBase extends GeneratedJavaParserBase {
 
     @Override
     GeneratedJavaParserTokenManager getTokenSource() {
+        return null;
+    }
+
+    @Override
+    void ReInit(Provider provider) {
+
+    }
+
+    @Override
+    JavaToken token() {
+        return null;
+    }
+
+    @Override
+    Token getNextToken() {
+        return null;
+    }
+
+    @Override
+    Token getToken(int index) {
         return null;
     }
 }

@@ -21,12 +21,17 @@ options
 }
 
 PARSER_BEGIN(AspectJParser)
+
 package javamop.parser.aspectj_parser;
+
 import java.io.*;
 import java.util.*;
+
+import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.*;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.body.*;
+import com.github.javaparser.GeneratedParserBase;
 import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
@@ -34,7 +39,7 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.*;
 import javamop.parser.astex.aspectj.*;
 
-public class AspectJParser
+public class AspectJParser extends GeneratedParserBase
 {
   private static AspectJParser parser;
 
@@ -79,16 +84,6 @@ public class AspectJParser
   public static PointCut parse(File file) throws ParseException
   {
     return parse(file, null);
-  }
-
-  private List add(List list, Object obj)
-  {
-    if (list == null)
-    {
-      list = new LinkedList();
-    }
-    list.add(obj);
-    return list;
   }
 
   private class Modifier
@@ -1129,13 +1124,10 @@ PointCut PointCut() :
 {
   PointCut ret;
   List < PointCut > pointcuts = new ArrayList < PointCut > ();
-  int line, column;
 }
 {
   ret = AndPointCut()
   {
-    line = ret.getBeginLine();
-    column = ret.getBeginColumn();
     pointcuts.add(ret);
   }
   (
@@ -1146,7 +1138,7 @@ PointCut PointCut() :
   )*
   {
     if (pointcuts.size() == 1) return pointcuts.get(0);
-    else return new CombinedPointCut(line, column, "||", pointcuts);
+    else return new CombinedPointCut(tokenRange(), "||", pointcuts);
   }
 }
 
@@ -1154,13 +1146,10 @@ PointCut AndPointCut() :
 {
   PointCut ret;
   List < PointCut > pointcuts = new ArrayList < PointCut > ();
-  int line, column;
 }
 {
   ret = NotPointCut()
   {
-    line = ret.getBeginLine();
-    column = ret.getBeginColumn();
     pointcuts.add(ret);
   }
   (
@@ -1171,14 +1160,13 @@ PointCut AndPointCut() :
   )*
   {
     if (pointcuts.size() == 1) return pointcuts.get(0);
-    else return new CombinedPointCut(line, column, "&&", pointcuts);
+    else return new CombinedPointCut(tokenRange(), "&&", pointcuts);
   }
 }
 
 PointCut NotPointCut() :
 {
   PointCut ret;
-  int line, column;
 }
 {
   (
@@ -1187,9 +1175,7 @@ PointCut NotPointCut() :
     (
       "!" ret = BasePointCut()
       {
-        line = ret.getBeginLine();
-        column = ret.getBeginColumn();
-        ret = new NotPointCut(line, column, ret);
+        ret = new NotPointCut(tokenRange(), ret);
       }
     )
   )
@@ -1235,7 +1221,6 @@ PointCut BasePointCut() :
 PointCut HandlerPointCut() :
 {
   String type;
-  int line, column;
   String specName;
   String referenceElement;
   String state = null;
@@ -1243,8 +1228,6 @@ PointCut HandlerPointCut() :
 {
   "handler"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" < IDPATTERN >
@@ -1270,24 +1253,20 @@ PointCut HandlerPointCut() :
   )
   ")"
   {
-    return new HandlerPointCut(line, column, type, specName, referenceElement, state);
+    return new HandlerPointCut(tokenRange(), type, specName, referenceElement, state);
   }
 }
 
 PointCut EventPointCut() :
 {
   String type;
-  int line, column;
   String specName = null;
   String referenceElement;
-  //String state;
   List < String > parameters;
 }
 {
   "event"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" < IDPATTERN >
@@ -1304,7 +1283,7 @@ PointCut EventPointCut() :
   parameters = ExtParameters() 
   ")"
   {
-    return new EventPointCut(line, column, type, specName, referenceElement, parameters);
+    return new EventPointCut(tokenRange(), type, specName, referenceElement, parameters);
   }
 }
 
@@ -1335,7 +1314,6 @@ List < String > ExtParameters() :
 PointCut MethodPointCut() :
 {
   String type;
-  int line, column;
   MethodPattern methodSig;
 }
 {
@@ -1344,20 +1322,17 @@ PointCut MethodPointCut() :
   | "execution"
   )
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" methodSig = MethodPattern() ")"
   {
-    return new MethodPointCut(line, column, type, methodSig);
+    return new MethodPointCut(tokenRange(), type, methodSig);
   }
 }
 
 PointCut FieldPointCut() :
 {
   String type;
-  int line, column;
   FieldPattern pattern;
 }
 {
@@ -1366,252 +1341,210 @@ PointCut FieldPointCut() :
   | "get"
   )
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" pattern = FieldPattern() ")"
   {
-    return new FieldPointCut(line, column, type, pattern);
+    return new FieldPointCut(tokenRange(), type, pattern);
   }
 }
 
 PointCut ThisPointCut() :
 {
   String type;
-  int line, column;
   TypePattern id;
 }
 {
   "this"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" id = TypePattern() ")"
   {
-    return new ThisPointCut(line, column, type, id);
+    return new ThisPointCut(tokenRange(), type, id);
   }
 }
 
 PointCut TargetPointCut() :
 {
   String type;
-  int line, column;
   TypePattern id;
 }
 {
   "target"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" id = TypePattern() ")"
   {
-    return new TargetPointCut(line, column, type, id);
+    return new TargetPointCut(tokenRange(), type, id);
   }
 }
 
 PointCut ArgsPointCut() :
 {
   String type;
-  int line, column;
   List < TypePattern > parameters;
 }
 {
   "args"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   parameters = ExtParameterTypes()
   {
-    return new ArgsPointCut(line, column, type, parameters);
+    return new ArgsPointCut(tokenRange(), type, parameters);
   }
 }
 
 PointCut WithinPointCut() :
 {
   String type;
-  int line, column;
   TypePattern pattern;
   String name;
 }
 {
   "within"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" pattern = TypePattern() ")"
   {
-    return new WithinPointCut(line, column, type, pattern);
+    return new WithinPointCut(tokenRange(), type, pattern);
   }
 }
 
 PointCut ThreadPointCut() :
 {
-  int line, column;
   PositionString id;
 }
 {
   "thread"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" id = AnyIdPattern() ")"
   {
-    return new ThreadPointCut(line, column, id.str);
+    return new ThreadPointCut(tokenRange(), id.str);
   }
 }
 
 PointCut ThreadNamePointCut() :
 {
-  int line, column;
   PositionString id;
 }
 {
   "threadName"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" id = QuotesAndAnyIdPattern() ")"
   {
-    return new ThreadNamePointCut(line, column, id.str);
+    return new ThreadNamePointCut(tokenRange(), id.str);
   }
 }
 
 PointCut ThreadBlockedPointCut() :
 {
-  int line, column;
   PositionString id;
 }
 {
   "threadBlocked"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" id = QuotesAndAnyIdPattern() ")"
   {
-    return new ThreadBlockedPointCut(line, column, id.str);
+    return new ThreadBlockedPointCut(tokenRange(), id.str);
   }
 }
 
 PointCut EndProgramPointCut() :
 {
-  int line, column;
 }
 {
   "endProgram"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" ")"
   {
-    return new EndProgramPointCut(line, column);
+    return new EndProgramPointCut(tokenRange());
   }
 }
 
 PointCut EndThreadPointCut() :
 {
-  int line, column;
 }
 {
   "endThread"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" ")"
   {
-    return new EndThreadPointCut(line, column);
+    return new EndThreadPointCut(tokenRange());
   }
 }
 
 PointCut StartThreadPointCut() :
 {
-  int line, column;
 }
 {
   "startThread"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" ")"
   {
-    return new StartThreadPointCut(line, column);
+    return new StartThreadPointCut(tokenRange());
   }
 }
 
 PointCut EndObjectPointCut() :
 {
-  int line, column;
   TypePattern targetType;
   PositionString id = null;
 }
 {
   "endObject"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   "(" targetType = TypePattern() id = AnyIdPattern() ")"
   {
-    return new EndObjectPointCut(line, column, targetType, id.str);
+    return new EndObjectPointCut(tokenRange(), targetType, id.str);
   }
 }
 
 PointCut ConditionPointCut() :
 {
   String type;
-  int line, column;
   Expression expr;
 }
 {
   "condition"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" expr = Expression() ")"
   {
-    return new ConditionPointCut(line, column, type, expr);
+    return new ConditionPointCut(tokenRange(), type, expr);
   }
 }
 
 PointCut CountCondPointCut() :
 {
   String type;
-  int line, column;
   Expression expr;
 }
 {
   "countCond"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" expr = Expression() ")"
   {
-    return new CountCondPointCut(line, column, type, expr);
+    return new CountCondPointCut(tokenRange(), type, expr);
   }
 }
 
 PointCut CFlowPointCut() :
 {
   PointCut p;
-  int line, column;
   String type;
 }
 {
@@ -1620,38 +1553,32 @@ PointCut CFlowPointCut() :
   | "cflowbelow"
   )
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" p = PointCut() ")"
   {
-    return new CFlowPointCut(line, column, type, p);
+    return new CFlowPointCut(tokenRange(), type, p);
   }
 }
 
 PointCut IFPointCut() :
 {
   String type;
-  int line, column;
   Expression expr;
 }
 {
   "if"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
     type = token.image;
   }
   "(" expr = Expression() ")"
   {
-    return new IFPointCut(line, column, type, expr);
+    return new IFPointCut(tokenRange(), type, expr);
   }
 }
 
 PointCut IDPointCut() :
 {
-  int line, column;
   List < TypePattern > parameters;
   String id;
   PositionString name = null;
@@ -1659,13 +1586,11 @@ PointCut IDPointCut() :
 {
   name = IdPattern()
   {
-    line = name.line;
-    column = name.column;
     id = name.str;
   }
   parameters = ExtParameterTypes()
   {
-    return new IDPointCut(line, column, id, parameters);
+    return new IDPointCut(tokenRange(), id, parameters);
   }
 }
 
@@ -1683,16 +1608,12 @@ FieldPattern FieldPattern() :
     LOOKAHEAD(ExtModifiers())
     mod = ExtModifiers()
     {
-      line = mod.line;
-      column = mod.column;
     }
   ]
   retType = TypePattern()
   {
     if (line == - 1)
     {
-      line = retType.getBeginLine();
-      column = retType.getBeginColumn();
     }
   }
   [
@@ -1701,7 +1622,7 @@ FieldPattern FieldPattern() :
   ]
   name = AnyIdPattern()
   {
-    return new FieldPattern(line, column, mod.modifiers, mod.not_modifiers, retType, owner, name.str);
+    return new FieldPattern(tokenRange(), mod.modifiers, mod.not_modifiers, retType, owner, name.str);
   }
 }
 
@@ -1720,8 +1641,6 @@ MethodPattern MethodPattern() :
     LOOKAHEAD(ExtModifiers())
     mod = ExtModifiers()
     {
-      line = mod.line;
-      column = mod.column;
     }
   ]
   // for constructors, there is no return type
@@ -1731,8 +1650,6 @@ MethodPattern MethodPattern() :
     {
       if (line == - 1)
       {
-        line = retType.getBeginLine();
-        column = retType.getBeginColumn();
       }
     }
   ]
@@ -1752,8 +1669,6 @@ MethodPattern MethodPattern() :
       {
         if (line == - 1)
         {
-          line = owner.getBeginLine();
-          column = owner.getBeginColumn();
         }
       }
     ]
@@ -1761,14 +1676,12 @@ MethodPattern MethodPattern() :
     {
       if (line == - 1)
       {
-        line = name.line;
-        column = name.column;
       }
     }
   )
   parameters = ExtParameterTypes() [ "throws" throwTypes = TypePatterns() ]
   {
-    return new MethodPattern(line, column, mod.modifiers, mod.not_modifiers, retType, owner, name.str, parameters, throwTypes);
+    return new MethodPattern(tokenRange(), mod.modifiers, mod.not_modifiers, retType, owner, name.str, parameters, throwTypes);
   }
 }
 
@@ -1794,8 +1707,6 @@ Modifier ExtModifiers() :
           i = 1;
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
         }
       ]
@@ -1804,8 +1715,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.PUBLIC, token);
         }
@@ -1813,8 +1722,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.STATIC, token);
         }
@@ -1822,8 +1729,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.PROTECTED, token);
         }
@@ -1831,8 +1736,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.PRIVATE, token);
         }
@@ -1840,8 +1743,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.FINAL, token);
         }
@@ -1849,8 +1750,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.ABSTRACT, token);
         }
@@ -1858,8 +1757,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.SYNCHRONIZED, token);
         }
@@ -1867,8 +1764,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.NATIVE, token);
         }
@@ -1876,8 +1771,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.TRANSIENT, token);
         }
@@ -1885,8 +1778,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.VOLATILE, token);
         }
@@ -1894,8 +1785,6 @@ Modifier ExtModifiers() :
         {
           if (line == - 1)
           {
-            line = token.beginLine;
-            column = token.beginColumn;
           }
           modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.STRICTFP, token);
         }
@@ -1951,7 +1840,7 @@ TypePattern TypeOrDotdot() :
     t = TypePattern()
   | ".."
     {
-      t = new WildcardParameter(token.beginLine, token.beginColumn);
+      t = new WildcardParameter(tokenRange());
     }
   )
   {
@@ -1963,13 +1852,10 @@ TypePattern TypePattern() :
 {
   List < TypePattern > types = new ArrayList < TypePattern > ();
   TypePattern t;
-  int line, column;
 }
 {
   t = AndTypePattern()
   {
-    line = t.getBeginLine();
-    column = t.getBeginColumn();
     types.add(t);
   }
   (
@@ -1980,7 +1866,7 @@ TypePattern TypePattern() :
   )*
   {
     if (types.size() == 1) return t;
-    else return new CombinedTypePattern(line, column, "||", types);
+    else return new CombinedTypePattern(tokenRange(), "||", types);
   }
 }
 
@@ -1988,13 +1874,10 @@ TypePattern AndTypePattern() :
 {
   List < TypePattern > types = new ArrayList < TypePattern > ();
   TypePattern t;
-  int line, column;
 }
 {
   t = NotTypePattern()
   {
-    line = t.getBeginLine();
-    column = t.getBeginColumn();
     types.add(t);
   }
   (
@@ -2005,7 +1888,7 @@ TypePattern AndTypePattern() :
   )*
   {
     if (types.size() == 1) return t;
-    else return new CombinedTypePattern(line, column, "&&", types);
+    else return new CombinedTypePattern(tokenRange(), "&&", types);
   }
 }
 
@@ -2018,8 +1901,6 @@ TypePattern NotTypePattern() :
   [
     "!"
     {
-      line = token.beginLine;
-      column = token.beginColumn;
     }
   ]
   t = BaseTypePattern()
@@ -2027,7 +1908,7 @@ TypePattern NotTypePattern() :
     if (line == - 1) return t;
     else
     {
-      new NotTypePattern(line, column, t);
+      new NotTypePattern(tokenRange(), t);
     }
   }
 }
@@ -2036,7 +1917,6 @@ TypePattern BaseTypePattern() :
 {
   PositionString id = null;
   TypePattern t = null;
-  int line, column;
   PrimitiveType type = null;
   String s;
 }
@@ -2044,14 +1924,10 @@ TypePattern BaseTypePattern() :
   (
     "("
     {
-      line = token.beginLine;
-      column = token.beginColumn;
     }
     t = TypePattern() ")"
   | type = PrimitiveType()
     {
-      line = type.getBeginLine();
-      column = type.getBeginColumn();
       s = type.toString();
     }
     ("[" "]"
@@ -2060,13 +1936,11 @@ TypePattern BaseTypePattern() :
     }
     )*
     {
-      t = new BaseTypePattern(line, column, s);
+      t = new BaseTypePattern(tokenRange(), s);
     }
   | "void"
     {
-      line = token.beginLine;
-      column = token.beginColumn;
-      t = new BaseTypePattern(line, column, "void");
+      t = new BaseTypePattern(tokenRange(), "void");
     }
   | id = IdPattern()
     [
@@ -2082,7 +1956,7 @@ TypePattern BaseTypePattern() :
     )*
   )
   {
-    if (t == null) t = new BaseTypePattern(id.line, id.column, id.str);
+    if (t == null) t = new BaseTypePattern(tokenRange(), id.str);
     return t;
   }
 }
@@ -2244,13 +2118,10 @@ TypePattern TypePatternEndingDot() :
 {
   List < TypePattern > types = new ArrayList < TypePattern > ();
   TypePattern t;
-  int line, column;
 }
 {
   t = AndTypePattern2()
   {
-    line = t.getBeginLine();
-    column = t.getBeginColumn();
     types.add(t);
   }
   (
@@ -2262,7 +2133,7 @@ TypePattern TypePatternEndingDot() :
   "."
   {
     if (types.size() == 1) return t;
-    else return new CombinedTypePattern(line, column, "||", types);
+    else return new CombinedTypePattern(tokenRange(), "||", types);
   }
 }
 
@@ -2270,13 +2141,10 @@ TypePattern AndTypePattern2() :
 {
   List < TypePattern > types = new ArrayList < TypePattern > ();
   TypePattern t;
-  int line, column;
 }
 {
   t = NotTypePattern2()
   {
-    line = t.getBeginLine();
-    column = t.getBeginColumn();
     types.add(t);
   }
   (
@@ -2287,7 +2155,7 @@ TypePattern AndTypePattern2() :
   )*
   {
     if (types.size() == 1) return t;
-    else return new CombinedTypePattern(line, column, "&&", types);
+    else return new CombinedTypePattern(tokenRange(), "&&", types);
   }
 }
 
@@ -2300,8 +2168,6 @@ TypePattern NotTypePattern2() :
   [
     "!"
     {
-      line = token.beginLine;
-      column = token.beginColumn;
     }
   ]
   t = BaseTypePattern2()
@@ -2309,7 +2175,7 @@ TypePattern NotTypePattern2() :
     if (line == - 1) return t;
     else
     {
-      new NotTypePattern(line, column, t);
+      new NotTypePattern(tokenRange(), t);
     }
   }
 }
@@ -2318,14 +2184,11 @@ TypePattern BaseTypePattern2() :
 {
   PositionString id = null;
   TypePattern t = null;
-  int line, column;
 }
 {
   (
     "("
     {
-      line = token.beginLine;
-      column = token.beginColumn;
     }
     t = TypePattern() ")"
   | id = IdPattern2()
@@ -2344,7 +2207,7 @@ TypePattern BaseTypePattern2() :
     )*
   )
   {
-    if (t == null) t = new BaseTypePattern(id.line, id.column, id.str);
+    if (t == null) t = new BaseTypePattern(tokenRange(), id.str);
     return t;
   }
 }
@@ -2440,7 +2303,7 @@ Expression VariableInitializer() :
 
 ArrayInitializerExpr ArrayInitializer() :
 {
-  List values = null;
+  NodeList values = null;
   Expression val;
   int line;
   int column;
@@ -2448,8 +2311,6 @@ ArrayInitializerExpr ArrayInitializer() :
 {
   "{"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   [
     val = VariableInitializer()
@@ -2466,18 +2327,17 @@ ArrayInitializerExpr ArrayInitializer() :
   ]
   [ "," ] "}"
   {
-    return new ArrayInitializerExpr(line, column, values);
+    return new ArrayInitializerExpr(tokenRange(), values);
   }
 }
 
 ExplicitConstructorInvocationStmt ExplicitConstructorInvocation() :
 {
   boolean isThis = false;
-  List args;
+  NodeList args;
   Expression expr = null;
-  List typeArgs = null;
+  NodeList typeArgs = null;
   int line =-1;
-  int column = 0;
 }
 {
   (
@@ -2486,16 +2346,12 @@ ExplicitConstructorInvocationStmt ExplicitConstructorInvocation() :
     [
       typeArgs = TypeArguments()
       {
-        line = ((Type)typeArgs.get(0)).getBeginLine();
-        column = ((Type) typeArgs.get(0)).getBeginColumn();
       }
     ]
     "this"
     {
       if (line == - 1)
       {
-        line = token.beginLine;
-        column = token.beginColumn;
       }
       isThis = true;
     }
@@ -2505,8 +2361,6 @@ ExplicitConstructorInvocationStmt ExplicitConstructorInvocation() :
       LOOKAHEAD(PrimaryExpressionWithoutSuperSuffix() ".")
       expr = PrimaryExpressionWithoutSuperSuffix() "."
       {
-        line = expr.getBeginLine();
-        column = expr.getBeginColumn();
       }
     ]
     [
@@ -2514,8 +2368,6 @@ ExplicitConstructorInvocationStmt ExplicitConstructorInvocation() :
       {
         if (line == - 1)
         {
-          line = ((Type) typeArgs.get(0)).getBeginLine();
-          column = ((Type) typeArgs.get(0)).getBeginColumn();
         }
       }
     ]
@@ -2523,14 +2375,12 @@ ExplicitConstructorInvocationStmt ExplicitConstructorInvocation() :
     {
       if (line == - 1)
       {
-        line = token.beginLine;
-        column = token.beginColumn;
       }
     }
     args = Arguments() ";"
   )
   {
-    return new ExplicitConstructorInvocationStmt(line, column, typeArgs, isThis, expr, args);
+    return new ExplicitConstructorInvocationStmt(tokenRange(), typeArgs, isThis, expr, args);
   }
 }
 
@@ -2548,7 +2398,7 @@ Type Type() :
   | ret = PrimitiveType()
   | "void"
     {
-      ret = new VoidType(token.beginLine, token.beginColumn);
+      ret = new VoidType(tokenRange());
     }
   )
   {
@@ -2581,46 +2431,42 @@ ReferenceType ReferenceType() :
     )*
   )
   {
-    return new ReferenceType(type.getBeginLine(), type.getBeginColumn(), type, arrayCount);
+    return type.asReferenceType();
   }
 }
 
 ClassOrInterfaceType ClassOrInterfaceType() :
 {
   ClassOrInterfaceType ret;
-  String name;
-  List typeArgs = null;
-  int line;
-  int column;
+  SimpleName name;
+  NodeList typeArgs = null;
 }
 {
   < IDPATTERN >
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   {
-    name = token.image;
+    name = new SimpleName(token.image);
   }
   [
     LOOKAHEAD(2)
     typeArgs = TypeArguments()
   ]
   {
-    ret = new ClassOrInterfaceType(line, column, null, name, typeArgs);
+    ret = new ClassOrInterfaceType(tokenRange(), null, name, typeArgs, null);
   }
   (
     LOOKAHEAD(2)
     "." < IDPATTERN >
     {
-      name = token.image;
+      name = new SimpleName(token.image);
     }
     [
       LOOKAHEAD(2)
       typeArgs = TypeArguments()
     ]
     {
-      ret = new ClassOrInterfaceType(line, column, ret, name, typeArgs);
+      ret = new ClassOrInterfaceType(tokenRange(), ret, name, typeArgs, null);
     }
   )*
   {
@@ -2628,9 +2474,9 @@ ClassOrInterfaceType ClassOrInterfaceType() :
   }
 }
 
-List TypeArguments() :
+NodeList TypeArguments() :
 {
-  List ret = new LinkedList();
+  NodeList ret = new NodeList();
   Type type;
 }
 {
@@ -2674,15 +2520,13 @@ WildcardType Wildcard() :
 {
   "?"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   [
     "extends" ext = ReferenceType()
   | "super" sup = ReferenceType()
   ]
   {
-    return new WildcardType(line, column, ext, sup);
+    return new WildcardType(tokenRange(), ext, sup);
   }
 }
 
@@ -2694,35 +2538,35 @@ PrimitiveType PrimitiveType() :
   (
     "boolean"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.BOOLEAN);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BOOLEAN, null);
     }
   | "char"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.CHAR);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.CHAR, null);
     }
   | "byte"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.BYTE);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BYTE, null);
     }
   | "short"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.SHORT);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.SHORT, null);
     }
   | "int"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.INT);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.INT, null);
     }
   | "long"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.LONG);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.LONG, null);
     }
   | "float"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.FLOAT);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.FLOAT, null);
     }
   | "double"
     {
-      ret = new PrimitiveType(token.beginLine, token.beginColumn, PrimitiveType.Primitive.DOUBLE);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.DOUBLE, null);
     }
   )
   {
@@ -2754,13 +2598,13 @@ NameExpr Name() :
 {
   < IDPATTERN >
   {
-    ret = new NameExpr(token.beginLine, token.beginColumn, token.image);
+    ret = new NameExpr(tokenRange(), new SimpleName(token.image));
   }
   (
     LOOKAHEAD(2)
     "." < IDPATTERN >
     {
-      ret = new QualifiedNameExpr(token.beginLine, token.beginColumn, ret, token.image);
+//      ret = new QualifiedNameExpr(token.beginLine, token.beginColumn, ret, token.image);
     }
   )*
   {
@@ -2813,7 +2657,7 @@ Expression Expression() :
     LOOKAHEAD(2)
     op = AssignmentOperator() value = Expression()
     {
-      ret = new AssignExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, value, op);
+      ret = new AssignExpr(tokenRange(), ret, value, op);
     }
   ]
   {
@@ -2829,51 +2673,51 @@ AssignExpr.Operator AssignmentOperator() :
   (
     "="
     {
-      ret = AssignExpr.Operator.assign;
+      ret = AssignExpr.Operator.ASSIGN;
     }
   | "*="
     {
-      ret = AssignExpr.Operator.star;
+      ret = AssignExpr.Operator.MULTIPLY;
     }
   | "/="
     {
-      ret = AssignExpr.Operator.slash;
+      ret = AssignExpr.Operator.DIVIDE;
     }
   | "%="
     {
-      ret = AssignExpr.Operator.rem;
+      ret = AssignExpr.Operator.REMAINDER;
     }
   | "+="
     {
-      ret = AssignExpr.Operator.plus;
+      ret = AssignExpr.Operator.PLUS;
     }
   | "-="
     {
-      ret = AssignExpr.Operator.minus;
+      ret = AssignExpr.Operator.MINUS;
     }
   | "<<="
     {
-      ret = AssignExpr.Operator.lShift;
+      ret = AssignExpr.Operator.LEFT_SHIFT;
     }
   | ">>="
     {
-      ret = AssignExpr.Operator.rSignedShift;
+      ret = AssignExpr.Operator.SIGNED_RIGHT_SHIFT;
     }
   | ">>>="
     {
-      ret = AssignExpr.Operator.rUnsignedShift;
+      ret = AssignExpr.Operator.UNSIGNED_RIGHT_SHIFT;
     }
   | "&="
     {
-      ret = AssignExpr.Operator.and;
+      ret = AssignExpr.Operator.BINARY_AND;
     }
   | "^="
     {
-      ret = AssignExpr.Operator.xor;
+      ret = AssignExpr.Operator.XOR;
     }
   | "|="
     {
-      ret = AssignExpr.Operator.or;
+      ret = AssignExpr.Operator.BINARY_OR;
     }
   )
   {
@@ -2892,7 +2736,7 @@ Expression ConditionalExpression() :
   [
     "?" left = Expression() ":" right = ConditionalExpression()
     {
-      ret = new ConditionalExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, left, right);
+      ret = new ConditionalExpr(tokenRange(), ret, left, right);
     }
   ]
   {
@@ -2910,7 +2754,7 @@ Expression ConditionalOrExpression() :
   (
     "||" right = ConditionalAndExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, BinaryExpr.Operator.or);
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.OR);
     }
   )*
   {
@@ -2928,7 +2772,7 @@ Expression ConditionalAndExpression() :
   (
     "&&" right = InclusiveOrExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, BinaryExpr.Operator.and);
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.AND);
     }
   )*
   {
@@ -2946,7 +2790,7 @@ Expression InclusiveOrExpression() :
   (
     "|" right = ExclusiveOrExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, BinaryExpr.Operator.binOr);
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.BINARY_OR);
     }
   )*
   {
@@ -2964,7 +2808,7 @@ Expression ExclusiveOrExpression() :
   (
     "^" right = AndExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, BinaryExpr.Operator.xor);
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.XOR);
     }
   )*
   {
@@ -2982,7 +2826,7 @@ Expression AndExpression() :
   (
     "&" right = EqualityExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, BinaryExpr.Operator.binAnd);
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.BINARY_AND);
     }
   )*
   {
@@ -3002,16 +2846,16 @@ Expression EqualityExpression() :
     (
       "=="
       {
-        op = BinaryExpr.Operator.equals;
+        op = BinaryExpr.Operator.EQUALS;
       }
     | "!="
       {
-        op = BinaryExpr.Operator.notEquals;
+        op = BinaryExpr.Operator.NOT_EQUALS;
       }
     )
     right = InstanceOfExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, op);
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
     }
   )*
   {
@@ -3029,7 +2873,7 @@ Expression InstanceOfExpression() :
   [
     "instanceof" type = Type()
     {
-      ret = new InstanceOfExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, type);
+      ret = new InstanceOfExpr(tokenRange(), ret, type.asReferenceType(), null);
     }
   ]
   {
@@ -3049,24 +2893,24 @@ Expression RelationalExpression() :
     (
       "<"
       {
-        op = BinaryExpr.Operator.less;
+        op = BinaryExpr.Operator.LESS;
       }
     | ">"
       {
-        op = BinaryExpr.Operator.greater;
+        op = BinaryExpr.Operator.GREATER;
       }
     | "<="
       {
-        op = BinaryExpr.Operator.lessEquals;
+        op = BinaryExpr.Operator.LESS_EQUALS;
       }
     | ">="
       {
-        op = BinaryExpr.Operator.greaterEquals;
+        op = BinaryExpr.Operator.GREATER_EQUALS;
       }
     )
     right = ShiftExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, op);
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
     }
   )*
   {
@@ -3086,20 +2930,20 @@ Expression ShiftExpression() :
     (
       "<<"
       {
-        op = BinaryExpr.Operator.lShift;
+        op = BinaryExpr.Operator.LEFT_SHIFT;
       }
     | RSIGNEDSHIFT()
       {
-        op = BinaryExpr.Operator.rSignedShift;
+        op = BinaryExpr.Operator.SIGNED_RIGHT_SHIFT;
       }
     | RUNSIGNEDSHIFT()
       {
-        op = BinaryExpr.Operator.rUnsignedShift;
+        op = BinaryExpr.Operator.UNSIGNED_RIGHT_SHIFT;
       }
     )
     right = AdditiveExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, op);
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
     }
   )*
   {
@@ -3119,16 +2963,16 @@ Expression AdditiveExpression() :
     (
       "+"
       {
-        op = BinaryExpr.Operator.plus;
+        op = BinaryExpr.Operator.PLUS;
       }
     | "-"
       {
-        op = BinaryExpr.Operator.minus;
+        op = BinaryExpr.Operator.MINUS;
       }
     )
     right = MultiplicativeExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, op);
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
     }
   )*
   {
@@ -3148,20 +2992,20 @@ Expression MultiplicativeExpression() :
     (
       "*"
       {
-        op = BinaryExpr.Operator.times;
+        op = BinaryExpr.Operator.MULTIPLY;
       }
     | "/"
       {
-        op = BinaryExpr.Operator.divide;
+        op = BinaryExpr.Operator.DIVIDE;
       }
     | "%"
       {
-        op = BinaryExpr.Operator.remainder;
+        op = BinaryExpr.Operator.REMAINDER;
       }
     )
     right = UnaryExpression()
     {
-      ret = new BinaryExpr(ret.getBeginLine(), ret.getBeginColumn(), ret, right, op);
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
     }
   )*
   {
@@ -3173,45 +3017,39 @@ Expression UnaryExpression() :
 {
   Expression ret;
   UnaryExpr.Operator op;
-  int line = 0;
-  int column = 0;
 }
 {
   (
     (
       "+"
       {
-        op = UnaryExpr.Operator.positive;
-        line = token.beginLine;
-        column = token.beginColumn;
+        op = UnaryExpr.Operator.PLUS;
       }
     | "-"
       {
-        op = UnaryExpr.Operator.negative;
-        line = token.beginLine;
-        column = token.beginColumn;
+        op = UnaryExpr.Operator.MINUS;
       }
     )
     ret = UnaryExpression()
     {
-      if (op == UnaryExpr.Operator.negative)
+      if (op == UnaryExpr.Operator.MINUS)
       {
-        if (ret instanceof IntegerLiteralExpr && ((IntegerLiteralExpr) ret).isMinValue())
+        if (ret instanceof IntegerLiteralExpr)
         {
-          ret = new IntegerLiteralMinValueExpr(ret.getBeginLine(), ret.getBeginColumn());
+          ret = new IntegerLiteralExpr(String.valueOf(tokenRange()));
         }
-        else if (ret instanceof LongLiteralExpr && ((LongLiteralExpr) ret).isMinValue())
+        else if (ret instanceof LongLiteralExpr)
         {
-          ret = new LongLiteralMinValueExpr(ret.getBeginLine(), ret.getBeginColumn());
+          ret = new LongLiteralExpr(String.valueOf(tokenRange()));
         }
         else
         {
-          ret = new UnaryExpr(line, column, ret, op);
+          ret = new UnaryExpr(tokenRange(), ret, op);
         }
       }
       else
       {
-        ret = new UnaryExpr(line, column, ret, op);
+        ret = new UnaryExpr(tokenRange(), ret, op);
       }
     }
   | ret = PreIncrementExpression()
@@ -3232,12 +3070,10 @@ Expression PreIncrementExpression() :
 {
   "++"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   ret = PrimaryExpression()
   {
-    ret = new UnaryExpr(line, column, ret, UnaryExpr.Operator.preIncrement);
+    ret = new UnaryExpr(tokenRange(), ret, UnaryExpr.Operator.PREFIX_INCREMENT);
   }
   {
     return ret;
@@ -3253,12 +3089,10 @@ Expression PreDecrementExpression() :
 {
   "--"
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   ret = PrimaryExpression()
   {
-    ret = new UnaryExpr(line, column, ret, UnaryExpr.Operator.preDecrement);
+    ret = new UnaryExpr(tokenRange(), ret, UnaryExpr.Operator.PREFIX_DECREMENT);
   }
   {
     return ret;
@@ -3269,28 +3103,22 @@ Expression UnaryExpressionNotPlusMinus() :
 {
   Expression ret;
   UnaryExpr.Operator op;
-  int line = 0;
-  int column = 0;
 }
 {
   (
     (
       "~"
       {
-        op = UnaryExpr.Operator.inverse;
-        line = token.beginLine;
-        column = token.beginColumn;
+        op = UnaryExpr.Operator.BITWISE_COMPLEMENT;
       }
     | "!"
       {
-        op = UnaryExpr.Operator.not;
-        line = token.beginLine;
-        column = token.beginColumn;
+        op = UnaryExpr.Operator.LOGICAL_COMPLEMENT;
       }
     )
     ret = UnaryExpression()
     {
-      ret = new UnaryExpr(line, column, ret, op);
+      ret = new UnaryExpr(tokenRange(), ret, op);
     }
   | LOOKAHEAD(CastLookahead())
     ret = CastExpression()
@@ -3316,8 +3144,6 @@ Expression PostfixExpression() :
 {
   Expression ret;
   UnaryExpr.Operator op;
-  int line = 0;
-  int column = 0;
 }
 {
   ret = PrimaryExpression()
@@ -3326,19 +3152,15 @@ Expression PostfixExpression() :
     (
       "++"
       {
-        op = UnaryExpr.Operator.posIncrement;
-        line = token.beginLine;
-        column = token.beginColumn;
+        op = UnaryExpr.Operator.POSTFIX_INCREMENT;
       }
     | "--"
       {
-        op = UnaryExpr.Operator.posDecrement;
-        line = token.beginLine;
-        column = token.beginColumn;
+        op = UnaryExpr.Operator.POSTFIX_DECREMENT;
       }
     )
     {
-      ret = new UnaryExpr(line, column, ret, op);
+      ret = new UnaryExpr(tokenRange(), ret, op);
     }
   ]
   {
@@ -3356,12 +3178,10 @@ Expression CastExpression() :
 {
   "("
   {
-    line = token.beginLine;
-    column = token.beginColumn;
   }
   type = Type() ")" ret = UnaryExpression()
   {
-    ret = new CastExpr(line, column, type, ret);
+    ret = new CastExpr(tokenRange(), type, ret);
   }
   {
     return ret;
@@ -3403,41 +3223,32 @@ Expression PrimaryExpressionWithoutSuperSuffix() :
 Expression PrimaryPrefix() :
 {
   Expression ret;
-  String name;
-  List typeArgs = null;
-  List args = null;
+  SimpleName name;
+  NodeList typeArgs = null;
+  NodeList args = null;
   boolean hasArgs = false;
   Type type;
-  int line =-1;
-  int column = 0;
 }
 {
   (
     ret = Literal()
   | "this"
     {
-      ret = new ThisExpr(token.beginLine, token.beginColumn, null);
+      ret = new ThisExpr(tokenRange(), null);
     }
   | "super"
     {
-      ret = new SuperExpr(token.beginLine, token.beginColumn, null);
+      ret = new SuperExpr(tokenRange(), null);
     }
     "."
     [
       typeArgs = TypeArguments()
       {
-        line = ((Type) typeArgs.get(0)).getBeginLine();
-        column = ((Type) typeArgs.get(0)).getBeginColumn();
       }
     ]
     < IDPATTERN >
     {
-      name = token.image;
-      if (line == - 1)
-      {
-        line = token.beginLine;
-        column = token.beginColumn;
-      }
+      name = new SimpleName(token.image);
     }
     [
       args = Arguments()
@@ -3446,28 +3257,24 @@ Expression PrimaryPrefix() :
       }
     ]
     {
-      ret = hasArgs ? new MethodCallExpr(line, column, ret, typeArgs, name, args) : new FieldAccessExpr(line, column, ret, null, name);
+      ret = hasArgs ? new MethodCallExpr(tokenRange(), ret, typeArgs, name, args) : new FieldAccessExpr(tokenRange(), ret, null, name);
     }
   | "("
     {
-      line = token.beginLine;
-      column = token.beginColumn;
     }
     ret = Expression() ")"
     {
-      ret = new EnclosedExpr(line, column, ret);
+      ret = new EnclosedExpr(tokenRange(), ret);
     }
   | ret = AllocationExpression(null)
   | LOOKAHEAD(ResultType() "." "class")
     type = ResultType() "." "class"
     {
-      ret = new ClassExpr(type.getBeginLine(), type.getBeginColumn(), type);
+      ret = new ClassExpr(tokenRange(), type);
     }
   | < IDPATTERN >
     {
-      name = token.image;
-      line = token.beginLine;
-      column = token.beginColumn;
+      name = new SimpleName(token.image);
     }
     [
       args = Arguments()
@@ -3476,7 +3283,7 @@ Expression PrimaryPrefix() :
       }
     ]
     {
-      ret = hasArgs ? new MethodCallExpr(line, column, null, null, name, args) : new NameExpr(line, column, name);
+      ret = hasArgs ? new MethodCallExpr(tokenRange(), null, null, name, args) : new NameExpr(tokenRange(), name);
     }
   )
   {
@@ -3494,7 +3301,7 @@ Expression PrimarySuffix(Expression scope) :
     ret = PrimarySuffixWithoutSuper(scope)
   | "." "super"
     {
-      ret = new SuperExpr(token.beginLine, token.beginColumn, scope);
+      ret = new SuperExpr(tokenRange(), scope.asSuperExpr().getTypeName().get());
     }
   )
   {
@@ -3505,12 +3312,10 @@ Expression PrimarySuffix(Expression scope) :
 Expression PrimarySuffixWithoutSuper(Expression scope) :
 {
   Expression ret;
-  List typeArgs = null;
-  List args = null;
+  NodeList typeArgs = null;
+  NodeList args = null;
   boolean hasArgs = false;
-  String name;
-  int line =-1;
-  int column = 0;
+  SimpleName name;
   PositionString nameStr;
 }
 {
@@ -3520,26 +3325,17 @@ Expression PrimarySuffixWithoutSuper(Expression scope) :
     (
       "this"
       {
-        ret = new ThisExpr(token.beginLine, token.beginColumn, scope);
+        ret = new ThisExpr(tokenRange(), scope.asSuperExpr().getTypeName().get());
       }
     | ret = AllocationExpression(scope)
     | LOOKAHEAD([ TypeArguments() ] AnyIDPatternWithoutDot())
 
       [
         typeArgs = TypeArguments()
-        {
-          line = ((Type)typeArgs.get(0)).getBeginLine();
-          column = ((Type) typeArgs.get(0)).getBeginColumn();
-        }
       ]
       nameStr = AnyIDPatternWithoutDot()
       {
-        name = nameStr.str;
-        if (line == - 1)
-        {
-          line = nameStr.line;
-          column = nameStr.column;
-        }
+        name = new SimpleName(nameStr.str);
       }
       [
         args = Arguments()
@@ -3548,17 +3344,15 @@ Expression PrimarySuffixWithoutSuper(Expression scope) :
         }
       ]
       {
-        ret = hasArgs ? new MethodCallExpr(line, column, scope, typeArgs, name, args) : new FieldAccessExpr(line, column, scope, typeArgs, name);
+        ret = hasArgs ? new MethodCallExpr(tokenRange(), scope, typeArgs, name, args) : new FieldAccessExpr(tokenRange(), scope, typeArgs, name);
       }
     )
   | ("["
     {
-      line = token.beginLine;
-      column = token.beginColumn;
     }
     ret = Expression() "]"
     {
-      ret = new ArrayAccessExpr(line, column, scope, ret);
+      ret = new ArrayAccessExpr(tokenRange(), scope, ret);
     }
     )
   )
@@ -3575,23 +3369,23 @@ Expression Literal() :
   (
     < INTEGER_LITERAL >
     {
-      ret = new IntegerLiteralExpr(token.beginLine, token.beginColumn, token.image);
+      ret = new IntegerLiteralExpr(tokenRange(), token.image);
     }
   | < LONG_LITERAL >
     {
-      ret = new LongLiteralExpr(token.beginLine, token.beginColumn, token.image);
+      ret = new LongLiteralExpr(tokenRange(), token.image);
     }
   | < FLOATING_POINT_LITERAL >
     {
-      ret = new DoubleLiteralExpr(token.beginLine, token.beginColumn, token.image);
+      ret = new DoubleLiteralExpr(tokenRange(), token.image);
     }
   | < CHARACTER_LITERAL >
     {
-      ret = new CharLiteralExpr(token.beginLine, token.beginColumn, token.image.substring(1, token.image.length() - 1));
+      ret = new CharLiteralExpr(tokenRange(), token.image.substring(1, token.image.length() - 1));
     }
   | < STRING_LITERAL >
     {
-      ret = new StringLiteralExpr(token.beginLine, token.beginColumn, token.image.substring(1, token.image.length() - 1));
+      ret = new StringLiteralExpr(tokenRange(), token.image.substring(1, token.image.length() - 1));
     }
   | ret = BooleanLiteral()
   | ret = NullLiteral()
@@ -3609,11 +3403,11 @@ Expression BooleanLiteral() :
   (
     "true"
     {
-      ret = new BooleanLiteralExpr(token.beginLine, token.beginColumn, Boolean.TRUE);
+      ret = new BooleanLiteralExpr(tokenRange(), Boolean.TRUE);
     }
   | "false"
     {
-      ret = new BooleanLiteralExpr(token.beginLine, token.beginColumn, Boolean.FALSE);
+      ret = new BooleanLiteralExpr(tokenRange(), Boolean.FALSE);
     }
   )
   {
@@ -3626,13 +3420,13 @@ Expression NullLiteral() :
 {
   "null"
   {
-    return new NullLiteralExpr(token.beginLine, token.beginColumn);
+    return new NullLiteralExpr(tokenRange());
   }
 }
 
-List Arguments() :
+NodeList Arguments() :
 {
-  List ret = null;
+  NodeList ret = null;
 }
 {
   "(" [ ret = ArgumentList() ] ")"
@@ -3641,9 +3435,9 @@ List Arguments() :
   }
 }
 
-List ArgumentList() :
+NodeList ArgumentList() :
 {
-  List ret = new LinkedList();
+  NodeList ret = new NodeList();
   Expression expr;
 }
 {
@@ -3667,42 +3461,22 @@ Expression AllocationExpression(Expression scope) :
   Expression ret;
   Type type;
   Object [ ] arr = null;
-  List typeArgs = null;
-  List anonymousBody = null;
-  List args;
-  int line;
-  int column;
+  NodeList typeArgs = null;
+  NodeList anonymousBody = null;
+  NodeList args;
 }
 {
   "new"
-  {
-    line = token.beginLine;
-    column = token.beginColumn;
-  }
   (
     type = PrimitiveType() arr = ArrayDimsAndInits()
     {
-      if (arr [ 0 ] instanceof Integer)
-      {
-        ret = new ArrayCreationExpr(line, column, type, null, ((Integer) arr [ 0 ]).intValue(), (ArrayInitializerExpr) arr [ 1 ]);
-      }
-      else
-      {
-        ret = new ArrayCreationExpr(line, column, type, null, (List) arr [ 0 ], ((Integer) arr [ 1 ]).intValue());
-      }
+        ret = new ArrayCreationExpr(tokenRange(), type, null, (ArrayInitializerExpr) arr [ 1 ]);
     }
   | [ typeArgs = TypeArguments() ] type = ClassOrInterfaceType()
     (
       arr = ArrayDimsAndInits()
       {
-        if (arr [ 0 ] instanceof Integer)
-        {
-          ret = new ArrayCreationExpr(line, column, type, typeArgs, ((Integer) arr [ 0 ]).intValue(), (ArrayInitializerExpr) arr [ 1 ]);
-        }
-        else
-        {
-          ret = new ArrayCreationExpr(line, column, type, typeArgs, (List) arr [ 0 ], ((Integer) arr [ 1 ]).intValue());
-        }
+          ret = new ArrayCreationExpr(tokenRange(), type, typeArgs, (ArrayInitializerExpr) arr [ 1 ]);
       }
     )
   )

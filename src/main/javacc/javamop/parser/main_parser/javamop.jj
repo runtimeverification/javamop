@@ -78,12 +78,6 @@ public final class JavaMOPParser extends GeneratedParserBase {
         return token_source;
     }
 
-    /* Changes the amount by which the horizontal position is increased when a tab character is encountered.
-         One by default.*/
-    void setTabSize(int size) {
-        jj_input_stream.setTabSize(size);
-    }
-
     public static MOPSpecFileExt parse(InputStream in, String encoding) throws ParseException {
         if (parser == null) {
             parser = new JavaMOPParser(in, encoding);
@@ -212,21 +206,6 @@ public final class JavaMOPParser extends GeneratedParserBase {
     	jj_nt = token_source.getNextToken();
     	return buf.toString().trim();
     }
-
-	private class PositionString {
-		int line, column;
-		String str;
-
-		public PositionString(int line, int column, String str){
-			this.line = line;
-			this.column = column;
-			this.str = str;
-		}
-	}
-
-
-
-
 }
 
 PARSER_END(JavaMOPParser)
