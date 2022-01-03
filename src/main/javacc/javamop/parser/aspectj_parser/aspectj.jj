@@ -43,6 +43,16 @@ public class AspectJParser extends GeneratedParserBase
 {
   private static AspectJParser parser;
 
+  public static void main(String[] args) throws IOException {
+    FileReader reader = new FileReader(args[0]);
+    AspectJParser parser = new AspectJParser(reader);
+    try {
+      parser.PointCut();
+    } catch (ParseException pe) {
+      pe.printStackTrace();
+    }
+  }
+
   public static PointCut parse(InputStream in, String encoding) throws ParseException
   {
     if (parser == null)
@@ -127,6 +137,18 @@ public class AspectJParser extends GeneratedParserBase
 }
 
 PARSER_END(AspectJParser)
+
+TOKEN_MGR_DECLS :
+{
+   public static void main(String[] args) throws IOException {
+      FileReader reader = new FileReader(args[0]);
+      JavaCharStream stream = new JavaCharStream(reader);
+      AspectJParserTokenManager manager = new AspectJParserTokenManager(stream);
+      for (Token token = manager.getNextToken(); token.kind != EOF; token = manager.getNextToken()) {
+         manager.debugStream.println("Found token: " + token.image);
+      }
+   }
+}
 
 SKIP :
 {

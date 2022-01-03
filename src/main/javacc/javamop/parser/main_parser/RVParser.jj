@@ -24,7 +24,17 @@ import javamop.parser.rvm.core.ast.Specification;
  * @author A. Cody Schuffelen
  */
 public class RVParser {
-    
+
+    public static void main(String[] args) throws IOException {
+        FileReader reader = new FileReader(args[0]);
+        RVParser parser = new RVParser(reader);
+        try {
+            parser.rvmFile();
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+    }
+
     /**
      * Parse a complete RVM file specification.
      * @param s The text of the file.
@@ -33,7 +43,7 @@ public class RVParser {
     public static MonitorFile parse(final String s) {
         return parse(new BufferedReader(new StringReader(s)));
     }
-    
+
     /**
      * Parse a complete RVM file specification.
      * @param reader The place to read the specification from.
@@ -49,7 +59,7 @@ public class RVParser {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Read a backtick segment with matched backticks, e.g. `a`, ``a``, ```a```, or ``a`b``.
      * Assumes the first backtick has already been read.
@@ -88,7 +98,7 @@ public class RVParser {
             return "";
         }
     }
-    
+
     /**
      * Reads a segment from the character stream with matching open and close characters,
      * e.g. (((--)--(--))--).
@@ -144,7 +154,7 @@ public class RVParser {
     private String parseMatchingParens() throws ParseException {
         return parseMatchingSegment('(', ')', 1);
     }
-    
+
     /**
      * Parse matching curly brackets from the character stream, assuming one is already read.
      * @return The string read, including the first and last curly brackets.
@@ -152,7 +162,7 @@ public class RVParser {
     private String parseMatchingCurlyBrackets() throws ParseException {
         return parseMatchingSegment('{', '}', 1);
     }
-    
+
     /**
      * Read characters from the character stream until a string is exactly matched. Pushes the
      * matched text back onto the character stream.
@@ -189,7 +199,7 @@ public class RVParser {
             return "";
         }
     }
-    
+
     /**
      * Read lines from the character stream until a regular expression matches the line. Pushes
      * the matching line back into the character stream.
@@ -219,6 +229,19 @@ public class RVParser {
 }
 PARSER_END(RVParser)
 
+
+TOKEN_MGR_DECLS :
+{
+    public static void main(String[] args) throws IOException{
+        FileReader reader = new FileReader(args[0]);
+        SimpleCharStream stream = new SimpleCharStream(reader);
+        RVParserTokenManager manager = new RVParserTokenManager(stream);
+        for (Token token = manager.getNextToken(); token.kind != EOF; token = manager.getNextToken()) {
+            manager.debugStream.println("Found token: " + token.image);
+        }
+    }
+}
+
 SKIP : {
     <WHITESPACE: [" ","\t","\r","\n"]>
     | <LINECOMMENT: "//" (~["\n"])* "\n">
@@ -231,12 +254,33 @@ TOKEN : {
     | <LPAREN : "(">
     | <RPAREN : ")">
     | <COLON : ":">
+    | <SEMICOLON : ";">
+    | < STAR: "*" >
+    | < COMMA: "," >
     | <AT : "@">
     | <EVENT : ("event")>
     | <ID : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_"|"."|"-")*>
     | <DIGIT : ["0"-"9"]>
     | <LETTER : ["a"-"z","A"-"Z"]>
     | <BACKTICK : "`">
+    | < STRING_LITERAL:
+            "\""
+            (   (~["\"","\\","\n","\r"])
+              | ("\\"
+                  ( ["n","t","b","r","f","\\","'","\""]
+                  | ["0"-"7"] ( ["0"-"7"] )?
+                  | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+                  )
+                )
+              | ("\\u"
+              	["0"-"9","A"-"F","a"-"f"]
+              	["0"-"9","A"-"F","a"-"f"]
+              	["0"-"9","A"-"F","a"-"f"]
+              	["0"-"9","A"-"F","a"-"f"]
+                )
+            )*
+            "\""
+        >
 }
 
 MonitorFile rvmFile() : {

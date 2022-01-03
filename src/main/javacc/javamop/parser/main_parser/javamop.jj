@@ -69,6 +69,16 @@ public final class JavaMOPParser extends GeneratedParserBase {
 
     private static JavaMOPParser parser;
 
+    public static void main(String[] args) throws IOException {
+        FileReader reader = new FileReader(args[0]);
+        JavaMOPParser parser = new JavaMOPParser(reader);
+        try {
+            parser.MOPSpecFile();
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+    }
+
     /* Returns the JavaParser specific token type of the last matched token */
     JavaToken token() {
         return token.javaToken;
@@ -228,6 +238,15 @@ TOKEN_MGR_DECLS :
     private JavaToken homeToken;
     private Stack<Token> tokenWorkStack = new Stack<Token>();
     private boolean storeTokens;
+
+    public static void main(String[] args) throws IOException {
+        FileReader reader = new FileReader(args[0]);
+        JavaCharStream stream = new JavaCharStream(reader);
+        JavaMOPParserTokenManager manager = new JavaMOPParserTokenManager(stream);
+        for (Token token = manager.getNextToken(); token.kind != EOF; token = manager.getNextToken()) {
+            manager.debugStream.println("Found token: " + token.image);
+        }
+    }
 
     void reset() {
         tokens = new ArrayList<JavaToken>();
