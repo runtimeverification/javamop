@@ -103,8 +103,8 @@ public class EventDefinition extends ExtNode {
         condition = "";
         
         try {
-            originalPointCut = javamop.parser.aspectj_parser.AspectJParser.parse(new ByteArrayInputStream(input.getBytes()));
-        } catch (javamop.parser.aspectj_parser.ParseException e) {
+            originalPointCut = com.github.javaparser.AspectJParser.parse(new ByteArrayInputStream(input.getBytes()));
+        } catch (com.github.javaparser.ParseException e) {
             throw new ParseException("The following error encountered when parsing the pointcut in the event definition: "
             + e.getMessage());
         }

@@ -31,7 +31,7 @@ public class JavaMOPSpecExt extends ExtNode {
     private String rawLogic;
 
     public JavaMOPSpecExt(PackageDeclaration packagedeclaration, TokenRange tokenRange, boolean isPublic, int modifiers, String name, List<MOPParameter> parameters, String inMethod, List<ExtendedSpec> extendedSpecs,
-                          NodeList<BodyDeclaration<?>> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws javamop.parser.main_parser.ParseException {
+                          NodeList<BodyDeclaration<?>> declarations, List<EventDefinitionExt> events, List<PropertyAndHandlersExt> properties) throws com.github.javaparser.ParseException {
         super(tokenRange);
         this.packageDeclaration = packagedeclaration;   
         this.modifiers = modifiers;
@@ -58,7 +58,7 @@ public class JavaMOPSpecExt extends ExtNode {
         try {
             setVarsInEvents();
         } catch (MOPException e) {
-            throw new javamop.parser.main_parser.ParseException(e.getMessage());
+            throw new com.github.javaparser.ParseException(e.getMessage());
         }
     }
     

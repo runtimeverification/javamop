@@ -37,7 +37,7 @@ import javamop.parser.astex.visitor.CollectEventPointCutVisitor;
 import javamop.parser.astex.visitor.CollectHandlerPointCutVisitor;
 import javamop.parser.astex.visitor.RenameVariableVisitor;
 import javamop.parser.astex.visitor.ReplacePointCutVisitor;
-import javamop.parser.main_parser.JavaMOPParser;
+import com.github.javaparser.JavaMOPParser;
 import javamop.util.Pair;
 
 class SpecContext {
@@ -324,7 +324,7 @@ class JavaMOPExtender {
 					+ handlerPointCut.getState() + "(..))";
 			PointCut targetPointCut;
 			try {
-				targetPointCut = javamop.parser.aspectj_parser.AspectJParser.parse(new ByteArrayInputStream(methodPatternStr.getBytes()));
+				targetPointCut = com.github.javaparser.AspectJParser.parse(new ByteArrayInputStream(methodPatternStr.getBytes()));
 			} catch (Exception e) {
 				throw new MOPException("A JavaMOP internal method pattern for a handler pointcut cannot be parsed.\n" + e.getMessage());
 			}

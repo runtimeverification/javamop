@@ -5,7 +5,7 @@ import java.io.File;
 
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.astex.MOPSpecFileExt;
-import javamop.parser.main_parser.JavaMOPParser;
+import com.github.javaparser.JavaMOPParser;
 
 public class Main {
 

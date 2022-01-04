@@ -19,8 +19,8 @@
  */
 package javamop.parser.ast.aspectj;
 
-import javamop.parser.aspectj_parser.ParseException;
-import javamop.parser.aspectj_parser.Token;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.Token;
 
 /**
  * Class to hold modifiers.

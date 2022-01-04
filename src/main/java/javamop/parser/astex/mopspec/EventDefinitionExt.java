@@ -63,7 +63,7 @@ public class EventDefinitionExt extends ExtNode {
     public EventDefinitionExt(TokenRange tokenRange, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block, boolean hasReturning,
                               List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean abstractEvent,
                               boolean isBlockingEvent, boolean staticEvent)
-            throws javamop.parser.main_parser.ParseException {
+            throws com.github.javaparser.ParseException {
         super(tokenRange);
         this.id = id;
         this.retType = retType;
@@ -126,7 +126,7 @@ public class EventDefinitionExt extends ExtNode {
         this.parametersWithoutThreadVar = e.getParametersWithoutThreadVar();
     }
 
-    private PointCut parsePointCutAsRaw(String input) throws javamop.parser.main_parser.ParseException {
+    private PointCut parsePointCutAsRaw(String input) throws com.github.javaparser.ParseException {
         // create a token for exceptions
         javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
         t.beginLine = super.getBegin().get().line;
@@ -139,15 +139,15 @@ public class EventDefinitionExt extends ExtNode {
         condition = "";
 
         try {
-            originalPointCut = javamop.parser.aspectj_parser.AspectJParser.parse(new ByteArrayInputStream(input.getBytes()));
-        } catch (javamop.parser.aspectj_parser.ParseException e) {
-            throw new javamop.parser.main_parser.ParseException("The following error encountered when parsing the pointcut in the event definition: " + e.getMessage());
+            originalPointCut = com.github.javaparser.AspectJParser.parse(new ByteArrayInputStream(input.getBytes()));
+        } catch (com.github.javaparser.ParseException e) {
+            throw new com.github.javaparser.ParseException("The following error encountered when parsing the pointcut in the event definition: " + e.getMessage());
         }
 
         resultPointCut = originalPointCut;
 
         if (resultPointCut == null)
-            throw new javamop.parser.main_parser.ParseException("endObject() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("endObject() pointcut should appear at the root level in a conjuction form");
 
         purePointCutStr = resultPointCut.toString();
 

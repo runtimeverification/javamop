@@ -28,7 +28,7 @@ import javamop.parser.astex.mopspec.HandlerExt;
 import javamop.parser.astex.mopspec.JavaMOPSpecExt;
 import javamop.parser.astex.mopspec.PropertyAndHandlersExt;
 import javamop.parser.astex.mopspec.PropertyExt;
-import javamop.parser.main_parser.JavaMOPParser;
+import com.github.javaparser.JavaMOPParser;
 import javamop.parser.main_parser.ParseException;
 import javamop.parser.main_parser.RVParser;
 import javamop.parser.rvm.core.ast.Event;
@@ -182,7 +182,7 @@ final public class JavaParserAdapter {
      * @param listOfRawCode
      * @return The Java-specific specification.
      */
-    private static MOPSpecFileExt convert(MonitorFile file, List<String> listOfRawCode) throws ParseException {
+    private static MOPSpecFileExt convert(MonitorFile file, List<String> listOfRawCode) throws com.github.javaparser.ParseException {
         final PackageDeclaration filePackage = getPackage(file.getPreamble());
         final List<ImportDeclaration> imports = getImports(file.getPreamble());
         final ArrayList<JavaMOPSpecExt> specs = new ArrayList<JavaMOPSpecExt>();
@@ -203,7 +203,7 @@ final public class JavaParserAdapter {
      * @param file The specification to convert.
      * @return The Java-specific specification.
      */
-    private static MOPSpecFileExt convert(MonitorFile file) throws ParseException {
+    private static MOPSpecFileExt convert(MonitorFile file) throws com.github.javaparser.ParseException {
         final PackageDeclaration filePackage = getPackage(file.getPreamble());
         final List<ImportDeclaration> imports = getImports(file.getPreamble());
         final ArrayList<JavaMOPSpecExt> specs = new ArrayList<JavaMOPSpecExt>();
@@ -267,7 +267,7 @@ final public class JavaParserAdapter {
      */
     private static JavaMOPSpecExt convert(final PackageDeclaration pack,
                                           final Specification spec, String rawCode) throws
-            ParseException {
+            com.github.javaparser.ParseException {
         final List<String> modifierList = spec.getLanguageModifiers();
         final boolean isPublic = modifierList.contains("public");
         final int modifierBitfield = extractModifierBitfield(modifierList);
@@ -360,7 +360,7 @@ final public class JavaParserAdapter {
      * @param event The language-independent event object.
      * @return A Java-specific event object.
      */
-    private static EventDefinitionExt convert(final Event event) throws ParseException {
+    private static EventDefinitionExt convert(final Event event) throws com.github.javaparser.ParseException {
         // This syntax is pretty complex, just reconstruct it and defer it to the existing parser
         // for now.
         final StringBuilder eventString = new StringBuilder();

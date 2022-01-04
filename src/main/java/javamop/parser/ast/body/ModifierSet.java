@@ -109,9 +109,9 @@ public final class ModifierSet {
     /**
      * Adds the given modifier.
      */
-    public static int addModifier(int modifiers, int mod) throws ParseException {
+    public static int addModifier(int modifiers, int mod) throws com.github.javaparser.ParseException {
         if ((modifiers & mod) != 0) {
-            throw new ParseException("Duplicated modifier");
+            throw new com.github.javaparser.ParseException("Duplicated modifier");
         }
         return modifiers |= mod;
     }

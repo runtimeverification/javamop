@@ -15,7 +15,7 @@ import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 
 //TODO: This is a hack!
-public class GeneratedParserBase extends GeneratedJavaParserBase {
+public abstract class GeneratedParserBase extends GeneratedJavaParserBase {
 
     public boolean storeTokens = super.storeTokens;
 
@@ -81,10 +81,6 @@ public class GeneratedParserBase extends GeneratedJavaParserBase {
         return super.generateLambda(ret, lambdaBody);
     }
 
-    public void setTokenKind(int newKind) {
-        super.setTokenKind(newKind);
-    }
-
     public ArrayCreationExpr juggleArrayCreation(TokenRange range, List<TokenRange> levelRanges, Type type,
                                                  NodeList<Expression> dimensions,
                                                  List<NodeList<AnnotationExpr>> arrayAnnotations,
@@ -120,20 +116,5 @@ public class GeneratedParserBase extends GeneratedJavaParserBase {
     @Override
     void ReInit(Provider provider) {
 
-    }
-
-    @Override
-    JavaToken token() {
-        return null;
-    }
-
-    @Override
-    Token getNextToken() {
-        return null;
-    }
-
-    @Override
-    Token getToken(int index) {
-        return null;
     }
 }
