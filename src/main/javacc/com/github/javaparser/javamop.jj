@@ -20,7 +20,7 @@ options {
   DEBUG_TOKEN_MANAGER=false;
 
   JDK_VERSION = "1.8";
-//  COMMON_TOKEN_ACTION=true;
+  COMMON_TOKEN_ACTION=true;
   TOKEN_EXTENDS ="TokenBase";
 //  JAVA_TEMPLATE_TYPE = "modern";
 }
@@ -273,6 +273,14 @@ TOKEN_MGR_DECLS :
     /* Makes the parser keep a list of tokens */
     public void setStoreTokens(boolean storeTokens) {
         this.storeTokens = storeTokens;
+    }
+
+    public static void CommonTokenAction(Token token) {
+        if(token.kind == EOF) {
+            System.out.println("Found end of file token");
+        } else {
+            System.out.println("Found token: " + token.image);
+        }
     }
 
 }
@@ -1296,7 +1304,7 @@ MOPSpecFileExt MOPSpecFile():
 	TokenRange tokenRange = null;
 }
 {
-	[ LOOKAHEAD(PackageDeclaration()) packageName = PackageDeclaration() { System.out.println("A"); tokenRange = tokenRange(); } ]
+	[ LOOKAHEAD(PackageDeclaration()) packageName = PackageDeclaration() { tokenRange = tokenRange(); } ]
 	( im = ImportDeclaration() { if(tokenRange == null){tokenRange = tokenRange(); } imports.add(im); } )*
 	(spec = JavaMOPSpec(packageName) { if(tokenRange == null){tokenRange = tokenRange(); } specList.add(spec);})+
 	(<EOF> | <CTRL_Z> )
@@ -1332,7 +1340,7 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 	//****************soha ends addition here*****************/
 	"{"
 	 declarations = ClassOrInterfaceBody()
-	(event = Event() { events.add(event); } )+
+	(event = Event() { System.out.println("ADDONE");events.add(event); } )+
 	(prop = PropertyAndHandlers(propId++) {props.add(prop);})*
 	"}"
 	{return new JavaMOPSpecExt(packageName, tokenRange, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
@@ -1466,7 +1474,7 @@ EventDefinitionExt Event():
      (<IDENTIFIER> | "get" | "set") {id = token.image;})
      (
 	  pos = Position() |
-	 rettype = ResultType(null)
+	 rettype = ResultType(new NodeList<AnnotationExpr>())
 	 "around" { pos = token.image; }
 	)
 	 [parameters = AdviceParameters()]		
@@ -1485,7 +1493,7 @@ EventDefinitionExt Event():
 	 
 	(
 	  pos = Position() |
-	 rettype = ResultType(null)
+	 rettype = ResultType(new NodeList<AnnotationExpr>())
 	 "around" { pos = token.image; }
 	)
 
@@ -1876,7 +1884,7 @@ NodeList<ClassOrInterfaceType> TypeBound():
 /* Moved "{" "}" up -- PAT */
 NodeList<BodyDeclaration<?>> ClassOrInterfaceBody():
 {
-        NodeList<BodyDeclaration> ret = emptyList();
+        NodeList<BodyDeclaration<?>> ret = emptyList();
         BodyDeclaration member;
 }
 {
@@ -2404,7 +2412,6 @@ SimpleName SimpleName():
 
 String Identifier():
 {
-        System.out.println("B");
     String ret;
 }
 {
@@ -2413,7 +2420,7 @@ String Identifier():
     // Make sure older Java versions parse
     <ENUM> | <STRICTFP> |
     // An actual plain old identifier
-    <IDENTIFIER>) { System.out.println("C: " + token.kind); ret = token.image; if (token() != null) token().setKind(IDENTIFIER);}
+    <IDENTIFIER>) { ret = token.image; if (token() != null) token().setKind(IDENTIFIER);}
     { return ret; }
 }
 

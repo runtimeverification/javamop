@@ -128,9 +128,9 @@ public class EventDefinitionExt extends ExtNode {
 
     private PointCut parsePointCutAsRaw(String input) throws com.github.javaparser.ParseException {
         // create a token for exceptions
-        javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
-        t.beginLine = super.getBegin().get().line;
-        t.beginColumn = super.getBegin().get().column;
+        com.github.javaparser.Token t = new com.github.javaparser.Token();
+//        t.beginLine = getTokenRange().get().getBegin().getRange().get().begin.line;
+//        t.beginColumn = getTokenRange().get().getBegin().getRange().get().begin.column;
 
         PointCut originalPointCut;
         PointCut resultPointCut;
