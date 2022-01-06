@@ -76,9 +76,9 @@ public class EventDefinitionExt extends ExtNode {
         this.hasThrowing = hasThrowing;
         this.throwVal = new MOPParameters(throwVal);
         
-        if (pointCutStr != null)
+        if (pointCutStr != null) {
             this.pointCut = parsePointCutAsRaw(pointCutStr);
-        
+        }
         this.startEvent = startEvent;
         this.creationEvent = startEvent;
         this.mopParameters = new MOPParameters();
@@ -128,7 +128,7 @@ public class EventDefinitionExt extends ExtNode {
 
     private PointCut parsePointCutAsRaw(String input) throws com.github.javaparser.ParseException {
         // create a token for exceptions
-        com.github.javaparser.Token t = new com.github.javaparser.Token();
+//        com.github.javaparser.Token t = new com.github.javaparser.Token();
 //        t.beginLine = getTokenRange().get().getBegin().getRange().get().begin.line;
 //        t.beginColumn = getTokenRange().get().getBegin().getRange().get().begin.column;
 

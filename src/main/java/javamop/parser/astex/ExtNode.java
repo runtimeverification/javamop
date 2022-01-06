@@ -29,6 +29,7 @@ import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import javamop.parser.astex.visitor.RVDumpVisitor;
+import javamop.util.MOPException;
 
 /**
  * @author Julio Vilmar Gesser
@@ -51,8 +52,20 @@ public abstract class ExtNode extends Node {
     }
 
     public <A> void accept(VoidVisitor<A> v, A arg) {
+        // arg can be null when JavaMOPParser is invoked from the command line
+        if (arg == null) {
+            return;
+        }
         NodeList nodeList = new NodeList();
-        nodeList.add(this);
+        if (arg instanceof Node) {
+            nodeList.add((Node) arg);
+        } else {
+            try {
+                throw new MOPException("VoidVisitor cannot visit an instance of " + arg.getClass());
+            } catch (MOPException e) {
+                e.printStackTrace();
+            }
+        }
         v.visit(nodeList, arg);
     }
 
