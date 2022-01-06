@@ -1597,7 +1597,7 @@ PropertyExt Property(int propId):
   (
     LOOKAHEAD(3)
   (
-    (<IDENTIFIER> | "get" | "set")    {logicId = token.image;}
+    (<IDENTIFIER> | "get" | "set") {logicId = token.image;}
     (<IDENTIFIER> | "get" | "set") {tokenRange = tokenRange(); propertyName = token.image; } ":")
 | ( (<IDENTIFIER> | "get" | "set") {tokenRange = tokenRange(); logicId = token.image; propertyName = "defaultProp" + propId;} ":"))
 	{f = getFormula();}
