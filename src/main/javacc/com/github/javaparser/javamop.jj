@@ -1340,7 +1340,7 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 	//****************soha ends addition here*****************/
 	"{"
 	 declarations = ClassOrInterfaceBody()
-	(event = Event() { System.out.println("ADDONE");events.add(event); } )+
+	(event = Event() { events.add(event); } )+
 	(prop = PropertyAndHandlers(propId++) {props.add(prop);})*
 	"}"
 	{return new JavaMOPSpecExt(packageName, tokenRange, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
