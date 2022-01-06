@@ -84,10 +84,6 @@ public final class JavaMOPParser extends GeneratedParserBase {
         return token.javaToken;
     }
 
-//    JavaMOPParserTokenManager getTokenSource() {
-//        return token_source;
-//    }
-//
     public static MOPSpecFileExt parse(InputStream in, String encoding) throws ParseException {
         if (parser == null) {
             parser = new JavaMOPParser(in, encoding);
@@ -1755,7 +1751,7 @@ ClassOrInterfaceDeclaration ClassOrInterfaceDeclaration(MOPModifierHolder modifi
 {
   ( "class" | "interface" { isInterface = true; } ) { begin = orIfInvalid(begin, token()); }
   name = SimpleName()
-  [ typePar = TypeParameters() ]
+  [ LOOKAHEAD(2)  typePar = TypeParameters() ]
   [ extList = ExtendsList() ]
   [ impList = ImplementsList() ]
   members = ClassOrInterfaceBody()
