@@ -66,7 +66,7 @@ public class EventDefinition extends ExtNode {
     public EventDefinition(TokenRange tokenRange, String id, Type retType, String pos, List<MOPParameter> parameters, String pointCutStr, BlockStmt block,
                            boolean hasReturning, List<MOPParameter> retVal, boolean hasThrowing, List<MOPParameter> throwVal, boolean startEvent, boolean creationEvent,
                            boolean blockingEvent, boolean staticEvent)
-    throws ParseException {
+    throws com.github.javaparser.ParseException {
         super(tokenRange);
         this.id = id;
         this.retType = retType;
@@ -90,50 +90,49 @@ public class EventDefinition extends ExtNode {
         this.staticEvent = staticEvent;
     }
 
-    private PointCut parsePointCut(String input) throws javamop.parser.main_parser.ParseException {
+    private PointCut parsePointCut(String input) throws com.github.javaparser.ParseException {
         // create a token for exceptions
-        javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
-        t.beginLine = super.getTokenRange().get().getBegin().getRange().get().begin.line;
-        t.beginColumn = super.getTokenRange().get().getBegin().getRange().get().begin.column;
+//        javamop.parser.main_parser.Token t = new javamop.parser.main_parser.Token();
+//        t.beginLine = super.getTokenRange().get().getBegin().getRange().get().begin.line;
+//        t.beginColumn = super.getTokenRange().get().getBegin().getRange().get().begin.column;
         
         PointCut originalPointCut;
         PointCut resultPointCut;
         purePointCutStr = "";
         threadVar = "";
         condition = "";
-        
         try {
             originalPointCut = com.github.javaparser.AspectJParser.parse(new ByteArrayInputStream(input.getBytes()));
         } catch (com.github.javaparser.ParseException e) {
-            throw new ParseException("The following error encountered when parsing the pointcut in the event definition: "
+            throw new com.github.javaparser.ParseException("The following error encountered when parsing the pointcut in the event definition: "
             + e.getMessage());
         }
         
         // thread pointcut
         threadVar = originalPointCut.accept(new ThreadVarVisitor(), null);
         if (threadVar == null)
-            throw new ParseException("There are more than one thread() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one thread() pointcut.");
         if (threadVar.length() != 0) {
             resultPointCut = originalPointCut.accept(new RemoveThreadVisitor(), new Integer(1));
         } else
             resultPointCut = originalPointCut;
         if (resultPointCut == null)
-            throw new ParseException("thread() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("thread() pointcut should appear at the root level in a conjuction form");
         
         // thread name pointcut
         threadNameVar = resultPointCut.accept(new ThreadNameVarVisitor(), null);
         if (threadNameVar == null)
-            throw new ParseException("There are more than one threadName() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one threadName() pointcut.");
         if (threadNameVar.length() != 0) {
             resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor(), new Integer(1));
         } 
         if (resultPointCut == null)
-            throw new ParseException("threadName() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("threadName() pointcut should appear at the root level in a conjuction form");
         
         // thread blocked pointcut
         String blockedThreads = resultPointCut.accept(new ThreadBlockedVarVisitor(), null);
         if (blockedThreads == null) {
-            throw new ParseException("threadBlocked() should have one parameter.");
+            throw new com.github.javaparser.ParseException("threadBlocked() should have one parameter.");
         } 
         if (blockedThreads.length() != 0) {
             resultPointCut = resultPointCut.accept(new RemoveThreadBlockedVisitor(), new Integer(1));
@@ -144,13 +143,13 @@ public class EventDefinition extends ExtNode {
             }
         }
         if (resultPointCut == null)
-            throw new ParseException("threadBlocked() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("threadBlocked() pointcut should appear at the root level in a conjuction form");
         
         
         // condition pointcut
         condition = resultPointCut.accept(new ConditionVisitor(), null);
         if (condition == null)
-            throw new ParseException("There are more than one condition() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one condition() pointcut.");
         if (condition.length() != 0) {
             resultPointCut = resultPointCut.accept(new RemoveConditionVisitor(), new Integer(1));
         }
@@ -164,23 +163,23 @@ public class EventDefinition extends ExtNode {
             }
         }
         if (resultPointCut == null)
-            throw new ParseException("condition() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("condition() pointcut should appear at the root level in a conjuction form");
         
         
         // Count condition pointcut
         countCond = resultPointCut.accept(new CountCondVisitor(), null);
         if (countCond == null)
-            throw new ParseException("There are more than one countCond() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one countCond() pointcut.");
         if (countCond.length() != 0) {
             resultPointCut = resultPointCut.accept(new RemoveCountCondVisitor(), new Integer(1));
         }
         if (resultPointCut == null)
-            throw new ParseException("countCond() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("countCond() pointcut should appear at the root level in a conjuction form");
         
         // endProgram pointcut
         String checkEndProgram = resultPointCut.accept(new EndProgramVisitor(), null);
         if (checkEndProgram == null)
-            throw new ParseException("There are more than one endProgram() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one endProgram() pointcut.");
         if (checkEndProgram.length() != 0) {
             endProgram = true;
             resultPointCut = resultPointCut.accept(new RemoveEndProgramVisitor(), new Integer(1));
@@ -188,12 +187,12 @@ public class EventDefinition extends ExtNode {
             endProgram = false;
         }
         if (resultPointCut == null)
-            throw new ParseException("endProgram() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("endProgram() pointcut should appear at the root level in a conjuction form");
         
         // endThread pointcut
         String checkEndThread = resultPointCut.accept(new EndThreadVisitor(), null);
         if (checkEndThread == null)
-            throw new ParseException("There are more than one endThread() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one endThread() pointcut.");
         if (checkEndThread.length() != 0) {
             endThread = true;
             resultPointCut = resultPointCut.accept(new RemoveEndThreadVisitor(), new Integer(1));
@@ -201,14 +200,14 @@ public class EventDefinition extends ExtNode {
             endThread = false;
         }
         if (resultPointCut == null)
-            throw new ParseException("endThread() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("endThread() pointcut should appear at the root level in a conjuction form");
         if (endProgram && endThread)
-            throw new ParseException("endProgram() pointcut and endThread() pointcut cannot appear at the same time");
+            throw new com.github.javaparser.ParseException("endProgram() pointcut and endThread() pointcut cannot appear at the same time");
         
         // startThread pointcut
         String checkStartThread = resultPointCut.accept(new StartThreadVisitor(), null);
         if (checkStartThread == null)
-            throw new ParseException("There are more than one startThread() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one startThread() pointcut.");
         if (checkStartThread.length() != 0) {
             startThread = true;
             resultPointCut = resultPointCut.accept(new RemovePointCutVisitor("startThread"), new Integer(1));
@@ -216,15 +215,15 @@ public class EventDefinition extends ExtNode {
             startThread = false;
         }
         if (resultPointCut == null)
-            throw new ParseException("startThread() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("startThread() pointcut should appear at the root level in a conjuction form");
         if (endThread && startThread)
-            throw new ParseException("startThread() pointcut and endThread() pointcut cannot appear at the same time");
+            throw new com.github.javaparser.ParseException("startThread() pointcut and endThread() pointcut cannot appear at the same time");
         
         // endObject pointcut
         endObjectId = resultPointCut.accept(new EndObjectVisitor(), null);
         endObjectType = resultPointCut.accept(new EndObjectTypeVisitor(), null);
         if (endObjectId == null || (endObjectId.length() != 0 && endObjectType == null))
-            throw new ParseException("There are more than one endObject() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one endObject() pointcut.");
         if (endObjectId.length() != 0) {
             endObject = true;
             resultPointCut = resultPointCut.accept(new RemoveEndObjectVisitor(), new Integer(1));
@@ -232,9 +231,9 @@ public class EventDefinition extends ExtNode {
             endObject = false;
         }
         if (resultPointCut == null)
-            throw new ParseException("endObject() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("endObject() pointcut should appear at the root level in a conjuction form");
         if (endObject && (endProgram || endThread))
-            throw new ParseException("endProgram() pointcut, endThread(), and endObject() pointcut cannot appear at the same time");
+            throw new com.github.javaparser.ParseException("endProgram() pointcut, endThread(), and endObject() pointcut cannot appear at the same time");
         
         purePointCutStr = resultPointCut.toString();
         

@@ -2,6 +2,7 @@
 package javamop.parser;
 
 import java.io.File;
+import java.util.jar.JarOutputStream;
 
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.astex.MOPSpecFileExt;
@@ -27,7 +28,10 @@ public final class SpecExtractor {
                 input = Tool.convertFileToString(file.getAbsolutePath());
             }
 
+            System.out.println("HAMM: " + input);
+
             final MOPSpecFileExt mopSpecFileExt = JavaParserAdapter.parse(input);
+            System.out.println("OND: " + mopSpecFileExt.getImports());
             return JavaMOPExtender.translateMopSpecFile(mopSpecFileExt);
         } catch (final Exception e) {
             e.printStackTrace();
