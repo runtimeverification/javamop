@@ -1580,13 +1580,12 @@ PropertyAndHandlersExt PropertyAndHandlers(int propId):
 	List<HandlerExt> handlerList = new ArrayList<HandlerExt>();
 	String propertyReference = null;
 	String specReference = null;
-    TokenRange tokenRange;
 }
 {
   [prop = Property(propId)]
   (LOOKAHEAD(2)
     "@"
-    (<IDENTIFIER> | "get" | "set") {id = token.image; tokenRange = tokenRange(); propertyReference = null; specReference = null;}
+    (<IDENTIFIER> | "get" | "set") {id = token.image; propertyReference = null; specReference = null;}
     [
       "@" (<IDENTIFIER> | "get" | "set") {propertyReference = id; id = token.image;}
       | ("." (<IDENTIFIER> | "get" | "set") {specReference = id; propertyReference = token.image;} "@" (<IDENTIFIER> | "get" | "set"){id = token.image;})
@@ -1594,7 +1593,7 @@ PropertyAndHandlersExt PropertyAndHandlers(int propId):
     handler = Block() 
     {
       handlers.put(id.toLowerCase(), handler); 
-      h = new HandlerExt(tokenRange, id, handler, specReference, propertyReference);
+      h = new HandlerExt(tokenRange(), id, handler, specReference, propertyReference);
       handlerList.add(h);
     }
   )+
@@ -1603,7 +1602,7 @@ PropertyAndHandlersExt PropertyAndHandlers(int propId):
 //  if (handlers.size() == 0)
 //    throw new ParseException(token, "At least one handler is expected");
 //  if(handlers.size() == 0) handlers = null;
-    return new PropertyAndHandlersExt(tokenRange, prop, handlers, handlerList);
+    return new PropertyAndHandlersExt(tokenRange(), prop, handlers, handlerList);
   }
 }
 

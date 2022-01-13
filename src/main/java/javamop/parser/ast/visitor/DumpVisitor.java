@@ -369,15 +369,19 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements javamop.
 	public void visit(CombinedPointCut p, Void arg) {
 		for (Iterator<PointCut> i = p.getPointcuts().iterator(); i.hasNext();) {
 			PointCut subP = i.next();
-			if ((p.getPointcuts().size() > 1) && (subP instanceof CombinedPointCut))
+			if ((p.getPointcuts().size() > 1) && (subP instanceof CombinedPointCut)) {
 				printer.print("(");
+			}
 			subP.accept(this, arg);
-			if ((p.getPointcuts().size() > 1) && (subP instanceof CombinedPointCut))
+			if ((p.getPointcuts().size() > 1) && (subP instanceof CombinedPointCut)) {
 				printer.print(")");
+			}
 			if (i.hasNext()) {
 				printer.print(" " + p.getType() + " ");
 			}
 		}
+		System.out.println("HUHHHHHHHHH: " + printer.toString());
+		System.out.println("BBBBBB");
 	}
 
 	public void visit(ThreadPointCut p, Void arg) {

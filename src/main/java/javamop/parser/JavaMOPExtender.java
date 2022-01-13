@@ -175,7 +175,7 @@ class JavaMOPExtender {
 	}
 
 	private static HashMap<PropertyExt, HashMap<String, HandlerExt>> collectProps(SpecContext context) throws MOPException {
-		HashMap<PropertyExt, HashMap<String, HandlerExt>> ret = new HashMap<PropertyExt, HashMap<String, HandlerExt>>();
+		HashMap<PropertyExt, HashMap<String, HandlerExt>> ret = new HashMap<>();
 
 		// collect properties and handlers from parents first
 		if (context.spec.hasExtend()) {
@@ -204,7 +204,7 @@ class JavaMOPExtender {
 				}
 
 				propNames.add(prop.getName());
-				ret.put(prop, new HashMap<String, HandlerExt>());
+				ret.put(prop, new HashMap<>());
 			}
 		}
 
@@ -238,15 +238,15 @@ class JavaMOPExtender {
 		String pointCutStr;
 		PointCut pointCut = event.getPointCut();
 
-		System.out.println("AAAA: " + pointCut);
+		System.out.println("AAAA: " + pointCut.toRVString());
 
 		pointCut = resolveEventPointCuts(pointCut, event, context);
-		System.out.println("BBBB: " + pointCut);
+		System.out.println("BBBB: " + pointCut.toRVString());
 
 		pointCut = resolveHandlerPointCuts(pointCut, event, context);
-		System.out.println("CCCC: " + pointCut);
+		System.out.println("CCCC: " + pointCut.toRVString());
 
-		pointCutStr = pointCut.toString();
+		pointCutStr = pointCut.toRVString();
 		try {
 			ret = new EventDefinition(event.getTokenRange().orElse(null), event.getId(), event.getRetType(), event.getPos(), event
 					.getParameters().toList(), pointCutStr, event.getBlock(), event.getHasRetruning(), event.getRetVal().toList(),

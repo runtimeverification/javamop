@@ -2,7 +2,6 @@
 package javamop.parser.ast.aspectj;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.visitor.BaseVisitor;
