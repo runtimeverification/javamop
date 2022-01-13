@@ -18,6 +18,10 @@ options
   DEBUG_PARSER = false;
   DEBUG_LOOKAHEAD = false;
   DEBUG_TOKEN_MANAGER = false;
+
+  JDK_VERSION = "1.8";
+  COMMON_TOKEN_ACTION=true;
+  TOKEN_EXTENDS ="TokenBase";
 }
 
 PARSER_BEGIN(AspectJParser)
@@ -46,12 +50,22 @@ public class AspectJParser extends GeneratedParserBase
     @Override
     JavaToken token()
     {
-        return null;
+        return token.javaToken;
+    }
+
+    public AspectJParserTokenManager getMOPTokenSource() {
+            return token_source;
+    }
+
+    void setTokenSourceStoreTokens(boolean storeTokens) {
+        getMOPTokenSource().setStoreTokens(storeTokens);
     }
 
   public static void main(String[] args) throws IOException {
     FileReader reader = new FileReader(args[0]);
     AspectJParser parser = new AspectJParser(reader);
+    parser.setStoreTokens(true);
+    parser.setTokenSourceStoreTokens(true);
     try {
       parser.PointCut();
     } catch (ParseException pe) {
@@ -64,6 +78,8 @@ public class AspectJParser extends GeneratedParserBase
     if (parser == null)
     {
       parser = new AspectJParser(in, encoding);
+      parser.setStoreTokens(true);
+      parser.setTokenSourceStoreTokens(true);
     }
     else
     {
@@ -146,6 +162,11 @@ PARSER_END(AspectJParser)
 
 TOKEN_MGR_DECLS :
 {
+    private List<JavaToken> tokens = new ArrayList<JavaToken>();
+    private JavaToken homeToken;
+    private Stack<Token> tokenWorkStack = new Stack<Token>();
+    private boolean storeTokens;
+
    public static void main(String[] args) throws IOException {
       FileReader reader = new FileReader(args[0]);
       JavaCharStream stream = new JavaCharStream(reader);
@@ -154,6 +175,58 @@ TOKEN_MGR_DECLS :
          manager.debugStream.println("Found token: " + token.image);
       }
    }
+
+   void reset() {
+           tokens = new ArrayList<JavaToken>();
+           homeToken = null;
+       }
+
+       List<JavaToken> getTokens() {
+           if(storeTokens) {
+               return tokens;
+           }
+           return null;
+       }
+
+       /* Get the very first token in the file */
+       JavaToken getHomeToken() {
+           return homeToken;
+       }
+
+       /* Makes the parser keep a list of tokens */
+       public void setStoreTokens(boolean storeTokens) {
+           this.storeTokens = storeTokens;
+       }
+
+       public void CommonTokenAction(Token token) {
+           if(token.kind == EOF) {
+               System.out.println("Found AJ end of file token");
+           } else {
+               System.out.println("Found AJ token: " + token.image);
+           }
+
+           // copied from javaparser's java.jj
+           // Use an intermediary stack to avoid recursion, see issue 1003
+           do {
+               tokenWorkStack.push(token);
+               token = token.specialToken;
+           } while (token != null);
+
+           // The stack is now filled with tokens in left-to-right order. Process them.
+           while(!tokenWorkStack.empty()) {
+               token = tokenWorkStack.pop();
+               token.javaToken = new JavaToken(token, tokens);
+
+               if(storeTokens) {
+                   tokens.add(token.javaToken);
+               }
+
+               if (homeToken == null) {
+                   homeToken = token.javaToken;
+               }
+
+           }
+       }
 }
 
 SKIP :
@@ -1165,7 +1238,7 @@ PointCut PointCut() :
     }
   )*
   {
-    if (pointcuts.size() == 1) return pointcuts.get(0);
+    if (pointcuts.size() == 1) { return pointcuts.get(0); }
     else return new CombinedPointCut(tokenRange(), "||", pointcuts);
   }
 }
@@ -1662,24 +1735,16 @@ MethodPattern MethodPattern() :
   PositionString name;
   List < TypePattern > parameters;
   List < TypePattern > throwTypes = null;
-  int line =-1, column =-1;
 }
 {
   [
     LOOKAHEAD(ExtModifiers())
     mod = ExtModifiers()
-    {
-    }
   ]
   // for constructors, there is no return type
   [
     LOOKAHEAD(TypePattern())
     retType = TypePattern()
-    {
-      if (line == - 1)
-      {
-      }
-    }
   ]
   (
     LOOKAHEAD("." < NEW >)
@@ -1694,18 +1759,8 @@ MethodPattern MethodPattern() :
       LOOKAHEAD(TypePatternEndingDot()
     | IdPatternWithDot())
       owner = TypePatternEndingDot()
-      {
-        if (line == - 1)
-        {
-        }
-      }
     ]
     name = AnyIdPattern()
-    {
-      if (line == - 1)
-      {
-      }
-    }
   )
   parameters = ExtParameterTypes() [ "throws" throwTypes = TypePatterns() ]
   {
@@ -1923,21 +1978,12 @@ TypePattern AndTypePattern() :
 TypePattern NotTypePattern() :
 {
   TypePattern t;
-  int line =-1, column =-1;
 }
 {
-  [
-    "!"
-    {
-    }
-  ]
+  [ "!" ]
   t = BaseTypePattern()
   {
-    if (line == - 1) return t;
-    else
-    {
-      new NotTypePattern(tokenRange(), t);
-    }
+      return new NotTypePattern(tokenRange(), t);
   }
 }
 
@@ -1951,8 +1997,6 @@ TypePattern BaseTypePattern() :
 {
   (
     "("
-    {
-    }
     t = TypePattern() ")"
   | type = PrimitiveType()
     {

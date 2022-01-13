@@ -51,7 +51,7 @@ import javamop.parser.astex.mopspec.ReferenceSpec;
  * @author Julio Vilmar Gesser
  */
 
-public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidVisitor<Object> {
+public class DumpVisitor extends javamop.parser.ast.visitor.DumpVisitor implements MOPVoidVisitor<Void> {
 
 	public DumpVisitor(PrinterConfiguration configuration) {
 		super(configuration, new MOPPrinter());
@@ -59,25 +59,25 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 
 	// - JavaMOP components
 
-	public void visit(MOPSpecFile f, Object arg) {
+	public void visit(MOPSpecFile f, Void arg) {
 		if (f.getPakage() != null)
-			f.getPakage().accept((VoidVisitor)this, arg);
+			f.getPakage().accept(this, arg);
 		if (f.getImports() != null) {
 			for (ImportDeclaration i : f.getImports()) {
-				i.accept((VoidVisitor)this, arg);
+				i.accept(this, arg);
 			}
 			printer.println();
 		}
 		if (f.getSpecs() != null) {
 			for (JavaMOPSpec i : f.getSpecs()) {
-				i.accept((VoidVisitor)this, arg);
+				i.accept(this, arg);
 				printer.println();
 			}
 		}
 
 	}
 
-	public void visit(JavaMOPSpec s, Object arg) {
+	public void visit(JavaMOPSpec s, Void arg) {
 		printSpecModifiers(s.getModifiers());
 		printer.print(s.getName());
 		printSpecParameters(s.getParameters(), arg);
@@ -95,13 +95,13 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 
 		if (s.getEvents() != null) {
 			for (EventDefinition e : s.getEvents()) {
-				e.accept((VoidVisitor)this, arg);
+				e.accept(this, arg);
 			}
 		}
 
 		if (s.getPropertiesAndHandlers() != null) {
 			for (PropertyAndHandlers p : s.getPropertiesAndHandlers()) {
-				p.accept((VoidVisitor)this, arg);
+				p.accept(this, arg);
 			}
 		}
 
@@ -109,12 +109,12 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 		printer.println("}");
 	}
 
-	public void visit(MOPParameter p, Object arg) {
-		p.getType().accept((VoidVisitor)this, arg);
+	public void visit(MOPParameter p, Void arg) {
+		p.getType().accept(this, arg);
 		printer.print(" " + p.getName());
 	}
 
-	public void visit(EventDefinition e, Object arg) {
+	public void visit(EventDefinition e, Void arg) {
 		if (e.isCreationEvent()) {
 			printer.print("creation ");
 		} else if (e.isStaticEvent()) {
@@ -138,49 +138,49 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 		// e.getPointCut().accept(this, arg);
 		printer.print(e.getPointCutString());
 		if (e.getAction() != null) {
-			e.getAction().accept((VoidVisitor)this, arg);
+			e.getAction().accept(this, arg);
 		}
 		printer.println();
 	}
 
-	public void visit(PropertyAndHandlers p, Object arg) {
-		p.getProperty().accept((VoidVisitor)this, arg);
+	public void visit(PropertyAndHandlers p, Void arg) {
+		p.getProperty().accept(this, arg);
 		printer.println();
 		for (String event : p.getHandlers().keySet()) {
 			BlockStmt stmt = p.getHandlers().get(event);
 			printer.println("@" + event);
 			printer.indent();
-			stmt.accept((VoidVisitor)this, arg);
+			stmt.accept(this, arg);
 			printer.unindent();
 			printer.println();
 		}
 	}
 
-	public void visit(Formula f, Object arg) {
+	public void visit(Formula f, Void arg) {
 		printer.print(f.getType() + ": " + f.getFormula());
 	}
 	
 	// All extended componenets
 
-	public void visit(MOPSpecFileExt f, Object arg) {
+	public void visit(MOPSpecFileExt f, Void arg) {
 		if (f.getPakage() != null)
-			f.getPakage().accept((VoidVisitor)this, arg);
+			f.getPakage().accept(this, arg);
 		if (f.getImports() != null) {
 			for (ImportDeclaration i : f.getImports()) {
-				i.accept((VoidVisitor)this, arg);
+				i.accept(this, arg);
 			}
 			printer.println();
 		}
 		if (f.getSpecs() != null) {
 			for (JavaMOPSpecExt i : f.getSpecs()) {
-				i.accept((VoidVisitor)this, arg);
+				i.accept(this, arg);
 				printer.println();
 			}
 		}
 	}
 
 	// soha: printing out references to other spec
-	public void visit(ReferenceSpec r, Object arg) {
+	public void visit(ReferenceSpec r, Void arg) {
 		if (r.getSpecName() != null)
 			if (r.getReferenceElement() != null)
 				printer.print(r.getSpecName() + "." + r.getReferenceElement());
@@ -191,7 +191,7 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 
 	}
 
-	public void visit(JavaMOPSpecExt s, Object arg) {
+	public void visit(JavaMOPSpecExt s, Void arg) {
 		if (s.isPublic())
 			printer.print("public ");
 		printSpecModifiers(s.getModifiers());
@@ -206,7 +206,7 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 			printer.print(" includes ");
 			int size = 1;
 			for (ExtendedSpec e : s.getExtendedSpec()) {
-				e.accept((VoidVisitor)this, arg);
+				e.accept(this, arg);
 				if (size != s.getExtendedSpec().size())
 					printer.print(",");
 				size++;
@@ -222,13 +222,13 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 
 		if (s.getEvents() != null) {
 			for (EventDefinitionExt e : s.getEvents()) {
-				e.accept((VoidVisitor)this, arg);
+				e.accept(this, arg);
 			}
 		}
 
 		if (s.getPropertiesAndHandlers() != null) {
 			for (PropertyAndHandlersExt p : s.getPropertiesAndHandlers()) {
-				p.accept((VoidVisitor)this, arg);
+				p.accept(this, arg);
 			}
 		}
 
@@ -236,7 +236,7 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 		printer.println("}");
 	}
 
-	public void visit(EventDefinitionExt e, Object arg) {
+	public void visit(EventDefinitionExt e, Void arg) {
 		if (e.isAbstract())
 			printer.print("abstract "); // Soha:printing out abstract keyword
 
@@ -260,7 +260,7 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 			// e.getPointCut().accept(this, arg);
 			printer.print(e.getPointCutString());
 			if (e.getAction() != null) {
-				e.getAction().accept((VoidVisitor)this, arg);
+				e.getAction().accept(this, arg);
 			}
 		} else
 			printer.print(";");
@@ -268,9 +268,9 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 		printer.println();
 	}
 
-	public void visit(PropertyAndHandlersExt p, Object arg) {
+	public void visit(PropertyAndHandlersExt p, Void arg) {
 		if (p.getProperty() != null)
-			p.getProperty().accept((VoidVisitor)this, arg);
+			p.getProperty().accept(this, arg);
 		printer.println();
 		for (String event : p.getHandlers().keySet()) {
 			for (HandlerExt h : p.getHandlerList()) { // i need to remove that
@@ -284,27 +284,27 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 												// property
 					if ((h.getReferenceSpec().getSpecName() != null) || (h.getReferenceSpec().getReferenceElement() != null))
 						printer.print("@");
-					h.accept((VoidVisitor)this, arg);
+					h.accept(this, arg);
 				}
 			}
 			BlockStmt stmt = p.getHandlers().get(event);
 			printer.println("@" + event);
 			printer.indent();
-			stmt.accept((VoidVisitor)this, arg);
+			stmt.accept(this, arg);
 			printer.unindent();
 			printer.println();
 		}
 	}
 	
-	public void visit(FormulaExt f, Object arg) {
+	public void visit(FormulaExt f, Void arg) {
 		printer.print(f.getType()+ " "+ f.getName() + ": " + f.getFormula());
 	}
 
-	public void visit(HandlerExt h, Object arg) {
-		h.getReferenceSpec().accept((VoidVisitor)this, arg);
+	public void visit(HandlerExt h, Void arg) {
+		h.getReferenceSpec().accept(this, arg);
 	}
 
-	public void visit(ExtendedSpec extendedSpec, Object arg) {
+	public void visit(ExtendedSpec extendedSpec, Void arg) {
 		printer.print(" " + extendedSpec.getName());
 		if (extendedSpec.isParametric()) {
 			printer.print("(");
@@ -322,15 +322,15 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 
 	// - AspectJ components --------------------
 
-	public void visit(EventPointCut p, Object arg) {
+	public void visit(EventPointCut p, Void arg) {
 		printer.print("event" + "(");
-		p.getReferenceSpec().accept((VoidVisitor)this, arg);
+		p.getReferenceSpec().accept(this, arg);
 		printer.print(")");
 	}
 
-	public void visit(HandlerPointCut p, Object arg) {
+	public void visit(HandlerPointCut p, Void arg) {
 		printer.print("handler" + "(");
-		p.getReferenceSpec().accept((VoidVisitor)this, arg);
+		p.getReferenceSpec().accept(this, arg);
 		printer.print("@" + p.getState());
 		printer.print(")");
 	}
@@ -362,12 +362,12 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements MOPVoidV
 		}
 	}
 
-	protected void printSpecParameters(MOPParameters args, Object arg) {
+	protected void printSpecParameters(MOPParameters args, Void arg) {
 		printer.print("(");
 		if (args != null) {
 			for (Iterator<MOPParameter> i = args.iterator(); i.hasNext();) {
 				MOPParameter t = i.next();
-				t.accept((VoidVisitor)this, arg);
+				t.accept(this, arg);
 				if (i.hasNext()) {
 					printer.print(", ");
 				}

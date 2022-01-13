@@ -20,7 +20,7 @@ public class RVDumpVisitor extends DumpVisitor {
 	}
 
 	@Override
-	public void visit(EventDefinition e, Object arg) {
+	public void visit(EventDefinition e, Void arg) {
 		if (e.isCreationEvent()) {
 			printer.print("creation ");
 		} else if (e.isBlockingEvent()) {
@@ -57,7 +57,7 @@ public class RVDumpVisitor extends DumpVisitor {
 		}
 		
 		if (e.getAction() != null) {
-			e.getAction().accept((VoidVisitor)this, arg);
+			e.getAction().accept(this, arg);
 		}
 		printer.println();
 		if (e.getCondition() != null && e.getCondition().length() > 0) {

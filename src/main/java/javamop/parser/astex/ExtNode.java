@@ -28,13 +28,16 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import javamop.parser.ast.visitor.BaseVisitor;
+import javamop.parser.ast.visitor.MOPVoidVisitor;
+import javamop.parser.astex.visitor.DumpVisitor;
 import javamop.parser.astex.visitor.RVDumpVisitor;
 import javamop.util.MOPException;
 
 /**
  * @author Julio Vilmar Gesser
  */
-public abstract class ExtNode extends Node {
+public class ExtNode extends Node {
 
     public ExtNode(TokenRange tokenRange) {
     	super(tokenRange);
@@ -46,34 +49,24 @@ public abstract class ExtNode extends Node {
      * @return .rvm file contents as a String
      */
     public String toRVString() {
-        RVDumpVisitor visitor = new RVDumpVisitor(new DefaultPrinterConfiguration());
+        DumpVisitor visitor = new DumpVisitor(new DefaultPrinterConfiguration());
         accept(visitor, null);
         return visitor.toString();
     }
 
     public <A> void accept(VoidVisitor<A> v, A arg) {
-        // arg can be null when JavaMOPParser is invoked from the command line
-        if (arg == null) {
-            return;
+        if (v instanceof javamop.parser.ast.visitor.MOPVoidVisitor) {
+            ((MOPVoidVisitor)v).visit(this, arg);
         }
-        NodeList nodeList = new NodeList();
-        if (arg instanceof Node) {
-            nodeList.add((Node) arg);
-        } else {
-            try {
-                throw new MOPException("VoidVisitor cannot visit an instance of " + arg.getClass());
-            } catch (MOPException e) {
-                e.printStackTrace();
-            }
-        }
-        v.visit(nodeList, arg);
     }
 
     @Override
     public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        NodeList nodeList = new NodeList();
-        nodeList.add(this);
-        return v.visit(nodeList, arg);
+        if (v instanceof BaseVisitor) {
+            return ((BaseVisitor<R, A>) v).visit(this, arg);
+        } else {
+            return null;
+        }
     }
 
 }

@@ -72,6 +72,8 @@ public final class JavaMOPParser extends GeneratedParserBase {
     public static void main(String[] args) throws IOException {
         FileReader reader = new FileReader(args[0]);
         JavaMOPParser parser = new JavaMOPParser(reader);
+        parser.setStoreTokens(true);
+        parser.setTokenSourceStoreTokens(true);
         try {
             parser.MOPSpecFile();
         } catch (ParseException pe) {
@@ -84,9 +86,23 @@ public final class JavaMOPParser extends GeneratedParserBase {
         return token.javaToken;
     }
 
+    public List<JavaToken> getTokens() {
+        return getMOPTokenSource().getTokens();
+    }
+
+    public JavaMOPParserTokenManager getMOPTokenSource() {
+        return token_source;
+    }
+
+    void setTokenSourceStoreTokens(boolean storeTokens) {
+        getMOPTokenSource().setStoreTokens(storeTokens);
+    }
+
     public static MOPSpecFileExt parse(InputStream in, String encoding) throws ParseException {
         if (parser == null) {
             parser = new JavaMOPParser(in, encoding);
+            parser.setStoreTokens(true);
+            parser.setTokenSourceStoreTokens(true);
         } else {
             parser.ReInit(in);
         }
@@ -230,7 +246,6 @@ SKIP :
 TOKEN_MGR_DECLS :
 {
     private List<JavaToken> tokens = new ArrayList<JavaToken>();
-    private CommentsCollection commentsCollection = new CommentsCollection();
     private JavaToken homeToken;
     private Stack<Token> tokenWorkStack = new Stack<Token>();
     private boolean storeTokens;
@@ -246,7 +261,6 @@ TOKEN_MGR_DECLS :
 
     void reset() {
         tokens = new ArrayList<JavaToken>();
-        commentsCollection = new CommentsCollection();
         homeToken = null;
     }
 
@@ -255,10 +269,6 @@ TOKEN_MGR_DECLS :
             return tokens;
         }
         return null;
-    }
-
-    CommentsCollection getCommentsCollection() {
-        return commentsCollection;
     }
 
     /* Get the very first token in the file */
@@ -271,11 +281,32 @@ TOKEN_MGR_DECLS :
         this.storeTokens = storeTokens;
     }
 
-    public static void CommonTokenAction(Token token) {
+    public void CommonTokenAction(Token token) {
         if(token.kind == EOF) {
             System.out.println("Found end of file token");
         } else {
             System.out.println("Found token: " + token.image);
+        }
+
+        // copied from javaparser's java.jj
+        // Use an intermediary stack to avoid recursion, see issue 1003
+        do {
+            tokenWorkStack.push(token);
+            token = token.specialToken;
+        } while (token != null);
+
+        // The stack is now filled with tokens in left-to-right order. Process them.
+        while(!tokenWorkStack.empty()) {
+            token = tokenWorkStack.pop();
+            token.javaToken = new JavaToken(token, tokens);
+
+            if(storeTokens) {
+                tokens.add(token.javaToken);
+            }
+
+            if (homeToken == null) {
+                homeToken = token.javaToken;
+            }
         }
     }
 
@@ -1423,11 +1454,10 @@ MOPParameter MOPParameter():
 {
 	TypePattern type;
 	String name;
-	TokenRange tokenRange = null;
 }
 {
-	type = SimpleTypePattern() {tokenRange = tokenRange();} (<IDENTIFIER> | "get" | "set") { name = token.image; }
-	{ return new MOPParameter(tokenRange, type, name); }
+	type = SimpleTypePattern() (<IDENTIFIER> | "get" | "set") { name = token.image; }
+	{ return new MOPParameter(tokenRange(), type, name); }
 }
 
 
@@ -1515,14 +1545,13 @@ String Position():
 BaseTypePattern SimpleTypePattern():
 {
 	String id = null;
-	TokenRange tokenRange;
 }
 {
-	(<IDENTIFIER> | "get" | "set" ) {tokenRange = tokenRange(); id = token.image;}
+	(<IDENTIFIER> | "get" | "set" ) {id = token.image;}
 	("." {id += token.image;} (<IDENTIFIER> | "get" | "set") {id += token.image;})*
 	("[" {id += token.image;} "]" {id += token.image;})*
 	["+" {id += token.image;}]
-	{ return new BaseTypePattern(tokenRange, id); }
+	{ return new BaseTypePattern(tokenRange(), id); }
 }
 
 

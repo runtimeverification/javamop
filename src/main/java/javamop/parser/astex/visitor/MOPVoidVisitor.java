@@ -20,12 +20,6 @@
 
 package javamop.parser.astex.visitor;
 
-import javamop.parser.ast.MOPSpecFile;
-import javamop.parser.ast.mopspec.EventDefinition;
-import javamop.parser.ast.mopspec.Formula;
-import javamop.parser.ast.mopspec.JavaMOPSpec;
-import javamop.parser.ast.mopspec.MOPParameter;
-import javamop.parser.ast.mopspec.PropertyAndHandlers;
 import javamop.parser.astex.MOPSpecFileExt;
 import javamop.parser.astex.aspectj.EventPointCut;
 import javamop.parser.astex.aspectj.HandlerPointCut;
@@ -36,21 +30,9 @@ import javamop.parser.astex.mopspec.JavaMOPSpecExt;
 import javamop.parser.astex.mopspec.PropertyAndHandlersExt;
 import javamop.parser.astex.mopspec.ReferenceSpec;
 
-public interface MOPVoidVisitor<A>  {
+public interface MOPVoidVisitor<A>  extends javamop.parser.ast.visitor.MOPVoidVisitor<A> {
 
     // - JavaMOP components
-
-    public void visit(MOPSpecFile f, A arg);
-
-    public void visit(JavaMOPSpec s, A arg);
-
-    public void visit(MOPParameter p, A arg);
-
-    public void visit(EventDefinition e, A arg);
-
-    public void visit(PropertyAndHandlers p, A arg);
-
-    public void visit(Formula f, A arg);
 
     // All extended componenets
 

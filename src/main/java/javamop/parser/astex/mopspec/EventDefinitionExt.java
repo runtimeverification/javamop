@@ -147,7 +147,7 @@ public class EventDefinitionExt extends ExtNode {
         resultPointCut = originalPointCut;
 
         if (resultPointCut == null)
-            throw new com.github.javaparser.ParseException("endObject() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("endObject() pointcut should appear at the root level in a conjunction form");
 
         purePointCutStr = resultPointCut.toString();
 

@@ -37,8 +37,8 @@ public class MOPSpecFileExt extends ExtNode {
     }
 
     public <A> void accept(DumpVisitor v, A arg) {
-            v.visit(this, arg);
-        }
+            v.visit(this, (Void) arg);
+    }
 
     /**
      * Search the specifications for one with a particular name.
