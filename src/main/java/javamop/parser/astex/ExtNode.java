@@ -51,6 +51,6 @@ public abstract class ExtNode extends Node {
     public String toRVString() {
         DumpVisitor visitor = new DumpVisitor(new DefaultPrinterConfiguration());
         accept(visitor, null);
-        return visitor.toString();
+        return visitor.getSource();
     }
 }

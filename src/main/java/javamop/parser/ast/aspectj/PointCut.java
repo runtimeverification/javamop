@@ -22,22 +22,6 @@ public abstract class PointCut extends Node {
     
     public String getType() { return type; }
 
-//    @Override
-//    public <A> void accept(VoidVisitor<A> v, A arg) {
-//        if (v instanceof MOPVoidVisitor) {
-//            ((MOPVoidVisitor)v).visit(this, arg);
-//        }
-//    }
-//
-//    @Override
-//    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-//        if (v instanceof BaseVisitor) {
-//            return ((BaseVisitor<R, A>) v).visit(this, arg);
-//        } else {
-//            return null;
-//        }
-//    }
-    
     public <R, A> R accept(PointcutVisitor<R, A> v, A arg) {
         return v.visit(this, arg);
     }
@@ -45,8 +29,7 @@ public abstract class PointCut extends Node {
     public String toRVString() {
         DumpVisitor visitor = new DumpVisitor(new DefaultPrinterConfiguration());
         accept(visitor, null);
-        String s = visitor.getSource();
-        return s;
+        return visitor.getSource();
     }
 
 }
