@@ -3,11 +3,7 @@ package javamop.parser.ast.aspectj;
 
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
-import javamop.parser.ast.visitor.BaseVisitor;
-import javamop.parser.ast.visitor.MOPVoidVisitor;
 import javamop.parser.ast.visitor.PointcutVisitor;
 import javamop.parser.astex.visitor.DumpVisitor;
 
@@ -31,5 +27,4 @@ public abstract class PointCut extends Node {
         accept(visitor, null);
         return visitor.getSource();
     }
-
 }

@@ -24,15 +24,8 @@ package javamop.parser.astex;
 
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
-import javamop.parser.ast.visitor.BaseVisitor;
-import javamop.parser.ast.visitor.MOPVoidVisitor;
 import javamop.parser.astex.visitor.DumpVisitor;
-import javamop.parser.astex.visitor.RVDumpVisitor;
-import javamop.util.MOPException;
 
 /**
  * @author Julio Vilmar Gesser

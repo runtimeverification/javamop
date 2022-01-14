@@ -45,7 +45,8 @@ public class MOPParameters implements Iterable<MOPParameter>, Serializable {
             if (p.getType().getOp() == null) {
                 BaseTypePattern t2 = new BaseTypePattern(p.getTokenRange().orElse(null), "NULL");
                 p2 = new MOPParameter(p.getTokenRange().orElse(null), t2, p.getName());
-            } else if (p.getType().getOp().charAt(p.getType().getOp().length() - 1) == '+') {
+            } else
+            if (p.getType().getOp().charAt(p.getType().getOp().length() - 1) == '+') {
                 BaseTypePattern t2 = new BaseTypePattern(p.getTokenRange().orElse(null),
                         p.getType().getOp().substring(0,p.getType().getOp().length() - 1));
                 p2 = new MOPParameter(p.getTokenRange().orElse(null), t2, p.getName());

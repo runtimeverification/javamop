@@ -52,10 +52,11 @@ import javamop.parser.ast.mopspec.SpecModifierSet;
 
 public class DumpVisitor extends DefaultPrettyPrinterVisitor implements javamop.parser.ast.visitor.MOPVoidVisitor<Void> {
 
-	protected final MOPPrinter printer = new MOPPrinter();
+	protected final SourcePrinter printer;
 
 	public DumpVisitor(PrinterConfiguration configuration, SourcePrinter printer) {
 		super(configuration, printer);
+		this.printer = printer;
 	}
 
 	public String getSource() {
