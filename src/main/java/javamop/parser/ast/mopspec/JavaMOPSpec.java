@@ -10,7 +10,11 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import javamop.parser.ast.visitor.BaseVisitor;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
+import javamop.parser.ast.visitor.MOPVoidVisitor;
 import javamop.parser.astex.ExtNode;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
@@ -367,5 +371,19 @@ public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
     public JavaMOPSpec setRawLogic(String rawLogic) {
         this.rawLogic = rawLogic;
         return this;
+    }
+
+    public <A> void accept(VoidVisitor<A> v, A arg) {
+        if (v instanceof javamop.parser.ast.visitor.MOPVoidVisitor) {
+            ((MOPVoidVisitor)v).visit(this, arg);
+        }
+    }
+
+    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
+        if (v instanceof BaseVisitor) {
+            return ((BaseVisitor<R, A>) v).visit(this, arg);
+        } else {
+            return null;
+        }
     }
 }

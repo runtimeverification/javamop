@@ -37,7 +37,7 @@ import javamop.util.MOPException;
 /**
  * @author Julio Vilmar Gesser
  */
-public class ExtNode extends Node {
+public abstract class ExtNode extends Node {
 
     public ExtNode(TokenRange tokenRange) {
     	super(tokenRange);
@@ -53,20 +53,4 @@ public class ExtNode extends Node {
         accept(visitor, null);
         return visitor.toString();
     }
-
-    public <A> void accept(VoidVisitor<A> v, A arg) {
-        if (v instanceof javamop.parser.ast.visitor.MOPVoidVisitor) {
-            ((MOPVoidVisitor)v).visit(this, arg);
-        }
-    }
-
-    @Override
-    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-        if (v instanceof BaseVisitor) {
-            return ((BaseVisitor<R, A>) v).visit(this, arg);
-        } else {
-            return null;
-        }
-    }
-
 }

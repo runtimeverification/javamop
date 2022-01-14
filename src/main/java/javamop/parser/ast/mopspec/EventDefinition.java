@@ -8,6 +8,8 @@ import java.util.List;
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.visitor.*;
@@ -423,5 +425,18 @@ public class EventDefinition extends ExtNode {
     public boolean has__STATICSIG() {
         return hasSpecialModifier("__STATICSIG");
     }
-    
+
+    public <A> void accept(VoidVisitor<A> v, A arg) {
+        if (v instanceof javamop.parser.ast.visitor.MOPVoidVisitor) {
+            ((MOPVoidVisitor)v).visit(this, arg);
+        }
+    }
+
+    public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
+        if (v instanceof BaseVisitor) {
+            return ((BaseVisitor<R, A>) v).visit(this, arg);
+        } else {
+            return null;
+        }
+    }
 }
