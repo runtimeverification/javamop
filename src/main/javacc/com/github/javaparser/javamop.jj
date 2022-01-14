@@ -1556,7 +1556,8 @@ BaseTypePattern TypePattern():
 }
 {    
 	(<IDENTIFIER> | "get"| "set" | "byte" | "short" | "int" 
-         | "long" | "float" | "double" | "boolean" | "char") 
+         | "long" | "float" | "double" | "boolean" | "char")
+    {id = token.image;}
 	("." {id += token.image;} (<IDENTIFIER> | "get" | "set") {id += token.image;})*
 	("[" {id += token.image;} "]" {id += token.image;})*
 	["+" {id += token.image;}]
