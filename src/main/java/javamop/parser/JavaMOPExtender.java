@@ -75,7 +75,7 @@ class JavaMOPExtender {
 		}
 
 		// return as an original AST
-		return new MOPSpecFile(currentFile.getTokenRange().get(), currentFile.getPakage(),
+		return new MOPSpecFile(currentFile.getTokenRange().orElse(null), currentFile.getPakage(),
 				currentFile.getImports(), specList);
 	}
 
@@ -110,7 +110,7 @@ class JavaMOPExtender {
 
 		JavaMOPSpec ret;
 		try {
-			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getTokenRange().get(), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
+			ret = new JavaMOPSpec(currentFile.getPakage(), spec.getTokenRange().orElse(null), spec.getModifiers(), spec.getName(), spec.getParameters().toList(),
 					spec.getInMethod(), declarations, events, props).setRawLogic(spec.getRawLogic());
 		} catch (Exception e) {
 			throw new MOPException(e.getMessage());
@@ -157,7 +157,7 @@ class JavaMOPExtender {
 			FormulaExt f = (FormulaExt) prop;
 			HashMap<String, HandlerExt> handlers = propAndHandlers.get(prop);
 
-			Property translatedProp = new Formula(prop.getTokenRange().get(), prop.getType(), f.getFormula());
+			Property translatedProp = new Formula(prop.getTokenRange().orElse(null), prop.getType(), f.getFormula());
 			HashMap<String, BlockStmt> translatedHandlers = new HashMap<String, BlockStmt>();
 			for (String state : handlers.keySet()) {
 				HandlerExt handler = handlers.get(state);
@@ -165,7 +165,7 @@ class JavaMOPExtender {
 				translatedHandlers.put(state, handler.getBlockStmt());
 			}
 
-			PropertyAndHandlers translatedPropAndHandlers = new PropertyAndHandlers(prop.getTokenRange().get(), translatedProp,
+			PropertyAndHandlers translatedPropAndHandlers = new PropertyAndHandlers(prop.getTokenRange().orElse(null), translatedProp,
 					translatedHandlers);
 
 			ret.add(translatedPropAndHandlers);
@@ -238,13 +238,9 @@ class JavaMOPExtender {
 		String pointCutStr;
 		PointCut pointCut = event.getPointCut();
 
-		System.out.println("AAAA: " + pointCut.toRVString());
-
 		pointCut = resolveEventPointCuts(pointCut, event, context);
-		System.out.println("BBBB: " + pointCut.toRVString());
 
 		pointCut = resolveHandlerPointCuts(pointCut, event, context);
-		System.out.println("CCCC: " + pointCut.toRVString());
 
 		pointCutStr = pointCut.toRVString();
 		try {

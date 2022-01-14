@@ -199,11 +199,11 @@ TOKEN_MGR_DECLS :
        }
 
        public void CommonTokenAction(Token token) {
-           if(token.kind == EOF) {
-               System.out.println("Found AJ end of file token");
-           } else {
-               System.out.println("Found AJ token: " + token.image);
-           }
+//           if(token.kind == EOF) {
+//               System.out.println("Found AJ end of file token");
+//           } else {
+//               System.out.println("Found AJ token: " + token.image);
+//           }
 
            // copied from javaparser's java.jj
            // Use an intermediary stack to avoid recursion, see issue 1003

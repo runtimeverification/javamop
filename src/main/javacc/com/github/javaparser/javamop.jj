@@ -282,11 +282,11 @@ TOKEN_MGR_DECLS :
     }
 
     public void CommonTokenAction(Token token) {
-        if(token.kind == EOF) {
-            System.out.println("Found end of file token");
-        } else {
-            System.out.println("Found token: " + token.image);
-        }
+//        if(token.kind == EOF) {
+//            System.out.println("Found end of file token");
+//        } else {
+//            System.out.println("Found token: " + token.image);
+//        }
 
         // copied from javaparser's java.jj
         // Use an intermediary stack to avoid recursion, see issue 1003
@@ -1328,14 +1328,13 @@ MOPSpecFileExt MOPSpecFile():
 	ImportDeclaration im = null;
 	List<JavaMOPSpecExt> specList = new ArrayList<JavaMOPSpecExt>();
 	JavaMOPSpecExt spec = null;
-	TokenRange tokenRange = null;
 }
 {
-	[ LOOKAHEAD(PackageDeclaration()) packageName = PackageDeclaration() { tokenRange = tokenRange(); } ]
-	( im = ImportDeclaration() { if(tokenRange == null){tokenRange = tokenRange(); } imports.add(im); } )*
-	(spec = JavaMOPSpec(packageName) { if(tokenRange == null){tokenRange = tokenRange(); } specList.add(spec);})+
+	[ LOOKAHEAD(PackageDeclaration()) packageName = PackageDeclaration() ]
+	( im = ImportDeclaration() { imports.add(im); } )*
+	(spec = JavaMOPSpec(packageName) { specList.add(spec);})+
 	(<EOF> | <CTRL_Z> )
-	{return new MOPSpecFileExt(tokenRange, packageName, imports, specList);}
+	{return new MOPSpecFileExt(tokenRange(), packageName, imports, specList);}
 }
 
 JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
@@ -1350,7 +1349,6 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 	EventDefinitionExt event = null;
 	List<PropertyAndHandlersExt> props = new ArrayList<PropertyAndHandlersExt>();
 	PropertyAndHandlersExt prop = null;
-	TokenRange tokenRange = null;
 	List<ExtendedSpec> extendedSpecList= null;
 	boolean isPublic = false;
 
@@ -1359,7 +1357,7 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 {
 	["public" { isPublic = true; }]
 	modifiers = SpecModifier()
-	(<IDENTIFIER> | "get" | "set") { if(tokenRange == null){tokenRange = tokenRange(); } name = token.image; }
+	(<IDENTIFIER> | "get" | "set") { name = token.image; }
 	[parameters = MOPParameters()]
 	["within" { inMethod = getStringUntil('{'); }]
 	//****************soha adding here*****************/
@@ -1370,7 +1368,7 @@ JavaMOPSpecExt JavaMOPSpec(PackageDeclaration packageName):
 	(event = Event() { events.add(event); } )+
 	(prop = PropertyAndHandlers(propId++) {props.add(prop);})*
 	"}"
-	{return new JavaMOPSpecExt(packageName, tokenRange, isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
+	{return new JavaMOPSpecExt(packageName, tokenRange(), isPublic, modifiers, name, parameters, inMethod, extendedSpecList, declarations, events, props);}
 }
 
 int SpecModifier():
@@ -1416,14 +1414,13 @@ ExtendedSpec singleExtendedSpec():
  String specName= null;
  boolean isParametric = false;
  List<String> parameterList = new ArrayList<String>();
- TokenRange tokenRange = null;
 }
 {
-  (<IDENTIFIER> | "get" | "set") {specName = token.image; tokenRange = tokenRange(); }
+  (<IDENTIFIER> | "get" | "set") {specName = token.image; }
    ["(" (<IDENTIFIER> | "get" | "set") {isParametric = true; parameterList.add(token.image); }
   (","(<IDENTIFIER> | "get" | "set") {parameterList.add(token.image);})* ")"]
 
-  {return new ExtendedSpec(tokenRange, specName, isParametric, parameterList);}
+  {return new ExtendedSpec(tokenRange(), specName, isParametric, parameterList);}
   
 }
 
@@ -1465,12 +1462,11 @@ MOPParameter AdviceParameter():
 {
 	TypePattern type;
 	String name;
-	TokenRange tokenRange = null;
 }
 {
-	type = TypePattern() {tokenRange =  tokenRange();}
+	type = TypePattern()
         (<IDENTIFIER> | "get" | "set") { name = token.image; }
-	{ return new MOPParameter(tokenRange, type, name); }
+	{ return new MOPParameter(tokenRange(), type, name); }
 }
 
 EventDefinitionExt Event():
@@ -1491,12 +1487,11 @@ EventDefinitionExt Event():
 	boolean abstractEvent = false;
 	boolean blockingEvent = false;
 	boolean staticEvent = false;
-	TokenRange tokenRange = null;
 }
 {
    (
      ( //to handle syntax of abstract events :Soha
-     ("abstract" {abstractEvent = true;} "event" {tokenRange = tokenRange();}
+     ("abstract" {abstractEvent = true;} "event"
      (<IDENTIFIER> | "get" | "set") {id = token.image;})
      (
 	  pos = Position() |
@@ -1514,7 +1509,7 @@ EventDefinitionExt Event():
       ["creation" {startEvent = true;}
       | "blocking"  {blockingEvent = true;}
       | "static" {staticEvent = true;}]
-	"event" {tokenRange = tokenRange();}
+	"event"
 	(<IDENTIFIER> | "get" | "set") {id = token.image;}
 	 
 	(
@@ -1529,7 +1524,7 @@ EventDefinitionExt Event():
 	":" {pointCut = getStringUntil('{');} 
 	(block = Block() | ";")))
 	
-	{ return new EventDefinitionExt(tokenRange, id, rettype, pos, parameters, pointCut, block, hasReturning,
+	{ return new EventDefinitionExt(tokenRange(), id, rettype, pos, parameters, pointCut, block, hasReturning,
 	retVal, hasThrowing, throwVal, startEvent, abstractEvent, blockingEvent, staticEvent); }
 }
 
@@ -1558,16 +1553,14 @@ BaseTypePattern SimpleTypePattern():
 BaseTypePattern TypePattern():
 {
 	String id = null;
-	TokenRange tokenRange;
 }
 {    
 	(<IDENTIFIER> | "get"| "set" | "byte" | "short" | "int" 
          | "long" | "float" | "double" | "boolean" | "char") 
-        { tokenRange = tokenRange();}
 	("." {id += token.image;} (<IDENTIFIER> | "get" | "set") {id += token.image;})*
 	("[" {id += token.image;} "]" {id += token.image;})*
 	["+" {id += token.image;}]
-	{ return new BaseTypePattern(tokenRange, id); }
+	{ return new BaseTypePattern(tokenRange(), id); }
 }
 
 PropertyAndHandlersExt PropertyAndHandlers(int propId):
@@ -1615,17 +1608,16 @@ PropertyExt Property(int propId):
 	String logicId;
 	String f;
 	String propertyName;
-	TokenRange tokenRange;
 }
 {
   (
     LOOKAHEAD(3)
   (
     (<IDENTIFIER> | "get" | "set") {logicId = token.image;}
-    (<IDENTIFIER> | "get" | "set") {tokenRange = tokenRange(); propertyName = token.image; } ":")
-| ( (<IDENTIFIER> | "get" | "set") {tokenRange = tokenRange(); logicId = token.image; propertyName = "defaultProp" + propId;} ":"))
+    (<IDENTIFIER> | "get" | "set") {propertyName = token.image; } ":")
+| ( (<IDENTIFIER> | "get" | "set") {logicId = token.image; propertyName = "defaultProp" + propId;} ":"))
 	{f = getFormula();}
-	{ return new FormulaExt(tokenRange, logicId, f, propertyName); }
+	{ System.out.println("WADDDDS");return new FormulaExt(tokenRange(), logicId, f, propertyName); }
 }
 
 /***********************************************

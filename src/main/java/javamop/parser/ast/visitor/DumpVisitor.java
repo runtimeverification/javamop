@@ -380,8 +380,6 @@ public class DumpVisitor extends DefaultPrettyPrinterVisitor implements javamop.
 				printer.print(" " + p.getType() + " ");
 			}
 		}
-		System.out.println("HUHHHHHHHHH: " + printer.toString());
-		System.out.println("BBBBBB");
 	}
 
 	public void visit(ThreadPointCut p, Void arg) {
