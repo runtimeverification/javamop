@@ -1978,12 +1978,22 @@ TypePattern AndTypePattern() :
 TypePattern NotTypePattern() :
 {
   TypePattern t;
+  int flag =-1;
 }
 {
-  [ "!" ]
+  [
+    "!"
+    {
+      flag = 0;
+    }
+  ]
   t = BaseTypePattern()
   {
-      return new NotTypePattern(tokenRange(), t);
+      if (flag == -1) {
+          return t;
+      } else {
+          return new NotTypePattern(tokenRange(), t);
+      }
   }
 }
 

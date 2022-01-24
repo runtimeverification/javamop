@@ -2,9 +2,9 @@
 package javamop.parser.ast.aspectj;
 
 import com.github.javaparser.TokenRange;
-import com.github.javaparser.ast.Node;
+import javamop.parser.astex.ExtNode;
 
-public abstract class TypePattern extends Node {
+public abstract class TypePattern extends ExtNode {
     
     private final String op;
     
