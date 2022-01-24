@@ -39,11 +39,6 @@ public abstract class PropertyExt extends ExtNode {
                 Objects.equals(propertyName, that.propertyName);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, propertyName);
-    }
-
     public <A> void accept(VoidVisitor<A> v, A arg) {
         if (v instanceof javamop.parser.ast.visitor.MOPVoidVisitor) {
             ((MOPVoidVisitor)v).visit(this, arg);

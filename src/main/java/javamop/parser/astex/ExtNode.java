@@ -22,6 +22,8 @@
  */
 package javamop.parser.astex;
 
+import java.util.Objects;
+
 import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
@@ -45,5 +47,11 @@ public abstract class ExtNode extends Node {
         DumpVisitor visitor = new DumpVisitor(new DefaultPrinterConfiguration());
         accept(visitor, null);
         return visitor.getSource();
+    }
+
+    public int hashCode() {
+        DumpVisitor visitor = new DumpVisitor(new DefaultPrinterConfiguration());
+        accept(visitor, null);
+        return Objects.hash(visitor.getSource());
     }
 }
