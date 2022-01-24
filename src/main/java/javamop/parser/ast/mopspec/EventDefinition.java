@@ -14,7 +14,6 @@ import javamop.parser.ast.aspectj.PointCut;
 import javamop.parser.ast.aspectj.TypePattern;
 import javamop.parser.ast.visitor.*;
 import javamop.parser.astex.ExtNode;
-import javamop.parser.main_parser.ParseException;
 
 public class EventDefinition extends ExtNode {
     

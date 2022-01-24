@@ -12,10 +12,12 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import javamop.parser.ast.visitor.BaseVisitor;
 import javamop.parser.ast.visitor.CheckThisJoinPointVisitor;
 import javamop.parser.ast.visitor.MOPVoidVisitor;
 import javamop.parser.astex.ExtNode;
+import javamop.parser.astex.visitor.RVDumpVisitor;
 import javamop.util.MOPException;
 import javamop.util.MOPNameSpace;
 
@@ -385,5 +387,12 @@ public class JavaMOPSpec extends ExtNode implements Comparable<JavaMOPSpec>{
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String toRVString() {
+        RVDumpVisitor visitor = new RVDumpVisitor(new DefaultPrinterConfiguration());
+        accept(visitor, null);
+        return visitor.getSource();
     }
 }

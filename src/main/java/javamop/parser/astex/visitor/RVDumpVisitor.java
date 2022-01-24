@@ -1,7 +1,7 @@
 // Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
 package javamop.parser.astex.visitor;
 
-import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.printer.configuration.PrinterConfiguration;
 import javamop.parser.ast.aspectj.BaseTypePattern;
 import javamop.parser.ast.aspectj.TypePattern;
@@ -65,10 +65,10 @@ public class RVDumpVisitor extends DumpVisitor {
 		}
 	}
 	
-//	public void visit(NameExpr n, Object arg) {
-//		String name = n.getName().asString();
-//		if (name.equals("__STATICSIG"))
-//			name = "staticsig";
-//		printer.print(name);
-//	}
+	public void visit(NameExpr n, Void arg) {
+		String name = n.getName().asString();
+		if (name.equals("__STATICSIG"))
+			name = "staticsig";
+		printer.print(name);
+	}
 }
