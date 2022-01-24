@@ -245,7 +245,7 @@ public class AdviceAndPointCut {
     @Override
     public String toString() {
         String ret = "";
-        String pointcutStr = pointcut.toString();
+        String pointcutStr = pointcut.toRVString();
 
         if (!isPointCutPrinted()) {
             ret += "pointcut " + pointcutName;

@@ -251,7 +251,7 @@ public class MOPParameters implements Iterable<MOPParameter>, Serializable {
         String ret = "";
         
         for (MOPParameter param : this.parameters) {
-            ret += ", " + param.getType() + " " + param.getName();
+            ret += ", " + param.getType().toRVString() + " " + param.getName();
         }
         if (ret.length() != 0)
             ret = ret.substring(2);

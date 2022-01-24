@@ -53,6 +53,7 @@ public abstract class PropertyExt extends ExtNode {
         }
     }
 
+    //TODO: start
     @Override
     public int hashCode() {
         return Objects.hash(type, propertyName);

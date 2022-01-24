@@ -20,7 +20,7 @@ public class CombinedAspect {
     private final List<JavaMOPSpec> specs;
     public final MOPStatManager statManager;
     public final LockManager lockManager;
-    private final EventManager eventManager;
+    public final EventManager eventManager;
 
     /**
      * Construct the combined aspect.
