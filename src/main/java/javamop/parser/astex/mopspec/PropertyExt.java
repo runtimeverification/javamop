@@ -52,4 +52,9 @@ public abstract class PropertyExt extends ExtNode {
             return null;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, propertyName);
+    }
 }
