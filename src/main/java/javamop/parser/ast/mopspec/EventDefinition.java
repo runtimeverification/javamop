@@ -112,13 +112,13 @@ public class EventDefinition extends ExtNode {
         // thread pointcut
         threadVar = originalPointCut.accept(new ThreadVarVisitor(), null);
         if (threadVar == null)
-            throw new com.github.javaparser.ParseException("There are more than one thread() pointcut.");
+            throw new com.github.javaparser.ParseException("There are more than one thread() pointcuts.");
         if (threadVar.length() != 0) {
             resultPointCut = originalPointCut.accept(new RemoveThreadVisitor(), new Integer(1));
         } else
             resultPointCut = originalPointCut;
         if (resultPointCut == null)
-            throw new com.github.javaparser.ParseException("thread() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("thread() pointcut should appear at the root level in a conjunction form");
         
         // thread name pointcut
         threadNameVar = resultPointCut.accept(new ThreadNameVarVisitor(), null);
@@ -128,7 +128,7 @@ public class EventDefinition extends ExtNode {
             resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor(), new Integer(1));
         } 
         if (resultPointCut == null)
-            throw new com.github.javaparser.ParseException("threadName() pointcut should appear at the root level in a conjuction form");
+            throw new com.github.javaparser.ParseException("threadName() pointcut should appear at the root level in a conjunction form");
         
         // thread blocked pointcut
         String blockedThreads = resultPointCut.accept(new ThreadBlockedVarVisitor(), null);
