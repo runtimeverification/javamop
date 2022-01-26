@@ -7,7 +7,7 @@ import javamop.parser.ast.aspectj.ThreadPointCut;
 public class RemoveThreadVisitor extends BasePointCutVisitor {
 
 	public PointCut visit(ThreadPointCut p, Integer arg){
-		return null;
+		return p;
 	}
 
 }
