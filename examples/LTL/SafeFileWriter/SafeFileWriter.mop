@@ -12,7 +12,7 @@ SafeFileWriter(FileWriter f) {
 	static int counter = 0;
 	int writes = 0;
 
-	event open after() returning(FileWriter f) : 
+	event openf after() returning(FileWriter f) : 
 		call(FileWriter.new(..)) {
 			this.writes = 0;
 		}
@@ -23,7 +23,7 @@ SafeFileWriter(FileWriter f) {
 	event close after(FileWriter f) : 
 		call(* close(..)) && target(f) {}
  		
-	ltl : [](write => (not close S open))
+	ltl : [](write => (not close S openf))
 
 	@violation {
 		System.out.println("write after close");

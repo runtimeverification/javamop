@@ -16,7 +16,7 @@ import java.util.*;
 
 SafeFileWriter(FileWriter f) {
      
-   event open after() returning(FileWriter f) : 
+   event openf after() returning(FileWriter f) : 
       call(FileWriter.new(..)) {}
    event write before(FileWriter f) : 
       call(* write(..)) && target(f) {}
@@ -24,7 +24,7 @@ SafeFileWriter(FileWriter f) {
       call(* close(..)) && target(f) {}
 
    cfg : 
-      S -> open SafeWrite close write, 
+      S -> openf SafeWrite close write, 
       SafeWrite -> SafeWrite S | SafeWrite write | epsilon
 
    @match {

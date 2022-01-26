@@ -12,7 +12,7 @@ import java.util.*;
 // the CFG specifies the correct behavior.
 
 SafeFile(FileReader f, Thread t) {
-   event open after(Thread t) returning(FileReader f) : 
+   event openf after(Thread t) returning(FileReader f) : 
       call(FileReader.new(..)) && thread(t){}
    event close after(FileReader f, Thread t) : 
       call(* FileReader.close(..)) && target(f) && thread(t){}
@@ -23,7 +23,7 @@ SafeFile(FileReader f, Thread t) {
 
    cfg : 
       S -> A S | epsilon, 
-      A -> A begin A end | A open A close | epsilon
+      A -> A begin A end | A openf A close | epsilon
 
    @fail {
       System.out.println("improper use of files");
