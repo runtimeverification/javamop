@@ -10,10 +10,12 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.visitor.GenericVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import javamop.parser.ast.mopspec.JavaMOPSpec;
 import javamop.parser.ast.visitor.BaseVisitor;
 import javamop.parser.ast.visitor.MOPVoidVisitor;
 import javamop.parser.astex.ExtNode;
+import javamop.parser.astex.visitor.RVDumpVisitor;
 
 public class MOPSpecFile extends ExtNode {
     private final PackageDeclaration pakage;
@@ -51,6 +53,12 @@ public class MOPSpecFile extends ExtNode {
         } else {
             return null;
         }
+    }
+
+    public String toRVString() {
+        RVDumpVisitor visitor = new RVDumpVisitor(new DefaultPrinterConfiguration());
+        accept(visitor, null);
+        return visitor.getSource();
     }
 
 }
