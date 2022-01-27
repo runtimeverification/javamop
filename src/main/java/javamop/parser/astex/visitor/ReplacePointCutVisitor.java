@@ -29,7 +29,7 @@ public class ReplacePointCutVisitor extends BaseMOPVisitor<PointCut, HashMap<Poi
 		List<PointCut> pointcuts = new ArrayList<PointCut>();
 		
 		for(PointCut p2 : p.getPointcuts()){
-			PointCut p3 = p2.accept((PointcutVisitor<PointCut, HashMap<PointCut, PointCut>>) this, arg);
+			PointCut p3 = p2.accept( this, arg);
 			
 			if(p2 != p3)
 				changed = true;
