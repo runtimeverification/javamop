@@ -59,30 +59,12 @@ public class SpecExtractorTest {
         specFileString = Tool.changeIndentation(specFileString, "","\t");
 
         String expectedFileName = "./src/test/resources/expected-output/" + this.mopFilePath + ".expected";
-        String expectedString = readFileToString(expectedFileName);
+        String expectedString = javamop.helper.IOUtils.readFile(expectedFileName);
 
-        specFileString = deleteNewLines(specFileString);
-        expectedString = deleteNewLines(expectedString);
+        specFileString = javamop.helper.IOUtils.deleteNewLines(specFileString);
+        expectedString = javamop.helper.IOUtils.deleteNewLines(expectedString);
 
         assertEquals(this.mopFilePath + " should match " + expectedFileName, expectedString, specFileString);
     }
 
-    private String deleteNewLines(String stringWithNewLines) {
-        return stringWithNewLines.replace("\n", "").replace("\r", "");
-    }
-
-    private String readFileToString(String expectedFileName) {
-        StringBuilder builder = new StringBuilder();
-        try(BufferedReader reader = new BufferedReader(new FileReader(new File(expectedFileName)))) {
-            String tmpString;
-            while ((tmpString = reader.readLine()) != null) {
-                builder.append(tmpString).append("\n");
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
-    }
 }

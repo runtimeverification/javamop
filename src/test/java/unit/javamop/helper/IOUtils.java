@@ -26,4 +26,8 @@ public class IOUtils {
             }
         }
     }
+
+    public static String deleteNewLines(String stringWithNewLines) {
+        return stringWithNewLines.replaceAll("[\r\n]", "");
+    }
 }
