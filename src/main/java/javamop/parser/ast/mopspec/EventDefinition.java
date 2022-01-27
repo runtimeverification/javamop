@@ -236,7 +236,7 @@ public class EventDefinition extends ExtNode {
         if (endObject && (endProgram || endThread))
             throw new com.github.javaparser.ParseException("endProgram() pointcut, endThread(), and endObject() pointcut cannot appear at the same time");
         
-        purePointCutStr = resultPointCut.toString();
+        purePointCutStr = resultPointCut.toRVString();
         
         return resultPointCut;
     }
