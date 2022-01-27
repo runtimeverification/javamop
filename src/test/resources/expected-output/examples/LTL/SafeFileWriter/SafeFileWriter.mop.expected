@@ -1,0 +1,26 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+SafeFileWriter(FileWriter f) {
+
+	static int counter = 0;
+
+	int writes = 0;
+	event openf(FileWriter f){
+		this.writes = 0;
+	}
+	event write(FileWriter f){
+		this.writes++;
+	}
+	event close(FileWriter f){
+	}
+	ltl:  [](write => (not close S openf))
+
+	@violation
+	{
+		System.out.println("write after close");
+	}
+}
+
