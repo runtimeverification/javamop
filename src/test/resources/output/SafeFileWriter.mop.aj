@@ -37,9 +37,9 @@ public aspect SafeFileWriterMonitorAspect implements com.runtimeverification.rvm
 		SafeFileWriterRuntimeMonitor.writeEvent(f);
 	}
 
-	pointcut SafeFileWriter_open() : (call(FileWriter.new(..))) && MOP_CommonPointCut();
-	after () returning (FileWriter f) : SafeFileWriter_open() {
-		SafeFileWriterRuntimeMonitor.openEvent(f);
+	pointcut SafeFileWriter_openf() : (call(FileWriter.new(..))) && MOP_CommonPointCut();
+	after () returning (FileWriter f) : SafeFileWriter_openf() {
+		SafeFileWriterRuntimeMonitor.openfEvent(f);
 	}
 
 	pointcut SafeFileWriter_close(FileWriter f) : (call(* close(..)) && target(f)) && MOP_CommonPointCut();

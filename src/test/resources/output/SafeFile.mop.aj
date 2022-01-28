@@ -38,10 +38,10 @@ public aspect SafeFileMonitorAspect implements com.runtimeverification.rvmonitor
 		SafeFileRuntimeMonitor.beginEvent(t);
 	}
 
-	pointcut SafeFile_open() : (call(FileReader.new(..))) && MOP_CommonPointCut();
-	after () returning (FileReader f) : SafeFile_open() {
+	pointcut SafeFile_openf() : (call(FileReader.new(..))) && MOP_CommonPointCut();
+	after () returning (FileReader f) : SafeFile_openf() {
 		Thread t = Thread.currentThread();
-		SafeFileRuntimeMonitor.openEvent(t, f);
+		SafeFileRuntimeMonitor.openfEvent(t, f);
 	}
 
 	pointcut SafeFile_close(FileReader f) : (call(* FileReader.close(..)) && target(f)) && MOP_CommonPointCut();

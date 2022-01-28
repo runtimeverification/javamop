@@ -3,7 +3,7 @@ package mop;
 import java.io.*;
 import java.util.*;
 SafeFile(FileReader f, Thread t) {
-	event open(Thread t, FileReader f){
+	event openf(Thread t, FileReader f){
 	}
 	event close(FileReader f, Thread t){
 	}
@@ -13,7 +13,7 @@ SafeFile(FileReader f, Thread t) {
 	}
 	cfg:
 	S -> A S | epsilon,
-	A -> A begin A end | A open A close | epsilon
+	A -> A begin A end | A openf A close | epsilon
 
 	@fail
 	{

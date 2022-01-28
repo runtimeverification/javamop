@@ -1,25 +1,26 @@
 package javamop.output;
 
-import examples.ExamplesIT;
-import javamop.JavaMOPMain;
-import javamop.JavaMOPOptions;
-import javamop.NodeEquivalenceChecker;
-import javamop.helper.IOUtils;
-import javamop.helper.MOP_Serialization;
-import javamop.parser.SpecExtractorTest;
-import javamop.parser.ast.MOPSpecFile;
-import javamop.util.MOPNameSpace;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import examples.ExamplesIT;
+import javamop.JavaMOPMain;
+import javamop.JavaMOPOptions;
+import javamop.helper.IOUtils;
+import javamop.helper.MOP_Serialization;
+import javamop.parser.SpecExtractor;
+import javamop.parser.SpecExtractorTest;
+import javamop.parser.ast.MOPSpecFile;
+import javamop.util.MOPException;
+import javamop.util.MOPNameSpace;
+import javamop.util.Tool;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Created by xiaohe on 4/15/16.
@@ -30,7 +31,6 @@ public class MOPProcessorTest {
     public static final String expectedOutputPrefix = inputASTPrefix + "output" + File.separator;
 
     private MOPSpecFile inputAST;
-    private String inputASTPath;
 
     private String output_AJ_FilePath;
     private String output_RVM_FilePath;
@@ -50,9 +50,11 @@ public class MOPProcessorTest {
 
         this.aspectName = testName.substring(0, testName.lastIndexOf("."));
 
-        this.inputASTPath = inputASTPrefix + testName + ".ser";
-
-        this.inputAST = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
+        try {
+            this.inputAST = SpecExtractor.parse(new File(this.mopFilePath));
+        } catch (MOPException e) {
+            e.printStackTrace();
+        }
         this.output_AJ_FilePath = expectedOutputPrefix + testName + ".aj";
         this.output_RVM_FilePath = expectedOutputPrefix + testName + ".rvm";
     }
@@ -72,16 +74,15 @@ public class MOPProcessorTest {
         MOPProcessor processor = new MOPProcessor(this.aspectName);
         MOPNameSpace.init();
 
-        String actualRVString = processor.generateRVFile(this.inputAST)
-                .replaceAll("[\r\n]", "");
-        String expectedRVString = IOUtils.readFile(this.output_RVM_FilePath)
-                .replaceAll("[\r\n]", "");
+        System.out.println(this.output_RVM_FilePath);
+
+        String actualRVString = IOUtils.deleteNewLines(processor.generateRVFile(this.inputAST));
+        actualRVString = Tool.changeIndentation(actualRVString, "", "\t");
+        String expectedRVString = IOUtils.deleteNewLines(IOUtils.readFile(this.output_RVM_FilePath));
+        expectedRVString = Tool.changeIndentation(expectedRVString, "", "\t");
+
         assertEquals("The generated RV String for spec " + this.mopFilePath +
                 " is not as expected", expectedRVString, actualRVString);
-
-        MOPSpecFile originalSpecFile = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
-        assertTrue("The method for generating .rvm spec should not alter the MOPSpecFile object",
-                NodeEquivalenceChecker.equalMOPSpecFiles(originalSpecFile, this.inputAST));
     }
 
     @Test
@@ -89,16 +90,13 @@ public class MOPProcessorTest {
         MOPProcessor processor = new MOPProcessor(this.aspectName);
         MOPNameSpace.init();
 
-        String actualAJString = processor.generateAJFile(this.inputAST)
-                .replaceAll("[\r\n]", "");
-        String expectedAJString = IOUtils.readFile(this.output_AJ_FilePath)
-                .replaceAll("[\r\n]", "");
+        String actualAJString = IOUtils.deleteNewLines(processor.generateAJFile(this.inputAST));
+        actualAJString = Tool.changeIndentation(actualAJString, "", "\t");
+        String expectedAJString = IOUtils.deleteNewLines(IOUtils.readFile(this.output_AJ_FilePath));
+        expectedAJString = Tool.changeIndentation(expectedAJString, "", "\t");
+
         assertEquals("The generated AJ String for spec " + this.mopFilePath +
                 " is not as expected", expectedAJString, actualAJString);
-
-        MOPSpecFile originalSpecFile = MOP_Serialization.readMOPSpecObjectFromFile(inputASTPath);
-        assertTrue("The method for generating .aj code should not alter the MOPSpecFile object",
-                NodeEquivalenceChecker.equalMOPSpecFiles(originalSpecFile, this.inputAST));
     }
 
 }

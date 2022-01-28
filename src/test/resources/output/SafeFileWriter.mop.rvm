@@ -7,7 +7,7 @@ SafeFileWriter(FileWriter f) {
 	static int counter = 0;
 
 	int writes = 0;
-	event open(FileWriter f){
+	event openf(FileWriter f){
 		this.writes = 0;
 	}
 	event write(FileWriter f){
@@ -15,7 +15,7 @@ SafeFileWriter(FileWriter f) {
 	}
 	event close(FileWriter f){
 	}
-	ltl:  [](write => (not close S open))
+	ltl:  [](write => (not close S openf))
 
 	@violation
 	{
