@@ -28,7 +28,7 @@ public class BaseStringVisitor extends BaseVisitor<String, Object> {
 	}
 
 	public String visit(ConditionPointCut p, Object arg) {
-		return null;
+		return "";
 	}
 	
 	public String visit(CountCondPointCut p, Object arg) {
