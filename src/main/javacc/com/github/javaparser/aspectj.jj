@@ -3395,7 +3395,7 @@ Expression PrimarySuffixWithoutSuper(Expression scope) :
 {
   Expression ret;
   NodeList typeArgs = null;
-  NodeList args = null;
+  NodeList args = new NodeList();
   boolean hasArgs = false;
   SimpleName name;
   PositionString nameStr;
@@ -3508,7 +3508,7 @@ Expression NullLiteral() :
 
 NodeList Arguments() :
 {
-  NodeList ret = null;
+  NodeList ret = new NodeList();
 }
 {
   "(" [ ret = ArgumentList() ] ")"
