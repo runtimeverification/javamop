@@ -5,6 +5,10 @@ import javamop.parser.ast.aspectj.*;
 
 public class RemoveConditionVisitor extends BasePointCutVisitor {
 
+	public RemoveConditionVisitor(String className) {
+		super(className);
+	}
+
 	public PointCut visit(ConditionPointCut p, Integer arg) {
 		return null;
 	}

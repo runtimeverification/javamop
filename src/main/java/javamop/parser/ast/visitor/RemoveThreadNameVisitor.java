@@ -6,6 +6,10 @@ import javamop.parser.ast.aspectj.ThreadNamePointCut;
 
 public class RemoveThreadNameVisitor extends BasePointCutVisitor {
 
+	public RemoveThreadNameVisitor(String className) {
+		super(className);
+	}
+
 	public PointCut visit(ThreadNamePointCut p, Integer arg){
 		return null;
 	}

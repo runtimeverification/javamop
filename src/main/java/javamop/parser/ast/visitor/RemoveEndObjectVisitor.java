@@ -10,6 +10,10 @@ import javamop.parser.ast.aspectj.PointCut;
 
 public class RemoveEndObjectVisitor extends BasePointCutVisitor{
 
+	public RemoveEndObjectVisitor(String className) {
+		super(className);
+	}
+
 	public PointCut visit(EndObjectPointCut p, Integer arg){
 		if(arg == 0){
 			return null;

@@ -28,6 +28,7 @@ public class RemovePointCutVisitor extends BasePointCutVisitor {
 	String targetType;
 
 	public RemovePointCutVisitor(String type) {
+		super(type);
 		this.targetType = type;
 	}
 

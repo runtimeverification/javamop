@@ -23,6 +23,10 @@ public class BaseStringVisitor extends BaseVisitor<String, Object> {
 		return goal;
 	}
 
+	public String visit(ArgsPointCut p, Object arg){
+		return "";
+	}
+
 	public String visit(NotPointCut p, Object arg) {
 		return p.getPointCut().accept(this, arg);
 	}

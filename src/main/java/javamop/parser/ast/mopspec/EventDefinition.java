@@ -114,7 +114,7 @@ public class EventDefinition extends ExtNode {
         if (threadVar == null)
             throw new com.github.javaparser.ParseException("There are more than one thread() pointcuts.");
         if (threadVar.length() != 0) {
-            resultPointCut = originalPointCut.accept(new RemoveThreadVisitor(), new Integer(1));
+            resultPointCut = originalPointCut.accept(new RemoveThreadVisitor("javamop.parser.ast.aspectj.ThreadPointCut"), new Integer(1));
         } else
             resultPointCut = originalPointCut;
         if (resultPointCut == null)
@@ -125,7 +125,7 @@ public class EventDefinition extends ExtNode {
         if (threadNameVar == null)
             throw new com.github.javaparser.ParseException("There are more than one threadName() pointcut.");
         if (threadNameVar.length() != 0) {
-            resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveThreadNameVisitor("javamop.parser.ast.aspectj.ThreadNamePointCut"), new Integer(1));
         } 
         if (resultPointCut == null)
             throw new com.github.javaparser.ParseException("threadName() pointcut should appear at the root level in a conjunction form");
@@ -136,7 +136,7 @@ public class EventDefinition extends ExtNode {
             throw new com.github.javaparser.ParseException("threadBlocked() should have one parameter.");
         } 
         if (blockedThreads.length() != 0) {
-            resultPointCut = resultPointCut.accept(new RemoveThreadBlockedVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveThreadBlockedVisitor("javamop.parser.ast.aspectj.ThreadBlockedPointCut"), new Integer(1));
             threadBlockedVars = new ArrayList<String>();
             String vars[] = blockedThreads.split("@");
             for (String var : vars) {
@@ -152,7 +152,7 @@ public class EventDefinition extends ExtNode {
         if (condition == null)
             throw new com.github.javaparser.ParseException("There are more than one condition() pointcut.");
         if (condition.length() != 0) {
-            resultPointCut = resultPointCut.accept(new RemoveConditionVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveConditionVisitor("javamop.parser.ast.aspectj.ConditionPointCut"), new Integer(1));
         }
         // syntax de-sugar threadName pointcut into condition constraint
         if (threadNameVar != null && threadNameVar.length() != 0) {
@@ -172,7 +172,7 @@ public class EventDefinition extends ExtNode {
         if (countCond == null)
             throw new com.github.javaparser.ParseException("There are more than one countCond() pointcut.");
         if (countCond.length() != 0) {
-            resultPointCut = resultPointCut.accept(new RemoveCountCondVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveCountCondVisitor("javamop.parser.ast.aspectj.CountCondPointCut"), new Integer(1));
         }
         if (resultPointCut == null)
             throw new com.github.javaparser.ParseException("countCond() pointcut should appear at the root level in a conjuction form");
@@ -183,7 +183,7 @@ public class EventDefinition extends ExtNode {
             throw new com.github.javaparser.ParseException("There are more than one endProgram() pointcut.");
         if (checkEndProgram.length() != 0) {
             endProgram = true;
-            resultPointCut = resultPointCut.accept(new RemoveEndProgramVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveEndProgramVisitor("javamop.parser.ast.aspectj.EndProgramPointCut"), new Integer(1));
         } else {
             endProgram = false;
         }
@@ -196,7 +196,7 @@ public class EventDefinition extends ExtNode {
             throw new com.github.javaparser.ParseException("There are more than one endThread() pointcut.");
         if (checkEndThread.length() != 0) {
             endThread = true;
-            resultPointCut = resultPointCut.accept(new RemoveEndThreadVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveEndThreadVisitor("javamop.parser.ast.aspectj.EndThreadPointCut"), new Integer(1));
         } else {
             endThread = false;
         }
@@ -227,7 +227,7 @@ public class EventDefinition extends ExtNode {
             throw new com.github.javaparser.ParseException("There are more than one endObject() pointcut.");
         if (endObjectId.length() != 0) {
             endObject = true;
-            resultPointCut = resultPointCut.accept(new RemoveEndObjectVisitor(), new Integer(1));
+            resultPointCut = resultPointCut.accept(new RemoveEndObjectVisitor("javamop.parser.ast.aspectj.EndObjectPointCut"), new Integer(1));
         } else {
             endObject = false;
         }

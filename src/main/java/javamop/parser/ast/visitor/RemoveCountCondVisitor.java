@@ -6,6 +6,10 @@ import javamop.parser.ast.aspectj.PointCut;
 
 public class RemoveCountCondVisitor extends BasePointCutVisitor {
 
+	public RemoveCountCondVisitor(String className) {
+		super(className);
+	}
+
 	public PointCut visit(CountCondPointCut p, Integer arg){
 		return null;
 	}

@@ -8,13 +8,19 @@ import javamop.parser.ast.aspectj.*;
 
 public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 
+	String className;
+
+	public BasePointCutVisitor(String className) {
+		this.className = className;
+	}
+
 	public PointCut visit(ArgsPointCut p, Integer arg) {
 		return p;
 	}
 
 	public PointCut visit(CombinedPointCut p, Integer arg){
 		if(arg == 0){
-			List<PointCut> pointcuts = new ArrayList<PointCut>();
+			List<PointCut> pointcuts = new ArrayList<>();
 			for(PointCut p2 : p.getPointcuts()){
 				PointCut temp = p2.accept(this, new Integer(0));
 				
@@ -30,7 +36,7 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 			
 			List<PointCut> pointcuts = new ArrayList<PointCut>();
 			for(PointCut p2 : p.getPointcuts()){
-				if(andType && p2 instanceof ConditionPointCut){
+				if(andType && isRightInstance(p2)){
 					if(alreadySeen)
 						return null;
 					alreadySeen = true;
@@ -46,6 +52,16 @@ public class BasePointCutVisitor extends BaseVisitor<PointCut, Integer>{
 			}
 			return new CombinedPointCut(p.getTokenRange().get(), p.getType(), pointcuts);
 		}		
+	}
+
+	private boolean isRightInstance(PointCut p2) {
+		boolean instance = false;
+		try {
+			instance = Class.forName(this.className).isInstance(p2);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return instance;
 	}
 
 	public PointCut visit(ConditionPointCut p, Integer arg) {
