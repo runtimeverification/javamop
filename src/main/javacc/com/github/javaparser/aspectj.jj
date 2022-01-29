@@ -2535,7 +2535,7 @@ ClassOrInterfaceType ClassOrInterfaceType() :
     typeArgs = TypeArguments()
   ]
   {
-    ret = new ClassOrInterfaceType(tokenRange(), null, name, typeArgs, null);
+    ret = new ClassOrInterfaceType(tokenRange(), null, name, typeArgs, new NodeList());
   }
   (
     LOOKAHEAD(2)
@@ -2548,7 +2548,7 @@ ClassOrInterfaceType ClassOrInterfaceType() :
       typeArgs = TypeArguments()
     ]
     {
-      ret = new ClassOrInterfaceType(tokenRange(), ret, name, typeArgs, null);
+      ret = new ClassOrInterfaceType(tokenRange(), ret, name, typeArgs, new NodeList());
     }
   )*
   {
@@ -2615,40 +2615,41 @@ WildcardType Wildcard() :
 PrimitiveType PrimitiveType() :
 {
   PrimitiveType ret;
+  NodeList annotations = new NodeList();
 }
 {
   (
     "boolean"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BOOLEAN, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BOOLEAN, annotations);
     }
   | "char"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.CHAR, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.CHAR, annotations);
     }
   | "byte"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BYTE, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BYTE, annotations);
     }
   | "short"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.SHORT, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.SHORT, annotations);
     }
   | "int"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.INT, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.INT, annotations);
     }
   | "long"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.LONG, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.LONG, annotations);
     }
   | "float"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.FLOAT, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.FLOAT, annotations);
     }
   | "double"
     {
-      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.DOUBLE, null);
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.DOUBLE, annotations);
     }
   )
   {
