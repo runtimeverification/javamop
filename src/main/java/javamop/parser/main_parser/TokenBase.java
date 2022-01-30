@@ -2,7 +2,7 @@ package javamop.parser.main_parser;
 
 import com.github.javaparser.JavaToken;
 
-abstract class TokenBase {
+public abstract class TokenBase {
     /**
      * For tracking the >> >>> ambiguity.
      */
@@ -11,5 +11,5 @@ abstract class TokenBase {
     /**
      * This is the link to the token that JavaParser presents to the user
      */
-    JavaToken javaToken = null;
+    public JavaToken javaToken = null;
 }

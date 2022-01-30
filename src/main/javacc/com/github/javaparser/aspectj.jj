@@ -21,7 +21,7 @@ options
 
   JDK_VERSION = "1.8";
   COMMON_TOKEN_ACTION=true;
-  TOKEN_EXTENDS ="TokenBase";
+  TOKEN_EXTENDS ="javamop.parser.main_parser.TokenBase";
 }
 
 PARSER_BEGIN(AspectJParser)
@@ -1164,6 +1164,10 @@ TOKEN :
      input_stream.backup(1);
   }
 | < GT: ">" >
+  {
+    matchedToken.kind = GT;
+    matchedToken.realKind = GT;
+  }
 }
 
 /* .'s need special attention due to ApsectJ syntax. */

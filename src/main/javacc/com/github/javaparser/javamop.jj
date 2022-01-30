@@ -21,11 +21,12 @@ options {
 
   JDK_VERSION = "1.8";
   COMMON_TOKEN_ACTION=true;
-  TOKEN_EXTENDS ="TokenBase";
+  TOKEN_EXTENDS ="javamop.parser.main_parser.TokenBase";
 //  JAVA_TEMPLATE_TYPE = "modern";
 }
 
 PARSER_BEGIN(JavaMOPParser)
+
 package com.github.javaparser;
 
 import java.io.*;
