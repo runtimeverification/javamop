@@ -48,7 +48,6 @@ public class IOUtils {
                 return retval;
             }
         });
-        System.out.println(filenames);
         return filenames;
     }
 }

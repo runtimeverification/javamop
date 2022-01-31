@@ -83,7 +83,7 @@ public final class MOPNameSpace {
     /**
      * Retrieve a unique variable name with a given base for use in JavaMOP code.
      * @param varName The base of the variable name.
-     * @return A unique name to use at a particular instnace.
+     * @return A unique name to use at a particular instance.
      */
     static public String getMOPVar(final String varName) {
         used = true;

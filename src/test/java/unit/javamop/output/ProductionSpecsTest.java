@@ -4,14 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import javamop.JavaMOPMain;
 import javamop.JavaMOPOptions;
 import javamop.helper.IOUtils;
-import javamop.helper.MOP_Serialization;
 import javamop.parser.SpecExtractor;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.util.MOPException;
@@ -41,11 +39,15 @@ public class ProductionSpecsTest {
         JavaMOPMain.options = new JavaMOPOptions();
     }
 
+    private MOPProcessor processor;
 
     public ProductionSpecsTest(String inputMOPFile) {
         this.mopFilePath = inputMOPFile;
         String specFileName = mopFilePath.substring(mopFilePath.lastIndexOf(File.separator) + 1);
         this.specName = specFileName.substring(0, specFileName.lastIndexOf("."));
+
+        processor = new MOPProcessor(this.specName);
+        MOPNameSpace.init();
 
         try {
             this.inputAST = SpecExtractor.parse(new File(this.mopFilePath));
@@ -67,9 +69,6 @@ public class ProductionSpecsTest {
 
     @Test
     public void testRVMFileGeneration() throws Exception {
-        MOPProcessor processor = new MOPProcessor(this.specName);
-        MOPNameSpace.init();
-
         String actualRVString = IOUtils.deleteNewLines(processor.generateRVFile(this.inputAST));
         actualRVString = Tool.changeIndentation(actualRVString, "", "\t");
         String expectedRVString = IOUtils.deleteNewLines(IOUtils.readFile(this.output_RVM_FilePath));
@@ -81,9 +80,6 @@ public class ProductionSpecsTest {
 
     @Test
     public void generateAJFile() throws Exception {
-        MOPProcessor processor = new MOPProcessor(this.specName);
-        MOPNameSpace.init();
-
         String actualAJString = IOUtils.deleteNewLines(processor.generateAJFile(this.inputAST));
         actualAJString = Tool.changeIndentation(actualAJString, "", "\t");
         String expectedAJString = IOUtils.deleteNewLines(IOUtils.readFile(this.output_AJ_FilePath));
