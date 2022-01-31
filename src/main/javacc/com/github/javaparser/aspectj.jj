@@ -2517,8 +2517,12 @@ ReferenceType ReferenceType() :
     )*
   )
   {
-    return type.asReferenceType();
+  if (arrayCount > 0) {
+      return new ArrayType(type, ArrayType.Origin.TYPE, new NodeList());
+  } else {
+      return type.asReferenceType();
   }
+}
 }
 
 ClassOrInterfaceType ClassOrInterfaceType() :
