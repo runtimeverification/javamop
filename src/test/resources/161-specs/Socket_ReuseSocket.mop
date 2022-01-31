@@ -1,0 +1,35 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a closed socket is about to be reused for binding or connecting.
+ *
+ * Once a socket has been closed, it is not available for further networking
+ * use (i.e. can't be reconnected or rebound). A new socket needs to be
+ * created.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/Socket.html#close%28%29
+ *
+ * @severity error
+ */
+
+Socket_ReuseSocket(Socket sock) {
+	creation event close before(Socket sock) :
+		call(* Socket+.close(..)) && target(sock) {}
+
+	event bind before(Socket sock) :
+		call(* Socket+.bind(..)) && target(sock) {}
+
+	event connect before(Socket sock) :
+		call(* Socket+.connect(..)) && target(sock) {}
+
+	ere : close (bind | connect)+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Once a socket has been closed, it is not available for further networking use; a new socket needs to be created.");
+	}
+}
+

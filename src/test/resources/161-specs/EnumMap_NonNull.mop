@@ -1,0 +1,34 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if null is provided as a key of an EnumMap object.
+ *
+ * EnumMap does not permit null key.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/EnumMap.html#put%28K,%20V%29
+ *
+ * This property warns if null is about to be inserted as a key.
+ *
+ * @severity error
+ */
+
+EnumMap_NonNull() {
+	event insertnull before(Object e) :
+		call(* EnumMap.put(Object, Object)) && args(e, ..) && condition(e == null) {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "EnumMap does not permit null.");
+	}
+	event insertnull before(Map m) :
+		call(* EnumMap.putAll(Map)) && args(m) {
+		for (Map.Entry entry : (Set<Map.Entry>)m.entrySet()) {
+			if (entry.getKey() == null) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "EnumMap does not permit null.");
+			}
+		}
+	}
+}
+

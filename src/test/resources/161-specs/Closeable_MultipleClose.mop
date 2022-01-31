@@ -1,0 +1,31 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if close() is invoked multiple times.
+ *
+ * According to the Closeable.close() documentation, closing a previously closed
+ * stream has no effect.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Closeable.html#close%28%29
+ *
+ * Although calling close() multiple times does not do any harm, this property
+ * raises a warning in the hope that the warning helps developers to find a
+ * glitch in their programs.
+ *
+ * @severity suggestion
+ */
+
+Closeable_MultipleClose(Closeable c) {
+	event close before(Closeable c) : call(* Closeable+.close(..)) && target(c) {}
+
+	ere : close close+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "close() was invoked multiple times.");
+	}
+}
+

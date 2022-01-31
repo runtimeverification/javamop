@@ -1,0 +1,29 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if ContentHandler.getContent() is invoked.
+ *
+ * According to the reference, an application does not generally call the
+ * getContent() method in the ContentHandler class. Instead, an application
+ * calls the getContent() method in class URL or in URLConnection.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/ContentHandler.html
+ *
+ * Since the reference was not clear about the consequence of calling
+ * ContentHandler.getContent(), a violation of this property is not considered
+ * an error.
+ *
+ * @severity suggestion
+ */
+ContentHandler_GetContent() {
+	event get_content before() : 
+		call(* ContentHandler+.getContent(..))
+	{
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "An application does not generally call ContentHandler.getContent().");
+	}
+}
+

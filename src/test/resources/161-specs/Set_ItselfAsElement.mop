@@ -1,0 +1,41 @@
+package mop;
+
+import java.util.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a subclass of Set contains itself as an element.
+ *
+ * The behavior of a set is not specified if the value of an object is changed
+ * in a manner that affects equals() comparisons while the object is an
+ * element in the set. A special case of this prohibition is that it is not
+ * permissible for a set to contain itself as an element.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Set.html
+ *
+ * This property checks if the special case: a set contains itself by
+ * capturing add() and addAll(). It is hard to detect whether or not equals()
+ * comparisons are affected.
+ *
+ * @severity error
+ */
+
+Set_ItselfAsElement() {
+	event add before(Set s, Object elem) :
+		call(* Set+.add(Object)) && target(s) && args(elem) && condition(elem == s){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A set cannot contain itself as an element.");
+	}
+
+	event addall before(Set s, Collection src) :
+		call(* Set+.addAll(Collection)) && target(s) && args(src) {
+		for (Object elem : src) {
+			if (elem == s) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "A set cannot contain itself as an element.");
+			}
+		}
+	}
+}
+

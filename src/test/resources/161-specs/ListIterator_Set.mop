@@ -1,0 +1,45 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if ListIterator.set() call is made without next()/previous(), or
+ * after remove()/add().
+ *
+ * ListIterator.set() can be made only if neither remove() nor add() have been
+ * called after the last call to next() or previous().
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ListIterator.html#set%28E%29
+ *
+ * @severity error
+ */
+
+ListIterator_Set(ListIterator i) {
+	creation event create after() returning(ListIterator i) :
+		call(ListIterator Iterable+.listIterator()) {}
+
+	event remove before(ListIterator i) :
+		call(void Iterator+.remove()) && target(i) {}
+
+	event add before(ListIterator i) :
+		call(void ListIterator+.add(..)) && target(i) {}
+
+	event next before(ListIterator i) :
+		call(* Iterator+.next()) && target(i) {}
+
+	event previous before(ListIterator i) :
+		call(* ListIterator+.previous()) && target(i) {}
+
+	event set before(ListIterator i) :
+		call(* ListIterator+.set(..)) && target(i) {}
+
+	ere : create add* ((next | previous)+ set* (remove | add+ | epsilon))*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "ListIterator.set() can be made only if neither remove() nor add() have been called after the last call to next() or previous().");
+	}
+}
+

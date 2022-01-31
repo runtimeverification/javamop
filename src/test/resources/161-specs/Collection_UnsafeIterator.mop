@@ -1,0 +1,52 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a collection is modified while an iterator is being used.
+ *
+ * It is not generally permissible to modify a Collection while iterating over
+ * it. Some Iterators implementations may choose to throw
+ * ConcurrentModificationException if this behavior is detected, but this
+ * fail-fast behavior is not guaranteed.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ConcurrentModificationException.html
+ *
+ * This property warns if a collection is modified while an iterator is being
+ * used. Unlike the underlying system, where the fail-fast behavior is not
+ * guaranteed, this property always detects the problematic behavior.
+ *
+ * @severity error
+ */
+
+Collection_UnsafeIterator(Collection c, Iterator i) {
+	creation event create after(Collection c) returning(Iterator i) :
+		call(Iterator Iterable+.iterator()) && target(c) {}
+
+	event modify before(Collection c) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.offer*(..)) ||
+			call(* Collection+.pop(..)) ||
+			call(* Collection+.push(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(c) {}
+
+	event useiter before(Iterator i) :
+		(
+			call(* Iterator.hasNext(..)) ||
+			call(* Iterator.next(..))
+		) && target(i) {}
+
+	ere : create useiter* modify+ useiter
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The collection was modified while an iterator is being used.");
+	}
+}
+

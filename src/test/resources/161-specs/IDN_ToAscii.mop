@@ -1,0 +1,41 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the input to IDN.toASCII() should not be used in an
+ * internationalized domain name.
+ *
+ * IDN.toASCII(), which translates Unicode to ASCII, can fail when the given
+ * string cannot be used in an internationalized domain name.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/IDN.html#toASCII%28java.lang.String%29
+ *
+ * @severity error
+ */
+IDN_ToAscii() {
+	private boolean isAsciiSafe(String input) {
+		for (int i = 0; i < input.length(); ++i) {
+			int c = input.charAt(i);
+			if (c > 0x7f)
+				return false;
+		}
+		return true;
+	}
+
+	event toascii before(String input) :
+		(
+			call(* IDN.toASCII(String)) ||
+			call(* IDN.toASCII(String, int))
+		) && args(input, ..)
+	{
+		boolean safe = this.isAsciiSafe(input);
+
+		if (!safe) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The input to IDN.toASCII() should not be used in an internationalized domain name.");
+		}
+	}
+}
+

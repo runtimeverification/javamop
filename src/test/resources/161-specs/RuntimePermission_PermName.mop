@@ -1,0 +1,33 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if permission name is not in the format.
+ *
+ * According to the manual, an asterisk may appear at the end of the name, following a "."
+ * or by itself.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/RuntimePermission.html
+ *
+ * @severity error
+ */
+ 
+RuntimePermission_PermName() {
+	event constructor_runtimeperm after(String name) returning(RuntimePermission r): 
+		call(RuntimePermission.new(String)) && args(name) {
+			int index = name.indexOf("*");
+			if(index != -1 && name.length() > 1){
+				if(index != name.length() - 1){
+					RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+					RVMLogging.out.println(Level.CRITICAL, "The permission name for RuntimePermission is invalid");
+				} else if (name.charAt(index - 1) != '.'){
+					RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+					RVMLogging.out.println(Level.CRITICAL, "The permission name for RuntimePermission is invalid");
+				}
+			}
+		}
+}
+

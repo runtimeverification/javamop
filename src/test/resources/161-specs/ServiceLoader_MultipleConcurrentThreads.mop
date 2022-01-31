@@ -1,0 +1,48 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a ServiceLoader object is used by multiple threads.
+ *
+ * Instances of ServiceLoader class are not safe for use by multiple
+ * concurrent threads.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html
+ *
+ * This property warns if a ServiceLoader object is ever used by multiple
+ * threads. This condition is harsher than the documentation in the sense that
+ * this property warns non-concurrent use of the object.
+ *
+ * @severity warning
+ */
+
+ServiceLoader_MultipleConcurrentThreads(ServiceLoader s) {
+	Thread t;
+	
+	creation event create after(Thread t2) returning(ServiceLoader s) :
+		call(ServiceLoader ServiceLoader+.load*(..)) && thread(t2) {
+			this.t = t2; 
+		}
+
+	event gooduse before(ServiceLoader s, Thread t2) :
+		(
+			call(* ServiceLoader+.iterator()) ||
+			call(* ServiceLoader+.reload())
+		) && target(s) && thread(t2) && condition(this.t == t2) {}
+
+	event baduse before(ServiceLoader s, Thread t2) :
+		(
+			call(* ServiceLoader+.iterator()) ||
+			call(* ServiceLoader+.reload())
+		) && target(s) && thread(t2) && condition(this.t != t2) {}
+
+	ere : create gooduse* baduse
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A ServiceLoader object has been used by multiple threads.");
+	}
+}
+

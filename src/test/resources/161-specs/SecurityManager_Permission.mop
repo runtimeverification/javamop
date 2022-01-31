@@ -1,0 +1,32 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.security.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the context argument to checkPermission method is not from getSecurityContext method call. 
+ *
+ * According to the manual, the context must be a security context returned by a previous call to getSecurityContext.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/SecurityManager.html#checkPermission%28java.security.Permission,%20java.lang.Object%29
+ *
+ * @severity error
+ */
+SecurityManager_Permission(SecurityManager manager, Object context) {
+	event get after(SecurityManager manager) returning(Object context) :
+		call (* SecurityManager.getSecurityContext(..)) && target(manager){
+		}
+
+	event check before(SecurityManager manager, Object context) : 
+		call(* SecurityManager.checkPermission(Permission, Object)) && target(manager) && args(.., context) {
+		}
+
+	ere: get (get | check)*
+	@fail{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The context argument to checkPermission must come from getSecurityContext method call.");
+	}
+}
+

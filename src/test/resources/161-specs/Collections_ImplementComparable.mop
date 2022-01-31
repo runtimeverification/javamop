@@ -1,0 +1,67 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the argument of Collections.sort(List<T>) is not comparable.
+ *
+ * All elements in the argument of Collections.sort(List<T>) must implement
+ * the Comparable interface, and they must be mutually comparable.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#sort%28java.util.List%29
+ *
+ * Similarly, the argument of Collections.min(Collection<T>) and
+ * Collections.max(Collection<T>) must satisfy the same requirements.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#min%28java.util.Collection%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#max%28java.util.Collection%29
+ *
+ * This property verifies that each element implements the Comparable
+ * interface, and if comparing each pair of elements does not raise a
+ * ClassCastException. This property requires O(n^2) time for n elements.
+ *
+ * @severity error
+ */
+
+Collections_ImplementComparable() {
+	private void validate(Object[] arr, String msg)
+	{
+		for (int i = 0; i < arr.length; ++i) {
+			// Each element must implement the Comparable interface.
+			Object o1 = arr[i];
+			if (!(o1 instanceof Comparable)) {
+				RVMLogging.out.println(Level.CRITICAL, msg);
+				RVMLogging.out.println(Level.CRITICAL, i + "-th element does not implement the Comparable interface.");
+			}
+			Comparable c1 = (Comparable)o1;
+
+			// All elements must be mutually comparable.
+			for (int j = i + 1; j < arr.length; ++j) {
+				try {
+					Comparable c2 = (Comparable)arr[j];
+					c1.compareTo(c2);
+					c2.compareTo(c1);
+				}
+				catch (ClassCastException e) {
+					RVMLogging.out.println(Level.CRITICAL, msg);
+					RVMLogging.out.println(Level.CRITICAL, i + "-th element and " + j + "-th element are not comparable.");
+				}
+			}
+		}
+	}
+
+	event invalid_sort before(List list) :
+		call(void Collections.sort(List)) && args(list) {
+		this.validate(list.toArray(), __DEFAULT_MESSAGE);
+	}
+
+	event invalid_minmax before(Collection col) :
+		(
+			call(* Collections.min(Collection)) ||
+			call(* Collections.max(Collection))
+		) && args(col) {
+		this.validate(col.toArray(), __DEFAULT_MESSAGE);
+	}
+}
+

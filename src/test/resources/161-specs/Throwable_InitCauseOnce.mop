@@ -1,0 +1,41 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a Throwable object initializes its cause more than once.
+ *
+ * According to the manual, initCause can be called at most once.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Throwable.html#initCause%28java.lang.Throwable%29
+ *
+ * @severity error
+ */
+
+Throwable_InitCauseOnce(Throwable t){
+	event createWithoutThrowable after() returning(Throwable t) :
+		call(Throwable+.new()) || call(Throwable+.new(String)) {}
+
+	event createWithThrowable after() returning(Throwable t) :
+		call(Throwable+.new(String, Throwable)) || call(Throwable+.new(Throwable)) {}
+
+	event initCause before(Throwable t) : 
+        call(* Throwable+.initCause(..)) && target(t) {}
+
+    ere : (createWithoutThrowable initCause initCause+) | (createWithThrowable initCause+)  
+
+	@match{
+           RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+           RVMLogging.out.println(Level.WARNING, "initCause should not be called more than once.");
+	}
+}
+		
+
+
+
+
+
+

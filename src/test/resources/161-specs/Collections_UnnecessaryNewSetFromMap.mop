@@ -1,0 +1,33 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if Collections.newSetFromMap() is invoked on HashMap or TreeMap.
+ *
+ * There is no need to use Collections.newSetFromMap() on a Map implementation
+ * that already has a corresponding Set imeplementation (such as HashMap or
+ * TreeMap).
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#newSetFromMap%28java.util.Map%29
+ *
+ * This property warns if newSetFromMap() is invoked on either HashMap or
+ * TreeMap. Since calling newSetFromMap() does not do any harm, a violation is
+ * merely suggestive.
+ *
+ * @severity suggestion
+ */
+
+Collections_UnnecessaryNewSetFromMap() {
+	event unnecessary before() :
+		call(* Collections.newSetFromMap(Map)) &&
+		(
+			args(HashMap) ||
+			args(TreeMap)
+		) {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "There is no need to use Collections.newSetFromMap() on HashMap or TreeMap.");
+	}
+}
+

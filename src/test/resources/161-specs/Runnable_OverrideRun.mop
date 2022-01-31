@@ -1,0 +1,33 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a class is runnable without overriding run() method.
+ *
+ * According to the manual, runnable class must provide its own run() method.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Runnable.html
+ *
+ * @severity error
+ */
+Runnable_OverrideRun() {
+	event staticinit after() : staticinitialization(Runnable+) {
+		org.aspectj.lang.Signature initsig = __STATICSIG;
+		Class klass = initsig.getDeclaringType();		
+
+		if (klass != null) {
+			Method m;
+			try{
+				m = klass.getMethod("run");
+			} catch (NoSuchMethodException e){
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "A Runnable class should provide/override run() method.");
+			}
+		}
+	}
+}
+

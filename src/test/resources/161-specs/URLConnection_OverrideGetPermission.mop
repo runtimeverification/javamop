@@ -1,0 +1,53 @@
+package mop;
+
+import java.net.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a subclass of URLConnection does not override getPermission().
+ *
+ * Subclasses of URLConnection should override the default implementation of
+ * getPermission().
+ * http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#getPermission%28%29
+ *
+ * This property warns if a class or one of its superclass does not override
+ * getPermission().
+ *
+ * @severity error
+ */
+
+URLConnection_OverrideGetPermission() {
+	event staticinit after() : staticinitialization(URLConnection+) {
+		org.aspectj.lang.Signature initsig = __STATICSIG;
+		Class klass = initsig.getDeclaringType();		
+
+		Method overriden = null;
+		while (klass != null && !klass.getName().equals("java.net.URLConnection")) {
+			try {
+				for (Method m : klass.getDeclaredMethods()) {
+					if (!m.getName().equals("getPermission"))
+						continue;
+					if (m.getParameterTypes().length != 0)
+						continue;
+
+					overriden = m;
+					break;
+				}
+				if (overriden != null)
+					break;
+			}
+			catch (SecurityException e) {
+			}
+
+			klass = klass.getSuperclass();
+		}
+
+		if (overriden == null) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "A URLConnection class should override the getPermission() method.");
+		}
+	}
+}
+

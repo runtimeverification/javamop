@@ -1,0 +1,46 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a single thread attempts to use both a PipedInputStream instance
+ * and a PipedOutputStream instance.
+ *
+ * As Java compilers and runtime do not detect the violation of this property
+ * and violating it may lead to deadlock, it is encouraged to enable this
+ * property.
+ *
+ * According to the manual, attempting to use both objects from a single
+ * thread is not recommended, as it may deadlock the thread.
+ * http://download.oracle.com/javase/6/docs/api/java/io/PipedInputStream.html
+ *
+ * This property warns if that attempt is detected.
+ *
+ * @severity warning
+ */
+PipedStream_SingleThread(PipedInputStream i, PipedOutputStream o, Thread t) {
+	creation event create1 after(PipedOutputStream o) returning(PipedInputStream i) :
+		call(PipedInputStream+.new(PipedOutputStream+)) && args(o) {}
+	creation event create2 before(PipedInputStream i, PipedOutputStream o) :
+		call(* PipedInputStream+.connect(PipedOutputStream+)) && target(i) && args(o) {}
+	creation event create3 after(PipedInputStream i) returning(PipedOutputStream o) :
+		call(PipedOutputStream+.new(PipedInputStream+)) && args(i) {}
+	creation event create4 before(PipedOutputStream o, PipedInputStream i) :
+		call(* PipedOutputStream+.connect(PipedInputStream+)) && target(o) && args(i) {}
+
+	event write before(PipedOutputStream o, Thread t) :
+		call(* OutputStream+.write(..)) && target(o) && thread(t) {}
+
+	event read before(PipedInputStream i, Thread t) :
+		call(* InputStream+.read(..)) && target(i) && thread(t) {}
+
+	ere: (create1 | create2 | create3 | create4) (write* | read*)
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A single thread attempted to use both a PipedInputStream instance and a PipedOutputStream instance, which may deadlock the thread.");
+	}
+}
+

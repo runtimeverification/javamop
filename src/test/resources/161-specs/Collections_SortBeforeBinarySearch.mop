@@ -1,0 +1,75 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if binarySearch() is invoked on an unsorted list.
+ *
+ * Before calling binarySearch(), the list must be sorted into ascending
+ * order.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#binarySearch%28java.util.List,%20T%29
+ *
+ * This property verifies that sort() is invoked before calling
+ * binarySearch(), and no modifications are applied in between two calls.
+ *
+ * Since a list can be sorted without using sort(), this property may report a
+ * false warning.
+ *
+ * @severity error
+ */
+
+Collections_SortBeforeBinarySearch(List list) {
+	Comparator comp = null;
+
+	event sort1 before(List list) :
+		call(void Collections.sort(List)) && args(list) {}
+	event sort2 before(List list, Comparator comp2) :
+		call(void Collections.sort(List, Comparator)) && args(list, comp2) {
+		this.comp = comp2;
+	}
+
+	event modify before(List list) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.retain*(..)) ||
+			call(* List+.set(..))
+		) && target(list) {}
+
+	event bsearch1 before(List list) :
+		call(int Collections.binarySearch(List, Object)) && args(list, ..) {}
+	event bsearch2 before(List list, Comparator comp2) :
+		call(int Collections.binarySearch(List, Object, Comparator)) && args(list, .., comp2) &&
+		condition(this.comp == comp2) {}
+	event bad_bsearch2 before(List list, Comparator comp2) :
+		call(int Collections.binarySearch(List, Object, Comparator)) && args(list, .., comp2) &&
+		condition(this.comp != comp2) {}
+
+	fsm :
+		unsorted [
+			sort1 -> sorted1
+			sort2 -> sorted2
+			modify -> unsorted
+		]
+		sorted1 [
+			sort1 -> sorted1
+			sort2 -> sorted2
+			modify -> unsorted
+			bsearch1 -> sorted1
+		]
+		sorted2 [
+			sort1 -> sorted1
+			sort2 -> sorted2
+			modify -> unsorted
+			bsearch2 -> sorted2
+		]
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The list must be sorted prior to making binarySearch() call.");
+	}
+}
+

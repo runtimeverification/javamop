@@ -1,0 +1,28 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the destination list of Arrays.copy() is not as long as the source
+ * list.
+ *
+ * Collections.copy() requires that the destination list be as long as the
+ * source list.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#copy%28java.util.List,%20java.util.List%29
+ *
+ * This property checks the lengths of two lists.
+ *
+ * @severity error
+ */
+
+Collections_CopySize() {
+	event bad_copy before(List dest, List src) :
+		call(void Collections.copy(List, List)) && args(dest, src) &&
+		condition(dest.size() < src.size()) {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The destination list must be at least as long as the source list.");
+	}
+}
+

@@ -1,0 +1,98 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Raises an error if mark() is invalidated by reading.
+ *
+ * Some subclasses of InputStream support mark() but the mark position can be
+ * invalidated.
+ * http://download.oracle.com/javase/6/docs/api/java/io/InputStream.html#reset%28%29
+ *
+ * BufferedInputStream support mark() and reset(), but after reading the
+ * specified number of bytes, the mark is not preserved and, consequently,
+ * calling reset() is prevented.
+ *
+ * As for DataInputStream and LineNumberInputStream, mark() and reset() rely
+ * on the underlying stream. Therefore, one cannot assume that the mark for
+ * these classes is not invalidated.
+ *
+ * This specification keeps track of validity of the mark, and raises an error
+ * when the mark is invalidated and read() is invoked.
+ *
+ * @severity error
+ */
+
+InputStream_ReadAheadLimit(InputStream i) {
+	int limit = 0;
+	int rest = 0;
+	String LOC = null;
+
+	creation event mark before(InputStream i, int l) : 
+		call(* InputStream+.mark(int)) && target(i) && args(l) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {
+		this.limit = l;
+		this.rest = l;
+	}
+
+	event read1 after(InputStream i) returning(int n) :
+		call(* InputStream+.read()) && target(i) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {
+		if (n != -1) {
+			this.rest -= 1;
+			if (this.rest < 0)
+				this.LOC = __LOC;
+		}
+	}
+
+	event readn after(InputStream i) returning(int n) :
+		call(* InputStream+.read(char[], ..)) && target(i) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {
+		if (n != -1) {
+			this.rest -= n;
+			if (this.rest < 0)
+				this.LOC = __LOC;
+		}
+	}
+
+	event badreset before(InputStream i) : 
+		call(* InputStream+.reset(..)) && target(i) && condition(rest < 0) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {
+		this.limit = 0;
+		this.rest = 0;
+	}
+
+	event goodreset before(InputStream i) : 
+		call(* InputStream+.reset(..)) && target(i) && condition(rest >= 0) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {
+		this.rest = this.limit;
+	}
+
+	ere : (mark | read1 | readn | goodreset)* badreset+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The position mark has been invalidated.");
+		if (this.LOC != null) {
+			RVMLogging.out.println(Level.CRITICAL, "read() at line " + this.LOC + " invalidated the mark.");
+		}
+	}
+}
+

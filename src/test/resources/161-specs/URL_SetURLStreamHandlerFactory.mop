@@ -1,0 +1,26 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if URL.setURLStreamHandlerFactory() is called multiple times.
+ *
+ * This method can be called at most once in a given Java Virtual Machine.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/URL.html#setURLStreamHandlerFactory%28java.net.URLStreamHandlerFactory%29
+ *
+ * @severity error
+ */
+URL_SetURLStreamHandlerFactory() {
+	event set before() :
+		call(* URL.setURLStreamHandlerFactory(..)) {}
+
+	ere : set set+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "URL.setURLStreamHandlerFactory() can be called at most once in a given Java Virtual Machine.");
+	}
+}
+

@@ -1,0 +1,45 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if null key or value is inserted.
+ *
+ * According to the manual, the returned map from environment() does not permit null keys or values.  
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/ProcessBuilder.html
+ * Attempting to insert or query the presence of a null key or value will throw an exception.
+ *
+ * @severity error
+ */
+
+ProcessBuilder_NullKeyOrValue(Map map){
+	creation event createMap after() returning(Map map) : 
+        call(* ProcessBuilder.environment()) {}
+              
+	event nullPut before(Map map, Object key, Object value) : 
+        call(* Map.put(..)) && args(key, value) && target(map) && condition(key == null || value == null){}
+
+	event nullPut before(Map map, Map map2) : 
+        call(* Map.putAll(Map)) && args(map2) && target(map) && condition(map2.containsKey(null) || map2.containsValue(null)){}
+
+	event nullQuery before(Map map, Object o) : 
+	    (call(* Map.containsKey(..)) || call(* Map.containsValue(..)) || call(* Map.get(..)) || call(* Map.remove(..))) && target(map) && args(o) && condition(o == null){}
+
+    ere : createMap (nullPut | nullQuery)+ 
+
+	@match{
+           RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+           RVMLogging.out.println(Level.WARNING, "null key or value is not permitted in the map from ProcessBuilder.environment()");
+	}
+}
+		
+
+
+
+
+
+

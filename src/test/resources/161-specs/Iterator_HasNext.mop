@@ -1,0 +1,39 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if next() is invoked when hasNext() is not invoked or returns false.
+ *
+ * This property requires that hasNext() be called before next() and that
+ * hasNext() return true. It is a modification of the HasNext property from
+ * tracematches (see ECOOP'07 http://abc.comlab.ox.ac.uk/papers), with the
+ * modification requiring hasNext() to return true.
+ *
+ * This property may raise a false positive because one may safely call next()
+ * multiple times after retrieving the actual number of elements.
+ *
+ * @severity warning
+ */
+
+Iterator_HasNext(Iterator i) {
+	event hasnexttrue after(Iterator i) returning(boolean b) :
+		call(* Iterator+.hasNext())
+		&& target(i) && condition(b) { }
+	event hasnextfalse after(Iterator i) returning(boolean b) :
+		call(* Iterator+.hasNext())
+		&& target(i) && condition(!b) { }
+	event next before(Iterator i) :
+		call(* Iterator+.next())
+		&& target(i) { }
+
+	ltl: [](next => (*) hasnexttrue)
+
+	@violation {
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "Iterator.hasNext() was not called before calling next().");
+	}
+}
+

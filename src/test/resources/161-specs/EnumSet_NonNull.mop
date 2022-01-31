@@ -1,0 +1,34 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if null is added to an EnumSet object.
+ *
+ * EnumSet does not permit null elements.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/EnumSet.html
+ *
+ * This property warns if null is about to be inserted.
+ *
+ * @severity error
+ */
+
+EnumSet_NonNull() {
+	event insertnull before(Object e) :
+		call(* EnumSet+.add(Object)) && args(e) && condition(e == null) {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "EnumSet does not permit null.");
+	}
+	event insertnull before(Collection c) :
+		call(* EnumSet+.addAll(Collection)) && args(c) {
+		for (Object elem : c) {
+			if (elem == null){
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "EnumSet does not permit null.");
+			}
+		}
+	}
+}
+

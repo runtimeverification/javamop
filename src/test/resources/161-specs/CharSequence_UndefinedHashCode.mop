@@ -1,0 +1,31 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.nio.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if one tries to use equals or hashCode method of a CharSequence instance.  
+ * 
+ * According to the manual, this inferface does not refine the general contracts of the
+ * equals and hashCode methods.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/CharSequence.html
+ * User should check whether the instance of CharSequence that he/she tries to use supports
+ * those methods.
+ * 
+ * @severity warning
+ */
+
+CharSequence_UndefinedHashCode() {
+	event equals before() : call(* CharSequence+.equals(..)) && !target(String) && !target(CharBuffer){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "equals and hashCode methods might not be supported in CharSequence"); 
+	}
+	
+	event hashCode before() : call(* CharSequence+.hashCode(..)) && !target(String) && !target(CharBuffer){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "equals and hashCode methods might not be supported in CharSequence"); 
+	}
+}

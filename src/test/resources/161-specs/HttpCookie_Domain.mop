@@ -1,0 +1,74 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the domain of an HttpCookie object has invalid character.
+ *
+ * The domain name (or pattern), the only parameter of HttpCookie.setDomain(),
+ * should be in the form specified by RFC 2965.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/HttpCookie.html#setDomain%28java.lang.String%29
+ *
+ * According to RFC 2965, the domain value can be either a token or a
+ * quoted-string. A token is defined as follows:
+ *
+ *      token      = 1*<any CHAR except CTLs or separators>
+ *      CHAR       = <any US-ASCII character (octets 0 - 127)>
+ *      CTL        = <any US-ASCII control character
+ *                   (octets 0 - 31) and DEL (127)>
+ *      separators = "(" | ")" | "<" | ">" | "@"
+ *                 | "," | ";" | ":" | "\" | <">
+ *                 | "/" | "[" | "]" | "?" | "="
+ *                 | "{" | "}" | SP | HT
+ *
+ * Since a quoted-string is not defined in RFC 2965, this property assumes a
+ * quoted-string is a sequence of CHARs surrounded by double-quotes.
+ *
+ * @severity error
+ */
+
+HttpCookie_Domain() {
+	event setdomain before(String domain) :
+		call(void HttpCookie.setDomain(String)) && args(domain)
+	{
+		String separators = "()<>@,;:\\\"/[]?={} \t";
+
+		char ch = '0';
+		boolean quoted = false;
+		boolean outofrange = false;
+		boolean hasctrl = false;
+		boolean hassep = false;
+
+		if (domain.length() >= 2 && domain.charAt(0) == '"' && domain.charAt(domain.length() - 1) == '"') {
+			quoted = true;
+			domain = domain.substring(1, domain.length() - 1);
+		}
+
+		for (int i = 0; i < domain.length(); ++i) {
+			ch = domain.charAt(i);
+
+			if (!(0 <= ch && ch <= 127)) {
+				outofrange = true;
+				break;
+			}
+			else if (quoted) {
+				if (ch <= 31 || ch == 127) {
+					hasctrl = true;
+					break;
+				}
+				else if (separators.indexOf(ch) != -1) {
+					hassep = true;
+					break;
+				}
+			}
+		}
+
+		if (outofrange || hasctrl || hassep) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The specified domain '" + domain + "' is invalid; it cannot contain '" + ch + "'.");
+		}
+	}
+}
+

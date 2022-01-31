@@ -1,0 +1,68 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a map is modified while an iterator is being used.
+ *
+ * If the map is modified while an iteration over the set/collection is in
+ * progress (except through the iterator's own remove() operation), the
+ * results of the iteration are undefined. The set/collection supports element
+ * removal, which removes the corresponding mapping from the map, via the
+ * Iterator.remove(), Set.remove(), removeAll(), retainAll(), and clear()
+ * operations. However, it does not support the add() or addAll() operations.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#entrySet%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#keySet%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#values%28%29
+ *
+ * This property warns if a map is modified or the returned set performs add()
+ * or addAll() operations while an iterator is being used.
+ *
+ * @severity error
+ */
+
+Map_UnsafeIterator(Map m, Collection c, Iterator i) {
+	creation event getset after(Map m) returning(Collection c) :
+		(
+			call(Set Map+.keySet()) ||
+			call(Set Map+.entrySet()) ||
+			call(Collection Map+.values())
+		) && target(m) {}
+
+	event getiter after(Collection c) returning(Iterator i) :
+		call(Iterator Iterable+.iterator()) && target(c) {}
+
+	event modifyMap before(Map m) :
+		(
+			call(* Map+.clear*(..)) ||
+			call(* Map+.put*(..)) ||
+			call(* Map+.remove(..))
+		) && target(m) {}
+
+	event modifyCol before(Collection c) :
+		(
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.offer*(..)) ||
+			call(* Collection+.pop(..)) ||
+			call(* Collection+.push(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(c) {}
+
+	event useiter before(Iterator i) :
+		(
+			call(* Iterator.hasNext(..)) ||
+			call(* Iterator.next(..)) 
+		) && target(i) {}
+
+	ere : getset (modifyMap | modifyCol)* getiter useiter* (modifyMap | modifyCol)+ useiter
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The map was modified while an iteration over the set is in progress.");
+	}
+}
+

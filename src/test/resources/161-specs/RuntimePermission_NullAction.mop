@@ -1,0 +1,24 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if actions in the constructor of RuntimePermission is not null.
+ *
+ * According to the manual, the actions string is currently unused and should be null. 
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/RuntimePermission.html#RuntimePermission%28java.lang.String,%20java.lang.String%29
+ *
+ * @severity warning
+ */
+ 
+RuntimePermission_NullAction() {
+	event constructor_runtimeperm after(String name, String actions) returning(RuntimePermission r): 
+		call(RuntimePermission.new(String, String)) && args(name, actions) && condition(actions != null) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The actions string should be null.");
+		}
+}
+
