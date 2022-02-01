@@ -28,13 +28,19 @@ public class MOPProcessor {
     public static boolean verbose = false;
     
     private final String name;
+    private final String id;
 
     /**
      * Construct a MOPProcessor.
      * @param name The name of the processor.
      */
-    public MOPProcessor(String name) {
+    public MOPProcessor(String name, String id) {
         this.name = name;
+        this.id = id;
+    }
+
+    public MOPProcessor(String name) {
+        this(name, "magicID");
     }
 
     /**

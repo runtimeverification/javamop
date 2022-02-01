@@ -96,9 +96,9 @@ public class EventManager {
                         AdviceAndPointCut newAdvice = new AdviceAndPointCut(spec, event,
                                 combinedAspect);
                         //using the existing pointcut if there is any
-//                        if (cachedAdvice != null) {
-//                            newAdvice = newAdvice.clone(cachedAdvice);
-//                        }
+                        if (cachedAdvice != null) {
+                            newAdvice = newAdvice.clone(cachedAdvice);
+                        }
                         advices.add(newAdvice);
                     }
                 }

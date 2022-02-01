@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class PointcutComparator {
 
     public boolean compare(PointCut p1, PointCut p2){
-        return p1.toString().equals(p2.toString());
+        return p1.toRVString().equals(p2.toRVString());
     }
 
     public boolean compare(ArgsPointCut p1, ArgsPointCut p2){

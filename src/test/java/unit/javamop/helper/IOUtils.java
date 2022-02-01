@@ -31,7 +31,7 @@ public class IOUtils {
     }
 
     public static String deleteNewLines(String stringWithNewLines) {
-        return stringWithNewLines.replaceAll("[\r\n]", "");
+        return stringWithNewLines.replaceAll("[\r\n\\s+]", "");
     }
 
     public static List<String> getFilesInDir(String dir) {
@@ -43,7 +43,7 @@ public class IOUtils {
                 boolean retval = false;
                 if (name.endsWith(".mop")) {
                     retval = true;
-                    filenames.add(dir + File.separator + name);
+                    filenames.add(dir + name);
                 }
                 return retval;
             }

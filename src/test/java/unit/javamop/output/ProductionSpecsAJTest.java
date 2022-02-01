@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class ProductionSpecsTest {
+public class ProductionSpecsAJTest {
     public static final String resourcePath = "src" + File.separator + "test" + File.separator
             + "resources" + File.separator;
     public static final String pathToMopFiles = resourcePath + "161-specs" + File.separator;
@@ -30,7 +30,6 @@ public class ProductionSpecsTest {
     private MOPSpecFile inputAST;
 
     private String output_AJ_FilePath;
-    private String output_RVM_FilePath;
 
     private String mopFilePath;
     private String specName;
@@ -41,12 +40,12 @@ public class ProductionSpecsTest {
 
     private MOPProcessor processor;
 
-    public ProductionSpecsTest(String inputMOPFile) {
+    public ProductionSpecsAJTest(String inputMOPFile) {
         this.mopFilePath = inputMOPFile;
         String specFileName = mopFilePath.substring(mopFilePath.lastIndexOf(File.separator) + 1);
         this.specName = specFileName.substring(0, specFileName.lastIndexOf("."));
 
-        processor = new MOPProcessor(this.specName);
+        processor = new MOPProcessor(this.specName, "ProductionSpecsAJTest");
         MOPNameSpace.init();
 
         try {
@@ -55,7 +54,6 @@ public class ProductionSpecsTest {
             e.printStackTrace();
         }
         this.output_AJ_FilePath = pathToExpectedFiles + specName + "MonitorAspect.aj";
-        this.output_RVM_FilePath = pathToExpectedFiles + specName + ".rvm";
     }
 
     @Parameterized.Parameters
@@ -65,17 +63,6 @@ public class ProductionSpecsTest {
             result.add( new Object[] {file});
         }
         return result;
-    }
-
-    @Test
-    public void testRVMFileGeneration() throws Exception {
-        String actualRVString = IOUtils.deleteNewLines(processor.generateRVFile(this.inputAST));
-        actualRVString = Tool.changeIndentation(actualRVString, "", "\t");
-        String expectedRVString = IOUtils.deleteNewLines(IOUtils.readFile(this.output_RVM_FilePath));
-        expectedRVString = Tool.changeIndentation(expectedRVString, "", "\t");
-
-        assertEquals("The generated RV String for spec " + this.mopFilePath +
-                " is not as expected", expectedRVString, actualRVString);
     }
 
     @Test
