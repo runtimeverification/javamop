@@ -1,0 +1,27 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+NavigableSet_Modification(NavigableSet s1, NavigableSet s2, Iterator i) {
+	creation event create(NavigableSet s1, NavigableSet s2){
+	}
+	event getiter1(NavigableSet s1, Iterator i){
+	}
+	event getiter2(NavigableSet s2, Iterator i){
+	}
+	event modify1(NavigableSet s1){
+	}
+	event modify2(NavigableSet s2){
+	}
+	event useiter(Iterator i){
+	}
+	ere:  create (modify1 | modify2)* (getiter1 | getiter2) useiter* (modify1 | modify2)+ useiter
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The NavigableSet was modified while an iteration over a NavigableSet that shares the same storage.");
+	}
+}

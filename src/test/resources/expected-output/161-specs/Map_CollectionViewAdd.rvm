@@ -1,0 +1,19 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Map_CollectionViewAdd(Map m, Collection c) {
+	creation event getset(Map m, Collection c){
+	}
+	event add(Collection c){
+	}
+	ere:  getset add+
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A collection/set view of a map does not support add()/addAll().");
+	}
+}

@@ -1,0 +1,36 @@
+package mop;
+
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ShutdownHook_SystemExit(Thread t) {
+	creation event register(Thread t){
+	}
+	creation event unregister(Thread t){
+	}
+	event start(Thread t){
+	}
+	event exit(Thread t){
+		__SKIP;
+	}
+	fsm:
+	unregistered [
+	register -> registered
+	]
+	registered [
+	unregister -> unregistered
+	start -> started
+	]
+	started [
+	exit -> unsafe
+	]
+	unsafe [
+	exit -> unsafe
+	]
+
+	@unsafe
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Invoking System.exit() in a shutdown hook was suppressed because it may lead to deadlocks.");
+	}
+}

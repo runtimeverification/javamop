@@ -1,0 +1,22 @@
+package mop;
+
+import java.util.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Map_ItselfAsKey() {
+	event put(Map map, Object key, Object value){
+		if (key == map) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "A map cannot contain itself as a key.");
+		}
+	}
+	event putall(Map map, Map src){
+		for (Map.Entry entry : (Set<Map.Entry>) src.entrySet()) {
+			if (entry.getKey() == map) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "A map cannot contain itself as a key.");
+			}
+		}
+	}
+}

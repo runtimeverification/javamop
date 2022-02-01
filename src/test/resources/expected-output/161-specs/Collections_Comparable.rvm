@@ -1,0 +1,30 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Collections_Comparable() {
+
+	private void validate(Object[] arr, Comparator comp, String msg) {
+		for (int i = 0; i < arr.length; ++i) {
+			Object o1 = arr[i];
+			for (int j = i + 1; j < arr.length; ++j) {
+				Object o2 = arr[j];
+				try {
+					comp.compare(o1, o2);
+					comp.compare(o2, o1);
+				} catch (ClassCastException e) {
+					RVMLogging.out.println(Level.CRITICAL, msg);
+					RVMLogging.out.println(Level.CRITICAL, i + "-th element and " + j + "-th element are not comparable.");
+				}
+			}
+		}
+	}
+	event invalid_sort(List list, Comparator comp){
+		this.validate(list.toArray(), comp, __DEFAULT_MESSAGE);
+	}
+	event invalid_minmax(Collection col, Comparator comp){
+		this.validate(col.toArray(), comp, __DEFAULT_MESSAGE);
+	}
+}

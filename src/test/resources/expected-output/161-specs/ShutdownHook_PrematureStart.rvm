@@ -1,0 +1,42 @@
+package mop;
+
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ShutdownHook_PrematureStart(Thread t) {
+	creation event good_register(Thread t){
+		if ( ! (t.getState() == Thread.State.NEW) ) {
+			return false;
+		}
+		{
+		}
+	}
+	creation event bad_register(Thread t){
+		if ( ! (t.getState() != Thread.State.NEW) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event unregister(Thread t){
+	}
+	event userstart(Thread t){
+	}
+	fsm:
+	unregistered [
+	good_register -> registered
+	bad_register -> err
+	]
+	registered [
+	unregister -> unregistered
+	userstart -> err
+	]
+	err [
+	]
+
+	@err
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A virtual-machine shutdown hook has been started by the user code.");
+	}
+}

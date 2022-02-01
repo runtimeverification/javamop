@@ -1,0 +1,27 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ServerSocket_LargeReceiveBuffer(ServerSocket sock) {
+	creation event create_bound(ServerSocket sock){
+	}
+	creation event create_unbound(ServerSocket sock){
+	}
+	event bind(ServerSocket sock){
+	}
+	event set(ServerSocket sock, int size){
+		if ( ! (size > 65536) ) {
+			return false;
+		}
+		{
+		}
+	}
+	ere:  (create_bound | create_unbound set* bind+) set
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A receive window large than 64K bytes must be set before the server socket is bound.");
+	}
+}

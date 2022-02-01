@@ -1,0 +1,11 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Collections_UnnecessaryNewSetFromMap() {
+	event unnecessary(){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "There is no need to use Collections.newSetFromMap() on HashMap or TreeMap.");
+	}
+}

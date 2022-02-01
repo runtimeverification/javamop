@@ -1,0 +1,19 @@
+package mop;
+
+import java.util.*;
+import java.util.concurrent.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Deque_OfferRatherThanAdd(Deque q) {
+	creation event create(Deque q){
+	}
+	event add(Deque q){
+	}
+	ere:  create add+
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "When using a capacity-restricted deque, it is generally preferable to use offerFirst(), offerLast() and offer() instead of addFirt(), addLast() and add().");
+	}
+}

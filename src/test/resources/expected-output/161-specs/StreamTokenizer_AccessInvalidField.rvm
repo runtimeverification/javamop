@@ -1,0 +1,69 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+StreamTokenizer_AccessInvalidField(StreamTokenizer s) {
+	event nexttoken_word(StreamTokenizer s, int t){
+		if ( ! (t == StreamTokenizer.TT_WORD) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event nexttoken_num(StreamTokenizer s, int t){
+		if ( ! (t == StreamTokenizer.TT_NUMBER) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event nexttoken_eol(StreamTokenizer s, int t){
+		if ( ! (t == StreamTokenizer.TT_EOL) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event nexttoken_eof(StreamTokenizer s, int t){
+		if ( ! (t == StreamTokenizer.TT_EOF) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event sval(StreamTokenizer s){
+	}
+	event nval(StreamTokenizer s){
+	}
+	fsm:
+	valid [
+	nexttoken_word -> read_word
+	nexttoken_num -> read_num
+	nexttoken_eol -> valid
+	nexttoken_eof -> done
+	]
+	read_word [
+	sval -> read_word
+	nexttoken_word -> read_word
+	nexttoken_num -> read_num
+	nexttoken_eol -> valid
+	nexttoken_eof -> done
+	]
+	read_num [
+	nval -> read_num
+	nexttoken_word -> read_word
+	nexttoken_num -> read_num
+	nexttoken_eol -> valid
+	nexttoken_eof -> done
+	]
+	done [
+	]
+
+	@fail
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The caller attempted to read an invalidated value. " + __LOC);
+		__RESET;
+	}
+}

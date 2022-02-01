@@ -1,0 +1,16 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Object_MonitorOwner() {
+	event bad_notify(Object o){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "notify() and notifyAll() can be called only by the owner of this object's monitor.");
+	}
+	event bad_wait(Object o){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "wait() can be called only by the owner of this object's monitor.");
+	}
+}

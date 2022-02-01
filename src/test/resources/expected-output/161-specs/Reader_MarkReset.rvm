@@ -1,0 +1,15 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Reader_MarkReset() {
+	event mark(Reader r){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "PushbackReader, InputStreamReader, FileReader and PipedReader do not support mark() and reset().");
+	}
+	event reset(Reader r){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "PushbackReader, InputStreamReader, FileReader and PipedReader do not support mark() and reset().");
+	}
+}

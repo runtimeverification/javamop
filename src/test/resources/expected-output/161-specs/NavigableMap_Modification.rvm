@@ -1,0 +1,31 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+NavigableMap_Modification(NavigableMap m1, NavigableMap m2, Collection c, Iterator i) {
+	creation event create(NavigableMap m1, NavigableMap m2){
+	}
+	event getset1(NavigableMap m1, Collection c){
+	}
+	event getset2(NavigableMap m2, Collection c){
+	}
+	event getiter(Collection c, Iterator i){
+	}
+	event modify1(NavigableMap m1){
+	}
+	event modify2(NavigableMap m2){
+	}
+	event modify3(Collection c){
+	}
+	event useiter(Iterator i){
+	}
+	ere:  create (modify1 | modify2)* (getset1 | getset2) (modify1 | modify2 | modify3)* getiter useiter* (modify1 | modify2 | modify3)+ useiter
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The NavigableMap was modified while an iteration over a collection view of a NavigableMap that shares the same storage.");
+	}
+}

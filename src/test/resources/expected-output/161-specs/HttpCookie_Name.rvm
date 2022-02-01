@@ -1,0 +1,31 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+HttpCookie_Name() {
+	event construct(String name){
+		String separators = "()<>@,;:\\\"/[]?={} \t";
+		char ch = '0';
+		boolean outofrange = false;
+		boolean hasctrl = false;
+		boolean hassep = false;
+		for (int i = 0; i < name.length(); ++i) {
+			ch = name.charAt(i);
+			if (!(0 <= ch && ch <= 127)) {
+				outofrange = true;
+				break;
+			} else if (ch <= 31 || ch == 127) {
+				hasctrl = true;
+				break;
+			} else if (separators.indexOf(ch) != -1) {
+				hassep = true;
+				break;
+			}
+		}
+		if (outofrange || hasctrl || hassep) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The specified cookie name '" + name + "' is invalid; it cannot contain '" + ch + "'.");
+		}
+	}
+}
