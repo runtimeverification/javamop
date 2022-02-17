@@ -1,0 +1,155 @@
+options {
+ STATIC = false;
+ ERROR_REPORTING = true;
+}
+
+PARSER_BEGIN(EREParser)
+package com.runtimeverification.rvmonitor.logicrepository.plugins.ere.parser;
+
+import com.runtimeverification.rvmonitor.logicrepository.plugins.ere.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.io.*;
+
+public class EREParser {
+
+  public static void main(String[] args){
+    parse(args[0]);
+  }
+
+  public static EREParser parse(String input) {
+     Reader reader = new StringReader(input);
+     EREParser ereParser = new EREParser(reader);   
+
+     try{
+      ereParser.Start();
+	  }   
+     catch(Exception e){ 
+      System.err.println(e.getMessage());
+      System.exit(1);
+	  }   
+     return ereParser;
+  }
+
+  private ERE ere;
+
+  public ERE getERE(){
+    return ere;
+  }
+
+}
+
+PARSER_END(EREParser)
+
+SKIP : {
+    <WHITESPACE: [" ","\t","\r","\n"]>
+}
+
+TOKEN : {
+      <LPAREN : "(">
+    | <RPAREN : ")">
+    | <NEG : "~">
+    | <AND : "&">
+    | <OR  : "|" >
+    | <STAR  : "*" >
+    | <PLUS  : "+" >
+  	| <EPSILON : "epsilon" >
+    | <CARET : "^" >
+	  | <EMPTY : "empty" >
+	  | <SYMBOL : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_")*>
+    | <DIGIT : ["0"-"9"]>
+    | <LETTER : ["a"-"z","A"-"Z"]>
+}
+
+void Start() : {}
+{
+  ere = Ere() <EOF>
+}
+
+ERE Ere() : {
+  ERE sub1 = null;
+  ERE sub2 = null;
+  ArrayList<ERE> children;
+}
+{ 
+	{ children = new ArrayList<ERE>(); }
+   sub1 = And() {children.add(sub1);} 
+	( "|" sub2 = And()
+	    {children.add(sub2);}
+	)*
+	{ 
+	  if(children.size() == 1) return sub1;
+	  return Or.get(children);
+   }
+
+}
+
+ERE And() : {
+  ERE sub1;
+  ERE neg1;
+  ERE sub2;
+  ArrayList<ERE> children;
+}
+{  
+	{ children = new ArrayList<ERE>(); }
+   sub1 = Cat()  {neg1 = Negation.get(sub1); children.add(neg1);} 
+	( "&" sub2 = Cat()
+	    {children.add(Negation.get(sub2));}
+	)*
+	{
+	  if(children.size() == 1) return sub1;
+	  return Negation.get(Or.get(children));
+   }
+}
+
+ERE Cat() : {
+  ERE sub1;
+  ERE sub2;
+  ArrayList<ERE> children;
+}
+{
+   { children = new ArrayList<ERE>(); } 
+	sub1 = Unary() {children.add(sub1);}
+	( sub2 = Unary()
+	   {children.add(sub2);}
+	)*
+	{
+     if(children.size() == 1) return sub1;
+	  int size = children.size();
+	  ERE c = Concat.get(children.get(size - 2), children.get(size - 1)); 
+     for(int i = children.size() - 3; i >= 0; --i){
+       c = Concat.get(children.get(i), c); 
+	  }
+	  return c;
+	}
+}
+
+ERE Unary() : {
+  ERE sub;
+  Token name;
+  Token num;
+  Symbol s;
+  Epsilon ep;
+  Empty em;
+}
+{
+    "~" sub = Unary() {return Negation.get(sub);}
+  | name = <SYMBOL>  {s = Symbol.get(name.image);}
+                     [ ("+"                     {return Concat.get(s, Kleene.get(s));} 
+                       | "*"                    {return Kleene.get(s);}) 
+                       | "^" num = <DIGIT>      {return Repeat.get(s, new Integer(num.image));}
+                     ] 
+                    {return s;} 
+  |  "(" sub = Ere() ")" [ ("+" {return Concat.get(sub, Kleene.get(sub));} 
+                          | "*" {return Kleene.get(sub);}) ] 
+								        {return sub;}
+  |  "epsilon"       {ep = Epsilon.get();}
+                     [ ("+" {return Concat.get(ep, Kleene.get(ep));} 
+                     | "*"  {return Kleene.get(ep);}) ] 
+                            {return ep;}   
+  |  "empty"         {em = Empty.get();}
+                     [ ("+" {return Concat.get(em, Kleene.get(em));} 
+                     | "*"  {return Kleene.get(em);}) ] 
+                            {return em;}  
+}

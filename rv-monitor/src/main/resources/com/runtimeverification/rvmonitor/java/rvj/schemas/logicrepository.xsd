@@ -1,0 +1,38 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<xsd:element name="mop" type="LogicRepositoryType"/>
+
+<xsd:complexType name="LogicRepositoryType">
+	<xsd:sequence>
+		<xsd:element name="SpecName" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+        <xsd:element name="Client" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		<xsd:element name="Events" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		<xsd:element name="Property" type="PropertyType" minOccurs="0" maxOccurs="1"/>
+		<xsd:element name="Categories" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		<xsd:element name="CreationEvents" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		<xsd:element name="Message" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:element name="EnableSets" type="xsd:string" minOccurs="0" maxOccurs="1"/>		
+		<xsd:element name="Statistics" type="StatisticsType" minOccurs="0" maxOccurs="1"/>
+	</xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="PropertyType">
+	<xsd:sequence>
+		<xsd:element name="Logic" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="Formula" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+	</xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="StatisticsType">
+	<xsd:sequence>
+		<xsd:element name="TotalRVMCount" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="CurrentClient" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="ClientCount" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="CurrentLogic" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="LogicCount" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="ClientAndLogicCount" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+		<xsd:element name="TotalExecutionTime" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+	</xsd:sequence>
+</xsd:complexType>
+
+</xsd:schema>

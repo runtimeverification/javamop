@@ -1,0 +1,199 @@
+options {
+ STATIC = false;
+ ERROR_REPORTING = true;
+}
+
+PARSER_BEGIN(LTLParser)
+package com.runtimeverification.rvmonitor.logicrepository.plugins.ltl.parser;
+
+import com.runtimeverification.rvmonitor.logicrepository.plugins.ltl.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.io.*;
+
+public class LTLParser {
+  public static LTLParser parse(String input) {
+     Reader reader = new StringReader(input);
+     LTLParser ltlParser = new LTLParser(reader);   
+
+     try{
+      ltlParser.Start();
+     }   
+     catch(Exception e){ 
+      System.err.println(e.getMessage());
+      System.exit(1);
+     }   
+     return ltlParser;
+  }
+
+  private LTLFormula formula;
+
+  public LTLFormula getFormula(){
+    return formula;
+  }
+
+}
+
+PARSER_END(LTLParser)
+
+SKIP : {
+    <WHITESPACE: [" ","\t","\r","\n"]>
+}
+
+TOKEN : {
+      <LPAREN : "(">
+    | <RPAREN : ")">
+    | <NEG : "not">
+    | <AND : "and">
+    | <OR  : "or" >
+    | <XOR : "xor">
+    | <U   : "U"  >
+    | <DU  : "~U" >
+    | <R  : "R" >
+    | <S   : "S"  >
+    | <DS  : "~S" >
+    | <X   : "o"  >
+    | <DX  : "~o" >
+    | <Y   : "(*)">
+    | <DY  : "~(*)">
+    | <ALWAYS : "[]">
+    | <EVENTUALLY : "<>">
+    | <EVENTUALLY_PAST : "<*>">
+    | <TRUE   : "true">
+    | <FALSE  : "false">
+    | <ATOM : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_")*>
+    | <DIGIT : ["0"-"9"]>
+    | <LETTER : ["a"-"z","A"-"Z"]>
+}
+
+void Start() : {}
+{
+  formula = Formula() <EOF>
+}
+
+LTLFormula Formula() : {
+  LTLFormula subFormula1 = null;
+  LTLFormula subFormula2 = null;
+}
+{ 
+  //why did I bother to make actual
+  //node types for things that will just be lowered into
+  //other node types.  The parser should do the lowering
+  subFormula1 = OrFormula() 
+ ( "U" subFormula2 = OrFormula()
+    {return new Until(subFormula1,subFormula2);}
+ |  "~U" subFormula2 = OrFormula()
+    {return new DualUntil(subFormula1,subFormula2);}
+ |  "R" subFormula2 = OrFormula()
+    {return new DualUntil(subFormula1,subFormula2);}
+ |  "S" subFormula2 = OrFormula()
+    {return new Since(subFormula1,subFormula2);}
+ |  "~S" subFormula2 = OrFormula()
+    {return new DualSince(subFormula1,subFormula2);}
+ |    "=>" subFormula2 = OrFormula()
+    {return new Implication(subFormula1,subFormula2);}
+ |    "<=>" subFormula2 = OrFormula()
+    {return new IFF(subFormula1,subFormula2);}
+ )?
+ {return subFormula1;}
+
+}
+
+
+LTLFormula OrFormula() : {
+  LTLFormula subFormula1;
+  LTLFormula subFormula2;
+  ArrayList<LTLFormula> children;
+}
+{  
+   { children = new ArrayList<LTLFormula>(); }
+   subFormula1 = XOrFormula() {children.add(subFormula1);} 
+   ( "or" subFormula2 = XOrFormula()
+       {children.add(subFormula2);}
+   )*
+   { 
+     if(children.size() == 1) return subFormula1;
+     return new Or(children);
+   }
+}
+
+LTLFormula XOrFormula() : {
+  LTLFormula subFormula1;
+  LTLFormula subFormula2;
+  ArrayList<LTLFormula> children;
+}
+{  
+   { children = new ArrayList<LTLFormula>(); }
+   subFormula1 = AndFormula()  {children.add(subFormula1);}  
+   ( "xor" subFormula2 = AndFormula()
+       {children.add(subFormula2);}
+   )*
+   { 
+     if(children.size() == 1) return subFormula1;
+     return new XOr(children);
+   }
+}
+
+LTLFormula AndFormula() : {
+  LTLFormula subFormula1;
+  LTLFormula subFormula2;
+  ArrayList<LTLFormula> children;
+}
+{  
+   { children = new ArrayList<LTLFormula>(); }
+   subFormula1 = UnaryFormula()  {children.add(subFormula1);} 
+   ( "and" subFormula2 = UnaryFormula()
+       {children.add(subFormula2);}
+   )*
+   {
+     if(children.size() == 1) return subFormula1;
+     return new And(children);
+   }
+}
+
+
+LTLFormula UnaryFormula() : {
+  LTLFormula subFormula;
+  Token name;
+}
+{
+  "(" subFormula = Formula() ")" {return subFormula;}
+  | ("not" | "!") subFormula = UnaryFormula() {return new Negation(subFormula);}
+  | "o"   subFormula = UnaryFormula() {return new Next(subFormula);}
+  | "~o"  subFormula = UnaryFormula() {return new DualNext(subFormula);}
+  | "(*)" subFormula = UnaryFormula() {return new Previously(subFormula);}
+  | "~(*)"subFormula = UnaryFormula() {return new DualPreviously(subFormula);}
+  | "[]"  subFormula = UnaryFormula() {return new DualUntil(False.get(), subFormula); }
+  | "<>"  subFormula = UnaryFormula() {return new Until(True.get(), subFormula); } 
+  | "<*>" subFormula = UnaryFormula() {return new Since(True.get(), subFormula); }
+  | "true" {return True.get();} 
+  | "false" {return False.get();} 
+  | name = <ATOM> {return Atom.get(name.image);} 
+}
+
+
+
+/*  | LOOKAHEAD((<ATOM> | "true" | "false" | ")" | "(")* "and") subFormula1 = SimpleFormula() 
+    "and" subFormula2 = Formula()    {return new And(subFormula1, subFormula2);} 
+   | LOOKAHEAD((<ATOM> | "true" | "false" | ")" | "(")* "or") subFormula1 = SimpleFormula() 
+    "or" subFormula2 = Formula()    {return new Or(subFormula1, subFormula2);} 
+ | subFormula1 = SimpleFormula()    {return subFormula1;} 
+*/
+
+/*
+  | subFormula1 = SimpleFormula() 
+    "xor" subFormula2 = Formula()     {return new XOr(subFormula1, subFormula2);}
+  | subFormula1 = SimpleFormula() 
+    "U" subFormula2 = Formula()     {return new Until(subFormula1, subFormula2);}
+  | subFormula1 = SimpleFormula() 
+    "~U" subFormula2 = Formula()     {return new DualUntil(subFormula1, subFormula2);}
+  | subFormula1 = SimpleFormula() 
+    "S" subFormula2 = Formula()     {return new Since(subFormula1, subFormula2);}
+  | subFormula1 = SimpleFormula() 
+    "~S" subFormula2 = Formula()     {return new DualSince(subFormula1, subFormula2);}
+  | "o" subFormula1 = SimpleFormula()   {return new Next(subFormula1);}
+  | "~o" subFormula1 = SimpleFormula()   {return new DualNext(subFormula1);}
+  | "(*)" subFormula1 = SimpleFormula()   {return new Previously(subFormula1);}
+  | "~(*)" subFormula1 = SimpleFormula()   {return new DualPreviously(subFormula1);}*/
+  

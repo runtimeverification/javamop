@@ -1,0 +1,23 @@
+import com.runtimeverification.rvmonitor.logicrepository.plugins.ptltl._
+import com.runtimeverification.rvmonitor.logicrepository.plugins.ptltl.main._
+import com.runtimeverification.rvmonitor.logicrepository._ // ~/FSL/projects/MOP/trunk/lib/com.runtimeverification.rvmonitor.logicrepository.jar
+import com.runtimeverification.rvmonitor.logicrepository.LogicException._
+import com.runtimeverification.rvmonitor.logicrepository.Main._
+import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax._
+import com.runtimeverification.rvmonitor.logicrepository.plugins._
+
+package com.runtimeverification.rvmonitor.logicrepository.plugins.ptltl {
+  class PTLTLPlugin extends LogicPlugin {
+
+    def process(logicInputXML: com.runtimeverification.rvmonitor.logicrepositoryType) : com.runtimeverification.rvmonitor.logicrepositoryType = {
+      val logicStr = logicInputXML.getProperty.getFormula.trim
+
+      var ret = logicInputXML
+      ret.getProperty.setLogic("fsm")
+      ret.getProperty.setFormula(PTLTL.mkFSM(logicStr))
+
+      ret
+    }
+
+  }
+}

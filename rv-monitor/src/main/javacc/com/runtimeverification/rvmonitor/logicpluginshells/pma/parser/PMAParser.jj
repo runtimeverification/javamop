@@ -1,0 +1,188 @@
+options {
+  STATIC = false;
+  ERROR_REPORTING = true;
+}
+
+PARSER_BEGIN(PMAParser)
+  package com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.parser;
+
+  import com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.*;
+  import java.util.ArrayList;
+  import java.util.HashMap;
+  import java.util.HashSet;
+  import java.io.*;
+
+  public class PMAParser {
+    public static PMAParser parse(InputStream input) {
+      PMAParser srsParser = new PMAParser(input);
+      try{
+        srsParser.Start();
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+        System.exit(1);
+      }
+      return srsParser;
+    }
+
+    public static PMAParser parse(String input) {
+      PMAParser srsParser = new PMAParser(new StringReader(input));
+      try{
+        srsParser.Start();
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+        System.exit(1);
+      }
+      return srsParser;
+    }
+
+    public static void main(String[] args) throws ParseException, TokenMgrError {
+      PMAParser parser = new PMAParser(System.in);
+      parser.Start();
+      ShellPatternMatchAutomaton pma = parser.getPMA();
+      System.out.println(pma);
+      System.out.println(pma.toImplString());
+    }
+  
+    private Symbol begin = Symbol.get("^");
+    private Symbol end   = Symbol.get("$");
+    private ShellPatternMatchAutomaton pma = new ShellPatternMatchAutomaton(new State(0,0, null));
+    public ShellPatternMatchAutomaton getPMA(){
+      return pma;
+    }
+  }
+
+PARSER_END(PMAParser)
+
+SKIP : {
+  <WHITESPACE: [" ","\t", "\r", "\n"]>
+}
+
+TOKEN : {
+    <EPSILON   : "#epsilon" >
+  | <NUMBER    : (["0"-"9"])+  >
+  | <MATCHES   : "matches"  >
+  | <TRUE      : "true"     >
+  | <FALSE     : "false"    >
+  | <COLON     : ":"        >
+  | <OPENA     : "<"        >
+  | <CLOSEA    : ">"        >
+  | <OPENB     : "["        >
+  | <CLOSEB    : "]"        >
+  | <FAIL      : "#fail"    >
+  | <SUCCEED   : "#succeed" >
+  | <BEGIN     : "^"        >
+  | <END       : "$"        >
+  | <PERIOD    : "."        >
+  | <ARROW     : "->"       > 
+  | <TERMINAL  : ["A"-"Z","a"-"z"](["A"-"Z","a"-"z"]|"_"|["0"-"9"])* >
+}
+
+void Start() : {}
+{
+  //in retrospect it is silly to send true and false for 
+  //containing begin and end like this when we parse 
+  //every rule anyway, but I don't feel like changing the plugin
+  //and this is every so slightly more efficient than setting hasBegin
+  //and hasEnd every time we see them
+  ("true" { pma.setBegin(true);} | "false")
+  ("true" { pma.setEnd(true);}   | "false")
+  Pma() <EOF>
+}
+
+void Pma() : {
+  State state;
+  HashMap<Symbol, ActionState> transition;
+}
+{
+  (state = State()
+     "["
+        transition = Transition() 
+     "]"
+     {pma.put(state, transition);}
+   )+
+}
+
+State State() : {
+Token number;
+Token depth;
+Rule rule = null;
+}
+{
+  "<" number = <NUMBER> "@" depth = <NUMBER> ["matches" rule = Rule()] ">"
+  { return new State(new Integer(number.image), new Integer(depth.image), rule); } 
+}
+
+HashMap<Symbol, ActionState> Transition() : {
+  Token symbol;
+  Token action;
+  State state;
+  HashMap<Symbol, ActionState> transition = new HashMap<Symbol, ActionState>();
+}
+{
+  ( 
+   (  symbol = <TERMINAL>
+     |symbol = "^"       
+     |symbol = "$"
+    )
+    "->" "[" action = <NUMBER> "]" state = State()
+   { transition.put(Symbol.get(symbol.image), 
+                    new ActionState(new Integer(action.image), state)); } 
+  )+
+   { return transition; }
+}
+
+Rule Rule() : {
+  Sequence lhs;
+  AbstractSequence rhs;
+}
+{
+  lhs = LhsSequence() 
+  "->"
+  (rhs = Sequence() | rhs = Epsilon() | rhs = SucceedOrFail() )
+  {  
+     return new Rule(lhs,rhs); 
+  }
+}
+
+Sequence LhsSequence() : {
+  Sequence ret = new Sequence();
+  Sequence seq;
+}
+{
+  [ "^" {ret.add(begin); } ]
+   seq = Sequence() { ret.addAll(seq); }
+  [ "$" {ret.add(end); } ]
+   {return ret;}
+}
+
+Sequence Sequence() : {
+  Sequence ret = new Sequence();
+  Symbol s;
+  Token t;
+}
+{
+  t = <TERMINAL>
+  { ret.add(Symbol.get(t.image)); }
+  (
+    t = <TERMINAL>
+    { ret.add(Symbol.get(t.image)); }
+  )*
+  { return ret; }
+  
+}
+
+AbstractSequence SucceedOrFail() : {}
+{
+  (<SUCCEED>
+   { return Succeed.get(); } )
+ |(<FAIL>
+   { return Fail.get();    } )
+}
+
+Sequence Epsilon() : {}
+{
+  <EPSILON>
+  { return new Sequence(); }
+}

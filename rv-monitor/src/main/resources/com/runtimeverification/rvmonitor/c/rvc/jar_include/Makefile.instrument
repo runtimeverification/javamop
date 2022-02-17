@@ -1,0 +1,21 @@
+all: instrument
+
+__RVC__Monitor.o: __RVC__Monitor.bc
+	llc -filetype=obj $< -o $@
+
+instrument: __RVC__Monitor.o aspect.map uninstrument
+	find . -type f \( -name "*.bc" ! -name "__RVC*" \) -exec make -f Makefile.instrument "{}.original" \; 
+	make LDFLAGS=__RVC__Monitor.o
+
+%.bc.original: %.bc
+	cp $< $@
+	opt -load LLVMAOP.so -aop $< -o $< -f
+	if diff -q $< $@ >/dev/null ; then rm $@ ; fi
+
+clean: uninstrument
+	rm -f __RVC__Monitor.o
+
+uninstrument:
+	find . -name "*.bc" -type f -exec mv "{}.original" "{}" \; -exec touch "{}" \; 2>/dev/null
+
+.PHONY: instrument uninstrument

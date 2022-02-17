@@ -1,0 +1,19 @@
+# This Makefile assumes that Makefile.original contains your original Makefile
+# you could rename this as Makefile
+all: original
+
+original:
+	make -f Makefile.original
+
+instrument: original
+	make -f Makefile.instrument
+
+uninstrument:
+	make -f Makefile.instrument uninstrument
+	make -f Makefile.original
+
+clean:
+	make -f Makefile.instrument clean
+	make -f Makefile.original clean
+
+.PHONY: original instrument uninstrument

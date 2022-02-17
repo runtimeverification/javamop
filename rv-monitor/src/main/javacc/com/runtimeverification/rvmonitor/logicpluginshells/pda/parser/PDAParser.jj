@@ -1,0 +1,188 @@
+ /**
+ * JavaCC file
+ */
+options
+{
+  JDK_VERSION = "1.5";
+  STATIC = false;
+}
+
+PARSER_BEGIN(PDAParser)
+package com.runtimeverification.rvmonitor.logicpluginshells.pda.parser;
+import java.util.*;
+import java.io.*;
+import com.runtimeverification.rvmonitor.logicpluginshells.pda.ast.*;
+
+public class PDAParser
+{
+  public static PDA parse(String input) throws ParseException
+  {
+    PDA pda;
+    Reader reader = new StringReader(input);
+    PDAParser parser = new PDAParser(reader);
+    try
+    {
+      pda = parser.EntireFormula();
+    }
+    catch (Exception e)
+    {
+      throw new ParseException(e.getMessage());
+    }
+    catch (Error e)
+    {
+      throw new ParseException(e.getMessage());
+    }
+    return pda;
+  }
+}
+
+PARSER_END(PDAParser)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+  < OR :
+    "or"
+  | "\\/"
+  | "||" >
+| < AND :
+    "and"
+  | "/\\"
+  | "&&" >
+| < XOR :
+    "++"
+  | "xor"
+  | "^" >
+| < NOT :
+    "!"
+  | "not" >
+}
+
+TOKEN :
+{
+  < CONSTANT : (< DIGIT >)+ >
+| < TRUE : "true" >
+| < FALSE : "false" >
+| < ID :
+    (
+      < LETTER >
+    | "_"
+    )
+    (
+      < LETTER >
+    | < DIGIT >
+    | "_"
+    )* >
+| < DIGIT : [ "0"-"9" ] >
+| < LETTER : [ "a"-"z", "A"-"Z" ] >
+}
+
+PDA EntireFormula() :
+{
+  Token t;
+  PDA pda = new PDA();
+}
+{
+  (
+    Item(pda)
+  )*
+  < EOF >
+  {
+    return pda;
+  }
+}
+
+void Item(PDA pda) :
+{
+  Token t;
+  State s;
+  HashMap < Event, State > tran = new HashMap < Event, State > ();
+  Event e;
+  State d;
+}
+{
+  s = FromState() "["
+  (
+    (
+      e = Event() "->" d = State()
+      {
+        tran.put(e, d);
+      }
+      [ "," ]
+    )
+  |
+    (
+      "default" d = State()
+      {
+        tran.put(new DefaultEvent(), d);
+      }
+    )
+  )*
+  "]"
+  {
+    pda.put(s, tran);
+    return;
+  }
+}
+
+State FromState() :
+{
+  Token t;
+  String name;
+  ArrayList < StackSymbol > queue = new ArrayList < StackSymbol > ();
+}
+{
+  t = < ID >
+  {
+    name = t.image;
+  }
+  [
+    "*" t = < ID >
+    {
+      queue.add(new StackSymbol(t.image));
+    }
+  ]
+  {
+    return new State(name, queue);
+  }
+}
+
+State State() :
+{
+  Token t;
+  String name;
+  ArrayList < StackSymbol > queue = new ArrayList < StackSymbol > ();
+}
+{
+  t = < ID >
+  {
+    name = t.image;
+  }
+  (
+    "*" t = < ID >
+    {
+      queue.add(new StackSymbol(t.image));
+    }
+  )*
+  {
+    return new State(name, queue);
+  }
+}
+
+Event Event() :
+{
+  Token t;
+}
+{
+  t = < ID >
+  {
+    return new Event(t.image);
+  }
+}

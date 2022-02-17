@@ -1,0 +1,246 @@
+ /**
+ * JavaCC file
+ */
+options
+{
+  JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(POParser)
+package com.runtimeverification.rvmonitor.logicpluginshells.po.parser;
+
+import com.runtimeverification.rvmonitor.logicpluginshells.po.util.*;
+import java.util.*;
+import java.io.*;
+
+public class POParser
+{
+  public static PartialOrders parse(String input) throws ParseException
+  {
+    PartialOrders graph = null;
+    Reader reader = new StringReader(input);
+    POParser parser = new POParser(reader);
+    try
+    {
+      graph = POParser.PartialOrders();
+    }
+    catch (Exception e)
+    {
+      System.out.println(e.getMessage());
+    }
+    catch (Error e)
+    {
+      System.out.println(e.getMessage());
+    }
+    return graph;
+  }
+}
+
+PARSER_END(POParser)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+  < ARROW : "->" >
+| < EQUAL : "=" >
+| < COMMA : "," >
+| < LBRAC : "[" >
+| < RBRAC : "]" >
+| < LPAREN : "(" >
+| < RPAREN : ")" >
+| < OR : "||" >
+| < AND : "&&" >
+| < NOT : "!" >
+| < CHECKBEFORE : "?->" >
+}
+
+TOKEN :
+{
+  < CONSTANT : (< DIGIT >)+ >
+| < ID :
+    (
+      < LETTER >
+    | "_"
+    )
+    (
+      < LETTER >
+    | < DIGIT >
+    | "_"
+    )* >
+| < DIGIT : [ "0"-"9" ] >
+| < LETTER : [ "a"-"z", "A"-"Z" ] >
+}
+
+PartialOrders PartialOrders() :
+{
+  Token t;
+  String schName = null;
+  PartialOrder po = null;
+  PartialOrders ret = new PartialOrders();
+}
+{
+  [
+    LOOKAHEAD(2)
+    t = < ID >
+    {
+      schName = t.image;
+      ret.setName(schName);
+    }
+    < EQUAL >
+  ]
+  (
+    (
+      po = PartialOrder()
+      {
+        ret.add(po);
+      }
+      [ < COMMA > ]
+    )
+  )*
+  < EOF >
+  {
+    return ret;
+  }
+}
+
+PartialOrder PartialOrder() :
+{
+  Token t;
+  Condition condition;
+  String event;
+}
+{
+  condition = OrCondition()
+  (
+    (
+      < ARROW > t = < ID >
+      {
+        event = t.image;
+        return new PartialOrder(condition, event);
+      }
+    )
+  |
+    (
+      < CHECKBEFORE > t = < ID >
+      {
+        event = t.image;
+        return new PartialOrder(condition, event, true);
+      }
+    )
+  )
+}
+
+Condition OrCondition() :
+{
+  Condition condition1;
+  Condition condition2;
+  Condition condition;
+}
+{
+  LOOKAHEAD(< OR >)
+  (
+    condition1 = AndCondition() < OR > condition2 = OrCondition()
+    {
+      return new ORCondition(condition1, condition2);
+    }
+  )
+| condition = AndCondition()
+  {
+    return condition;
+  }
+}
+
+Condition AndCondition() :
+{
+  Condition condition1;
+  Condition condition2;
+  Condition condition;
+}
+{
+  LOOKAHEAD(< AND >)
+  (
+    condition1 = BaseCondition() < AND > condition2 = AndCondition()
+    {
+      return new ANDCondition(condition1, condition2);
+    }
+  )
+| condition = BaseCondition()
+  {
+    return condition;
+  }
+}
+
+Condition BaseCondition() :
+{
+  Condition condition;
+}
+{
+  condition = SimpleCondition()
+  {
+    return condition;
+  }
+| condition = BlockCondition()
+  {
+    return condition;
+  }
+|
+  (
+    < NOT > condition = BaseCondition()
+    {
+      return new NotCondition(condition);
+    }
+  )
+|
+  (
+    < LPAREN > 
+    condition = OrCondition() 
+    < RPAREN >
+    {
+      return condition;
+    }
+  )
+}
+
+Condition SimpleCondition() :
+{
+  Token t;
+  String before;
+}
+{
+  t = < ID >
+  {
+    before = t.image;
+    return new SimpleCondition(before);
+  }
+}
+
+Condition BlockCondition() :
+{
+  Token t;
+  String before;
+  String block = null;
+}
+{
+  < LBRAC > t = < ID >
+  {
+    before = t.image;
+  }
+  [
+    < COMMA > t = < ID >
+    {
+      block = t.image;
+    }
+  ]
+  < RBRAC >
+  {
+    if (block != null) return new BlockCondition(before, block);
+    else return new BlockCondition(before);
+  }
+}

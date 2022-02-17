@@ -1,0 +1,164 @@
+options {
+  STATIC = false;
+  ERROR_REPORTING = true;
+}
+
+PARSER_BEGIN(SRSParser)
+  package com.runtimeverification.rvmonitor.logicrepository.plugins.srs.parser;
+
+  import com.runtimeverification.rvmonitor.logicrepository.plugins.srs.*;
+  import java.util.ArrayList;
+  import java.util.HashMap;
+  import java.util.HashSet;
+  import java.io.*;
+
+  public class SRSParser {
+    public static SRSParser parse(InputStream input) {
+      SRSParser srsParser = new SRSParser(input);
+      try{
+        srsParser.Start();
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+        System.exit(1);
+      }
+      return srsParser;
+    }
+
+    public static SRSParser parse(String input) {
+      SRSParser srsParser = new SRSParser(new StringReader(input));
+      try{
+        srsParser.Start();
+      }
+      catch(Exception e){
+        System.err.println(e.getMessage());
+        System.exit(1);
+      }
+      return srsParser;
+    }
+
+    public static void main(String[] args) throws ParseException, TokenMgrError {
+      SRSParser parser = new SRSParser(System.in);
+      parser.Start();
+      SRS srs = parser.getSRS();
+      System.out.println(srs.toString());
+      HashSet<Symbol> extraTerminals = new HashSet<Symbol>();
+      for(String s : args){
+        extraTerminals.add(Terminal.get(s));
+      }
+      PatternMatchAutomaton p = new PatternMatchAutomaton(srs, extraTerminals);
+     // System.out.println(p);
+     // if(args.length == 0){
+     //   System.out.println(p.toImplString());
+        System.out.println(p.toDotString());
+     // }
+    //  SpliceList<Symbol> l = new SpliceList<Symbol>();
+      //for(String s : args){
+    //    l.add(Terminal.get(s)); 
+  //    }
+//      p.rewrite(l);
+    }
+
+
+  
+    private SRS srs;
+    private PatternMatchAutomaton pma = null;
+    public SRS getSRS() { return srs; }
+    public PatternMatchAutomaton getPMA(Symbol[] extraTerminals){
+      if(pma != null) return pma;
+      pma = new PatternMatchAutomaton(srs, extraTerminals);
+      return pma;
+    }
+  }
+
+PARSER_END(SRSParser)
+
+SKIP : {
+  <WHITESPACE: [" ","\t", "\r", "\n"]>
+}
+
+TOKEN : {
+    <EPSILON   : "#epsilon" >
+  | <FAIL      : "#fail"    >
+  | <SUCCEED   : "#succeed" >
+  | <BEGIN     : "^"        >
+  | <END       : "$"        >
+  | <PERIOD    : "."        >
+  | <ARROW     : "->"       > 
+  | <TERMINAL  : ["A"-"Z","a"-"z"](["A"-"Z","a"-"z"]|"_"|["0"-"9"])* >
+}
+
+void Start() : {
+  srs = new SRS();
+}
+{
+  Srs() <EOF>
+}
+
+void Srs() : {
+  Rule r;
+}
+{
+  r = Rule()
+  { srs.add(r); }
+  "."
+  (
+   r = Rule()
+   {srs.add(r); }
+  "." )* 
+}
+
+Rule Rule() : {
+  Sequence lhs;
+  AbstractSequence rhs;
+}
+{
+  lhs = LhsSequence() 
+  "->"
+  (rhs = Sequence() | rhs = Epsilon() | rhs = SucceedOrFail() )
+  { 
+   
+     return new Rule(lhs,rhs); 
+  }
+}
+
+Sequence LhsSequence() : {
+  Sequence ret = new Sequence();
+  Sequence seq;
+}
+{
+  [ "^" {ret.add(Symbol.get("^")); } ]
+   seq = Sequence() { ret.addAll(seq); }
+  [ "$" {ret.add(Symbol.get("$")); } ]
+   {return ret;}
+}
+
+Sequence Sequence() : {
+  Sequence ret = new Sequence();
+  Symbol s;
+  Token t;
+}
+{
+  t = <TERMINAL>
+  { ret.add(Symbol.get(t.image)); }
+  (
+    t = <TERMINAL>
+    { ret.add(Symbol.get(t.image)); }
+  )*
+  { return ret; }
+  
+}
+
+AbstractSequence SucceedOrFail() : {}
+{
+  (<SUCCEED>
+   { return Succeed.get(); } )
+ |(<FAIL>
+   { return Fail.get();    } )
+}
+
+Sequence Epsilon() : {}
+{
+  <EPSILON>
+  { return new Sequence(); }
+}
