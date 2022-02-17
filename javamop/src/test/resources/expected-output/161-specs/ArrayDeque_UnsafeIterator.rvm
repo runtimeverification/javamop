@@ -1,0 +1,21 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ArrayDeque_UnsafeIterator(ArrayDeque q, Iterator i) {
+	creation event create(ArrayDeque q, Iterator i){
+	}
+	event modify(ArrayDeque q){
+	}
+	event useiter(Iterator i){
+	}
+	ere:  create useiter* modify+ useiter
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The deque was modified while an iterator is being used.");
+	}
+}

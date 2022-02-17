@@ -1,0 +1,22 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+PriorityQueue_NonComparable() {
+	event insertnull(Object e){
+		if (!(e instanceof Comparable)) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "PriorityQueue does not permit non-comparable objects.");
+		}
+	}
+	event insertnull(Collection c){
+		for (Object elem : c) {
+			if (!(elem instanceof Comparable)) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "PriorityQueue does not permit non-comparable objects.");
+			}
+		}
+	}
+}

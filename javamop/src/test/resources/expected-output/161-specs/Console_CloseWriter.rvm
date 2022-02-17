@@ -1,0 +1,18 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Console_CloseWriter(Writer w) {
+	event getwriter(Writer w){
+	}
+	event close(Writer w){
+	}
+	ere:  getwriter close+
+
+	@match
+	{
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "Invoking close() on the object returned by Console.writer() does not close the underlying stream.");
+	}
+}

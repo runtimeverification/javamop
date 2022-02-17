@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.nio.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+CharSequence_UndefinedHashCode() {
+	event equals(){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "equals and hashCode methods might not be supported in CharSequence");
+	}
+	event hashCode(){
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "equals and hashCode methods might not be supported in CharSequence");
+	}
+}

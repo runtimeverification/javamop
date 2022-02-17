@@ -1,0 +1,16 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+URL_SetURLStreamHandlerFactory() {
+	event set(){
+	}
+	ere:  set set+
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "URL.setURLStreamHandlerFactory() can be called at most once in a given Java Virtual Machine.");
+	}
+}

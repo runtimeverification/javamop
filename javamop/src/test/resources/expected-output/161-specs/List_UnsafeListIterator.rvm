@@ -1,0 +1,21 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+List_UnsafeListIterator(List l, ListIterator i) {
+	creation event create(List l, ListIterator i){
+	}
+	event modify(List l){
+	}
+	event useiter(ListIterator i){
+	}
+	ere:  create useiter* modify+ useiter
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The list was modified while a list iterator is being used.");
+	}
+}

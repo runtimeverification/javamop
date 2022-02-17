@@ -1,0 +1,25 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Map_UnsafeIterator(Map m, Collection c, Iterator i) {
+	creation event getset(Map m, Collection c){
+	}
+	event getiter(Collection c, Iterator i){
+	}
+	event modifyMap(Map m){
+	}
+	event modifyCol(Collection c){
+	}
+	event useiter(Iterator i){
+	}
+	ere:  getset (modifyMap | modifyCol)* getiter useiter* (modifyMap | modifyCol)+ useiter
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The map was modified while an iteration over the set is in progress.");
+	}
+}

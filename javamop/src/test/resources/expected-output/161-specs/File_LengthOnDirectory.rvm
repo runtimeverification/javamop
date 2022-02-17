@@ -1,0 +1,16 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+File_LengthOnDirectory() {
+	event bad_length(File f){
+		if ( ! (f.isDirectory()) ) {
+			return false;
+		}
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "length() was invoked on a File instance that represents a directory.");
+		}
+	}
+}

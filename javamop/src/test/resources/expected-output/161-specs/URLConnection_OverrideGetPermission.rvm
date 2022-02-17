@@ -1,0 +1,30 @@
+package mop;
+
+import java.net.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+URLConnection_OverrideGetPermission() {
+	event staticinit(org.aspectj.lang.Signature staticsig){
+		org.aspectj.lang.Signature initsig = staticsig;
+		Class klass = initsig.getDeclaringType();
+		Method overriden = null;
+		while (klass != null && !klass.getName().equals("java.net.URLConnection")) {
+			try {
+				for (Method m : klass.getDeclaredMethods()) {
+					if (!m.getName().equals("getPermission")) continue;
+					if (m.getParameterTypes().length != 0) continue;
+					overriden = m;
+					break;
+				}
+				if (overriden != null) break;
+			} catch (SecurityException e) {
+			}
+			klass = klass.getSuperclass();
+		}
+		if (overriden == null) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "A URLConnection class should override the getPermission() method.");
+		}
+	}
+}

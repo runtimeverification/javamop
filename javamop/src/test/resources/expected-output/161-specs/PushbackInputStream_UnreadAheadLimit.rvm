@@ -1,0 +1,81 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+PushbackInputStream_UnreadAheadLimit(PushbackInputStream p) {
+
+	int limit;
+
+	int pos;
+	creation event create(PushbackInputStream p){
+		this.limit = 1;
+		this.pos = 1;
+	}
+	creation event create(int size, PushbackInputStream p){
+		this.limit = size;
+		this.pos = size;
+	}
+	event read1(PushbackInputStream p, int r){
+		if (this.pos < this.limit) this.pos++;
+	}
+	event read2(PushbackInputStream p, int n){
+		int avail = this.limit - this.pos;
+		if (avail > 0) {
+			if (n < avail) avail = n;
+			this.pos += avail;
+		}
+	}
+	event safeunread(PushbackInputStream p){
+		if ( ! (pos > 0) ) {
+			return false;
+		}
+		{
+			--this.pos;
+		}
+	}
+	event unsafeunread(PushbackInputStream p){
+		if ( ! (pos == 0) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event safeunread(PushbackInputStream p, Object b){
+		if ( ! (pos >= ((byte[]) b).length) ) {
+			return false;
+		}
+		{
+			this.pos -= ((byte[]) b).length;
+		}
+	}
+	event unsafeunread(PushbackInputStream p, Object b){
+		if ( ! (pos < ((byte[]) b).length) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event safeunread(PushbackInputStream p, int len){
+		if ( ! (pos >= len) ) {
+			return false;
+		}
+		{
+			this.pos -= len;
+		}
+	}
+	event unsafeunread(PushbackInputStream p, int len){
+		if ( ! (pos < len) ) {
+			return false;
+		}
+		{
+		}
+	}
+	ere:  create (read1 | read2 | safeunread)*
+
+	@fail
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "unread() cannot be performed because the internal pushback buffer is full.");
+	}
+}

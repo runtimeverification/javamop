@@ -1,0 +1,19 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+DatagramPacket_Length() {
+
+	void validateOffsetLength(byte[] buffer, int offset, int length, String msg) {
+		if (offset + length <= buffer.length) return;
+		RVMLogging.out.println(Level.CRITICAL, msg);
+		RVMLogging.out.println(Level.CRITICAL, "The offset argument and/or the length argument are out of range; " + offset + " + " + length + " > " + buffer.length);
+	}
+	event construct_len(byte[] buffer, int length){
+		this.validateOffsetLength(buffer, 0, length, __DEFAULT_MESSAGE);
+	}
+	event construct_offlen(byte[] buffer, int offset, int length){
+		this.validateOffsetLength(buffer, offset, length, __DEFAULT_MESSAGE);
+	}
+}

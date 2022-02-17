@@ -1,0 +1,22 @@
+package mop;
+
+import java.util.*;
+import java.io.*;
+import java.nio.channels.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Scanner_ManipulateAfterClose(Scanner s, Closeable c) {
+	creation event create(Closeable c, Scanner s){
+	}
+	event close(Scanner s){
+	}
+	event manipulate(Closeable c){
+	}
+	ere:  create close+ manipulate
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The source stream or reader was used after the Scanner had been closed.");
+	}
+}

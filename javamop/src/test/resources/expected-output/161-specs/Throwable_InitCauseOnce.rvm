@@ -1,0 +1,22 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Throwable_InitCauseOnce(Throwable t) {
+	event createWithoutThrowable(Throwable t){
+	}
+	event createWithThrowable(Throwable t){
+	}
+	event initCause(Throwable t){
+	}
+	ere:  (createWithoutThrowable initCause initCause+) | (createWithThrowable initCause+)
+
+	@match
+	{
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "initCause should not be called more than once.");
+	}
+}

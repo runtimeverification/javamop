@@ -1,0 +1,25 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+PriorityQueue_NonNull() {
+	event insertnull(Object e){
+		if ( ! (e == null) ) {
+			return false;
+		}
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "PriorityQueue does not permit null.");
+		}
+	}
+	event insertnull(Collection c){
+		for (Object elem : c) {
+			if (elem == null) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "PriorityQueue does not permit null.");
+			}
+		}
+	}
+}

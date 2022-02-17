@@ -1,0 +1,86 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Arrays_SortBeforeBinarySearch(Object[] arr) {
+
+	int fromIndex;
+
+	int toIndex;
+
+	Comparator comp = null;
+	event sort1(Object[] arr){
+		this.fromIndex = 0;
+		this.toIndex = arr.length;
+	}
+	event sort1(Object[] arr, int src, int dest){
+		this.fromIndex = src;
+		this.toIndex = dest;
+	}
+	event sort2(Object[] arr, Comparator comp2){
+		this.fromIndex = 0;
+		this.toIndex = arr.length;
+		this.comp = comp2;
+	}
+	event sort2(Object[] arr, int src, int dest, Comparator comp2){
+		this.fromIndex = src;
+		this.toIndex = dest;
+		this.comp = comp2;
+	}
+	event modify(Object[] arr){
+		this.toIndex = 0;
+	}
+	event bsearch1(Object[] arr){
+		if ( ! (this.fromIndex <= 0 && arr.length <= this.toIndex) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event bsearch1(Object[] arr, int src, int dest){
+		if ( ! (this.fromIndex <= src && dest <= this.toIndex) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event bsearch2(Object[] arr, Comparator comp2){
+		if ( ! (this.fromIndex <= 0 && arr.length <= this.toIndex && this.comp == comp2) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event bsearch2(Object[] arr, int src, int dest, Comparator comp2){
+		if ( ! (this.fromIndex <= src && dest <= this.toIndex && this.comp == comp2) ) {
+			return false;
+		}
+		{
+		}
+	}
+	fsm:
+	unsorted [
+	sort1 -> sorted1
+	sort2 -> sorted2
+	modify -> unsorted
+	]
+	sorted1 [
+	sort1 -> sorted1
+	sort2 -> sorted2
+	modify -> unsorted
+	bsearch1 -> sorted1
+	]
+	sorted2 [
+	sort1 -> sorted1
+	sort2 -> sorted2
+	modify -> unsorted
+	bsearch2 -> sorted2
+	]
+
+	@fail
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The array or part of the array must be sorted prior to making binarySearch() call.");
+	}
+}

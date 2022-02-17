@@ -1,0 +1,22 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Socket_ReuseAddress(Socket sock) {
+	creation event create_connected(Socket sock){
+	}
+	creation event create_unconnected(Socket sock){
+	}
+	event bind(Socket sock){
+	}
+	event set(Socket sock){
+	}
+	ere:  (create_connected | create_unconnected set* bind+) set
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The behavior of setting SO_REUSEADDR after a socket is bound is not defined.");
+	}
+}
