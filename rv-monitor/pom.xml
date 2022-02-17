@@ -133,7 +133,7 @@
               </formats>
               <finalName>rv-monitor</finalName>
               <appendAssemblyId>false</appendAssemblyId>
-              <outputDirectory>../target/release</outputDirectory>
+              <outputDirectory>target/release</outputDirectory>
             </configuration>
           </execution>
         </executions>
