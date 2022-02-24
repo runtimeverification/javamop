@@ -31,7 +31,6 @@ package com.github.javaparser;
 import java.io.*;
 import java.util.*;
 
-import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.*;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.body.*;

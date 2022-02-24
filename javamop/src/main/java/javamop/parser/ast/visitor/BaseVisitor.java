@@ -45,7 +45,6 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 import javamop.parser.ast.MOPSpecFile;
 import javamop.parser.ast.aspectj.*;
 import javamop.parser.ast.mopspec.EventDefinition;
@@ -482,10 +481,6 @@ public class BaseVisitor<R, A> implements GenericVisitor<R, A> {
 	}
 
 	public R visit(ObjectCreationExpr n, A arg) {
-		return null;
-	}
-
-	public R visit(QualifiedNameExpr n, A arg) {
 		return null;
 	}
 

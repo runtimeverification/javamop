@@ -55,7 +55,6 @@ import com.github.javaparser.ast.type.VarType;
 import com.github.javaparser.ast.type.VoidType;
 import com.github.javaparser.ast.type.WildcardType;
 import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.runtimeverification.rvmonitor.java.rvj.parser.ast.expr.QualifiedNameExpr;
 
 public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object> {
 
@@ -584,16 +583,6 @@ public class CheckThisJoinPointVisitor implements GenericVisitor<Boolean, Object
 		if(process(n.getArguments(), arg) || process(n.getAnonymousClassBody(), arg))
 			return Boolean.TRUE;
 
-		return Boolean.FALSE;
-	}
-
-	public Boolean visit(QualifiedNameExpr n, Object arg) {
-		if(n.getName().equals("thisJoinPoint"))
-			return Boolean.TRUE;
-		
-		if(process(n.getQualifier(), arg))
-			return Boolean.TRUE;
-		
 		return Boolean.FALSE;
 	}
 
