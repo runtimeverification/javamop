@@ -13,11 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.*;
 
-import com.runtimeverification.rvmonitor.core.ast.Event;
-import com.runtimeverification.rvmonitor.core.ast.MonitorFile;
-import com.runtimeverification.rvmonitor.core.ast.Property;
-import com.runtimeverification.rvmonitor.core.ast.PropertyHandler;
-import com.runtimeverification.rvmonitor.core.ast.Specification;
+import javamop.parser.rvm.core.ast.Event;
+import javamop.parser.rvm.core.ast.MonitorFile;
+import javamop.parser.rvm.core.ast.Property;
+import javamop.parser.rvm.core.ast.PropertyHandler;
+import javamop.parser.rvm.core.ast.Specification;
 
 /**
  * Language-agnostic RVM file parser.

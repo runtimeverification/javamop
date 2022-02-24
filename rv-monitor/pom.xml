@@ -10,10 +10,15 @@
   <name>rv-monitor</name>
   <dependencies>
     <dependency>
+      <groupId>javamop</groupId>
+      <artifactId>javamop</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.runtimeverification.rvmonitor</groupId>
       <artifactId>rv-monitor-rt</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency>    
     <dependency>
       <groupId>com.runtimeverification.rvmonitor</groupId>
       <artifactId>logicrepository</artifactId>

@@ -2,10 +2,10 @@ package com.runtimeverification.rvmonitor.c.rvc;
 
 import java.util.HashMap;
 
-import com.runtimeverification.rvmonitor.core.ast.Event;
-import com.runtimeverification.rvmonitor.core.ast.MonitorFile;
-import com.runtimeverification.rvmonitor.core.ast.PropertyHandler;
-import com.runtimeverification.rvmonitor.core.ast.Specification;
+import javamop.parser.rvm.core.ast.Event;
+import javamop.parser.rvm.core.ast.MonitorFile;
+import javamop.parser.rvm.core.ast.PropertyHandler;
+import javamop.parser.rvm.core.ast.Specification;
 
 /**
  * Wrap the language-neutral specification in a way to easily make accessible
@@ -19,8 +19,7 @@ public class RVParserAdapter implements CSpecification {
     /**
      * Wrap the given specification.
      * 
-     * @param wrapped
-     *            The specification to wrap.
+     * @param file The specification to wrap.
      */
     public RVParserAdapter(final MonitorFile file) {
         this.file = file;

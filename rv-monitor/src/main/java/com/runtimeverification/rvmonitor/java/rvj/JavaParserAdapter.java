@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.runtimeverification.rvmonitor.core.ast.Event;
-import com.runtimeverification.rvmonitor.core.ast.MonitorFile;
-import com.runtimeverification.rvmonitor.core.ast.Property;
-import com.runtimeverification.rvmonitor.core.ast.PropertyHandler;
-import com.runtimeverification.rvmonitor.core.ast.Specification;
+import javamop.parser.rvm.core.ast.Event;
+import javamop.parser.rvm.core.ast.MonitorFile;
+import javamop.parser.rvm.core.ast.Property;
+import javamop.parser.rvm.core.ast.PropertyHandler;
+import javamop.parser.rvm.core.ast.Specification;
 import com.runtimeverification.rvmonitor.core.parser.RVParser;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.ImportDeclaration;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.PackageDeclaration;
@@ -87,7 +87,7 @@ public final class JavaParserAdapter {
      * Convert a language-independent specification into one with Java-specific
      * information.
      *
-     * @param spec
+     * @param file
      *            The specification to convert.
      * @return The Java-specific specification.
      */
