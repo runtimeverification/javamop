@@ -62,6 +62,6 @@ echo ${error_status}
 fileupload_status=$(grep "BUILD SUCCESS" /tmp/fileupload-outcome.txt)
 check_status "${fileupload_status}" " on fileupload tests"
 
-violation_diffs=$(diff <(sort /tmp/commons-fileupload/violation-counts) <(sort commons-fileupload-violation-counts))
+violation_diffs=$(diff <(sort /tmp/commons-fileupload/violation-counts) <(sort ${SCRIPT_DIR}/commons-fileupload-violation-counts))
 check_reverse_status "${violation_diffs}" "on fileupload violations"
 
