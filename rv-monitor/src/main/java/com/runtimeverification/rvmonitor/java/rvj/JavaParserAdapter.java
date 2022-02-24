@@ -14,7 +14,7 @@ import javamop.parser.rvm.core.ast.MonitorFile;
 import javamop.parser.rvm.core.ast.Property;
 import javamop.parser.rvm.core.ast.PropertyHandler;
 import javamop.parser.rvm.core.ast.Specification;
-import com.runtimeverification.rvmonitor.core.parser.RVParser;
+import javamop.parser.main_parser.RVParser;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.ImportDeclaration;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.PackageDeclaration;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.rvmspec.RVMParameter;
