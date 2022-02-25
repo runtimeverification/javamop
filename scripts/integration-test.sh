@@ -9,6 +9,7 @@ function check_status() {
         echo "PASSED "${suffix}
     else
         echo "FAILED "${suffix}
+        exit 1
     fi
 }
 
@@ -20,6 +21,7 @@ function check_reverse_status() {
         echo "PASSED "${suffix}
     else
         echo "FAILED "${suffix}
+        exit 1
     fi
 }
 
