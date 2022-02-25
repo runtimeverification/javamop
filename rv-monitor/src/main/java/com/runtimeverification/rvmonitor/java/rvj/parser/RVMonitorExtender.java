@@ -23,7 +23,7 @@ import com.runtimeverification.rvmonitor.java.rvj.parser.astex.rvmspec.PropertyA
 import com.runtimeverification.rvmonitor.java.rvj.parser.astex.rvmspec.PropertyExt;
 import com.runtimeverification.rvmonitor.java.rvj.parser.astex.rvmspec.RVMonitorSpecExt;
 import com.runtimeverification.rvmonitor.java.rvj.parser.astex.rvmspec.ReferenceSpec;
-import com.runtimeverification.rvmonitor.util.Pair;
+import javamop.util.Pair;
 import com.runtimeverification.rvmonitor.util.RVMException;
 import com.runtimeverification.rvmonitor.util.Tool;
 
