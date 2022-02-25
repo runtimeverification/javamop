@@ -31,11 +31,12 @@ function check_reverse_status() {
 mop_test_status=$(grep "BUILD SUCCESS" /tmp/mop-unit-tests.txt)
 check_status "${mop_test_status}" " on mop's unit tests"
 
-
 (
+    rm -rf ${HOME}/.m2/repository/javamop
+    rm -rf ${SCRIPT_DIR}/agents
     cd ~/projects/emop/scripts
-    bash make-agent-new.sh props/ agents quiet
-    mvn install:install-file -Dfile=agents/JavaMOPAgent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
+    bash make-agent-new.sh props/ ${SCRIPT_DIR}/agents quiet
+    mvn install:install-file -Dfile=${SCRIPT_DIR}/agents/JavaMOPAgent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
 ) &> /tmp/agent-outcome.txt
 
 agent_status=$(grep "JavaMOPAgent.jar is generated." /tmp/agent-outcome.txt)
