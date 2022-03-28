@@ -5,9 +5,9 @@ import java.util.Properties;
 
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell;
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShellResult;
-import com.runtimeverification.rvmonitor.logicpluginshells.pda.ast.PDA;
-import com.runtimeverification.rvmonitor.logicpluginshells.pda.parser.PDAParser;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.pda.parser.PDAParser;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.pda.ast.PDA;
 import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class JavaPDA extends LogicPluginShell {
