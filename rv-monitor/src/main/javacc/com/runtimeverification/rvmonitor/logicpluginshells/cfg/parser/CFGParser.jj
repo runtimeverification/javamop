@@ -7,6 +7,7 @@ PARSER_BEGIN(CFGParser)
    package com.runtimeverification.rvmonitor.logicpluginshells.cfg.parser;
 
    import com.runtimeverification.rvmonitor.logicpluginshells.cfg.util.*;
+   import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.*;
 
    import java.util.ArrayList;
    import java.util.HashMap;
@@ -60,8 +61,8 @@ PARSER_BEGIN(CFGParser)
          HashSet<NonTerminal> nts = cfg.nonTerminals();
          ArrayList<Symbol> rhs;
          Symbol s;
-         for (Production p : cfg.prods) {
-            rhs = p.rhs;
+         for (Production p : cfg.getProds()) {
+            rhs = p.getRhs();
             for (int j = 0; j < rhs.size(); j++) {
                s = rhs.get(j);
                if (s instanceof Epsilon){
@@ -110,7 +111,7 @@ void Cfg() : {
 }
 {
    ps = Production()
-   { cfg.add(ps); cfg.start = ps.get(0).lhs;}
+   { cfg.add(ps); cfg.setStart(ps.get(0).getLhs());}
    (
     <COMMA>
     ps = Production()

@@ -6,6 +6,10 @@ import java.util.HashMap;
 import com.runtimeverification.rvmonitor.logicpluginshells.cfg.parser.CFGParser;
 import com.runtimeverification.rvmonitor.logicpluginshells.cfg.parser.ParseException;
 import com.runtimeverification.rvmonitor.logicpluginshells.cfg.parser.TokenMgrError;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.CFG;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.GLRGen;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.LR;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.Terminal;
 
 public class GLRGenTest {
     public static void main(String[] args) throws ParseException,
