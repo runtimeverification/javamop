@@ -6,13 +6,13 @@ import java.util.Properties;
 
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell;
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShellResult;
-import com.runtimeverification.rvmonitor.logicpluginshells.po.util.BlockCondition;
-import com.runtimeverification.rvmonitor.logicpluginshells.po.util.Condition;
 import com.runtimeverification.rvmonitor.logicpluginshells.po.util.ConditionToExp;
-import com.runtimeverification.rvmonitor.logicpluginshells.po.util.PartialOrder;
-import com.runtimeverification.rvmonitor.logicpluginshells.po.util.PartialOrders;
-import com.runtimeverification.rvmonitor.logicpluginshells.po.util.SimpleCondition;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.po.BlockCondition;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.po.Condition;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.po.PartialOrder;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.po.PartialOrders;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.po.SimpleCondition;
 import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class JavaPO extends LogicPluginShell {

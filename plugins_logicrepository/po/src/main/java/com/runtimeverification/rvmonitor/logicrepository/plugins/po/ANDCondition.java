@@ -35,4 +35,24 @@ public class ANDCondition extends Condition{
 		return ret;
 	}
 
+	@Override
+	public ArrayList<SimpleCondition> getSimpleConditions() {
+		ArrayList<SimpleCondition> ret = new ArrayList<SimpleCondition>();
+
+		ret.addAll(con1.getSimpleConditions());
+		ret.addAll(con2.getSimpleConditions());
+
+		return ret;
+	}
+
+	@Override
+	public ArrayList<BlockCondition> getBlockConditions() {
+		ArrayList<BlockCondition> ret = new ArrayList<BlockCondition>();
+
+		ret.addAll(con1.getBlockConditions());
+		ret.addAll(con2.getBlockConditions());
+
+		return ret;
+	}
+
 }
