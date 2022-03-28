@@ -6,7 +6,6 @@ options {
 PARSER_BEGIN(CFGParser)
    package com.runtimeverification.rvmonitor.logicpluginshells.cfg.parser;
 
-   import com.runtimeverification.rvmonitor.logicpluginshells.cfg.util.*;
    import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.*;
 
    import java.util.ArrayList;
