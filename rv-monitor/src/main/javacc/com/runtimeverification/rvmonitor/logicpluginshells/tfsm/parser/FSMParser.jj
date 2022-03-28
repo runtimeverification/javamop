@@ -33,7 +33,7 @@ package com.runtimeverification.rvmonitor.logicpluginshells.tfsm.parser;
 
 import java.io.*;
 import java.util.*;
-import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.ast.*;
+import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.*;
 
 
 public final class FSMParser {

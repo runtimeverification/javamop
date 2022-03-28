@@ -9,12 +9,12 @@ import java.util.Properties;
 
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell;
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShellResult;
-import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.ast.FSMAlias;
-import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.ast.FSMInput;
-import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.ast.FSMItem;
-import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.ast.FSMTransition;
+import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMAlias;
+import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMInput;
+import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMItem;
+import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMTransition;
+import com.runtimeverification.rvmonitor.logicpluginshells.fsm.visitor.HasDefaultVisitor;
 import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.parser.FSMParser;
-import com.runtimeverification.rvmonitor.logicpluginshells.tfsm.visitor.HasDefaultVisitor;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
 import com.runtimeverification.rvmonitor.util.RVMException;
 

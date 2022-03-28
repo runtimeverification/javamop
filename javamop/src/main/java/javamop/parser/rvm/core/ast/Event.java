@@ -21,7 +21,7 @@ public class Event {
      *
      * @param modifiers  Strings that change the meaning of the event.
      * @param name       The name of the event to monitor.
-     * @param definition The descrption of what the event is on, e.g. its parameters.
+     * @param definition The description of what the event is on, e.g. its parameters.
      * @param action     The action to take on encountering the event.
      */
     public Event(final List<String> modifiers, final String name,
