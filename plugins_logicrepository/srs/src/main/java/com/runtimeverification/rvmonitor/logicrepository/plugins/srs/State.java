@@ -10,6 +10,12 @@ public class State {
         number = counter++;
         this.depth = depth;
     }
+
+    public State(int number, int depth, Rule matchedRule) {
+        this.matchedRule = matchedRule;
+        this.number = number;
+        this.depth = depth;
+    }
     
     public int getNumber() {
         return number;

@@ -7,6 +7,7 @@ PARSER_BEGIN(PMAParser)
   package com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.parser;
 
   import com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.*;
+  import com.runtimeverification.rvmonitor.logicrepository.plugins.srs.*;
   import java.util.ArrayList;
   import java.util.HashMap;
   import java.util.HashSet;

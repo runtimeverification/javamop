@@ -9,9 +9,9 @@ import java.util.Properties;
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell;
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShellResult;
 import com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.ShellPatternMatchAutomaton;
-import com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.Symbol;
 import com.runtimeverification.rvmonitor.logicpluginshells.srs.pma.parser.PMAParser;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.srs.Symbol;
 import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class JavaSRS extends LogicPluginShell {

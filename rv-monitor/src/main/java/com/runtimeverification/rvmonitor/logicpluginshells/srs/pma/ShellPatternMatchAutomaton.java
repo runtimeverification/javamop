@@ -2,6 +2,10 @@
 
 package com.runtimeverification.rvmonitor.logicpluginshells.srs.pma;
 
+import com.runtimeverification.rvmonitor.logicrepository.plugins.srs.ActionState;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.srs.State;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.srs.Symbol;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
