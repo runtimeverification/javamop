@@ -63,9 +63,7 @@ public abstract class AdviceBody {
     public abstract void generateCode();
 
     public static AdviceBody createAdviceBody(RVMonitorSpec rvmSpec,
-            EventDefinition event, CombinedOutput combinedOutput)
-                    throws RVMException {
-        // return new GeneralAdviceBody(rvmSpec, event, combinedOutput);
+            EventDefinition event, CombinedOutput combinedOutput) {
         return new EventMethodBody(rvmSpec, event, combinedOutput);
     }
 }
