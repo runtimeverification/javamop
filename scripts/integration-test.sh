@@ -27,7 +27,7 @@ function check_reverse_status() {
 
 (
     cd ${SCRIPT_DIR}/..
-    mvn package -DskipITs
+    mvn clean package -DskipITs
 ) &> /tmp/mop-unit-tests.txt
 
 mop_test_status=$(grep "BUILD SUCCESS" /tmp/mop-unit-tests.txt)

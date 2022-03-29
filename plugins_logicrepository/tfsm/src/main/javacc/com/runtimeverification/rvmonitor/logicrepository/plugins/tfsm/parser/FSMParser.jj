@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.io.*;
 import com.runtimeverification.rvmonitor.logicrepository.LogicException;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.tfsm.parser.ast.*;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.parser.ast.*;
 
 public class FSMParser {
   public static FSMParser parse(String input) {

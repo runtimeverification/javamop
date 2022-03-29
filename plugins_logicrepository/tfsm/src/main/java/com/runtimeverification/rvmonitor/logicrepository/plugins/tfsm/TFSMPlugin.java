@@ -8,9 +8,12 @@ import com.runtimeverification.rvmonitor.logicrepository.LogicException;
 import com.runtimeverification.rvmonitor.logicrepository.LogicRepositoryData;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
 import com.runtimeverification.rvmonitor.logicrepository.plugins.LogicPlugin;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.FSMCoenables;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.FSMEnables;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.FSMMin;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.parser.ast.State;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.parser.ast.Symbol;
 import com.runtimeverification.rvmonitor.logicrepository.plugins.tfsm.parser.FSMParser;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.tfsm.parser.ast.State;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.tfsm.parser.ast.Symbol;
 
 public class TFSMPlugin extends LogicPlugin {
 
