@@ -33,7 +33,7 @@ public class TimestampManager {
 
         ret += "// Declarations for Timestamps \n";
         for (RVMVariable timestamp : timestamps.values()) {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 ret += "private static final AtomicLong " + timestamp
                 + " = new AtomicLong(1);\n";
             else
@@ -51,7 +51,7 @@ public class TimestampManager {
             return ret;
 
         for (RVMVariable timestamp : timestamps.values()) {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 ret += timestamp + ".set(1);\n";
             else
                 ret += timestamp + " = 1;\n";

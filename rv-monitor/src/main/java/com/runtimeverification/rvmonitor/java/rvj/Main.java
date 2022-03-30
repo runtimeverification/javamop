@@ -10,7 +10,10 @@ package com.runtimeverification.rvmonitor.java.rvj;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.List;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.runtimeverification.rvmonitor.java.rvj.logicclient.LogicRepositoryConnector;
 import com.runtimeverification.rvmonitor.java.rvj.output.CodeGenerationOption;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.RVMSpecFile;
@@ -18,37 +21,38 @@ import com.runtimeverification.rvmonitor.util.RVMException;
 import com.runtimeverification.rvmonitor.util.Tool;
 
 public class Main {
+    public static RVMOptions options;
 
-    static File outputDir = null;
-    public static boolean debug = false;
-    public static boolean noopt1 = false;
-    public static boolean statistics = false;
-    public static boolean statistics2 = false;
-    public static String outputName = null;
-    public static boolean isJarFile = false;
-    public static String jarFilePath = null;
-
-    public static boolean silent = false;
-    public static boolean empty_advicebody = false;
-
-    public static boolean merge = false;
-    public static boolean inline = false;
-
-    public static boolean internalBehaviorObserving = false;
-
-    public static boolean useFineGrainedLock = false;
-    public static boolean useWeakRefInterning = false;
-
-    public static boolean generateVoidMethods = false;
-    public static boolean stripUnusedParameterInMonitor = true;
-    public static boolean eliminatePresumablyRemnantCode = true;
-    public static boolean suppressActivator = false;
-    public static boolean usePartitionedSet = false;
-    public static boolean useAtomicMonitor = true;
+//    static File outputDir = null;
+//    public static boolean debug = false;
+//    public static boolean noopt1 = false;
+//    public static boolean statistics = false;
+//    public static boolean statistics2 = false;
+//    public static String outputName = null;
+//    public static boolean isJarFile = false;
+//    public static String jarFilePath = null;
+//
+//    public static boolean silent = false;
+//    public static boolean empty_advicebody = false;
+//
+//    public static boolean merge = false;
+//    public static boolean inline = false;
+//
+//    public static boolean internalBehaviorObserving = false;
+//
+//    public static boolean useFineGrainedLock = false;
+//    public static boolean useWeakRefInterning = false;
+//
+//    public static boolean generateVoidMethods = false;
+//    public static boolean stripUnusedParameterInMonitor = true;
+//    public static boolean eliminatePresumablyRemnantCode = true;
+//    public static boolean suppressActivator = false;
+//    public static boolean usePartitionedSet = false;
+//    public static boolean useAtomicMonitor = true;
 
     /**
      * The target directory for outputting the results produced from some
-     * specification files. If {@link outputDir} is already set, use that. If
+     * specification files. If outputDir is already set, use that. If
      * the input files are all in the same directory, return that directory.
      * Otherwise, return the current directory.
      *
@@ -56,10 +60,9 @@ public class Main {
      *            The specification files used in the input.
      * @return The place to put the output files.
      */
-    static private File getTargetDir(ArrayList<File> specFiles)
-            throws RVMException {
-        if (Main.outputDir != null) {
-            return outputDir;
+    static private File getTargetDir(ArrayList<File> specFiles) {
+        if (options.outputDir != null) {
+            return options.outputDir;
         }
 
         boolean sameDir = true;
@@ -69,9 +72,7 @@ public class Main {
             if (parentFile == null) {
                 parentFile = file.getAbsoluteFile().getParentFile();
             } else {
-                if (file.getAbsoluteFile().getParentFile().equals(parentFile)) {
-                    continue;
-                } else {
+                if (!file.getAbsoluteFile().getParentFile().equals(parentFile)) {
                     sameDir = false;
                     break;
                 }
@@ -93,23 +94,21 @@ public class Main {
      *
      * @param file
      *            a File object containing the specification file
-     * @param location
-     *            an absolute path for result file
      */
-    public static void processSpecFile(File file, String location)
+    public static void processSpecFile(File file)
             throws RVMException {
         RVMNameSpace.init();
         String specStr = SpecExtractor.process(file);
         RVMSpecFile spec = SpecExtractor.parse(specStr);
 
-        if (outputDir == null) {
-            ArrayList<File> specList = new ArrayList<File>();
+        if (options.outputDir == null) {
+            ArrayList<File> specList = new ArrayList<>();
             specList.add(file);
-            outputDir = getTargetDir(specList);
+            options.outputDir = getTargetDir(specList);
         }
 
-        String outputName = Main.outputName == null ? Tool.getFileName(file
-                .getAbsolutePath()) : Main.outputName;
+        String outputName = options.name == null ? Tool.getFileName(file
+                .getAbsolutePath()) : options.name;
 
         RVMProcessor processor = new RVMProcessor(outputName);
 
@@ -128,12 +127,12 @@ public class Main {
             throws RVMException {
         String outputName;
 
-        if (outputDir == null) {
-            outputDir = getTargetDir(specFiles);
+        if (options.outputDir == null) {
+            options.outputDir = getTargetDir(specFiles);
         }
 
-        if (Main.outputName != null) {
-            outputName = Main.outputName;
+        if (options.name != null) {
+            outputName = options.name;
         } else {
             if (specFiles.size() == 1) {
                 outputName = Tool.getFileName(specFiles.get(0)
@@ -145,7 +144,7 @@ public class Main {
                 File outputFile;
                 do {
                     suffixNumber++;
-                    outputFile = new File(outputDir.getAbsolutePath()
+                    outputFile = new File(options.outputDir.getAbsolutePath()
                             + File.separator + "MultiSpec_" + suffixNumber
                             + "RuntimeMonitor.java");
                 } while (outputFile.exists());
@@ -155,7 +154,7 @@ public class Main {
         }
 
         RVMNameSpace.init();
-        ArrayList<RVMSpecFile> specs = new ArrayList<RVMSpecFile>();
+        ArrayList<RVMSpecFile> specs = new ArrayList<>();
         for (File file : specFiles) {
             String specStr = SpecExtractor.process(file);
             RVMSpecFile spec = SpecExtractor.parse(specStr);
@@ -184,7 +183,7 @@ public class Main {
             return;
 
         try {
-            FileWriter f = new FileWriter(outputDir.getAbsolutePath()
+            FileWriter f = new FileWriter(options.outputDir.getAbsolutePath()
                     + File.separator + outputName + "RuntimeMonitor.java");
             f.write(outputContent);
             f.close();
@@ -220,7 +219,7 @@ public class Main {
      */
     public static ArrayList<File> collectFiles(String[] files, String path)
             throws RVMException {
-        ArrayList<File> ret = new ArrayList<File>();
+        ArrayList<File> ret = new ArrayList<>();
 
         for (String file : files) {
             String fPath = path.length() == 0 ? file : path + File.separator
@@ -263,22 +262,18 @@ public class Main {
     public static void process(String[] files, String path) throws RVMException {
         ArrayList<File> specFiles = collectFiles(files, path);
 
-        if (Main.outputName != null && files.length > 1) {
-            Main.merge = true;
+        if (options.name != null && files.length > 1) {
+            options.merge = true;
         }
 
-        if (Main.merge) {
+        if (options.merge) {
             System.out.println("-Processing " + specFiles.size()
                     + " specification(s)");
             processMultipleFiles(specFiles);
         } else {
             for (File file : specFiles) {
-                String location = outputDir == null ? file.getAbsolutePath()
-                        : outputDir.getAbsolutePath() + File.separator
-                        + file.getName();
-
                 System.out.println("-Processing " + file.getPath());
-                processSpecFile(file, location);
+                processSpecFile(file);
             }
         }
     }
@@ -290,12 +285,18 @@ public class Main {
      *            A list of files, separated by semicolons.
      */
     public static void process(String arg) throws RVMException {
-        if (outputDir != null && !outputDir.exists())
+        if (options.outputDir != null && !options.outputDir.exists())
             throw new RVMException("The output directory, "
-                    + outputDir.getPath() + " does not exist.");
+                    + options.outputDir.getPath() + " does not exist.");
 
         process(arg.split(";"), "");
     }
+
+    public static void process(List<String> files) throws RVMException {
+        System.out.println("BBBBBBBB: " + files);
+        process(files.toArray(files.toArray(new String[0])), "");
+    }
+
 
     /**
      * Print the command line options (extended version) usable with Java
@@ -305,8 +306,7 @@ public class Main {
         System.out
         .println("Usage: java [-cp rv_monitor_classpath] com.runtimeverification.rvmonitor.java.rvj.Main [-options] files");
         System.out.println("");
-        System.out
-        .println(" Options enabled by default are prefixed with \'+\'");
+        System.out.println(" Options enabled by default are prefixed with '+'");
         System.out.println("    -h --help\t\t\t  print this help message");
         System.out
         .println("    --version\t\t\t  display RV-Monitor version information");
@@ -356,105 +356,142 @@ public class Main {
      *            The command-line arguments.
      */
     public static void main(String[] args) {
+
+        options = new RVMOptions();
+        JCommander jc;
+        try {
+            jc = new JCommander(options, args);
+        } catch (ParameterException pe) {
+            System.out.println(pe.getMessage());
+            return;
+        }
+        jc.setProgramName("rv-monitor");
+
+        handleOptions(options, args, jc);
         ClassLoader loader = Main.class.getClassLoader();
         String mainClassPath = loader.getResource(
-                "com/runtimeverification/rvmonitor/java/rvj/Main.class")
+                        "com/runtimeverification/rvmonitor/java/rvj/Main.class")
                 .toString();
         if (mainClassPath
                 .endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")
                 && mainClassPath.startsWith("jar:")) {
-            isJarFile = true;
+            options.isJarFile = true;
 
-            jarFilePath = mainClassPath
+            options.jarFilePath = mainClassPath
                     .substring(
                             "jar:file:".length(),
                             mainClassPath.length()
-                            - "!/com/runtimeverification/rvmonitor/java/rvj/Main.class"
-                            .length());
-            jarFilePath = polishPath(jarFilePath);
+                                    - "!/com/runtimeverification/rvmonitor/java/rvj/Main.class"
+                                    .length());
+            options.jarFilePath = polishPath(options.jarFilePath);
         }
 
-        int i = 0;
-        String files = "";
-        boolean help = false;
-        boolean verbose = false;
+//        int i = 0;
+//        String files = "";
+//        boolean help = false;
+//        boolean verbose = false;
 
-        while (i < args.length) {
-            if ("-h".equals(args[i]) || "--help".equals(args[i])) {
-                help = true;
-            }
+//        while (i < args.length) {
+//            if ("-h".equals(args[i]) || "--help".equals(args[i])) {
+//                help = true;
+//            }
+//
+//            if ("-d".equals(args[i])) {
+//                i++;
+//                outputDir = new File(args[i]);
+//            } else if ("-v".equals(args[i]) || "--verbose".equals(args[i])) {
+//                verbose = true;
+//                LogicRepositoryConnector.verbose = true;
+//                RVMProcessor.verbose = true;
+//            } else if ("--debug".equals(args[i])) {
+//                Main.debug = true;
+//            } else if ("--noopt1".equals(args[i])) {
+//                Main.noopt1 = true;
+//            } else if ("-s".equals(args[i]) || "--statistics".equals(args[i])) {
+//                Main.options.statistics = true;
+//            } else if ("-s2".equals(args[i]) || "--statistics2".equals(args[i])) {
+//                Main.options.statistics = true;
+//            } else if ("-n".equals(args[i]) || "--name".equals(args[i])) {
+//                i++;
+//                Main.outputName = args[i];
+//            } else if ("--silent".equals(args[i])) {
+//                Main.silent = true;
+//            } else if ("-merge".equals(args[i])) {
+//                Main.merge = true;
+//            } else if ("--inline".equals(args[i])) {
+//                Main.inline = true;
+//            } else if ("--noadvicebody".equals(args[i])) {
+//                Main.empty_advicebody = true;
+//            } else if ("--internalbehavior".equals(args[i])) {
+//                Main.options.internalBehaviorObserving = true;
+//            } else if ("--finegrainedlock".equals(args[i])) {
+//                Main.options.finegrainedlock = true;
+//            } else if ("--nofinegrainedlock".equals(args[i])) {
+//                Main.options.finegrainedlock = false;
+//            } else if ("--weakrefinterning".equals(args[i])) {
+//                Main.options.weakrefinterning = true;
+//            } else if ("--noweakrefinterning".equals(args[i])) {
+//                Main.options.weakrefinterning = false;
+//            } else if ("--partitionedset".equals(args[i])) {
+//                Main.usePartitionedSet = true;
+//            } else if ("--nopartitionedset".equals(args[i])) {
+//                Main.usePartitionedSet = false;
+//            } else if ("--atomicmonitor".equals(args[i])) {
+//                Main.options.useAtomicMonitor = true;
+//            } else if ("--noatomicmonitor".equals(args[i])) {
+//                Main.options.useAtomicMonitor = false;
+//            } else if ("--version".equals(args[i])) {
+//                Tool.printVersionMessage();
+//                return;
+//            } else {
+//                if (files.length() != 0)
+//                    files += ";";
+//                files += args[i];
+//            }
+//            ++i;
+//        }
 
-            if ("-d".equals(args[i])) {
-                i++;
-                outputDir = new File(args[i]);
-            } else if ("-v".equals(args[i]) || "--verbose".equals(args[i])) {
-                verbose = true;
-                LogicRepositoryConnector.verbose = true;
-                RVMProcessor.verbose = true;
-            } else if ("--debug".equals(args[i])) {
-                Main.debug = true;
-            } else if ("--noopt1".equals(args[i])) {
-                Main.noopt1 = true;
-            } else if ("-s".equals(args[i]) || "--statistics".equals(args[i])) {
-                Main.statistics = true;
-            } else if ("-s2".equals(args[i]) || "--statistics2".equals(args[i])) {
-                Main.statistics2 = true;
-            } else if ("-n".equals(args[i]) || "--name".equals(args[i])) {
-                i++;
-                Main.outputName = args[i];
-            } else if ("--silent".equals(args[i])) {
-                Main.silent = true;
-            } else if ("-merge".equals(args[i])) {
-                Main.merge = true;
-            } else if ("--inline".equals(args[i])) {
-                Main.inline = true;
-            } else if ("--noadvicebody".equals(args[i])) {
-                Main.empty_advicebody = true;
-            } else if ("--internalbehavior".equals(args[i])) {
-                Main.internalBehaviorObserving = true;
-            } else if ("--finegrainedlock".equals(args[i])) {
-                Main.useFineGrainedLock = true;
-            } else if ("--nofinegrainedlock".equals(args[i])) {
-                Main.useFineGrainedLock = false;
-            } else if ("--weakrefinterning".equals(args[i])) {
-                Main.useWeakRefInterning = true;
-            } else if ("--noweakrefinterning".equals(args[i])) {
-                Main.useWeakRefInterning = false;
-            } else if ("--partitionedset".equals(args[i])) {
-                Main.usePartitionedSet = true;
-            } else if ("--nopartitionedset".equals(args[i])) {
-                Main.usePartitionedSet = false;
-            } else if ("--atomicmonitor".equals(args[i])) {
-                Main.useAtomicMonitor = true;
-            } else if ("--noatomicmonitor".equals(args[i])) {
-                Main.useAtomicMonitor = false;
-            } else if ("--version".equals(args[i])) {
-                Tool.printVersionMessage();
-                return;
-            } else {
-                if (files.length() != 0)
-                    files += ";";
-                files += args[i];
-            }
-            ++i;
-        }
-
-        if (help || files.length() == 0) {
-            if (verbose)
-                print_help_ext();
-            else
-                print_help();
-            return;
-        }
+//        if (help || files.length() == 0) {
+//            if (verbose)
+//                print_help_ext();
+//            else
+//                print_help();
+//            return;
+//        }
 
         CodeGenerationOption.initialize();
 
         try {
-            process(files);
+            process(options.files);
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            if (Main.debug)
+            if (options.debug)
                 e.printStackTrace();
+        }
+    }
+
+    private static void handleOptions(RVMOptions options, String[] args, JCommander jc) {
+        if (args.length == 0 || (options.files.size() == 0)) {
+            jc.usage();
+            System.exit(1);
+        }
+
+        if (options.verbose) {
+            LogicRepositoryConnector.verbose = true;
+            RVMProcessor.verbose = true;
+        }
+
+        if (options.version) {
+            Tool.printVersionMessage();
+            System.exit(0);
+        }
+
+        if (options.help || options.files.size() == 0) {
+            if (options.verbose) {
+                print_help_ext();
+            } else {
+                print_help();
+            }
         }
     }
 }

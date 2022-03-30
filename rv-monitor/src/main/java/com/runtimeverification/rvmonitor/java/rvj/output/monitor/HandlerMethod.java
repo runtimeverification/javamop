@@ -74,7 +74,7 @@ public class HandlerMethod {
 
     @Override
     public String toString() {
-        // String synch = Main.useFineGrainedLock ? "synchronized " : "";
+        // String synch = Main.options.finegrainedlock ? "synchronized " : "";
         String synch = "";
         String ret = "";
 
@@ -85,11 +85,11 @@ public class HandlerMethod {
         ret += "void ";
 
         ret += methodName + " (";
-        if (!Main.stripUnusedParameterInMonitor)
+        if (!Main.options.stripUnusedParameterInMonitor)
             ret += this.specParam.parameterDeclString();
         ret += "){\n";
 
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += "if(" + categoryVar + ") {\n";
             ret += monitor.stat.categoryInc(prop, category);
             ret += "}\n";

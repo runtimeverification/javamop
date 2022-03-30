@@ -173,7 +173,7 @@ public class MonitorTermination {
                 ret += ")){\n";
                 ret += "RVM_terminated = true;\n";
 
-                if (Main.statistics) {
+                if (Main.options.statistics) {
                     ret += stat.incTerminatedMonitor();
                 }
 
@@ -190,7 +190,7 @@ public class MonitorTermination {
         ret += "}\n";
         ret += "\n";
 
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += "protected void finalize() throws Throwable {\n";
             ret += "try {\n";
             ret += stat.incCollectedMonitor();

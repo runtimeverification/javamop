@@ -880,7 +880,7 @@ public class IndexingTreeImplementation implements ICodeGenerator {
                 invoke = new CodeMethodInvokeExpr(type, mapref,
                         "getNodeWithStrongRef", strongref);
             } else {
-                if (Main.useWeakRefInterning)
+                if (Main.options.weakrefinterning)
                     invoke = new CodeMethodInvokeExpr(type, mapref, "getNode",
                             weakref);
                 else

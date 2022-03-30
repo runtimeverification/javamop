@@ -32,13 +32,13 @@ public class RuntimeServiceManager implements ICodeGenerator {
 
     public RuntimeServiceManager() {
         this.observer = new InternalBehaviorObservableCodeGenerator(
-                Main.internalBehaviorObserving);
+                Main.options.internalBehaviorObserving);
 
         this.services = new ArrayList<ServiceDefinition>();
 
         this.services.add(this.addCleanerService());
         this.services.add(this.addRuntimeBehaviorOption());
-        if (Main.internalBehaviorObserving)
+        if (Main.options.internalBehaviorObserving)
             this.services.add(this.addObserverService());
     }
 
@@ -114,7 +114,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         CodeStmtCollection init = new CodeStmtCollection();
         {
             CodeType type = CodeHelper.RuntimeType.getRuntimeOption();
-            CodeExpr enabled = CodeLiteralExpr.bool(Main.useFineGrainedLock);
+            CodeExpr enabled = CodeLiteralExpr.bool(Main.options.finegrainedlock);
             CodeExpr invoke = new CodeMethodInvokeExpr(CodeType.foid(), type,
                     null, "enableFineGrainedLock", enabled);
             init.add(new CodeExprStmt(invoke));

@@ -20,7 +20,7 @@ public class EventManager {
     public ArrayList<EndObject> endObjectEvents = new ArrayList<EndObject>();
     public ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
     public ArrayList<StartThread> startThreadEvents = new ArrayList<StartThread>();
-    public EndProgram endProgramEvent = null;
+    public EndProgram endProgramEvent;
 
     public TreeMap<RVMonitorSpec, MonitorSet> monitorSets;
     public TreeMap<RVMonitorSpec, SuffixMonitor> monitors;
@@ -95,7 +95,7 @@ public class EventManager {
 
         int numAdvice = 1;
         for (Advice advice : advices) {
-            if (Main.empty_advicebody) {
+            if (Main.options.noadvicebody) {
                 ret += "// " + numAdvice++ + "\n";
             }
 

@@ -26,7 +26,7 @@ public class GlobalLock {
     public String toString() {
         String ret = "";
 
-        if (!Main.useFineGrainedLock) {
+        if (!Main.options.finegrainedlock) {
             ret += "static final ReentrantLock " + lock
                     + " = new ReentrantLock();\n";
             // Why do we need this?
@@ -40,7 +40,7 @@ public class GlobalLock {
     public String getAcquireCode() {
         String ret = "";
 
-        if (!Main.useFineGrainedLock) {
+        if (!Main.options.finegrainedlock) {
             if (this.useImplicitLock)
                 ret += "synchronized (" + this.getName() + ") {\n";
             else {
@@ -56,7 +56,7 @@ public class GlobalLock {
     public String getReleaseCode() {
         String ret = "";
 
-        if (!Main.useFineGrainedLock) {
+        if (!Main.options.finegrainedlock) {
             if (this.useImplicitLock)
                 ret += "}\n";
             else

@@ -40,11 +40,6 @@ public class JavaMOPOptions {
             "source code name.")
     public String aspectname;
 
-    @Parameter(names="-dacapo",description = "is for adding pointcuts, such as," +
-            " !within(dacapo.test.*) -- automatically. Otherwise, user will have to add these " +
-            "pointcuts manually for each specification.")
-    public boolean dacapo = false;
-
     @Parameter(names="-noadvicebody",description = "Enabling this causes JavaMOP not to put " +
             "the monitoring-related routine inside the corresponding advice body. This can be " +
             "used count the number of fired events for each event.")

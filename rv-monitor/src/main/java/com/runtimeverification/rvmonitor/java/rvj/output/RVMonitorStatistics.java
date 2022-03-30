@@ -51,7 +51,7 @@ public class RVMonitorStatistics {
 
     public String fieldDecl() {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += "protected static long " + numMonitor + " = 0;\n";
@@ -84,7 +84,7 @@ public class RVMonitorStatistics {
      **/
     public String methodDecl() {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         // Generate getters for main statistics (total, collected, terminated
@@ -123,7 +123,7 @@ public class RVMonitorStatistics {
 
     public String paramInc(RVMParameter param) {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         /* removed for buggy behavior */
@@ -142,7 +142,7 @@ public class RVMonitorStatistics {
 
     public String eventInc(String eventName) {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         RVMVariable eventVar = eventVars.get(eventName);
@@ -154,7 +154,7 @@ public class RVMonitorStatistics {
 
     public String categoryInc(PropertyAndHandlers prop, String category) {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         RVMVariable categoryVar = categoryVars.get(prop).get(category);
@@ -166,7 +166,7 @@ public class RVMonitorStatistics {
 
     public String incNumMonitor() {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += numMonitor + "++;\n";
@@ -176,7 +176,7 @@ public class RVMonitorStatistics {
 
     public String incCollectedMonitor() {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += collectedMonitor + "++;\n";
@@ -186,7 +186,7 @@ public class RVMonitorStatistics {
 
     public String incTerminatedMonitor() {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += terminatedMonitor + "++;\n";
@@ -196,7 +196,7 @@ public class RVMonitorStatistics {
 
     public String advice() {
         String ret = "";
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += "after () : execution(* *.main(..)) {\n";

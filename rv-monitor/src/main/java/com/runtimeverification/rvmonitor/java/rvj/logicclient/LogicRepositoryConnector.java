@@ -57,7 +57,7 @@ public class LogicRepositoryConnector {
             logicOutputData = new LogicRepositoryData(logicOutput_OutputStream);
             logicOutputXML = logicOutputData.getXML();
         } catch (Exception e) {
-            if (Main.debug)
+            if (Main.options.debug)
                 e.printStackTrace();
             throw new RVMException("Logic Engine Error: " + e.getMessage());
         }
@@ -127,7 +127,7 @@ public class LogicRepositoryConnector {
                 + File.separator + "plugins" + File.separator + "*";
 
         if (isLogicRepositoryInJar) {
-            String mysqlConnectorPath = new File(Main.jarFilePath).getParent()
+            String mysqlConnectorPath = new File(Main.options.jarFilePath).getParent()
                     + "/lib/mysql-connector-java-3.0.9-stable-bin.jar";
             String executePath = new File(logicJarFilePath).getParent();
 
@@ -137,7 +137,7 @@ public class LogicRepositoryConnector {
                     Tool.polishPath(logicJarFilePath) + File.pathSeparator
                             + logicPluginFarFilePath + File.pathSeparator
                             + mysqlConnectorPath + File.pathSeparator
-                            + new File(Main.jarFilePath).getParent()
+                            + new File(Main.options.jarFilePath).getParent()
                             + "/scala-library.jar",
                     "com.runtimeverification.rvmonitor.logicrepository.Main" };
 

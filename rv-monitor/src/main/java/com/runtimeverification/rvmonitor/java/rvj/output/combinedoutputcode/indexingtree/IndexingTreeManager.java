@@ -84,7 +84,7 @@ public class IndexingTreeManager {
         }
         ret += "\n";
 
-        if (Main.useWeakRefInterning) {
+        if (Main.options.weakrefinterning) {
             ret += "// Trees for References\n";
             for (RefTree refTree : refTrees.values()) {
                 ret += refTree;
@@ -92,7 +92,7 @@ public class IndexingTreeManager {
             ret += "\n";
         }
 
-        if (Main.internalBehaviorObserving) {
+        if (Main.options.internalBehaviorObserving) {
             ret += "static {\n";
             for (IndexingDeclNew indexDecl : trees.values()) {
                 ret += indexDecl.getObservableObjectDescriptionSetCode();
@@ -109,7 +109,7 @@ public class IndexingTreeManager {
                 ret += decl.getCleanUpCode(var);
             }
 
-            if (Main.useWeakRefInterning) {
+            if (Main.options.weakrefinterning) {
                 ret += "// ref trees\n";
                 for (RefTree refTree : refTrees.values()) {
                     ret += refTree.getCleanUpCode(var);

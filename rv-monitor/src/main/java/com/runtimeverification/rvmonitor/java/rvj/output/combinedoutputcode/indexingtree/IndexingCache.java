@@ -76,7 +76,7 @@ public class IndexingCache {
                 ret += param.get(i).getName() + " == " + getKey(i)
                         + ".get().get()";
             } else {
-                if (Main.useFineGrainedLock) {
+                if (Main.options.finegrainedlock) {
                     ret += getKey(i) + ".get() != null && ";
                     ret += param.get(i).getName() + " == " + getKey(i)
                             + ".get().get()";
@@ -102,7 +102,7 @@ public class IndexingCache {
             if (perthread) {
                 ret += getKey(p) + ".get();\n";
             } else {
-                if (Main.useFineGrainedLock)
+                if (Main.options.finegrainedlock)
                     ret += getKey(p) + ".get();\n";
                 else
                     ret += getKey(p) + ";\n";
@@ -121,7 +121,7 @@ public class IndexingCache {
         if (perthread) {
             ret += obj + " = " + set + ".get();\n";
         } else {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 ret += obj + " = " + set + ".get();\n";
             else
                 ret += obj + " = " + set + ";\n";
@@ -136,7 +136,7 @@ public class IndexingCache {
         if (perthread) {
             ret += obj + " = " + node + ".get();\n";
         } else {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 ret += obj + " = " + node + ".get();\n";
             else
                 ret += obj + " = " + node + ";\n";
@@ -154,7 +154,7 @@ public class IndexingCache {
             if (perthread) {
                 ret += getKey(p) + ".set(" + tempRef + ");\n";
             } else {
-                if (Main.useFineGrainedLock)
+                if (Main.options.finegrainedlock)
                     ret += getKey(p) + ".set(" + tempRef + ");\n";
                 else
                     ret += getKey(p) + " = " + tempRef + ";\n";
@@ -173,7 +173,7 @@ public class IndexingCache {
         if (perthread) {
             ret += set + ".set(" + obj + ");\n";
         } else {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 ret += set + ".set(" + obj + ");\n";
             else
                 ret += set + " = " + obj + ";\n";
@@ -191,7 +191,7 @@ public class IndexingCache {
         if (perthread) {
             ret += node + ".set(" + obj + ");\n";
         } else {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 ret += node + ".set(" + obj + ");\n";
             else
                 ret += node + " = " + obj + ";\n";
@@ -239,7 +239,7 @@ public class IndexingCache {
             }
         } else {
             // ---
-            if (Main.useFineGrainedLock) {
+            if (Main.options.finegrainedlock) {
                 for (RVMParameter p : param) {
                     String type = getKeyType(p);
                     RVMVariable name = keys.get(p.getName());

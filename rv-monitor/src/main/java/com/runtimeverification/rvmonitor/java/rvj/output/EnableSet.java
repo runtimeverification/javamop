@@ -119,7 +119,7 @@ public class EnableSet {
     }
 
     public RVMParameterSet getEnable(String event) {
-        if (contents.get(event) == null || Main.noopt1)
+        if (contents.get(event) == null || Main.options.noopt1)
             return getFullEnable();
         return contents.get(event);
     }

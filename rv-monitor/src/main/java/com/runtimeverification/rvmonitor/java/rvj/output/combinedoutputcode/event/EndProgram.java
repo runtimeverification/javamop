@@ -13,8 +13,8 @@ public class EndProgram {
     private final RVMVariable hookName;
     private final String className;
 
-    private final ArrayList<EndThread> endThreadEvents = new ArrayList<EndThread>();
-    private final ArrayList<AdviceBody> eventBodies = new ArrayList<AdviceBody>();
+    private final ArrayList<EndThread> endThreadEvents = new ArrayList<>();
+    private final ArrayList<AdviceBody> eventBodies = new ArrayList<>();
 
     public EndProgram(String name) {
         this.hookName = new RVMVariable(name + "_DummyHookThread");

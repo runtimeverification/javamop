@@ -164,7 +164,7 @@ public class SuffixMonitor extends Monitor {
     }
 
     public String doEvent(EventDefinition event) {
-        String synch = Main.useFineGrainedLock ? " synchronized " : " ";
+        String synch = Main.options.finegrainedlock ? " synchronized " : " ";
         String ret = "";
 
         int idnum = event.getIdNum();
@@ -180,7 +180,7 @@ public class SuffixMonitor extends Monitor {
         ret += "final" + synch + "void event_" + event.getId() + "(";
         {
             RVMParameters params;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 params = event.getReferredParameters(event.getRVMParameters());
             else
                 params = event.getRVMParameters();
@@ -254,7 +254,7 @@ public class SuffixMonitor extends Monitor {
         ret += monitorVar + ".event_" + event.getId() + "(";
         {
             RVMParameters passing;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 passing = event.getReferredParameters(event.getRVMParameters());
             else
                 passing = event.getRVMParameters();
@@ -262,7 +262,7 @@ public class SuffixMonitor extends Monitor {
         }
         ret += ");\n";
 
-        if (!Main.eliminatePresumablyRemnantCode) {
+        if (!Main.options.eliminatePresumablyRemnantCode) {
             for (RVMVariable var : getCategoryVars()) {
                 ret += BaseMonitor.getNiceVariable(var) + " |= " + monitorVar
                         + "." + BaseMonitor.getNiceVariable(var) + ";" + "\n";

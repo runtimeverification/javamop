@@ -307,7 +307,7 @@ public class IndexingDeclNew {
             return;
 
         // If weak-ref interning is disabled, GWRT does not exist.
-        if (!Main.useWeakRefInterning)
+        if (!Main.options.weakrefinterning)
             return;
 
         for (RVMParameters params : this.indexingTrees.keySet()) {

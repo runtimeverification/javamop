@@ -160,7 +160,7 @@ public class MonitorFeatures {
 
         this.stabilized = false;
 
-        this.needsSelfSynchronization = Main.useFineGrainedLock;
+        this.needsSelfSynchronization = Main.options.finegrainedlock;
 
         this.needsTimeTracking = true;
         this.rememberedParameters = new HashSet<RVMParameter>();

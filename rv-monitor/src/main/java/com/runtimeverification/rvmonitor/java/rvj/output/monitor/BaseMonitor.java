@@ -146,7 +146,7 @@ public class BaseMonitor extends Monitor {
         MonitorFeatures feature = this.getFeatures();
 
         CodeMemberField pair = null;
-        if (Main.useAtomicMonitor) {
+        if (Main.options.atomicmonitor) {
             boolean simple = true;
             for (PropertyAndHandlers prop : props) {
                 PropMonitor propMonitor = propMonitors.get(prop);
@@ -166,7 +166,7 @@ public class BaseMonitor extends Monitor {
 
         this.atomicMonitorTried = true;
 
-        feature.setSelfSynchroniztionNeeded(Main.useFineGrainedLock
+        feature.setSelfSynchroniztionNeeded(Main.options.finegrainedlock
                 && !this.isAtomicMoniorUsed());
     }
 
@@ -188,7 +188,7 @@ public class BaseMonitor extends Monitor {
                     rvmSpec.getEvents(), coenableSet);
         }
 
-        String prefix = Main.merge ? this.monitorName + "_" : "";
+        String prefix = Main.options.merge ? this.monitorName + "_" : "";
 
         for (PropertyAndHandlers prop : props) {
             PropMonitor propMonitor = new PropMonitor();
@@ -347,7 +347,7 @@ public class BaseMonitor extends Monitor {
             if (event.getAction() != null) {
                 String eventActionStr = event.getAction();
 
-                if (!Main.generateVoidMethods) {
+                if (!Main.options.generateVoidMethods) {
                     eventActionStr = eventActionStr.replaceAll("return;",
                             "return true;");
                 }
@@ -375,7 +375,7 @@ public class BaseMonitor extends Monitor {
         // However, it seems the return value is always 'true' for monitoring.
         // To eliminate unnecessary
         // hassle, I let it generate 'void' methods for monitoring.
-        boolean retbool = !Main.generateVoidMethods;
+        boolean retbool = !Main.options.generateVoidMethods;
         ret += "final" + synch + (retbool ? "boolean " : "void ")
                 + methodNamePrefix
                 + propMonitor.eventMethods.get(event.getId()) + "(";
@@ -383,7 +383,7 @@ public class BaseMonitor extends Monitor {
         // user's action code.
         {
             RVMParameters params;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 params = event.getReferredParameters(event.getRVMParameters());
             else
                 params = event.getRVMParameters();
@@ -407,7 +407,7 @@ public class BaseMonitor extends Monitor {
             ret += eventAction;
         }
 
-        if (Main.internalBehaviorObserving) {
+        if (Main.options.internalBehaviorObserving) {
             ret += "this.trace.add(\"";
             ret += event.getId();
             ret += "\");\n";
@@ -509,7 +509,7 @@ public class BaseMonitor extends Monitor {
                         + propMonitor.eventMethods.get(event.getId()) + "(";
                 {
                     RVMParameters passing;
-                    if (Main.stripUnusedParameterInMonitor)
+                    if (Main.options.stripUnusedParameterInMonitor)
                         passing = event.getReferredParameters(event
                                 .getRVMParameters());
                     else
@@ -617,7 +617,7 @@ public class BaseMonitor extends Monitor {
 
             final RVMVariable rvmVariable = propMonitor.categoryVars
                     .get(category);
-            if (!Main.eliminatePresumablyRemnantCode) {
+            if (!Main.options.eliminatePresumablyRemnantCode) {
                 ret += BaseMonitor.getNiceVariable(rvmVariable) + " |= "
                         + monitorVar + "." + rvmVariable + ";\n";
             }
@@ -625,7 +625,7 @@ public class BaseMonitor extends Monitor {
             // Generate code to trigger handler
             ret += "if(" + monitorVar + "." + rvmVariable + ") {\n";
             ret += monitorVar + "." + handlerMethod.getMethodName() + "(";
-            if (!Main.stripUnusedParameterInMonitor)
+            if (!Main.options.stripUnusedParameterInMonitor)
                 ret += event.getRVMParametersOnSpec().parameterStringIn(
                         specParam);
             ret += ");\n";
@@ -683,12 +683,12 @@ public class BaseMonitor extends Monitor {
                     .getVarName());
             ret += "class " + holderName + " extends DisableHolder implements "
                     + interfaceName;
-            if (Main.internalBehaviorObserving)
+            if (Main.options.internalBehaviorObserving)
                 ret += ", IObservableObject";
             ret += " {\n";
             ret += holderName + "(long tau) {\n";
             ret += "super(tau);\n";
-            if (Main.internalBehaviorObserving)
+            if (Main.options.internalBehaviorObserving)
                 ret += "this.holderid = ++nextid;\n";
             ret += "}\n\n";
 
@@ -716,7 +716,7 @@ public class BaseMonitor extends Monitor {
                 ret += "}\n\n";
             }
 
-            if (Main.internalBehaviorObserving) {
+            if (Main.options.internalBehaviorObserving) {
                 ret += "private int holderid;\n";
                 ret += "private static int nextid;\n\n";
                 ret += "@Override\n";
@@ -749,7 +749,7 @@ public class BaseMonitor extends Monitor {
             else
                 ret += ", com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder";
         }
-        if (Main.internalBehaviorObserving)
+        if (Main.options.internalBehaviorObserving)
             ret += ", IObservableObject";
         ret += " {\n";
 
@@ -758,7 +758,7 @@ public class BaseMonitor extends Monitor {
 
         // clone()
         ret += "protected Object clone() {\n";
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.incNumMonitor();
         }
         ret += "try {\n";
@@ -767,7 +767,7 @@ public class BaseMonitor extends Monitor {
             ret += monitorInfo.copy("ret", "this");
         for (PropertyAndHandlers prop : props)
             ret += propMonitors.get(prop).cloneCode;
-        if (Main.internalBehaviorObserving) {
+        if (Main.options.internalBehaviorObserving) {
             ret += "ret.monitorid = ++nextid;\n";
             ret += "ret.trace = new ArrayList<String>();\n";
             ret += "ret.trace.addAll(this.trace);\n";
@@ -789,7 +789,7 @@ public class BaseMonitor extends Monitor {
         // if (this.has__LOC)
         // ret += "String " + loc + ";\n";
         // monitor statistics variables
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.fieldDecl() + "\n";
         }
 
@@ -881,17 +881,17 @@ public class BaseMonitor extends Monitor {
                 ret += "this." + var + " = " + var + ";\n";
             }
         }
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.incNumMonitor();
         }
-        if (Main.internalBehaviorObserving) {
+        if (Main.options.internalBehaviorObserving) {
             ret += "this.trace = new ArrayList<String>();\n";
             ret += "this.monitorid = ++nextid;\n";
         }
         ret += "}\n";
         ret += "\n";
 
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.methodDecl() + "\n";
         }
         // implements getState(), getLastEvent() and other related things
@@ -1062,7 +1062,7 @@ public class BaseMonitor extends Monitor {
             ret += "}\n\n";
         }
 
-        if (Main.internalBehaviorObserving) {
+        if (Main.options.internalBehaviorObserving) {
             ret += "private List<String> trace;\n";
             ret += "private int monitorid;\n";
             ret += "private static int nextid;\n";

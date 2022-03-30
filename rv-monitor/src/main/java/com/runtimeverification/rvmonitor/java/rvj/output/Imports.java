@@ -52,15 +52,15 @@ public class Imports {
 
         this.addImports(this.required);
 
-        if (Main.internalBehaviorObserving)
+        if (Main.options.internalBehaviorObserving)
             this.addImports(this.observer);
 
-        if (Main.useFineGrainedLock) {
+        if (Main.options.finegrainedlock) {
             imports.add("java.util.concurrent.atomic.AtomicBoolean");
             imports.add("java.util.concurrent.atomic.AtomicLong");
         }
 
-        if (Main.useAtomicMonitor)
+        if (Main.options.atomicmonitor)
             imports.add("java.util.concurrent.atomic.AtomicInteger");
     }
 

@@ -362,7 +362,7 @@ public class EventMethodBody extends AdviceBody implements ICodeGenerator {
                 throw new NotImplementedException();
 
             CodeExpr initval = null;
-            if (Main.useWeakRefInterning) {
+            if (Main.options.weakrefinterning) {
                 String rhs;
                 RefTree gwrt = this.getGWRT(param);
                 if (create)
@@ -1524,7 +1524,7 @@ public class EventMethodBody extends AdviceBody implements ICodeGenerator {
         protected CodeMemberField field;
 
         public static Timestamp create(String fieldname) {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 return new AtomicTimestamp(fieldname);
             return new OrdinaryTimestamp(fieldname);
         }

@@ -206,7 +206,7 @@ public class MonitorSet {
     }
 
     private boolean determineIfPartitionedSetApplicable() {
-        if (!Main.usePartitionedSet)
+        if (!Main.options.partitionedset)
             return false;
 
         // This checks whether each starting event carries all the parameters,
@@ -268,7 +268,7 @@ public class MonitorSet {
          * legacy code, which might do something important, let's use the legacy
          * code. String methodname = "event_" + event.getId(); List<CodeExpr>
          * args = new ArrayList<CodeExpr>(); RVMParameters passing; if
-         * (Main.stripUnusedParameterInMonitor) passing =
+         * (Main.options.stripUnusedParameterInMonitor) passing =
          * event.getReferredParameters(event.getRVMParameters()); else passing =
          * event.getRVMParameters(); for (RVMParameter param : passing)
          * args.add(CodeExpr.fromLegacy(CodeType.object(), param.getName()));
@@ -308,7 +308,7 @@ public class MonitorSet {
         ret += monitorSetVar + ".event_" + event.getId() + "(";
         {
             RVMParameters passing;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 passing = event.getReferredParameters(event.getRVMParameters());
             else
                 passing = event.getRVMParameters();
@@ -316,7 +316,7 @@ public class MonitorSet {
         }
         ret += ");\n";
 
-        if (!Main.eliminatePresumablyRemnantCode) {
+        if (!Main.options.eliminatePresumablyRemnantCode) {
             // What's the point of this?
             for (RVMVariable var : monitor.getCategoryVars()) {
                 ret += BaseMonitor.getNiceVariable(var) + " = " + monitorSetVar
@@ -392,7 +392,7 @@ public class MonitorSet {
             stmts.add(new CodeExprStmt(addset));
         }
 
-        if (Main.internalBehaviorObserving) {
+        if (Main.options.internalBehaviorObserving) {
             // TODO: Some code should be added.
         }
 
@@ -619,7 +619,7 @@ public class MonitorSet {
 
     @Override
     public String toString() {
-        boolean synch = Main.useFineGrainedLock;
+        boolean synch = Main.options.finegrainedlock;
         // A partitioned-set is capable of synchronizing itself. Thus, an event
         // handling method does not need to be synchronized.
         if (this.usePartitionedSet)
@@ -650,7 +650,7 @@ public class MonitorSet {
         if (existSkip)
             ret += "boolean " + BaseMonitor.skipEvent + " = false;\n";
 
-        if (!Main.eliminatePresumablyRemnantCode) {
+        if (!Main.options.eliminatePresumablyRemnantCode) {
             for (RVMVariable var : this.monitor.getCategoryVars()) {
                 ret += "boolean " + BaseMonitor.getNiceVariable(var) + ";\n";
             }
@@ -730,7 +730,7 @@ public class MonitorSet {
         for (EventDefinition event : this.events) {
             String eventName = event.getId();
             RVMParameters parameters;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 parameters = event.getReferredParameters(event
                         .getRVMParameters());
             else
@@ -747,7 +747,7 @@ public class MonitorSet {
                 stmts.getCode(fmt);
                 ret += fmt.getCode();
             } else {
-                if (!Main.eliminatePresumablyRemnantCode) {
+                if (!Main.options.eliminatePresumablyRemnantCode) {
                     for (RVMVariable var : this.monitor.getCategoryVars()) {
                         ret += "this." + BaseMonitor.getNiceVariable(var)
                                 + " = " + "false;\n";

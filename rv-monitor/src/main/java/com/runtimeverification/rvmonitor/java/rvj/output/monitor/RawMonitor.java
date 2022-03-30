@@ -90,7 +90,7 @@ public class RawMonitor extends Monitor {
         if (event.getAction() != null) {
             String eventActionStr = event.getAction();
 
-            if (!Main.generateVoidMethods) {
+            if (!Main.options.generateVoidMethods) {
                 eventActionStr = eventActionStr.replaceAll("return;",
                         "return true;");
             }
@@ -111,13 +111,13 @@ public class RawMonitor extends Monitor {
             eventAction = new RVMJavaCode(eventActionStr);
         }
 
-        boolean retbool = !Main.generateVoidMethods;
-        String synch = Main.useFineGrainedLock ? " synchronized " : " ";
+        boolean retbool = !Main.options.generateVoidMethods;
+        String synch = Main.options.finegrainedlock ? " synchronized " : " ";
         ret += "final" + synch + (retbool ? "boolean" : "void") + " event_"
                 + event.getId() + "(";
         {
             RVMParameters params;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 params = event.getReferredParameters(event.getRVMParameters());
             else
                 params = event.getRVMParameters();
@@ -130,7 +130,7 @@ public class RawMonitor extends Monitor {
 
         if (!condition.isEmpty()) {
             ret += "if (!(" + condition + ")) {\n";
-            if (Main.generateVoidMethods)
+            if (Main.options.generateVoidMethods)
                 ret += "return;\n";
             else
                 ret += "return false;\n";
@@ -144,7 +144,7 @@ public class RawMonitor extends Monitor {
         if (eventAction != null)
             ret += eventAction;
 
-        if (!Main.generateVoidMethods)
+        if (!Main.options.generateVoidMethods)
             ret += "return true;\n";
         ret += "}\n";
 
@@ -168,7 +168,7 @@ public class RawMonitor extends Monitor {
         ret += monitorVar + ".event_" + event.getId() + "(";
         {
             RVMParameters params;
-            if (Main.stripUnusedParameterInMonitor)
+            if (Main.options.stripUnusedParameterInMonitor)
                 params = event.getReferredParameters(event.getRVMParameters());
             else
                 params = event.getRVMParameters();
@@ -186,7 +186,7 @@ public class RawMonitor extends Monitor {
 
     @Override
     public String toString() {
-        String synch = Main.useFineGrainedLock ? " synchronized " : " ";
+        String synch = Main.options.finegrainedlock ? " synchronized " : " ";
         String ret = "";
 
         ret += "class " + monitorName;
@@ -199,7 +199,7 @@ public class RawMonitor extends Monitor {
 
         // clone()
         ret += "protected Object clone() {\n";
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.incNumMonitor();
         }
         ret += "try {\n";
@@ -217,18 +217,18 @@ public class RawMonitor extends Monitor {
         if (this.has__ACTIVITY)
             ret += activityCode();
 
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.fieldDecl() + "\n";
         }
 
         //constructor
         ret += monitorName + "(){\n";
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.incNumMonitor();
         }
         ret += "}\n";
 
-        if (Main.statistics) {
+        if (Main.options.statistics) {
             ret += stat.methodDecl() + "\n";
         }
         // if (this.has__LOC)

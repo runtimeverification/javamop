@@ -34,7 +34,7 @@ public class RVMonitorStatManager {
     public String statClass() {
         String ret = "";
 
-        if (!Main.statistics2)
+        if (!Main.options.statistics)
             return ret;
 
         ret = "class "
@@ -61,7 +61,7 @@ public class RVMonitorStatManager {
     public String incEvent(RVMonitorSpec spec, EventDefinition event) {
         String ret = "";
 
-        if (!Main.statistics2)
+        if (!Main.options.statistics)
             return ret;
 
         ret += statClass + ".numTotalEvents++;\n";
@@ -72,7 +72,7 @@ public class RVMonitorStatManager {
     public String incMonitor(RVMonitorSpec spec) {
         String ret = "";
 
-        if (!Main.statistics2)
+        if (!Main.options.statistics)
             return ret;
 
         ret += statClass + ".numTotalMonitors++;\n";
@@ -83,7 +83,7 @@ public class RVMonitorStatManager {
     public String fieldDecl2() {
         String ret = "";
 
-        if (!Main.statistics2)
+        if (!Main.options.statistics)
             return ret;
 
         ret += "private static " + statClass + " " + statObject + ";\n";
@@ -94,7 +94,7 @@ public class RVMonitorStatManager {
     public String constructor() {
         String ret = "";
 
-        if (!Main.statistics2)
+        if (!Main.options.statistics)
             return ret;
 
         ret += statObject + " = new " + statClass + "();\n";
@@ -106,7 +106,7 @@ public class RVMonitorStatManager {
     public String fieldDecl() {
         String ret = "";
 
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += "// Declarations for Statistics \n";
@@ -121,7 +121,7 @@ public class RVMonitorStatManager {
     public String advice() {
         String ret = "";
 
-        if (!Main.statistics)
+        if (!Main.options.statistics)
             return ret;
 
         ret += "\n";

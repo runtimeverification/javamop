@@ -47,7 +47,7 @@ public class Advice {
     public Advice(RVMonitorSpec rvmSpec, EventDefinition event,
             CombinedOutput combinedOutput) throws RVMException {
 
-        String prefix = Main.merge ? rvmSpec.getName() + "_" : "";
+        String prefix = Main.options.merge ? rvmSpec.getName() + "_" : "";
         this.pointcutName = new RVMVariable(prefix + event.getId() + "Event");
         this.inlineFuncName = new RVMVariable("RVMInline" + rvmSpec.getName()
                 + "_" + event.getUniqueId());
@@ -135,7 +135,7 @@ public class Advice {
     protected String adviceBody() {
         String ret = "";
 
-        if (Main.empty_advicebody) {
+        if (Main.options.noadvicebody) {
             ret += "System.out.print(\"\");\n";
 
             Iterator<EventDefinition> iter;
@@ -161,8 +161,8 @@ public class Advice {
                         + " = Thread.currentThread();\n";
             }
 
-            if (Main.useFineGrainedLock) {
-                if (!Main.suppressActivator) {
+            if (Main.options.finegrainedlock) {
+                if (!Main.options.suppressActivator) {
                     for (RVMonitorSpec spec : specsForActivation) {
                         ret += this.activatorsManager.setValue(spec, true);
                         ret += ";\n";
@@ -199,7 +199,7 @@ public class Advice {
                                 + event.getUniqueId() + "\n";
                     }
 
-                    if (Main.suppressActivator)
+                    if (Main.options.suppressActivator)
                         ret += "{\n";
                     else
                         ret += "if ("
@@ -213,7 +213,7 @@ public class Advice {
                     }
                 }
 
-                if (Main.statistics) {
+                if (Main.options.statistics) {
                     RVMonitorStatistics stat = this.statManager
                             .getStat(advice.rvmSpec);
 
@@ -251,7 +251,7 @@ public class Advice {
                         .generateEventMethodLeaveCode(event);
             }
 
-            if (!Main.useFineGrainedLock) {
+            if (!Main.options.finegrainedlock) {
                 if (isSync)
                     ret += this.globalLock.getReleaseCode();
             }
@@ -264,7 +264,7 @@ public class Advice {
     public String toString() {
         String ret = "";
 
-        if (Main.inline) {
+        if (Main.options.inline) {
             ret += "void " + inlineFuncName + "("
                     + inlineParameters.parameterDeclString();
             ret += ") {\n";
@@ -280,7 +280,7 @@ public class Advice {
         ret += ")";
         ret += " {\n";
 
-        if (Main.inline) {
+        if (Main.options.inline) {
             ret += inlineFuncName + "(" + inlineParameters.parameterString();
             ret += ");\n";
         } else {

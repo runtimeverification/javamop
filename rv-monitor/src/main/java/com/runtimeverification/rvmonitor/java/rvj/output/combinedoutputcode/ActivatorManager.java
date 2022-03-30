@@ -25,7 +25,7 @@ public class ActivatorManager {
     private String getValue(RVMVariable var) {
         StringBuilder s = new StringBuilder();
         s.append(var);
-        if (Main.useFineGrainedLock)
+        if (Main.options.finegrainedlock)
             s.append(".get()");
         return s.toString();
     }
@@ -40,7 +40,7 @@ public class ActivatorManager {
 
         StringBuilder s = new StringBuilder();
         s.append(var);
-        if (Main.useFineGrainedLock) {
+        if (Main.options.finegrainedlock) {
             s.append(".set(");
             s.append(valuestr);
             s.append(')');
@@ -61,7 +61,7 @@ public class ActivatorManager {
         String type = "boolean";
         String initvalue = "false";
 
-        if (Main.useFineGrainedLock) {
+        if (Main.options.finegrainedlock) {
             isfinal = true;
             type = "AtomicBoolean";
             initvalue = "new AtomicBoolean()";

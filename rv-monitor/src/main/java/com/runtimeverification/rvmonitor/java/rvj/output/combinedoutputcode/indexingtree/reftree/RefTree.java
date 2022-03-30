@@ -158,7 +158,7 @@ public class RefTree {
         ret += "Cached";
         /*
          * We no longer store 'disable' and 't' at GWRT. if
-         * (Main.useWeakRefInterning) { if (generalProperties.size() == 0) ret
+         * (Main.options.weakrefinterning) { if (generalProperties.size() == 0) ret
          * += ""; else if (generalProperties.size() == 1) ret += "Tag"; else ret
          * += "MultiTag"; }
          */
@@ -177,7 +177,7 @@ public class RefTree {
         String ret = "";
 
         if (hostIndexingTree == null) {
-            if (Main.useWeakRefInterning) {
+            if (Main.options.weakrefinterning) {
                 // Now that we no longer keep 'disable' and 't' at weak
                 // references,
                 // I don't think we need any distinction.

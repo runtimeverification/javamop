@@ -79,7 +79,7 @@ public class PartialParamIndexingTree extends IndexingTree {
         RVMParameter p = queryParam.get(i);
         RVMVariable tempRef = localVars.getTempRef(p);
 
-        if (Main.useWeakRefInterning)
+        if (Main.options.weakrefinterning)
             ret += obj.getType() + " " + obj.getName() + " = " + tempMap
             + ".getMap(" + tempRef + ");\n";
         else
@@ -132,7 +132,7 @@ public class PartialParamIndexingTree extends IndexingTree {
         RVMParameter p = queryParam.get(i);
         RVMVariable tempRef = localVars.getTempRef(p);
 
-        if (Main.useWeakRefInterning)
+        if (Main.options.weakrefinterning)
             ret += obj.getType() + " " + obj.getName() + " = " + tempMap
             + ".getMap(" + tempRef + ");\n";
         else
@@ -164,7 +164,7 @@ public class PartialParamIndexingTree extends IndexingTree {
 
         ret += "}\n";
 
-        if (!Main.useWeakRefInterning) {
+        if (!Main.options.weakrefinterning) {
             if (i + 1 < queryParam.size()) {
                 RVMParameter q = queryParam.get(i + 1);
                 RVMVariable wrq = localVars.getTempRef(q);
@@ -237,7 +237,7 @@ public class PartialParamIndexingTree extends IndexingTree {
         RVMVariable tempRef = localVars.getTempRef(p);
         RVMTypedVariable lastMap = localVars.getMap(lastMapStr);
 
-        if (Main.useWeakRefInterning) {
+        if (Main.options.weakrefinterning) {
             ret += lastSet + " = " + lastMap + ".getSet(" + tempRef + ");\n";
 
             if (creative) {
@@ -310,7 +310,7 @@ public class PartialParamIndexingTree extends IndexingTree {
         RVMVariable tempRef = localVars.getTempRef(p);
         RVMTypedVariable lastMap = localVars.getMap(lastMapStr);
 
-        if (Main.useWeakRefInterning) {
+        if (Main.options.weakrefinterning) {
             ret += monitor + " = " + lastMap + ".getLeaf(" + tempRef + ");\n";
             ret += lastSet + " = " + lastMap + ".getSet(" + tempRef + ");\n";
         } else {
@@ -478,7 +478,7 @@ public class PartialParamIndexingTree extends IndexingTree {
         RVMTypedVariable obj = localVars.createObj(tempMap,
                 queryParam.size() == 1 ? IndexingTreeInterface.Set
                         : IndexingTreeInterface.Map);
-        if (Main.useWeakRefInterning) {
+        if (Main.options.weakrefinterning) {
             if (queryParam.size() == 1) {
                 ret += obj.getType() + " " + obj.getName() + " = " + tempMap
                         + ".getSet(" + tempRef + ");\n";
@@ -518,7 +518,7 @@ public class PartialParamIndexingTree extends IndexingTree {
                     i != queryParam.size() - 1 ? IndexingTreeInterface.Map
                             : IndexingTreeInterface.Set);
 
-            if (Main.useWeakRefInterning) {
+            if (Main.options.weakrefinterning) {
                 if (i != queryParam.size() - 1)
                     ret += obj.getType() + " " + obj.getName() + " = "
                             + tempMap + ".getMap(" + tempRef + ");\n";

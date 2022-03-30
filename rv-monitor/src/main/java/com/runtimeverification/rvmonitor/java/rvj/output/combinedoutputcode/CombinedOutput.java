@@ -146,7 +146,7 @@ public class CombinedOutput {
             categoryVars.addAll(monitorClass.getCategoryVars());
         }
         String ret = "";
-        if (!Main.eliminatePresumablyRemnantCode) {
+        if (!Main.options.eliminatePresumablyRemnantCode) {
             for (RVMVariable variable : categoryVars) {
                 ret += "private static boolean "
                         + BaseMonitor.getNiceVariable(variable) + " = "

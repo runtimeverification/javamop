@@ -22,7 +22,7 @@ public class LogicPluginShellFactory {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Class<?>[] pluginParamClass = {};
 
-            if (Main.isJarFile)
+            if (Main.options.isJarFile)
                 logicPlugins = getClassesFromJar(loader, packageName);
             else
                 logicPlugins = getClasses(loader, packageName);
@@ -52,7 +52,7 @@ public class LogicPluginShellFactory {
 
         try {
             JarInputStream jarFile = new JarInputStream(new FileInputStream(
-                    Main.jarFilePath));
+                    Main.options.jarFilePath));
             JarEntry jarEntry;
 
             while (true) {

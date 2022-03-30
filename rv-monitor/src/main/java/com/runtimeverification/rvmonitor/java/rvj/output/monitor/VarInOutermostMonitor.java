@@ -19,7 +19,7 @@ public class VarInOutermostMonitor {
         // same
         // monitor. For that reason, the 'disable' field is added to the
         // monitor.
-        // this.disable = Main.useWeakRefInterning ? null : new
+        // this.disable = Main.options.weakrefinterning ? null : new
         // RVMVariable("disable");
     }
 

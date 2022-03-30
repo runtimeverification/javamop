@@ -236,7 +236,7 @@ public class IndexingCacheNew implements ICodeGenerator {
         }
 
         public static CodeCacheField create(String fieldname, CodeType type) {
-            if (Main.useFineGrainedLock)
+            if (Main.options.finegrainedlock)
                 return new CodeTLSCacheField(fieldname, type);
             return new CodeOrdinaryCacheField(fieldname, type);
         }

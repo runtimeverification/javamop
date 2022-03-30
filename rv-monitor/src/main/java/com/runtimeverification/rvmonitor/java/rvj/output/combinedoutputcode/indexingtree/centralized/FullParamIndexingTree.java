@@ -97,7 +97,7 @@ public class FullParamIndexingTree extends IndexingTree {
         RVMParameter p = queryParam.get(i);
         RVMVariable tempRef = localVars.getTempRef(p);
 
-        if (Main.useWeakRefInterning)
+        if (Main.options.weakrefinterning)
             ret += obj.getType() + " " + obj.getName() + " = " + tempMap
             + ".getMap(" + tempRef + ");\n";
         else
@@ -144,7 +144,7 @@ public class FullParamIndexingTree extends IndexingTree {
         RVMParameter p = queryParam.get(i);
         RVMVariable tempRef = localVars.getTempRef(p);
 
-        if (Main.useWeakRefInterning)
+        if (Main.options.weakrefinterning)
             ret += obj.getType() + " " + obj.getName() + " = " + tempMap
             + ".getMap(" + tempRef + ");\n";
         else
@@ -169,7 +169,7 @@ public class FullParamIndexingTree extends IndexingTree {
 
         ret += "}\n";
 
-        if (!Main.useWeakRefInterning) {
+        if (!Main.options.weakrefinterning) {
             if (i + 1 < queryParam.size()) {
                 RVMParameter q = queryParam.get(i + 1);
                 RVMVariable wrq = localVars.getTempRef(q);
@@ -215,7 +215,7 @@ public class FullParamIndexingTree extends IndexingTree {
         RVMVariable tempRef = localVars.getTempRef(p);
         RVMTypedVariable lastMap = localVars.getMap(lastMapStr);
 
-        if (Main.useWeakRefInterning)
+        if (Main.options.weakrefinterning)
             ret += monitor + " = " + lastMap + ".getLeaf(" + tempRef + ");\n";
         else
             ret += getGetNodeStrongRefCode(monitor, lastMap, p, tempRef,
