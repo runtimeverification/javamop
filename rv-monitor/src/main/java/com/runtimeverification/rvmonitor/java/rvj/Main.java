@@ -23,33 +23,6 @@ import com.runtimeverification.rvmonitor.util.Tool;
 public class Main {
     public static RVMOptions options;
 
-//    static File outputDir = null;
-//    public static boolean debug = false;
-//    public static boolean noopt1 = false;
-//    public static boolean statistics = false;
-//    public static boolean statistics2 = false;
-//    public static String outputName = null;
-//    public static boolean isJarFile = false;
-//    public static String jarFilePath = null;
-//
-//    public static boolean silent = false;
-//    public static boolean empty_advicebody = false;
-//
-//    public static boolean merge = false;
-//    public static boolean inline = false;
-//
-//    public static boolean internalBehaviorObserving = false;
-//
-//    public static boolean useFineGrainedLock = false;
-//    public static boolean useWeakRefInterning = false;
-//
-//    public static boolean generateVoidMethods = false;
-//    public static boolean stripUnusedParameterInMonitor = true;
-//    public static boolean eliminatePresumablyRemnantCode = true;
-//    public static boolean suppressActivator = false;
-//    public static boolean usePartitionedSet = false;
-//    public static boolean useAtomicMonitor = true;
-
     /**
      * The target directory for outputting the results produced from some
      * specification files. If outputDir is already set, use that. If
@@ -385,79 +358,6 @@ public class Main {
                                     .length());
             options.jarFilePath = polishPath(options.jarFilePath);
         }
-
-//        int i = 0;
-//        String files = "";
-//        boolean help = false;
-//        boolean verbose = false;
-
-//        while (i < args.length) {
-//            if ("-h".equals(args[i]) || "--help".equals(args[i])) {
-//                help = true;
-//            }
-//
-//            if ("-d".equals(args[i])) {
-//                i++;
-//                outputDir = new File(args[i]);
-//            } else if ("-v".equals(args[i]) || "--verbose".equals(args[i])) {
-//                verbose = true;
-//                LogicRepositoryConnector.verbose = true;
-//                RVMProcessor.verbose = true;
-//            } else if ("--debug".equals(args[i])) {
-//                Main.debug = true;
-//            } else if ("--noopt1".equals(args[i])) {
-//                Main.noopt1 = true;
-//            } else if ("-s".equals(args[i]) || "--statistics".equals(args[i])) {
-//                Main.options.statistics = true;
-//            } else if ("-s2".equals(args[i]) || "--statistics2".equals(args[i])) {
-//                Main.options.statistics = true;
-//            } else if ("-n".equals(args[i]) || "--name".equals(args[i])) {
-//                i++;
-//                Main.outputName = args[i];
-//            } else if ("--silent".equals(args[i])) {
-//                Main.silent = true;
-//            } else if ("-merge".equals(args[i])) {
-//                Main.merge = true;
-//            } else if ("--inline".equals(args[i])) {
-//                Main.inline = true;
-//            } else if ("--noadvicebody".equals(args[i])) {
-//                Main.empty_advicebody = true;
-//            } else if ("--internalbehavior".equals(args[i])) {
-//                Main.options.internalBehaviorObserving = true;
-//            } else if ("--finegrainedlock".equals(args[i])) {
-//                Main.options.finegrainedlock = true;
-//            } else if ("--nofinegrainedlock".equals(args[i])) {
-//                Main.options.finegrainedlock = false;
-//            } else if ("--weakrefinterning".equals(args[i])) {
-//                Main.options.weakrefinterning = true;
-//            } else if ("--noweakrefinterning".equals(args[i])) {
-//                Main.options.weakrefinterning = false;
-//            } else if ("--partitionedset".equals(args[i])) {
-//                Main.usePartitionedSet = true;
-//            } else if ("--nopartitionedset".equals(args[i])) {
-//                Main.usePartitionedSet = false;
-//            } else if ("--atomicmonitor".equals(args[i])) {
-//                Main.options.useAtomicMonitor = true;
-//            } else if ("--noatomicmonitor".equals(args[i])) {
-//                Main.options.useAtomicMonitor = false;
-//            } else if ("--version".equals(args[i])) {
-//                Tool.printVersionMessage();
-//                return;
-//            } else {
-//                if (files.length() != 0)
-//                    files += ";";
-//                files += args[i];
-//            }
-//            ++i;
-//        }
-
-//        if (help || files.length() == 0) {
-//            if (verbose)
-//                print_help_ext();
-//            else
-//                print_help();
-//            return;
-//        }
 
         CodeGenerationOption.initialize();
 
