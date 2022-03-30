@@ -27,8 +27,8 @@ public class RVMOptions {
     @Parameter(names="-debug",description = "Print verbose error messages.")
     public boolean debug = false;
 
-    @Parameter(names="-noopt1",description = "TBD")
-    public boolean noopt1 = false;
+    @Parameter(names="-disableEnableSet",description = "Disable the enable set optimization.")
+    public boolean disableEnableSet = false;
 
     @Parameter(names={"-s","-statistics"}, description = "Count events and monitors.")
     public boolean statistics = false;
@@ -45,10 +45,10 @@ public class RVMOptions {
     @Parameter(names={"-noadvicebody"},description = "TBD")
     public boolean noadvicebody;
 
-    @Parameter(names={"-finegrainedlock"},description = "TBD")
+    @Parameter(names={"-finegrainedlock"},description = "Use fine-grained lock for internal data structure.")
     public boolean finegrainedlock;
 
-    @Parameter(names={"-weakrefinterning"},description = "TBD")
+    @Parameter(names={"-weakrefinterning"},description = "Use WeakReference interning in indexing trees.")
     public boolean weakrefinterning;
 
     @Parameter(names={"-partitionedset"},description = "TBD")
