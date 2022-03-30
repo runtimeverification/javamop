@@ -10,7 +10,6 @@ package com.runtimeverification.rvmonitor.java.rvj;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -235,10 +234,6 @@ public class Main {
     public static void process(String[] files, String path) throws RVMException {
         ArrayList<File> specFiles = collectFiles(files, path);
 
-        if (options.name != null && files.length > 1) {
-            options.merge = true;
-        }
-
         if (options.merge) {
             System.out.println("-Processing " + specFiles.size()
                     + " specification(s)");
@@ -250,26 +245,6 @@ public class Main {
             }
         }
     }
-
-    /**
-     * Process a semicolon-separated list of files.
-     *
-     * @param arg
-     *            A list of files, separated by semicolons.
-     */
-    public static void process(String arg) throws RVMException {
-        if (options.outputDir != null && !options.outputDir.exists())
-            throw new RVMException("The output directory, "
-                    + options.outputDir.getPath() + " does not exist.");
-
-        process(arg.split(";"), "");
-    }
-
-    public static void process(List<String> files) throws RVMException {
-        System.out.println("BBBBBBBB: " + files);
-        process(files.toArray(files.toArray(new String[0])), "");
-    }
-
 
     /**
      * Print the command line options (extended version) usable with Java
@@ -329,40 +304,16 @@ public class Main {
      *            The command-line arguments.
      */
     public static void main(String[] args) {
-
         options = new RVMOptions();
-        JCommander jc;
-        try {
-            jc = new JCommander(options, args);
-        } catch (ParameterException pe) {
-            System.out.println(pe.getMessage());
-            return;
-        }
-        jc.setProgramName("rv-monitor");
+        JCommander jc = initializeJCommander(args);
+        if (jc == null) return;
 
-        handleOptions(options, args, jc);
-        ClassLoader loader = Main.class.getClassLoader();
-        String mainClassPath = loader.getResource(
-                        "com/runtimeverification/rvmonitor/java/rvj/Main.class")
-                .toString();
-        if (mainClassPath
-                .endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")
-                && mainClassPath.startsWith("jar:")) {
-            options.isJarFile = true;
-
-            options.jarFilePath = mainClassPath
-                    .substring(
-                            "jar:file:".length(),
-                            mainClassPath.length()
-                                    - "!/com/runtimeverification/rvmonitor/java/rvj/Main.class"
-                                    .length());
-            options.jarFilePath = polishPath(options.jarFilePath);
-        }
+        handleOptions(args, jc);
 
         CodeGenerationOption.initialize();
 
         try {
-            process(options.files);
+            process(options.files.toArray(new String[0]), "");
         } catch (Exception e) {
             System.err.println(e.getMessage());
             if (options.debug)
@@ -370,7 +321,19 @@ public class Main {
         }
     }
 
-    private static void handleOptions(RVMOptions options, String[] args, JCommander jc) {
+    private static JCommander initializeJCommander(String[] args) {
+        JCommander jc;
+        try {
+            jc = new JCommander(options, args);
+        } catch (ParameterException pe) {
+            System.out.println(pe.getMessage());
+            return null;
+        }
+        jc.setProgramName("rv-monitor");
+        return jc;
+    }
+
+    private static void handleOptions(String[] args, JCommander jc) {
         if (args.length == 0 || (options.files.size() == 0)) {
             jc.usage();
             System.exit(1);
@@ -392,6 +355,29 @@ public class Main {
             } else {
                 print_help();
             }
+        }
+
+
+        if (options.name != null && options.files.size() > 1) {
+            options.merge = true;
+        }
+
+        ClassLoader loader = Main.class.getClassLoader();
+        String mainClassPath = loader.getResource(
+                        "com/runtimeverification/rvmonitor/java/rvj/Main.class")
+                .toString();
+        if (mainClassPath
+                .endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")
+                && mainClassPath.startsWith("jar:")) {
+            options.isJarFile = true;
+
+            options.jarFilePath = mainClassPath
+                    .substring(
+                            "jar:file:".length(),
+                            mainClassPath.length()
+                                    - "!/com/runtimeverification/rvmonitor/java/rvj/Main.class"
+                                    .length());
+            options.jarFilePath = polishPath(options.jarFilePath);
         }
     }
 }

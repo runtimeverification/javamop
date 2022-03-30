@@ -10,9 +10,9 @@ import java.util.List;
 public class RVMOptions {
     // Any stand-alone command line argument which is not required for a '-x' option
     // Examples: in `rv-monitor a.rvm`, files = [a.rvm]
-    //           in ` rv-monitor -n test rvm a.mop, files = [rvm, a.mop]
+    //           in ` rv-monitor -n test a.rvm b.rvm, files = [a.rvm, b.rvm]
     @Parameter(description = "Files")
-    public List<String> files = new ArrayList<String>();
+    public List<String> files = new ArrayList<>();
 
     @Parameter(names={"-h","-help"}, description = "Show this help message.", help = true)
     public boolean help = false;
@@ -20,10 +20,6 @@ public class RVMOptions {
     @Parameter(names="-d",description = "Directory in which to store the output.",
             converter = JavaMOPOptions.FileConverter.class)
     public File outputDir;
-
-//    @Parameter(names="-",description = "Directory in which to store the output.",
-//            converter = JavaMOPOptions.FileConverter.class)
-//    public String outputName;
 
     @Parameter(names={"-v","-verbose"}, description = "Enable verbose output.")
     public boolean verbose = false;
@@ -40,9 +36,6 @@ public class RVMOptions {
     @Parameter(names={"-n","-name"},description = "Use the given name instead of source file name.")
     public String name;
 
-    @Parameter(names={"-silent"},description = "TBD")
-    public boolean silent;
-
     @Parameter(names={"-merge"},description = "TBD")
     public boolean merge;
 
@@ -52,32 +45,17 @@ public class RVMOptions {
     @Parameter(names={"-noadvicebody"},description = "TBD")
     public boolean noadvicebody;
 
-    @Parameter(names={"-internalbehavior"},description = "TBD")
-    public boolean internalbehavior;
-
     @Parameter(names={"-finegrainedlock"},description = "TBD")
     public boolean finegrainedlock;
-
-    @Parameter(names={"-nofinegrainedlock"},description = "TBD")
-    public boolean nofinegrainedlock;
 
     @Parameter(names={"-weakrefinterning"},description = "TBD")
     public boolean weakrefinterning;
 
-    @Parameter(names={"-noweakrefinterning"},description = "TBD")
-    public boolean noweakrefinterning;
-
     @Parameter(names={"-partitionedset"},description = "TBD")
     public boolean partitionedset;
 
-    @Parameter(names={"-nopartitionedset"},description = "TBD")
-    public boolean nopartitionedset;
-
     @Parameter(names={"-atomicmonitor"},description = "TBD")
     public boolean atomicmonitor;
-
-    @Parameter(names={"-noatomicmonitor"},description = "TBD")
-    public boolean noatomicmonitor;
 
     @Parameter(names={"-version"},description = "TBD")
     public boolean version;
