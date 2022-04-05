@@ -1,0 +1,77 @@
+package rvm;
+
+// This property logs every time a user finishes a session and
+// also tracks the cumulative number of message send attempts and
+// failures they have had based on e-mail server logs.
+// 
+// This property is parameterized on the source host of the user
+// and also stores the canonical time of each event for log retrieval purposes.
+
+UserSessionLog(String sourceHost) {
+    
+    String sourceHost;
+    String time;
+    int numAttempts = 0;
+    int numFails = 0;
+
+    event connect(String sourceHost, String time) {
+        this.sourceHost = sourceHost;
+        this.time = time;
+    }
+
+    event submitMessage(String sourceHost, String time) {
+        this.sourceHost = sourceHost;
+        this.time = time;
+    }  
+
+    event messageFail(String sourceHost, String time) {
+        this.sourceHost = sourceHost;
+        this.time = time;
+    }  
+
+    event disconnect(String sourceHost, String time) {
+        this.sourceHost = sourceHost;
+        this.time = time;
+    }  
+
+    fsm:
+       start [
+         connect -> connected
+       ]
+       disconnected [
+         connect -> connected
+       ]
+       connected [
+         submitMessage -> messageSubmitted
+         disconnect -> disconnected
+       ]
+       messageSubmitted [
+         submitMessage -> messageSubmitted
+         disconnect -> disconnected
+         messageFail -> failed
+       ]
+       failed [
+         submitMessage -> messageSubmitted
+         disconnect -> disconnected
+         messageFail -> failed
+       ]
+
+    @failed {
+        numFails++;
+    }
+
+    @messagesubmitted {
+        numAttempts++;
+    }
+
+    @disconnected {
+        System.out.println("User " + sourceHost+ " completed a session and has had a total of " + numAttempts +
+            " attempted sends and " + numFails + " failures (" + (int) ((numFails*100.0) / numAttempts) +  ")%");
+    }
+
+    @fail {
+        System.err.println("Unknown state reached for " + sourceHost + " at " + time +
+            ".  Please inspect the logs manually (Property: UserSessionLog.rvm).");
+    }
+
+}

@@ -1,0 +1,30 @@
+package rvm;
+
+EqualityCheck {
+    event done() {}
+    event a() {}
+    event b() {}
+    event c() {}
+    
+    srs:
+        b a -> a b .
+        c a -> a c .
+        c b -> b c .
+        a b -> E .
+        E b -> b E .
+        E a -> a E .
+        E c -> #epsilon .
+        c E -> #epsilon .
+        ^ done -> #succeed .
+        a done -> #fail .
+        b done -> #fail .
+        c done -> #fail .
+    
+    @succeed {
+        System.out.println("worked!");
+    }
+    
+    @fail {
+        System.err.println("The call times of A(), B(), C() are not equal");
+    }
+}

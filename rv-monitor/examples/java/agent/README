@@ -1,0 +1,15 @@
+To run this agent (which consists of more than 200 Java API properties
+developed thus far by RV Inc), simply replace "java" in your command with
+"rv-monitor-all" to run any Java program against all these properties,
+with no further configuration.
+
+Several examples of both correct and incorrect programs are provided in
+this directory.  To run them, simply use "javac [example].java" followed
+by "rv-monitor-all [example]".  The violation of any of the included
+properties should be displayed to the screen, along with an explanation of
+the violated property.
+
+To run the agent manually (without the included script) simply add
+-javaagent:rv-monitor-all.jar to the Java command required
+to run any program.  Make sure the RV-Monitor lib folder is added to
+your classpath.

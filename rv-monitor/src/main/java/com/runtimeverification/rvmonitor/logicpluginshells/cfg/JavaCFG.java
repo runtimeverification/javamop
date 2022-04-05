@@ -9,12 +9,12 @@ import java.util.Properties;
 
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell;
 import com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShellResult;
+import com.runtimeverification.rvmonitor.logicpluginshells.cfg.parser.CFGParser;
+import com.runtimeverification.rvmonitor.logicpluginshells.cfg.util.CFG;
+import com.runtimeverification.rvmonitor.logicpluginshells.cfg.util.GLRGen;
+import com.runtimeverification.rvmonitor.logicpluginshells.cfg.util.LR;
+import com.runtimeverification.rvmonitor.logicpluginshells.cfg.util.Terminal;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.parser.CFGParser;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.CFG;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.GLRGen;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.LR;
-import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.Terminal;
 import com.runtimeverification.rvmonitor.util.FileUtils;
 import com.runtimeverification.rvmonitor.util.RVMException;
 

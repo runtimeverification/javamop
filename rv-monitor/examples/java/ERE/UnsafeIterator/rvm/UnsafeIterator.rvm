@@ -1,0 +1,28 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// The UnsafeIterator property is designed 
+// to match a case where a Collection that 
+// is in the process of iteration is modified 
+// and iteration continues.  
+
+UnsafeIterator(Collection c, Iterator i) {
+ 
+        event create(Collection c, Iterator i) {}
+        event updatesource(Collection c) {}
+        event next(Iterator i) {}
+
+        ere : create next* updatesource updatesource* next
+
+        @match {
+           System.out.println("improper iterator usage");
+        }
+}
+
+
+
+
+
+

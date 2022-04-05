@@ -1,0 +1,33 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+
+// SafeMapIterator is similar to 
+// SafeIterator.  The biggest difference 
+// is that a key set of the map 
+// is used, and the iterator is over 
+// the collection.  
+
+full-binding SafeMapIterator(Map map, Collection c, Iterator i){
+	event createColl(Map map, Collection c) {} // after values keySet 
+	event createIter(Collection c, Iterator i) {} // after: 
+	event useIter(Iterator i) {} // before next 
+	event updateMap(Map map) {} // after: put putAll clear remove 
+
+       // the positive LTL formula capturing the exact same meaning as the ERE
+       // for UnsafeMapeIterator would be:
+       // [](useIter => (not updateMap S (createIter S createColl)))
+       // however, this logically simplifies to:
+       ltl: [](useIter => (not updateMap S createColl))
+
+	@violation{
+           System.out.println("unsafe iterator usage!");
+	}
+}
+		
+
+
+
+

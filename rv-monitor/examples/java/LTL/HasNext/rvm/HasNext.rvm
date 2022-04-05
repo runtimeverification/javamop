@@ -1,0 +1,26 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// This property requires that hasnext be called before next
+// and that hasnext return true.  It is a modification of the
+// HasNext property from tracematches 
+// (see ECOOP'07 http://abc.comlab.ox.ac.uk/papers),
+// with the modification requiring hasnext to return true
+
+HasNext(Iterator i) {
+
+  event hasnexttrue(Iterator i, boolean b) { // after
+          if (!b) return;
+  }
+  event hasnextfalse(Iterator i, boolean b) { // after
+          if (b) return;
+  }
+  event next(Iterator i) {} // before
+
+  ltl: [](next => (*) hasnexttrue)
+
+  @violation { System.out.println("ltl violated!");}
+ 
+}

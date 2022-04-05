@@ -1,0 +1,28 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies a case in 
+// which the hasnext method is not 
+// called before calling the next method, 
+// i.e. next is called twice in a row.
+// It is monitored for the match condition
+// and requires suffix matching to work 
+// properly. This property is borrowed 
+// from tracematches (see ECOOP'07 
+// http://abc.comlab.ox.ac.uk/papers)
+
+suffix HasNext(Iterator i) {
+       event hasnext(Iterator i) {}
+       event next(Iterator i) {}
+
+       ere : next next
+
+       @match {
+          System.out.println(
+            "@:" + __LOC + " ! hasNext not called before next");
+          __RESET;
+       }
+}
+

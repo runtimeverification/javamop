@@ -1,0 +1,43 @@
+package rvm;
+import java.io.*;
+import java.util.*;
+
+// This property specifies that a program does
+// not call the hasnext method  before the next
+// method of an iterator. 
+// This property is borrowed from tracematches 
+// (see ECOOP'07 http://abc.comlab.ox.ac.uk/papers)
+
+full-binding HasNext(Iterator i) {
+   event hasnext(Iterator i) {} // after
+   event next(Iterator i) {} // before 
+
+   fsm :
+     start [
+        next -> unsafe
+        hasnext -> safe
+     ]
+     safe [
+        next -> start
+        hasnext -> safe 
+     ]
+     unsafe [
+        next -> unsafe
+        hasnext -> safe
+     ]
+
+     alias match = unsafe
+	
+   @match {
+      System.out.println("next called without hasNext!");
+   }
+}
+
+
+
+
+
+
+
+
+

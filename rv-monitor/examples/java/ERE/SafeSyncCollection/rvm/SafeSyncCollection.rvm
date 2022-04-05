@@ -1,0 +1,38 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// The SafeSyncCollection property is designed 
+// to match a case where either a collection 
+// is synchronized and an non-synchronized
+// iterator is created for the collection, or 
+// a synchronized iterator is created, but 
+// accessed in an unsynchronized manner.
+
+SafeSyncCollection(Object c, Iterator iter) {
+	Object c;
+
+	creation event sync(Object c) // after
+		{
+			this.c = c;
+		}
+	event syncCreateIter(Object c, Iterator iter) // after
+                { if(!Thread.holdsLock(c)) return;}
+	event asyncCreateIter(Object c, Iterator iter) // after
+                { if(Thread.holdsLock(c)) return;}
+	event accessIter(Iterator iter) // before
+                { if (Thread.holdsLock(this.c)) return; }
+
+	ere : (sync asyncCreateIter) 
+            | (sync syncCreateIter accessIter)
+
+	@match{
+		System.out.println("pattern matched!");
+	}
+}
+		
+
+
+
+

@@ -1,0 +1,28 @@
+package rvm;
+import java.io.*;
+import java.util.*;
+
+// This property specifies that a program does
+// not call the hasnext method  before the next
+// method of an iterator. 
+// This is a simpler version of HasNext that
+// must be monitored using an @fail handler
+// because the fsm specifies correct behavior.
+
+HasNext2(Iterator i) {
+   event hasnext(Iterator i) {} // after
+   event next(Iterator i) {} // before
+
+   fsm :
+     start [
+        hasnext -> safe
+     ]
+     safe [
+        next -> start
+        hasnext -> safe
+     ]
+
+   @fail {
+      System.out.println("next called without hasNext!");
+   }
+}

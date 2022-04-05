@@ -38,7 +38,7 @@ public class GLRGen {
     }
     
     public static String reset(LR lr) { 
-        return "$stacks.clear()\n"+init(lr);
+        return "$stacks.clear();\n"+init(lr);
     }
     
     public static String state(LR lr) { 

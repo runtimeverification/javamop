@@ -1,0 +1,37 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// The SafeFile property is designed to 
+// match a case where a file is written 
+// after it is closed. 
+
+SafeFileWriter(FileWriter f) {
+	static int counter = 0;
+	int writes = 0;
+
+	event open(FileWriter f) { //after
+			this.writes = 0;
+		}
+	event write(FileWriter f) { //  before
+			this.writes ++;
+		}
+	event close(FileWriter f) {} //  after
+
+	ere : (open write write* close)*
+
+	@fail {
+		System.out.println("write after close");
+		__RESET;
+	}
+	@match {
+	   System.out.println((++(counter)) 
+             + ":" + writes);
+	}
+}
+
+
+
+
+
