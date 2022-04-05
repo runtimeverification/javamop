@@ -20,22 +20,15 @@ public class Main {
 	public static String jarFilePath = null;
 	public static String basePath = null;
 
-	/*
-	 * public static String readInput() { Scanner scanner = new
-	 * Scanner(System.in, "UTF-8"); String input = new String();
-	 * 
-	 * while (scanner.hasNextLine()) { input += scanner.nextLine() + "\n"; }
-	 * return input; }
-	 */
-
 	// Read Logic Plugin Directory
 	static public String readLogicPluginDir(String basePath) {
 		String logicPluginDirPath = System.getenv("LOGICPLUGINPATH");
 		if (logicPluginDirPath == null || logicPluginDirPath.length() == 0) {
-			if (basePath.charAt(basePath.length() - 1) == '/')
+			if (basePath.charAt(basePath.length() - 1) == '/') {
 				logicPluginDirPath = basePath + "plugins";
-			else
+			} else {
 				logicPluginDirPath = basePath + "/plugins";
+			}
 		}
 
 		return logicPluginDirPath;

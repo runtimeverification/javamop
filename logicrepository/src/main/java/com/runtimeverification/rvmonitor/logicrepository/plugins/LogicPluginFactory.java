@@ -1,11 +1,19 @@
 package com.runtimeverification.rvmonitor.logicrepository.plugins;
 
-import java.io.*;
-import java.util.jar.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
-import com.runtimeverification.rvmonitor.logicrepository.*;
-import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.*;
+import com.runtimeverification.rvmonitor.logicrepository.Log;
+import com.runtimeverification.rvmonitor.logicrepository.LogicException;
+import com.runtimeverification.rvmonitor.logicrepository.LogicRepositoryData;
+import com.runtimeverification.rvmonitor.logicrepository.StreamGobbler;
+import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
 
 public class LogicPluginFactory {
 
@@ -99,7 +107,6 @@ public class LogicPluginFactory {
 	static private ArrayList<Class<?>> getClassesFromPath(String packagePath) throws LogicException {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		String path = packagePath;
-
 		// WINDOWS HACK
 		if (path.indexOf("%20") > 0)
 			path = path.replaceAll("%20", " ");
