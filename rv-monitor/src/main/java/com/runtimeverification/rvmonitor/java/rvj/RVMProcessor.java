@@ -51,8 +51,7 @@ public class RVMProcessor {
         for (RVMonitorSpec rvmSpec : rvmSpecFile.getSpecs()) {
             for (PropertyAndHandlers prop : rvmSpec.getPropertiesAndHandlers()) {
                 // connect to the logic repository and get the logic output
-                LogicRepositoryType logicOutput = LogicRepositoryConnector
-                        .process(rvmSpec, prop);
+                LogicRepositoryType logicOutput = LogicRepositoryConnector.process(rvmSpec, prop);
                 // get the monitor from the logic shell
                 LogicPluginShellResult logicShellOutput = LogicPluginShellFactory
                         .process(logicOutput, rvmSpec.getEventStr(), "java");

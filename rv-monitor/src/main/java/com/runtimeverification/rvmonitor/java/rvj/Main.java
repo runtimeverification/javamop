@@ -1,8 +1,8 @@
 /**
  * @author fengchen, Dongyun Jin, Patrick Meredith, Michael Ilseman
- *
- *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * <p>
+ * To change the template for this generated type comment go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 
 package com.runtimeverification.rvmonitor.java.rvj;
@@ -117,8 +117,8 @@ public class Main {
                 do {
                     suffixNumber++;
                     outputFile = new File(options.outputDir.getAbsolutePath()
-                            + File.separator + "MultiSpec_" + suffixNumber
-                            + "RuntimeMonitor.java");
+                                          + File.separator + "MultiSpec_" + suffixNumber
+                                          + "RuntimeMonitor.java");
                 } while (outputFile.exists());
 
                 outputName = "MultiSpec_" + suffixNumber;
@@ -150,20 +150,20 @@ public class Main {
      *            The name of the output being written.
      */
     protected static void writeCombinedOutputFile(String outputContent,
-            String outputName) throws RVMException {
+                                                  String outputName) throws RVMException {
         if (outputContent == null || outputContent.length() == 0)
             return;
 
         try {
             FileWriter f = new FileWriter(options.outputDir.getAbsolutePath()
-                    + File.separator + outputName + "RuntimeMonitor.java");
+                                          + File.separator + outputName + "RuntimeMonitor.java");
             f.write(outputContent);
             f.close();
         } catch (Exception e) {
             throw new RVMException(e.getMessage());
         }
         System.out.println(" " + outputName
-                + "RuntimeMonitor.java is generated");
+                           + "RuntimeMonitor.java is generated");
     }
 
     /**
@@ -194,13 +194,11 @@ public class Main {
         ArrayList<File> ret = new ArrayList<>();
 
         for (String file : files) {
-            String fPath = path.length() == 0 ? file : path + File.separator
-                    + file;
+            String fPath = path.length() == 0 ? file : path + File.separator + file;
             File f = new File(fPath);
 
             if (!f.exists()) {
-                throw new RVMException("[Error] Target file, " + file
-                        + ", doesn't exist!");
+                throw new RVMException("[Error] Target file, " + file + ", doesn't exist!");
             } else if (f.isDirectory()) {
                 ret.addAll(collectFiles(f.list(), f.getAbsolutePath()));
             } else {
@@ -235,8 +233,7 @@ public class Main {
         ArrayList<File> specFiles = collectFiles(files, path);
 
         if (options.merge) {
-            System.out.println("-Processing " + specFiles.size()
-                    + " specification(s)");
+            System.out.println("-Processing " + specFiles.size() + " specification(s)");
             processMultipleFiles(specFiles);
         } else {
             for (File file : specFiles) {
@@ -265,8 +262,9 @@ public class Main {
             process(options.files.toArray(new String[0]), "");
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            if (options.debug)
+            if (options.debug) {
                 e.printStackTrace();
+            }
         }
     }
 
@@ -303,19 +301,16 @@ public class Main {
         }
 
         ClassLoader loader = Main.class.getClassLoader();
-        String mainClassPath = loader.getResource(
-                        "com/runtimeverification/rvmonitor/java/rvj/Main.class")
-                .toString();
-        if (mainClassPath
-                .endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")
-                && mainClassPath.startsWith("jar:")) {
+        String mainClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rvj/Main.class").toString();
+        if (mainClassPath.endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")
+            && mainClassPath.startsWith("jar:")) {
             options.isJarFile = true;
 
             options.jarFilePath = mainClassPath
                     .substring(
                             "jar:file:".length(),
                             mainClassPath.length()
-                                    - "!/com/runtimeverification/rvmonitor/java/rvj/Main.class"
+                            - "!/com/runtimeverification/rvmonitor/java/rvj/Main.class"
                                     .length());
             options.jarFilePath = polishPath(options.jarFilePath);
         }

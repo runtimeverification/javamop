@@ -96,8 +96,10 @@ public class JavaExamplesIT {
         File directory = new File(System.getProperty("user.dir") + "/examples/java");
         for (File rvmFile : FileUtils.listFiles(directory, new String[]{"rvm"}, true)) {
             String specPath = rvmFile.getPath();
-            if(collectSubCases(rvmFile.getParentFile().getParentFile()).size() > 0) {
-                data.add(new Object[] {specPath});
+            if (specPath.contains("FSM")) {
+                if (collectSubCases(rvmFile.getParentFile().getParentFile()).size() > 0) {
+                    data.add(new Object[]{specPath});
+                }
             }
         }
         return data;

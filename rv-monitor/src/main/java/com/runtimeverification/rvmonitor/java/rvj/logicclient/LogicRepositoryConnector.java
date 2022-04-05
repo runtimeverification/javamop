@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.rvmspec.Formula;
@@ -44,8 +46,7 @@ public class LogicRepositoryConnector {
         logicInputXML.setCategories(categories);
         logicInputXML.setProperty(logicProperty);
 
-        LogicRepositoryData logicInputData = new LogicRepositoryData(
-                logicInputXML);
+        LogicRepositoryData logicInputData = new LogicRepositoryData(logicInputXML);
 
         ByteArrayOutputStream logicOutput_OutputStream;
         LogicRepositoryData logicOutputData;
@@ -87,7 +88,7 @@ public class LogicRepositoryConnector {
                 .getOutputStream();
         String logicinputstr = logicInput_OutputStream.toString();
 
-        if (verbose) {
+        if (Main.options.debug) {
             System.out.println("== send to logic repository ==");
             System.out.print(logicinputstr);
             System.out.println("");
@@ -105,8 +106,7 @@ public class LogicRepositoryConnector {
         String logicJarFilePath = "";
         String logicPackageFilePath = "";
 
-        if (logicClassPath
-                .endsWith(".jar!/com/runtimeverification/rvmonitor/logicrepository/Main.class")
+        if (logicClassPath.endsWith(".jar!/com/runtimeverification/rvmonitor/logicrepository/Main.class")
                 && logicClassPath.startsWith("jar:")) {
             isLogicRepositoryInJar = true;
 
@@ -127,8 +127,6 @@ public class LogicRepositoryConnector {
                 + File.separator + "plugins" + File.separator + "*";
 
         if (isLogicRepositoryInJar) {
-            String mysqlConnectorPath = new File(Main.options.jarFilePath).getParent()
-                    + "/lib/mysql-connector-java-3.0.9-stable-bin.jar";
             String executePath = new File(logicJarFilePath).getParent();
 
             String[] cmdarray = {
@@ -136,7 +134,6 @@ public class LogicRepositoryConnector {
                     "-cp",
                     Tool.polishPath(logicJarFilePath) + File.pathSeparator
                             + logicPluginFarFilePath + File.pathSeparator
-                            + mysqlConnectorPath + File.pathSeparator
                             + new File(Main.options.jarFilePath).getParent()
                             + "/scala-library.jar",
                     "com.runtimeverification.rvmonitor.logicrepository.Main" };
@@ -156,17 +153,12 @@ public class LogicRepositoryConnector {
                 executePath = root.getAbsolutePath();
             }
 
-            String mysqlConnectorPath = executePath + File.separator + "lib"
-                    + File.separator
-                    + "mysql-connector-java-3.0.9-stable-bin.jar";
-            String scalaPath = executePath + File.separator + "lib"
-                    + File.separator + "scala-library.jar";
+            String scalaPath = System.getProperty("user.dir") + "/target/release/rv-monitor/lib/scala-library.jar";
 
             String[] cmdarray = {
                     "java",
                     "-cp",
                     Tool.polishPath(executePath) + File.pathSeparator
-                            + mysqlConnectorPath + File.pathSeparator
                             + scalaPath,
             "com.runtimeverification.rvmonitor.logicrepository.Main" };
 
@@ -174,7 +166,7 @@ public class LogicRepositoryConnector {
                     logicInput_InputStream);
         }
 
-        if (verbose) {
+        if (Main.options.debug) {
             System.out.println("== result from logic repository ==");
             System.out.println(logicOutput_OutputStream);
             System.out.println("");
@@ -192,10 +184,8 @@ public class LogicRepositoryConnector {
             OutputStream out = child.getOutputStream();
             BufferedOutputStream bs = new BufferedOutputStream(out);
 
-            StreamGobbler errorGobbler = new StreamGobbler(
-                    child.getErrorStream());
-            StreamGobbler outputGobbler = new StreamGobbler(
-                    child.getInputStream());
+            StreamGobbler errorGobbler = new StreamGobbler(child.getErrorStream());
+            StreamGobbler outputGobbler = new StreamGobbler(child.getInputStream());
 
             byte[] b = new byte[input.available()];
             input.read(b);
