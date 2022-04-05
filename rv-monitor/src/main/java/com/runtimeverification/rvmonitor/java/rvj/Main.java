@@ -247,57 +247,6 @@ public class Main {
     }
 
     /**
-     * Print the command line options (extended version) usable with Java
-     * RV-Monitor.
-     */
-    public static void print_help_ext() {
-        System.out
-        .println("Usage: java [-cp rv_monitor_classpath] com.runtimeverification.rvmonitor.java.rvj.Main [-options] files");
-        System.out.println("");
-        System.out.println(" Options enabled by default are prefixed with '+'");
-        System.out.println("    -h --help\t\t\t  print this help message");
-        System.out
-        .println("    --version\t\t\t  display RV-Monitor version information");
-        System.out.println("    -v | --verbose\t\t  enable verbose output");
-        System.out.println("    --debug\t\t\t  enable verbose error message");
-        System.out.println();
-
-        System.out
-        .println("    -d <output path>\t\t  select directory to store output files");
-        System.out
-        .println("    -n <name>\t\t\t  use the given class name instead of source code name");
-        System.out.println();
-
-        System.out
-        .println("    -s | --statistics\t\t  generate monitor with statistics");
-        System.out
-        .println("    --noopt1\t\t\t  don't use the enable set optimization");
-        System.out.println();
-
-        System.out
-        .println("    --finegrainedlock\t\t  use fine-grained lock for internal data structure");
-        System.out
-        .println("    --weakrefinterning\t\t  use WeakReference interning in indexing trees");
-        System.out.println();
-
-    }
-
-    /**
-     * Print the command line options usable with Java RV-Monitor.
-     */
-    public static void print_help() {
-        System.out
-        .println("Usage: java [-cp rv_monitor_classpath] com.runtimeverification.rvmonitor.java.rvj.Main [-options] files");
-        System.out.println("\n");
-        System.out.println("    -h --help\t\t\t  print this help message\n");
-        System.out
-        .println("    --version\t\t\t  display RV-Monitor version information\n");
-        System.out.println("    -v | --verbose\t\t  enable verbose output\n");
-        System.out.println("    --debug\t\t\t  enable verbose error message");
-        System.out.println();
-    }
-
-    /**
      * Run Java RV-Monitor on some files.
      *
      * @param args
@@ -334,7 +283,7 @@ public class Main {
     }
 
     private static void handleOptions(String[] args, JCommander jc) {
-        if (args.length == 0 || (options.files.size() == 0)) {
+        if (args.length == 0 || (options.files.size() == 0) || options.help) {
             jc.usage();
             System.exit(1);
         }
@@ -348,15 +297,6 @@ public class Main {
             Tool.printVersionMessage();
             System.exit(0);
         }
-
-        if (options.help || options.files.size() == 0) {
-            if (options.verbose) {
-                print_help_ext();
-            } else {
-                print_help();
-            }
-        }
-
 
         if (options.name != null && options.files.size() > 1) {
             options.merge = true;
