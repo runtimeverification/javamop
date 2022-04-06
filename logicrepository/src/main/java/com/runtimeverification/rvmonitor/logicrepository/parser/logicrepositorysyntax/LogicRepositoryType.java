@@ -261,4 +261,18 @@ public class LogicRepositoryType {
         this.statistics = value;
     }
 
+    @Override
+    public String toString() {
+        return "LogicRepositoryType{" +
+               "specName='" + specName + '\'' +
+               ", client='" + client + '\'' +
+               ", events='" + events + '\'' +
+               ", property=" + property +
+               ", categories='" + categories + '\'' +
+               ", creationEvents='" + creationEvents + '\'' +
+               ", message=" + message +
+               ", enableSets='" + enableSets + '\'' +
+               ", statistics=" + statistics +
+               '}';
+    }
 }

@@ -1,14 +1,14 @@
 package com.runtimeverification.rvmonitor.java.rvj.output;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.ImportDeclaration;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.RVMSpecFile;
 
 public class Imports {
-    // Hope this is cleaned up. I think the followings should be put on demand,
-    // conditionally.
+    // Hope this is cleaned up. I think the followings should be put on demand, conditionally.
     private final ArrayList<String> imports;
     private final String[] required = {
             "java.util.concurrent.*",
@@ -36,15 +36,17 @@ public class Imports {
             "com.runtimeverification.rvmonitor.java.rt.observable.InternalBehaviorMultiplexer", };
 
     public Imports(RVMSpecFile rvmSpecFile) {
-        imports = new ArrayList<String>();
+        imports = new ArrayList<>();
 
         for (ImportDeclaration imp : rvmSpecFile.getImports()) {
             String n = "";
-            if (imp.isStatic())
+            if (imp.isStatic()) {
                 n += "static ";
+            }
             n += imp.getName().toString().trim();
-            if (imp.isAsterisk())
+            if (imp.isAsterisk()) {
                 n += ".*";
+            }
 
             if (!imports.contains(n))
                 imports.add(n);
@@ -60,8 +62,9 @@ public class Imports {
             imports.add("java.util.concurrent.atomic.AtomicLong");
         }
 
-        if (Main.options.atomicmonitor)
+        if (Main.options.atomicmonitor) {
             imports.add("java.util.concurrent.atomic.AtomicInteger");
+        }
     }
 
     private void addImports(String[] array) {
@@ -73,12 +76,11 @@ public class Imports {
 
     @Override
     public String toString() {
-        String ret = "";
-
-        for (String imp : imports)
-            ret += "import " + imp + ";\n";
-
-        return ret;
+        StringBuilder ret = new StringBuilder();
+        for (String imp : imports) {
+            ret.append("import ").append(imp).append(";\n");
+        }
+        return ret.toString();
     }
 
 }

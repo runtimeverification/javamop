@@ -11,17 +11,13 @@ public abstract class LogicPluginShell {
     public String monitorType = "Error";
     public String outputLanguage = "Error";
 
-    public LogicPluginShell() {
-    }
+    public LogicPluginShell() {}
 
-    public LogicPluginShellResult process(LogicRepositoryType logicOutput,
-            String events) throws RVMException {
-
+    public LogicPluginShellResult process(LogicRepositoryType logicOutput, String events) throws RVMException {
         throw new RVMException("Non-recognizable Monitor Type");
     }
 
-    public Properties addEnableSets(Properties properties,
-            LogicRepositoryType logicOutputXML) {
+    public Properties addEnableSets(Properties properties, LogicRepositoryType logicOutputXML) {
         String enableSetsStr = logicOutputXML.getEnableSets();
 
         if (enableSetsStr == null)
@@ -31,7 +27,7 @@ public abstract class LogicPluginShell {
         Matcher matcher = p.matcher(enableSetsStr);
 
         String tag = "";
-        String value = "";
+        String value;
         int prevPosition = -1;
 
         while (matcher.find()) {
@@ -51,5 +47,4 @@ public abstract class LogicPluginShell {
 
         return properties;
     }
-
 }

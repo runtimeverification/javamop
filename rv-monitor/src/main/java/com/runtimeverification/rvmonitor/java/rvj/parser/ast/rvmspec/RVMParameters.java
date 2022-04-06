@@ -8,17 +8,16 @@ import java.util.List;
 
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.typepattern.BaseTypePattern;
 
-public class RVMParameters implements Iterable<RVMParameter>,
-Comparable<RVMParameters> {
+public class RVMParameters implements Iterable<RVMParameter>, Comparable<RVMParameters> {
 
     private final ArrayList<RVMParameter> parameters;
 
     public RVMParameters() {
-        this.parameters = new ArrayList<RVMParameter>();
+        this.parameters = new ArrayList<>();
     }
 
     public RVMParameters(List<RVMParameter> params) {
-        this.parameters = new ArrayList<RVMParameter>();
+        this.parameters = new ArrayList<>();
 
         if (params != null) {
             for (RVMParameter param : params) {
@@ -28,7 +27,7 @@ Comparable<RVMParameters> {
     }
 
     public RVMParameters(RVMParameters params) {
-        this.parameters = new ArrayList<RVMParameter>();
+        this.parameters = new ArrayList<>();
 
         if (params != null) {
             for (RVMParameter param : params) {
@@ -38,7 +37,7 @@ Comparable<RVMParameters> {
     }
 
     public RVMParameters tail() {
-        ArrayList<RVMParameter> tailparams = new ArrayList<RVMParameter>();
+        ArrayList<RVMParameter> tailparams = new ArrayList<>();
         for (int i = 1; i < this.parameters.size(); ++i)
             tailparams.add(this.parameters.get(i));
         return new RVMParameters(tailparams);
@@ -117,8 +116,7 @@ Comparable<RVMParameters> {
         return ret;
     }
 
-    static public RVMParameters intersectionSet(RVMParameters set1,
-            RVMParameters set2) {
+    static public RVMParameters intersectionSet(RVMParameters set1,  RVMParameters set2) {
         RVMParameters ret = new RVMParameters();
 
         for (RVMParameter p1 : set1) {

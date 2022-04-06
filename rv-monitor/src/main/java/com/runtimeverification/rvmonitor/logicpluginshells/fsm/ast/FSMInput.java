@@ -10,8 +10,7 @@ public class FSMInput extends Node {
     List<FSMItem> Items;
     List<FSMAlias> Aliases;
 
-    public FSMInput(int line, int column, List<FSMItem> Items,
-            List<FSMAlias> Aliases) {
+    public FSMInput(int line, int column, List<FSMItem> Items, List<FSMAlias> Aliases) {
         super(line, column);
         this.Items = Items;
         this.Aliases = Aliases;

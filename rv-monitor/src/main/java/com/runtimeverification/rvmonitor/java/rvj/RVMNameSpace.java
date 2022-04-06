@@ -1,7 +1,6 @@
 package com.runtimeverification.rvmonitor.java.rvj;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +11,9 @@ import com.runtimeverification.rvmonitor.util.RVMException;
 public class RVMNameSpace {
 
     static private boolean used = false;
-    static private List<String> userVariables = new ArrayList<String>();
-    static private List<String> mopVariables = new ArrayList<String>();
-    static private Map<String, String> mapVars = new HashMap<String, String>();
+    static private List<String> userVariables = new ArrayList<>();
+    static private List<String> mopVariables = new ArrayList<>();
+    static private Map<String, String> mapVars = new HashMap<>();
 
     static private final HashSet<String> keywords = new HashSet<String>();
 
@@ -27,9 +26,9 @@ public class RVMNameSpace {
 
     static public void init() {
         used = false;
-        userVariables = new ArrayList<String>();
-        mopVariables = new ArrayList<String>();
-        mapVars = new HashMap<String, String>();
+        userVariables = new ArrayList<>();
+        mopVariables = new ArrayList<>();
+        mapVars = new HashMap<>();
     }
 
     static public void addUserVariable(String varName) throws RVMException {
@@ -42,12 +41,6 @@ public class RVMNameSpace {
 
         if (!userVariables.contains(varName))
             userVariables.add(varName);
-    }
-
-    static public void addUserVariables(Collection<String> varNames)
-            throws RVMException {
-        for (String varName : varNames)
-            addUserVariable(varName);
     }
 
     static public boolean checkUserVariable(String varName) {
@@ -78,8 +71,4 @@ public class RVMNameSpace {
         }
     }
 
-    // only for debugging
-    static public List<String> getUserVariables() {
-        return userVariables;
-    }
 }

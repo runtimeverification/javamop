@@ -44,8 +44,9 @@ public class RVMProcessor {
         String result;
 
         // register all user variables to RVMNameSpace to avoid conflicts
-        for (RVMonitorSpec rvmSpec : rvmSpecFile.getSpecs())
+        for (RVMonitorSpec rvmSpec : rvmSpecFile.getSpecs()) {
             registerUserVar(rvmSpec);
+        }
 
         // Connect to Logic Repository
         for (RVMonitorSpec rvmSpec : rvmSpecFile.getSpecs()) {
@@ -60,12 +61,12 @@ public class RVMProcessor {
                 if (verbose) {
                     System.out.println("== result from logic shell ==");
                     System.out.print(logicShellOutput);
-                    System.out.println("");
+                    System.out.println();
                 }
             }
         }
 
-        // Error Checker
+        // Check for errors in the spec *after* updating the props
         for (RVMonitorSpec rvmSpec : rvmSpecFile.getSpecs()) {
             RVMErrorChecker.verify(rvmSpec);
         }

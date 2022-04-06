@@ -30,4 +30,14 @@ public class CoEnableSet extends EnableSet {
         }
     }
 
+    @Override
+    public String toString() {
+        return "CoEnableSet{" +
+               "contents=" + contents +
+               ", specParameters=" + specParameters +
+               ", events=" + events +
+               ", parametersOnSpec=" + parametersOnSpec +
+               ", cachedFullEntity=" + cachedFullEntity +
+               '}';
+    }
 }

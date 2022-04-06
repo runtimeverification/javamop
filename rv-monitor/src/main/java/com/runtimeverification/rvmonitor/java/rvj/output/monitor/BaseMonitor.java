@@ -173,7 +173,7 @@ public class BaseMonitor extends Monitor {
     public void initialize(String name, RVMonitorSpec rvmSpec,
             OptimizedCoenableSet coenableSet, boolean isOutermost,
             String monitorNameSuffix) {
-        this.isDefined = true;
+        isDefined = true;
         this.monitorName = new RVMVariable(getOutputName() + monitorNameSuffix
                 + "Monitor");
         this.events = rvmSpec.getEvents();
@@ -245,7 +245,7 @@ public class BaseMonitor extends Monitor {
             varsToSave.put(p, new RVMVariable("Ref_" + p.getName()));
         }
 
-        if (this.isDefined && rvmSpec.isGeneral()) {
+        if (isDefined && rvmSpec.isGeneral()) {
             if (rvmSpec.isFullBinding() || rvmSpec.isConnected())
                 monitorInfo = new MonitorInfo(rvmSpec);
         }

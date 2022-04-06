@@ -19,7 +19,7 @@ public class EnableSet {
     protected final RVMParameters specParameters;
     protected final List<EventDefinition> events;
 
-    HashMap<String, RVMParameters> parametersOnSpec = new HashMap<String, RVMParameters>();
+    HashMap<String, RVMParameters> parametersOnSpec = new HashMap<>();
 
     public EnableSet(List<EventDefinition> events, RVMParameters specParameters) {
         this.specParameters = specParameters;
@@ -27,17 +27,15 @@ public class EnableSet {
         for (EventDefinition event : events) {
             parametersOnSpec.put(event.getId(), event.getRVMParametersOnSpec());
         }
-        this.contents = new HashMap<String, RVMParameterSet>();
+        this.contents = new HashMap<>();
     }
 
-    public EnableSet(String enableSetStr, List<EventDefinition> events,
-            RVMParameters specParameters) {
+    public EnableSet(String enableSetStr, List<EventDefinition> events, RVMParameters specParameters) {
         this(events, specParameters);
         this.contents = parseSets(enableSetStr);
     }
 
-    public EnableSet(PropertyAndHandlers prop, List<EventDefinition> events,
-            RVMParameters specParameters) {
+    public EnableSet(PropertyAndHandlers prop, List<EventDefinition> events, RVMParameters specParameters) {
         this(events, specParameters);
         for (String categoryName : prop.getHandlers().keySet()) {
             String enableForCategory = prop.getLogicProperty(categoryName
@@ -141,13 +139,13 @@ public class EnableSet {
             int i;
             RVMParameters entity = new RVMParameters();
             for (i = 0; i < specParameters.size(); i++) {
-                if (paramBool[i] == true)
+                if (paramBool[i])
                     entity.add(specParameters.get(i));
             }
             fullEntity.add(entity);
 
             for (i = specParameters.size() - 1; i >= 0; i--) {
-                if (paramBool[i] == true) {
+                if (paramBool[i]) {
                     paramBool[i] = false;
                     for (int j = i + 1; j < specParameters.size(); j++)
                         paramBool[j] = true;
@@ -169,4 +167,14 @@ public class EnableSet {
         return contents.entrySet();
     }
 
+    @Override
+    public String toString() {
+        return "EnableSet{" +
+               "contents=" + contents +
+               ", specParameters=" + specParameters +
+               ", events=" + events +
+               ", parametersOnSpec=" + parametersOnSpec +
+               ", cachedFullEntity=" + cachedFullEntity +
+               '}';
+    }
 }

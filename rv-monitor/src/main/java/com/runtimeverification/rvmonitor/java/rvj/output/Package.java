@@ -6,20 +6,16 @@ public class Package {
     private String packageString;
 
     public Package(RVMSpecFile rvmSpecFile) {
-        if (rvmSpecFile.getPakage() != null)
+        if (rvmSpecFile.getPakage() != null) {
             packageString = rvmSpecFile.getPakage().toString();
-        else
+        } else {
             packageString = "";
+        }
         packageString = packageString.trim();
     }
 
     @Override
     public String toString() {
-        String ret = "";
-
-        ret += packageString + "\n";
-
-        return ret;
+        return packageString + "\n";
     }
-
 }

@@ -100,15 +100,13 @@ public class RVMonitorSpec extends Node implements Comparable<RVMonitorSpec> {
 
     public void setVarsInEvents() throws RVMException {
         int numStartEvent = 0;
-        HashSet<String> duplicatedEventNames = new HashSet<String>();
+        HashSet<String> duplicatedEventNames = new HashSet<>();
         for (EventDefinition event : this.events) {
             if (event.isStartEvent())
                 numStartEvent++;
 
-            event.rvmParametersOnSpec = RVMParameters.intersectionSet(
-                    event.rvmParameters, this.parameters);
-            event.rvmParametersOnSpec = this.parameters
-                    .sortParam(event.rvmParametersOnSpec);
+            event.rvmParametersOnSpec = RVMParameters.intersectionSet(event.rvmParameters, this.parameters);
+            event.rvmParametersOnSpec = this.parameters.sortParam(event.rvmParametersOnSpec);
 
             for (EventDefinition event2 : this.events) {
                 if (event == event2)

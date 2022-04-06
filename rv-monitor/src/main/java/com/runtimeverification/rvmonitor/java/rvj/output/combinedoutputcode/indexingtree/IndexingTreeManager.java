@@ -17,7 +17,7 @@ public class IndexingTreeManager {
 
     private final TreeMap<RVMonitorSpec, IndexingDeclNew> trees = new TreeMap<RVMonitorSpec, IndexingDeclNew>();
 
-    public TreeMap<String, RefTree> refTrees = new TreeMap<String, RefTree>();
+    public TreeMap<String, RefTree> refTrees = new TreeMap<>();
 
     public IndexingTreeManager(String name, List<RVMonitorSpec> specs,
             TreeMap<RVMonitorSpec, MonitorSet> monitorSets,

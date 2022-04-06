@@ -195,8 +195,7 @@ public class JavaTFSM extends LogicPluginShell {
                 .getCreationEvents());
         // logicShellResult.startEvents = allEvents;
         logicShellResult.properties = getMonitorCode(logicOutputXML);
-        logicShellResult.properties = addEnableSets(
-                logicShellResult.properties, logicOutputXML);
+        logicShellResult.properties = addEnableSets(logicShellResult.properties, logicOutputXML);
 
         return logicShellResult;
     }

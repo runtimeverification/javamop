@@ -5,7 +5,7 @@ import com.runtimeverification.rvmonitor.logicpluginshells.fsm.visitor.VoidVisit
 
 public class FSMTransition extends Node {
 
-    boolean defaultFlag = false;
+    boolean defaultFlag;
     String eventName;
     String stateName;
 

@@ -14,29 +14,24 @@ import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class LogicPluginShellFactory {
 
-    static public LogicPluginShell findLogicShellPlugin(String packageName,
-            String monitorType, String outputLanguage) {
-        ArrayList<Class<?>> logicPlugins = null;
+    static public LogicPluginShell findLogicShellPlugin(String packageName, String monitorType, String outputLanguage) {
+        ArrayList<Class<?>> logicPlugins;
         try {
             /* it should return only subclasses of LogicShellPlugin */
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Class<?>[] pluginParamClass = {};
 
-            if (Main.options.isJarFile)
-                logicPlugins = getClassesFromJar(loader, packageName);
-            else
+            if (Main.options.isJarFile) {
+                logicPlugins = getClassesFromJar(packageName);
+            } else {
                 logicPlugins = getClasses(loader, packageName);
-            if (logicPlugins != null) {
-                for (Class<?> c : logicPlugins) {
-                    LogicPluginShell logicShellPlugin = (LogicPluginShell) c
-                            .getConstructor(pluginParamClass).newInstance();
+            }
+            for (Class<?> c : logicPlugins) {
+                LogicPluginShell logicShellPlugin = (LogicPluginShell) c.getConstructor(pluginParamClass).newInstance();
 
-                    if (logicShellPlugin.monitorType.toLowerCase().compareTo(
-                            monitorType.toLowerCase()) == 0
-                            && logicShellPlugin.outputLanguage.toLowerCase()
-                                    .compareTo(outputLanguage.toLowerCase()) == 0) {
-                        return logicShellPlugin;
-                    }
+                if (logicShellPlugin.monitorType.toLowerCase().compareTo(monitorType.toLowerCase()) == 0
+                        && logicShellPlugin.outputLanguage.toLowerCase().compareTo(outputLanguage.toLowerCase()) == 0) {
+                    return logicShellPlugin;
                 }
             }
         } catch (Exception e) {
@@ -45,9 +40,8 @@ public class LogicPluginShellFactory {
         return null;
     }
 
-    static private ArrayList<Class<?>> getClassesFromJar(ClassLoader loader,
-            String packageName) throws RVMException {
-        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+    static private ArrayList<Class<?>> getClassesFromJar(String packageName) throws RVMException {
+        ArrayList<Class<?>> classes = new ArrayList<>();
         packageName = packageName.replaceAll("\\.", "/");
 
         try {
@@ -71,7 +65,7 @@ public class LogicPluginShellFactory {
                     if (!clazz.isInterface()) {
                         Class<?> superClass = clazz.getSuperclass();
                         while (superClass != null) {
-                            if (superClass.getName() == "com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell") {
+                            if (superClass.getName().equals("com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell")) {
                                 classes.add(clazz);
                                 break;
                             }
@@ -87,9 +81,8 @@ public class LogicPluginShellFactory {
         return classes;
     }
 
-    static private ArrayList<Class<?>> getClasses(ClassLoader loader,
-            String packageName) throws RVMException {
-        ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+    static private ArrayList<Class<?>> getClasses(ClassLoader loader, String packageName) throws RVMException {
+        ArrayList<Class<?>> classes = new ArrayList<>();
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources;
         try {
@@ -104,15 +97,13 @@ public class LogicPluginShellFactory {
                 // WINDOWS HACK
                 if (filePath.indexOf("%20") > 0)
                     filePath = filePath.replaceAll("%20", " ");
-                if (filePath != null) {
-                    if (!(filePath.indexOf("!") > 0)
-                            && !(filePath.indexOf(".jar") > 0)) {
-                        try {
-                            classes.addAll(getFromDirectory(new File(filePath),
-                                    packageName));
-                        } catch (Exception e) {
-                            throw new RVMException("cannot load codeplugins");
-                        }
+                if (!(filePath.indexOf("!") > 0)
+                        && !(filePath.indexOf(".jar") > 0)) {
+                    try {
+                        classes.addAll(getFromDirectory(new File(filePath),
+                                packageName));
+                    } catch (Exception e) {
+                        throw new RVMException("cannot load codeplugins");
                     }
                 }
             }
@@ -128,7 +119,7 @@ public class LogicPluginShellFactory {
                 if (file.getName().endsWith(".class")) {
                     String name = packageName + '.'
                             + stripFilenameExtension(file.getName());
-                    Class<?> clazz = null;
+                    Class<?> clazz;
                     try {
                         clazz = Class.forName(name);
                     } catch (Error e) {
@@ -138,7 +129,7 @@ public class LogicPluginShellFactory {
                     if (!clazz.isInterface()) {
                         Class<?> superClass = clazz.getSuperclass();
                         while (superClass != null) {
-                            if (superClass.getName() == "com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell") {
+                            if (superClass.getName().equals("com.runtimeverification.rvmonitor.logicpluginshells.LogicPluginShell")) {
                                 classes.add(clazz);
                                 break;
                             }
@@ -162,15 +153,13 @@ public class LogicPluginShellFactory {
         return (sepIndex != -1 ? path.substring(0, sepIndex) : path);
     }
 
-    static public LogicPluginShellResult process(
-            LogicRepositoryType logicOutput, String events,
-            String outputLanguage) throws RVMException {
+    static public LogicPluginShellResult process(LogicRepositoryType logicOutput, String events, String outputLanguage)
+            throws RVMException {
         LogicPluginShell logicShellPlugin = findLogicShellPlugin(
                 "com.runtimeverification.rvmonitor.logicpluginshells",
                 logicOutput.getProperty().getLogic(), outputLanguage);
         if (logicShellPlugin != null) {
-            LogicPluginShellResult result = logicShellPlugin.process(
-                    logicOutput, events);
+            LogicPluginShellResult result = logicShellPlugin.process(logicOutput, events);
             // Support deadlock detection since deadlock is not a state.
             result.properties.setProperty("deadlock condition", "");
             return result;

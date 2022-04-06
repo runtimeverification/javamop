@@ -31,7 +31,7 @@ public class RawMonitor extends Monitor {
                     throws RVMException {
         super(outputName, rvmSpec, coenableSet, isOutermost);
 
-        this.isDefined = true;
+        isDefined = true;
 
         this.monitorName = new RVMVariable(rvmSpec.getName() + "Monitor");
 
@@ -46,7 +46,7 @@ public class RawMonitor extends Monitor {
 
         events = rvmSpec.getEvents();
 
-        if (this.isDefined && rvmSpec.isGeneral()) {
+        if (isDefined && rvmSpec.isGeneral()) {
             if (rvmSpec.isFullBinding() || rvmSpec.isConnected())
                 monitorInfo = new MonitorInfo(rvmSpec);
         }

@@ -5,8 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.rvmspec.Formula;
@@ -21,19 +19,18 @@ import com.runtimeverification.rvmonitor.util.Tool;
 public class LogicRepositoryConnector {
     public static boolean verbose = false;
 
-    public static LogicRepositoryType process(RVMonitorSpec rvmSpec,
-            PropertyAndHandlers prop) throws RVMException {
+    public static LogicRepositoryType process(RVMonitorSpec rvmSpec, PropertyAndHandlers prop) throws RVMException {
         if (rvmSpec == null || prop == null)
             throw new RVMException("No annotation specified");
 
         String formula = "";
-        String categories = "";
+        StringBuilder categories = new StringBuilder();
 
         formula += ((Formula) prop.getProperty()).getFormula().trim();
         for (String key : prop.getHandlers().keySet()) {
-            categories += " " + key;
+            categories.append(" ").append(key);
         }
-        categories = categories.trim();
+        categories = new StringBuilder(categories.toString().trim());
 
         LogicRepositoryType logicInputXML = new LogicRepositoryType();
         PropertyType logicProperty = new PropertyType();
@@ -43,7 +40,7 @@ public class LogicRepositoryConnector {
 
         logicInputXML.setClient("RVMonitor");
         logicInputXML.setEvents(rvmSpec.getEventStr());
-        logicInputXML.setCategories(categories);
+        logicInputXML.setCategories(categories.toString());
         logicInputXML.setProperty(logicProperty);
 
         LogicRepositoryData logicInputData = new LogicRepositoryData(logicInputXML);
@@ -58,20 +55,21 @@ public class LogicRepositoryConnector {
             logicOutputData = new LogicRepositoryData(logicOutput_OutputStream);
             logicOutputXML = logicOutputData.getXML();
         } catch (Exception e) {
-            if (Main.options.debug)
+            if (verbose) {
                 e.printStackTrace();
+            }
             throw new RVMException("Logic Engine Error: " + e.getMessage());
         }
 
         if (logicOutputXML.getProperty() == null) {
             if (logicOutputXML.getMessage() != null) {
-                String errStr = "";
+                StringBuilder errStr = new StringBuilder();
                 for (String errMsg : logicOutputXML.getMessage()) {
                     if (errStr.length() != 0)
-                        errStr += "\n";
-                    errStr += errMsg.trim();
+                        errStr.append("\n");
+                    errStr.append(errMsg.trim());
                 }
-                throw new RVMException(errStr);
+                throw new RVMException(errStr.toString());
             } else {
                 throw new RVMException("Wrong Logic Repository Output");
             }
@@ -80,27 +78,22 @@ public class LogicRepositoryConnector {
         return logicOutputXML;
     }
 
-    public static ByteArrayOutputStream connectToServer(
-            LogicRepositoryData logicInputData) throws Exception {
-        ByteArrayInputStream logicInput_InputStream = logicInputData
-                .getInputStream();
-        ByteArrayOutputStream logicInput_OutputStream = logicInputData
-                .getOutputStream();
+    public static ByteArrayOutputStream connectToServer(LogicRepositoryData logicInputData) throws Exception {
+        ByteArrayInputStream logicInput_InputStream = logicInputData.getInputStream();
+        ByteArrayOutputStream logicInput_OutputStream = logicInputData.getOutputStream();
         String logicinputstr = logicInput_OutputStream.toString();
 
-        if (Main.options.debug) {
+        if (verbose) {
             System.out.println("== send to logic repository ==");
             System.out.print(logicinputstr);
-            System.out.println("");
+            System.out.println();
         }
 
         ByteArrayOutputStream logicOutput_OutputStream;
-        Class<?> logicClass = Class
-                .forName("com.runtimeverification.rvmonitor.logicrepository.Main");
+        Class<?> logicClass = Class.forName("com.runtimeverification.rvmonitor.logicrepository.Main");
         ClassLoader loader = logicClass.getClassLoader();
         String logicClassPath = loader.getResource(
-                "com/runtimeverification/rvmonitor/logicrepository/Main.class")
-                .toString();
+                "com/runtimeverification/rvmonitor/logicrepository/Main.class").toString();
 
         boolean isLogicRepositoryInJar = false;
         String logicJarFilePath = "";
@@ -110,12 +103,8 @@ public class LogicRepositoryConnector {
                 && logicClassPath.startsWith("jar:")) {
             isLogicRepositoryInJar = true;
 
-            logicJarFilePath = logicClassPath
-                    .substring(
-                            "jar:file:".length(),
-                            logicClassPath.length()
-                                    - "!/com/runtimeverification/rvmonitor/logicrepository/Main.class"
-                                            .length());
+            logicJarFilePath = logicClassPath.substring("jar:file:".length(), logicClassPath.length()
+                                    - "!/com/runtimeverification/rvmonitor/logicrepository/Main.class".length());
             logicJarFilePath = Tool.polishPath(logicJarFilePath);
         } else {
             logicPackageFilePath = logicClassPath.substring("file:".length(),
@@ -124,26 +113,21 @@ public class LogicRepositoryConnector {
         }
 
         String logicPluginFarFilePath = new File(logicJarFilePath).getParent()
-                + File.separator + "plugins" + File.separator + "*";
+                                        + File.separator + "plugins" + File.separator + "*";
 
         if (isLogicRepositoryInJar) {
             String executePath = new File(logicJarFilePath).getParent();
 
-            String[] cmdarray = {
-                    "java",
-                    "-cp",
-                    Tool.polishPath(logicJarFilePath) + File.pathSeparator
-                            + logicPluginFarFilePath + File.pathSeparator
-                            + new File(Main.options.jarFilePath).getParent()
-                            + "/scala-library.jar",
+            String[] cmdarray = {"java", "-cp", Tool.polishPath(logicJarFilePath) + File.pathSeparator
+                                                + logicPluginFarFilePath + File.pathSeparator
+                                                + new File(Main.options.jarFilePath).getParent() + "/scala-library.jar",
                     "com.runtimeverification.rvmonitor.logicrepository.Main" };
 
-            logicOutput_OutputStream = executeProgram(cmdarray, executePath,
-                    logicInput_InputStream);
+            logicOutput_OutputStream = executeProgram(cmdarray, executePath, logicInput_InputStream);
         } else {
             // The following didn't work at least under Windows.
             // String executePath = new File(logicPackageFilePath).getParent();
-            String executePath = null;
+            String executePath;
             {
                 File logic = new File(logicPackageFilePath);
                 File rvmonitor = logic.getParentFile();
@@ -155,21 +139,16 @@ public class LogicRepositoryConnector {
 
             String scalaPath = System.getProperty("user.dir") + "/target/release/rv-monitor/lib/scala-library.jar";
 
-            String[] cmdarray = {
-                    "java",
-                    "-cp",
-                    Tool.polishPath(executePath) + File.pathSeparator
-                            + scalaPath,
-            "com.runtimeverification.rvmonitor.logicrepository.Main" };
+            String[] cmdarray = {"java", "-cp", Tool.polishPath(executePath) + File.pathSeparator + scalaPath,
+                    "com.runtimeverification.rvmonitor.logicrepository.Main" };
 
-            logicOutput_OutputStream = executeProgram(cmdarray, executePath,
-                    logicInput_InputStream);
+            logicOutput_OutputStream = executeProgram(cmdarray, executePath, logicInput_InputStream);
         }
 
-        if (Main.options.debug) {
+        if (verbose) {
             System.out.println("== result from logic repository ==");
             System.out.println(logicOutput_OutputStream);
-            System.out.println("");
+            System.out.println();
         }
 
         return logicOutput_OutputStream;
@@ -178,7 +157,7 @@ public class LogicRepositoryConnector {
     static public ByteArrayOutputStream executeProgram(String[] cmdarray,
             String path, ByteArrayInputStream input) throws RVMException {
         Process child;
-        String output = "";
+        String output;
         try {
             child = Runtime.getRuntime().exec(cmdarray, null, new File(path));
             OutputStream out = child.getOutputStream();
@@ -210,7 +189,7 @@ public class LogicRepositoryConnector {
 
             return logicOutput;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             if (cmdarray.length > 0)
                 throw new RVMException("Cannot execute the program: "
                         + cmdarray[0]);

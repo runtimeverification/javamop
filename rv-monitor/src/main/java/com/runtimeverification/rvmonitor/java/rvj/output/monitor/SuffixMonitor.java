@@ -43,27 +43,23 @@ public class SuffixMonitor extends Monitor {
         return this.innerMonitor.getFeatures();
     }
 
-    public SuffixMonitor(String outputName, RVMonitorSpec rvmSpec,
-            OptimizedCoenableSet coenableSet, boolean isOutermost)
-                    throws RVMException {
+    public SuffixMonitor(String outputName, RVMonitorSpec rvmSpec, OptimizedCoenableSet coenableSet,
+                         boolean isOutermost) throws RVMException {
         super(outputName, rvmSpec, coenableSet, isOutermost);
 
-        this.isDefined = rvmSpec.isSuffixMatching();
+        isDefined = rvmSpec.isSuffixMatching();
 
-        if (this.isDefined) {
+        if (isDefined) {
             monitorName = new RVMVariable(rvmSpec.getName() + "SuffixMonitor");
 
             if (isOutermost) {
-                varInOutermostMonitor = new VarInOutermostMonitor(outputName,
-                        rvmSpec, rvmSpec.getEvents());
-                monitorTermination = new MonitorTermination(outputName,
-                        rvmSpec, rvmSpec.getEvents(), coenableSet);
+                varInOutermostMonitor = new VarInOutermostMonitor(outputName, rvmSpec, rvmSpec.getEvents());
+                monitorTermination = new MonitorTermination(outputName, rvmSpec, rvmSpec.getEvents(), coenableSet);
             }
 
             if (rvmSpec.isEnforce()) {
                 // TODO Do we need raw monitor for enforcing properties?
-                innerMonitor = new EnforceMonitor(outputName, rvmSpec,
-                        coenableSet, false);
+                innerMonitor = new EnforceMonitor(outputName, rvmSpec, coenableSet, false);
                 for (PropertyAndHandlers p : rvmSpec.getPropertiesAndHandlers()) {
                     int totalHandlers = p.getHandlers().size();
                     if (p.getHandlers().containsKey("deadlock"))
@@ -77,11 +73,9 @@ public class SuffixMonitor extends Monitor {
 
             } else {
                 if (rvmSpec.getPropertiesAndHandlers().size() == 0)
-                    innerMonitor = new RawMonitor(outputName, rvmSpec,
-                            coenableSet, false);
+                    innerMonitor = new RawMonitor(outputName, rvmSpec, coenableSet, false);
                 else
-                    innerMonitor = new BaseMonitor(outputName, rvmSpec,
-                            coenableSet, false);
+                    innerMonitor = new BaseMonitor(outputName, rvmSpec, coenableSet, false);
             }
             events = rvmSpec.getEvents();
 
@@ -119,15 +113,13 @@ public class SuffixMonitor extends Monitor {
                 }
             } else {
                 if (rvmSpec.getPropertiesAndHandlers().size() == 0)
-                    innerMonitor = new RawMonitor(outputName, rvmSpec,
-                            coenableSet, isOutermost);
+                    innerMonitor = new RawMonitor(outputName, rvmSpec, coenableSet, isOutermost);
                 else
-                    innerMonitor = new BaseMonitor(outputName, rvmSpec,
-                            coenableSet, isOutermost);
+                    innerMonitor = new BaseMonitor(outputName, rvmSpec, coenableSet, isOutermost);
             }
         }
 
-        if (this.isDefined && rvmSpec.isGeneral()) {
+        if (isDefined && rvmSpec.isGeneral()) {
             if (rvmSpec.isFullBinding() || rvmSpec.isConnected())
                 monitorInfo = new MonitorInfo(rvmSpec);
         }

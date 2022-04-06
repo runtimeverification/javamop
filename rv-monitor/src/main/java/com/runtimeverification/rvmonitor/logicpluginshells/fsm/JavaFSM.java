@@ -3,7 +3,6 @@ package com.runtimeverification.rvmonitor.logicpluginshells.fsm;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,11 +13,13 @@ import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMInput;
 import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMItem;
 import com.runtimeverification.rvmonitor.logicpluginshells.fsm.ast.FSMTransition;
 import com.runtimeverification.rvmonitor.logicpluginshells.fsm.parser.FSMParser;
-import com.runtimeverification.rvmonitor.logicpluginshells.fsm.visitor.HasDefaultVisitor;
 import com.runtimeverification.rvmonitor.logicrepository.parser.logicrepositorysyntax.LogicRepositoryType;
 import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class JavaFSM extends LogicPluginShell {
+    /**
+     * This constructor is invoked dynamically by the LoginPluginShellFactory(?)
+     */
     public JavaFSM() {
         super();
         monitorType = "FSM";
@@ -27,12 +28,13 @@ public class JavaFSM extends LogicPluginShell {
 
     ArrayList<String> allEvents;
 
-    private ArrayList<String> getEvents(String eventStr) throws RVMException {
-        ArrayList<String> events = new ArrayList<String>();
+    private ArrayList<String> getEvents(String eventStr) {
+        ArrayList<String> events = new ArrayList<>();
 
         for (String event : eventStr.trim().split(" ")) {
-            if (event.trim().length() != 0)
+            if (event.trim().length() != 0) {
                 events.add(event.trim());
+            }
         }
 
         return events;
@@ -44,78 +46,61 @@ public class JavaFSM extends LogicPluginShell {
 
         String monitor = logicOutput.getProperty().getFormula();
 
-        FSMInput fsmInput = null;
+        FSMInput fsmInput;
         try {
-            fsmInput = FSMParser.parse(new ByteArrayInputStream(monitor
-                    .getBytes()));
+            fsmInput = FSMParser.parse(new ByteArrayInputStream(monitor.getBytes()));
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new RVMException(
-                    "FSM to Java Plugin cannot parse FSM formula");
+            throw new RVMException("FSM to Java Plugin cannot parse FSM formula");
         }
 
-        if (fsmInput == null)
-            throw new RVMException(
-                    "FSM to Java Plugin cannot parse FSM formula");
-
-        HasDefaultVisitor hasDefaultVisitor = new HasDefaultVisitor();
-        fsmInput.accept(hasDefaultVisitor, null);
-
-        List<String> monitoredEvents;
-        monitoredEvents = allEvents;
-
-        Map<String, Integer> EventNum = new HashMap<String, Integer>();
-        int countEvent = 1;
-
-        String monitoredEventsStr = "";
-
-        for (String event : monitoredEvents) {
-            EventNum.put(event, new Integer(countEvent));
-
-            monitoredEventsStr += event + ":{\n  $state$ = $transition_"
-                    + event + "$[$state$];\n}\n\n";
-
-            countEvent++;
+        if (fsmInput == null) {
+            throw new RVMException("FSM to Java Plugin cannot parse FSM formula");
         }
 
-        Map<String, Integer> StateNum = new HashMap<String, Integer>();
-        Map<Integer, FSMItem> StateName = new HashMap<Integer, FSMItem>();
+        StringBuilder monitoredEventsStr = new StringBuilder();
+
+        for (String event : allEvents) {
+            monitoredEventsStr.append(event).append(":{\n  $state$ = $transition_").append(event).append("$[$state$];\n}\n\n");
+        }
+
+        Map<String, Integer> StateNum = new HashMap<>(); // maps state names to unique IDs
+        Map<Integer, FSMItem> StateName = new HashMap<>(); // maps the unique IDs to states (not just state names)
         int countState = 0;
 
         if (fsmInput.getItems() != null) {
             for (FSMItem i : fsmInput.getItems()) {
-                String stateName = i.getState();
-                StateNum.put(stateName, new Integer(countState));
-                StateName.put(new Integer(countState), i);
+                StateNum.put(i.getState(), countState);
+                StateName.put(countState, i);
                 countState++;
             }
         }
 
-        result.setProperty("monitored events", monitoredEventsStr);
+        result.setProperty("monitored events", monitoredEventsStr.toString());
 
-        String monitoredEventsStrForSet = "";
-        for (String event : monitoredEvents) {
-            monitoredEventsStrForSet += event
-                    + ":{\n  $monitor$.$state$ = $transition_" + event
-                    + "$[$monitor$.$state$];\n}\n\n";
+        StringBuilder monitoredEventsStrForSet = new StringBuilder();
+        for (String event : allEvents) {
+            monitoredEventsStrForSet.append(event)
+                    .append(":{\n  $monitor$.$state$ = $transition_")
+                    .append(event)
+                    .append("$[$monitor$.$state$];\n}\n\n");
         }
-        result.setProperty("monitored events for set", monitoredEventsStrForSet);
+        result.setProperty("monitored events for set", monitoredEventsStrForSet.toString());
 
-        String transitionArray = "";
+        StringBuilder transitionArray = new StringBuilder();
 
-        for (String event : this.allEvents) {
-            transitionArray += "static final int $transition_" + event
-                    + "$[] = {";
+        for (String event : allEvents) {
+            transitionArray.append("static final int $transition_").append(event).append("$[] = {");
             for (int i = 0; i < countState; i++) {
-                FSMItem state = StateName.get(new Integer(i));
+                FSMItem state = StateName.get(i);
 
                 int default_transition = countState;
 
                 for (FSMTransition t : state.getTransitions()) {
                     if (t.isDefaultFlag()) {
-                        if (StateNum.get(t.getStateName()) == null)
+                        if (StateNum.get(t.getStateName()) == null) {
                             throw new RVMException("Incorrect Monitor");
-
+                        }
                         default_transition = StateNum.get(t.getStateName());
                     }
                 }
@@ -125,56 +110,55 @@ public class JavaFSM extends LogicPluginShell {
                     if (!t.isDefaultFlag() && t.getEventName().equals(event)) {
                         found = true;
                         if (i != 0)
-                            transitionArray += ", ";
-                        transitionArray += StateNum.get(t.getStateName());
+                            transitionArray.append(", ");
+                        transitionArray.append(StateNum.get(t.getStateName()));
                     }
                 }
 
                 if (!found) {
                     if (i != 0)
-                        transitionArray += ", ";
-                    transitionArray += default_transition;
+                        transitionArray.append(", ");
+                    transitionArray.append(default_transition);
                 }
             }
 
             if (countState > 0)
-                transitionArray += ", ";
-            transitionArray += countState;
+                transitionArray.append(", ");
+            transitionArray.append(countState);
 
-            transitionArray += "};;\n";
+            transitionArray.append("};;\n");
         }
 
         result.setProperty("state declaration", "int $state$;\n" + transitionArray);
-        result.setProperty("state declaration for set", transitionArray);
+        result.setProperty("state declaration for set", transitionArray.toString());
         result.setProperty("reset", "$state$ = 0;\n");
         result.setProperty("initialization", "$state$ = 0;\n");
 
         result.setProperty("monitoring body", "");
 
         for (String state : StateNum.keySet()) {
-            result.setProperty(state.toLowerCase() + " condition", "$state$ == "
-                    + StateNum.get(state));
+            result.setProperty(state.toLowerCase() + " condition", "$state$ == " + StateNum.get(state));
         }
         result.setProperty("fail condition", "$state$ == " + countState + "\n");
         result.setProperty("nonfail condition", "$state$ != " + countState + "\n");
         if (fsmInput.getAliases() != null) {
             for (FSMAlias a : fsmInput.getAliases()) {
                 String stateName = a.getGroupName();
-                String conditionStr = "";
+                StringBuilder conditionStr = new StringBuilder();
                 boolean firstFlag = true;
                 for (String state : a.getStates()) {
                     if (firstFlag) {
-                        conditionStr += "$state$ == " + StateNum.get(state);
+                        conditionStr.append("$state$ == ").append(StateNum.get(state));
                         firstFlag = false;
                     } else {
-                        conditionStr += "|| $state$ == " + StateNum.get(state);
+                        conditionStr.append("|| $state$ == ").append(StateNum.get(state));
                     }
                 }
 
                 if (a.getStates().size() == 0)
-                    conditionStr = "false";
+                    conditionStr = new StringBuilder("false");
 
-                result.setProperty(stateName.toLowerCase() + " condition", conditionStr);
+                result.setProperty(stateName.toLowerCase() + " condition", conditionStr.toString());
             }
         }
 
@@ -182,21 +166,16 @@ public class JavaFSM extends LogicPluginShell {
     }
 
     @Override
-    public LogicPluginShellResult process(LogicRepositoryType logicOutputXML,
-            String events) throws RVMException {
-        if (logicOutputXML.getProperty().getLogic().toLowerCase()
-                .compareTo(monitorType.toLowerCase()) != 0)
-            throw new RVMException(
-                    "Wrong type of monitor is given to FSM Monitor.");
+    public LogicPluginShellResult process(LogicRepositoryType logicOutputXML, String events) throws RVMException {
+        if (logicOutputXML.getProperty().getLogic().toLowerCase().compareTo(monitorType.toLowerCase()) != 0) {
+            throw new RVMException("Wrong type of monitor is given to FSM Monitor.");
+        }
         allEvents = getEvents(events);
 
         LogicPluginShellResult logicShellResult = new LogicPluginShellResult();
-        logicShellResult.startEvents = getEvents(logicOutputXML
-                .getCreationEvents());
-        // logicShellResult.startEvents = allEvents;
+        logicShellResult.startEvents = getEvents(logicOutputXML.getCreationEvents());
         logicShellResult.properties = getMonitorCode(logicOutputXML);
-        logicShellResult.properties = addEnableSets(
-                logicShellResult.properties, logicOutputXML);
+        logicShellResult.properties = addEnableSets(logicShellResult.properties, logicOutputXML);
 
         return logicShellResult;
     }

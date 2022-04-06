@@ -70,7 +70,7 @@ public class Main {
     public static void processSpecFile(File file)
             throws RVMException {
         RVMNameSpace.init();
-        String specStr = SpecExtractor.process(file);
+        String specStr = SpecExtractor.process(file); // read the spec into a String object
         RVMSpecFile spec = SpecExtractor.parse(specStr);
 
         if (options.outputDir == null) {
@@ -79,8 +79,7 @@ public class Main {
             options.outputDir = getTargetDir(specList);
         }
 
-        String outputName = options.name == null ? Tool.getFileName(file
-                .getAbsolutePath()) : options.name;
+        String outputName = options.name == null ? Tool.getFileName(file.getAbsolutePath()) : options.name;
 
         RVMProcessor processor = new RVMProcessor(outputName);
 
