@@ -27,9 +27,9 @@ public class FSMPlugin extends LogicPlugin {
         if (!logic.equals("FSM")) {
             throw new LogicException("incorrect logic type: " + logic);
         }
-        
-        ArrayList<Symbol> events = new ArrayList<Symbol>();
-        ArrayList<State> categories = new ArrayList<State>();
+
+        HashSet<Symbol> events = new HashSet<>();
+        ArrayList<State> categories = new ArrayList<>();
         
         for (String event : (logicInputXML.getEvents().trim()).split("\\s+")){
             events.add(Symbol.get(event));
@@ -41,36 +41,45 @@ public class FSMPlugin extends LogicPlugin {
         
         String fsm = logicInputXML.getProperty().getFormula();
         
-        // parse the imput fsm in order to acquire the
+        // parse the input fsm in order to acquire the
         // stateMap, aliases, and state list
         FSMParser fsmParser = FSMParser.parse(fsm);
+        LogicRepositoryType logicOutputXML = logicInputXML;
+        logicOutputXML.getMessage().add("START STATE: " + fsmParser.getStartState());
+        logicOutputXML.getMessage().add("START STATES: " + fsmParser.getStates());
+        logicOutputXML.getMessage().add("START EVENTS: " + fsmParser.getEvents());
+        logicOutputXML.getMessage().add("START ALIASES: " + fsmParser.getAliases());
+        logicOutputXML.getMessage().add("START STATE-MAP: " + fsmParser.getStateMap());
         // check to see that all used states are defined
         fsmParser.check();
-        
+
         // check to see that all used events are defined
-        HashSet<Symbol> defEvents = new HashSet(events);
+//        HashSet<Symbol> defEvents = new HashSet(events);
         HashSet<Symbol> usedEvents = fsmParser.getEvents();
-        if (!usedEvents.equals(defEvents)) {
+        if (!usedEvents.equals(events)) {
             boolean error = false;
             String msg = "The following events are used but not defined: ";
             for (Symbol sym : usedEvents) {
-                if (!defEvents.contains(sym)) {
+                if (!events.contains(sym)) {
                     msg += sym + " ";
                     error = true;
                 }
             }
-            if (error)
+            if (error) {
                 throw new LogicException(msg);
+            }
         }
-        
+
         // minimize the FSM
         FSMMin fsmMin = new FSMMin(fsmParser.getStartState(), events, fsmParser.getStates(), categories, fsmParser.getAliases(), fsmParser.getStateMap());
+        logicOutputXML.getMessage().add("MINIMIZED: " + fsmMin.FSMString());
         // compute the enables
         FSMEnables fsmEnables = new FSMEnables(fsmMin.getStartState(), events, fsmMin.getStates(), categories, fsmMin.getAliases(), fsmMin.getStateMap());
         // compute the coenables
         FSMCoenables fsmCoenables = new FSMCoenables(fsmMin.getStartState(), events, fsmMin.getStates(), categories, fsmMin.getAliases(), fsmMin.getStateMap());
-        
-        LogicRepositoryType logicOutputXML = logicInputXML;
+        logicOutputXML.getMessage().add("FULL STATE: " + fsmCoenables.fullStateMap);
+        logicOutputXML.getMessage().add("INVERSE STATE: " + fsmCoenables.inversedStateMap);
+
         logicOutputXML.getMessage().add("done");
         
         logicOutputXML.getProperty().setFormula(fsmMin.FSMString());
@@ -90,27 +99,28 @@ public class FSMPlugin extends LogicPlugin {
      * Run the plugin as a standalone program, accepting input from stdin and producing output on stdout.
      */
     public static void main(String[] args) {
-        
+
+        LogicRepositoryType logicOutputXML = null;
         try {
             // Parse Input
             LogicRepositoryData logicInputData = new LogicRepositoryData(System.in);
-            
+
             // use plugin main function
             if (plugin == null) {
                 throw new LogicException("Each plugin should initiate plugin field.");
             }
-            LogicRepositoryType logicOutputXML = plugin.process(logicInputData.getXML());
-            
+            logicOutputXML = plugin.process(logicInputData.getXML());
+
             if (logicOutputXML == null) {
                 throw new LogicException("no output from the plugin.");
             }
-            
+
             ByteArrayOutputStream logicOutput = new LogicRepositoryData(logicOutputXML).getOutputStream();
-            System.out.println(logicOutput);
+            logicOutputXML.getMessage().add(String.valueOf(logicOutput));
         } catch (LogicException e) {
-            System.out.println(e);
+            logicOutputXML.getMessage().add(e.getMessage());
         }
-        
+
     }
     
 }

@@ -14,7 +14,7 @@ public class FSMEnables {
     }
 
     private State startState;
-    private ArrayList<Symbol> events;
+    private HashSet<Symbol> events;
     private ArrayList<State> states;
     private ArrayList<State> categories;
     private HashMap<State, HashSet<State>> aliases;
@@ -33,8 +33,8 @@ public class FSMEnables {
      * @param aliases A mapping between equivalent states.
      * @param stateMap A mapping from states to their transition mapping.
      */
-    public FSMEnables(State startState, ArrayList<Symbol> events, ArrayList<State> states, ArrayList<State> categories, HashMap<State, HashSet<State>> aliases,
-               HashMap<State, Transition> stateMap) {
+    public FSMEnables(State startState, HashSet<Symbol> events, ArrayList<State> states, ArrayList<State> categories, HashMap<State, HashSet<State>> aliases,
+                      HashMap<State, Transition> stateMap) {
         this.startState = startState;
         this.events = events;
         this.states = states;

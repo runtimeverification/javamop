@@ -158,6 +158,7 @@ public class LogicPluginShellFactory {
         LogicPluginShell logicShellPlugin = findLogicShellPlugin(
                 "com.runtimeverification.rvmonitor.logicpluginshells",
                 logicOutput.getProperty().getLogic(), outputLanguage);
+        System.out.println("LOGIC SHELL PLUGIN: " + logicShellPlugin.getClass().getName());
         if (logicShellPlugin != null) {
             LogicPluginShellResult result = logicShellPlugin.process(logicOutput, events);
             // Support deadlock detection since deadlock is not a state.

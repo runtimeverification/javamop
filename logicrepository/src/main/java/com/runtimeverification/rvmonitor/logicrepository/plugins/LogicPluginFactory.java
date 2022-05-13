@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
@@ -246,6 +247,8 @@ public class LogicPluginFactory {
 				}
 			}
 			LogicPlugin plugin = findLogicPluginFromJar(logicJarPath, logicName);
+
+			Log.write("Logic Class: ", plugin.getClass().getName());
 
 			if (plugin != null)
 				ret = plugin.process(logicRepositoryData.getInputStream());

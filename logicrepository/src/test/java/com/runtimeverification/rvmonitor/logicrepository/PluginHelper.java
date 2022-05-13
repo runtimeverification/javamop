@@ -24,6 +24,7 @@ public class PluginHelper {
             "plugins";
         System.out.println(path);
         LogicPlugin plugin = LogicPluginFactory.findLogicPlugin(path, logicName);
+        System.out.println("LOGIC PLUGINN: " + plugin.getClass().getName());
         if(plugin == null) {
             throw new RuntimeException("No such plugin: " + logicName);
         }

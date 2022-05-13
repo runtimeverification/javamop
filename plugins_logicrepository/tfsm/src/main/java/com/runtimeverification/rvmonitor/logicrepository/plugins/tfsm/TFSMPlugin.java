@@ -26,7 +26,7 @@ public class TFSMPlugin extends LogicPlugin {
 			throw new LogicException("incorrect logic type: " + logic);
 		}
 
-		ArrayList<Symbol> events = new ArrayList<Symbol>();
+		HashSet<Symbol> events = new HashSet<Symbol>();
 		ArrayList<State> categories = new ArrayList<State>();
 
 		for (String event : (logicInputXML.getEvents().trim()).split("\\s+")){
@@ -46,13 +46,12 @@ public class TFSMPlugin extends LogicPlugin {
 		fsmParser.check();
 
 		// check to see that all used events are defined
-		HashSet<Symbol> defEvents = new HashSet(events);
 		HashSet<Symbol> usedEvents = fsmParser.getEvents();
-		if (!usedEvents.equals(defEvents)) {
+		if (!usedEvents.equals(events)) {
 			boolean error = false;
 			String msg = "The following events are used but not defined: ";
 			for (Symbol sym : usedEvents) {
-				if (!defEvents.contains(sym)) {
+				if (!events.contains(sym)) {
 					msg += sym + " ";
 					error = true;
 				}

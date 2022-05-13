@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.rvmspec.Formula;
@@ -51,11 +52,11 @@ public class LogicRepositoryConnector {
 
         try {
             logicOutput_OutputStream = connectToServer(logicInputData);
-
+            System.out.println("CONN TO SERVER");
             logicOutputData = new LogicRepositoryData(logicOutput_OutputStream);
             logicOutputXML = logicOutputData.getXML();
         } catch (Exception e) {
-            if (verbose) {
+            if (Main.options.verbose) {
                 e.printStackTrace();
             }
             throw new RVMException("Logic Engine Error: " + e.getMessage());
@@ -83,7 +84,7 @@ public class LogicRepositoryConnector {
         ByteArrayOutputStream logicInput_OutputStream = logicInputData.getOutputStream();
         String logicinputstr = logicInput_OutputStream.toString();
 
-        if (verbose) {
+        if (Main.options.verbose) {
             System.out.println("== send to logic repository ==");
             System.out.print(logicinputstr);
             System.out.println();
@@ -122,6 +123,8 @@ public class LogicRepositoryConnector {
                                                 + logicPluginFarFilePath + File.pathSeparator
                                                 + new File(Main.options.jarFilePath).getParent() + "/scala-library.jar",
                     "com.runtimeverification.rvmonitor.logicrepository.Main" };
+
+            System.out.println("CMD: " + Arrays.asList(cmdarray));
 
             logicOutput_OutputStream = executeProgram(cmdarray, executePath, logicInput_InputStream);
         } else {

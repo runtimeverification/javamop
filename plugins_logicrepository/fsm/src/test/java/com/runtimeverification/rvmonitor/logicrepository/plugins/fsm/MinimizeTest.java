@@ -19,17 +19,17 @@ public class MinimizeTest {
         
         State start = State.get("start");
         State extra = State.get("extra");
-        ArrayList<State> states = new ArrayList<State>();
+        ArrayList<State> states = new ArrayList<>();
         states.add(start);
         states.add(extra);
         
         Symbol a = Symbol.get("a");
         Symbol b = Symbol.get("b");
-        ArrayList<Symbol> symbols = new ArrayList<Symbol>();
+        HashSet<Symbol> symbols = new HashSet<>();
         symbols.add(a);
         symbols.add(b);
         
-        ArrayList<State> categories = new ArrayList<State>();
+        ArrayList<State> categories = new ArrayList<>();
         
         HashMap<State, HashSet<State>> aliases = new HashMap<State, HashSet<State>>();
         
@@ -61,7 +61,7 @@ public class MinimizeTest {
         
         Symbol a = Symbol.get("a");
         Symbol b = Symbol.get("b");
-        ArrayList<Symbol> symbols = new ArrayList<Symbol>();
+        HashSet<Symbol> symbols = new HashSet<>();
         symbols.add(a);
         symbols.add(b);
         

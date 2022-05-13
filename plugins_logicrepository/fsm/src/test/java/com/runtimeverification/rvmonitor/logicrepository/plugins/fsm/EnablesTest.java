@@ -25,7 +25,7 @@ public class EnablesTest {
         
         Symbol a = Symbol.get("a");
         Symbol b = Symbol.get("b");
-        ArrayList<Symbol> symbols = new ArrayList<Symbol>();
+        HashSet<Symbol> symbols = new HashSet<>();
         symbols.add(a);
         symbols.add(b);
         

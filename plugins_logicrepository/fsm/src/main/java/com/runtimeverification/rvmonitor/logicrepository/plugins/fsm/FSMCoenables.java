@@ -25,15 +25,15 @@ public class FSMCoenables {
     }
 
     private State startState;
-    private ArrayList<Symbol> events;
+    private HashSet<Symbol> events;
     private ArrayList<State> states;
     private ArrayList<State> fullstates;
     private ArrayList<State> categories;
     private HashMap<State, HashSet<State>> aliases;
     private HashMap<State, Transition> stateMap;
-    private HashMap<State, Transition> fullStateMap;
+    public HashMap<State, Transition> fullStateMap;
 
-    private HashMap<State, HashMap<Symbol, HashSet<State>>> inversedStateMap;
+    public HashMap<State, HashMap<Symbol, HashSet<State>>> inversedStateMap;
     private HashMap<State, HashMap<Symbol, HashSet<HashSet<Symbol>>>> coenables;
 
     private HashSet<State> reachableStates;
@@ -48,8 +48,8 @@ public class FSMCoenables {
      * @param aliases A mapping between equivalent states.
      * @param stateMap A mapping from states to their transition mapping.
      */
-    public FSMCoenables(State startState, ArrayList<Symbol> events, ArrayList<State> states, ArrayList<State> categories, HashMap<State, HashSet<State>> aliases,
-                 HashMap<State, Transition> stateMap) throws LogicException {
+    public FSMCoenables(State startState, HashSet<Symbol> events, ArrayList<State> states, ArrayList<State> categories, HashMap<State, HashSet<State>> aliases,
+                        HashMap<State, Transition> stateMap) throws LogicException {
         this.startState = startState;
         this.events = events;
         this.states = states;
@@ -57,16 +57,16 @@ public class FSMCoenables {
         this.aliases = aliases;
         this.stateMap = stateMap;
 
-        this.fullstates = new ArrayList<State>();
+        this.fullstates = new ArrayList<>();
         this.fullstates.addAll(this.states);
         if(!this.fullstates.contains(fail))
             this.fullstates.add(fail);
 
-        this.reachableStates = new HashSet<State>();
+        this.reachableStates = new HashSet<>();
 
-        this.coenables = new HashMap<State, HashMap<Symbol, HashSet<HashSet<Symbol>>>>();
+        this.coenables = new HashMap<>();
         for (State category : this.categories) {
-            HashMap<Symbol, HashSet<HashSet<Symbol>>> categoryCoenable = new HashMap<Symbol, HashSet<HashSet<Symbol>>>();
+            HashMap<Symbol, HashSet<HashSet<Symbol>>> categoryCoenable = new HashMap<>();
 
             for (Symbol event : this.events) {
                 categoryCoenable.put(event, new HashSet<HashSet<Symbol>>());
@@ -190,12 +190,12 @@ public class FSMCoenables {
      * @return The reverse of {@code stateMap} where destinations now map to a set of sources.
      */
     private HashMap<State, HashMap<Symbol, HashSet<State>>> inverseStateMap(HashMap<State, Transition> stateMap) throws LogicException {
-        HashMap<State, HashMap<Symbol, HashSet<State>>> ret = new HashMap<State, HashMap<Symbol, HashSet<State>>>();
+        HashMap<State, HashMap<Symbol, HashSet<State>>> ret = new HashMap<>();
 
         for (State state : this.fullstates) {
-            HashMap<Symbol, HashSet<State>> transitions = new HashMap<Symbol, HashSet<State>>();
+            HashMap<Symbol, HashSet<State>> transitions = new HashMap<>();
             for (Symbol event : this.events) {
-                HashSet<State> destinations = new HashSet<State>();
+                HashSet<State> destinations = new HashSet<>();
                 transitions.put(event, destinations);
             }
             ret.put(state, transitions);
@@ -229,7 +229,7 @@ public class FSMCoenables {
      * @return All outgoing state transitions from all states, with transitions on all symbols.
      */
     private HashMap<State, Transition> makeFullStateMap(HashMap<State, Transition> stateMap) throws LogicException {
-        HashMap<State, Transition> ret = new HashMap<State, Transition>();
+        HashMap<State, Transition> ret = new HashMap<>();
 
         for (State state : stateMap.keySet()) {
             Transition transitions = stateMap.get(state);

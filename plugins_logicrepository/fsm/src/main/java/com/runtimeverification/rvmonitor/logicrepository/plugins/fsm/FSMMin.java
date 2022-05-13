@@ -38,11 +38,11 @@ public class FSMMin {
      * @param stateMap A mapping from states to their transition mapping.
      */
     public FSMMin(State startState,
-           ArrayList<Symbol> events,
-           ArrayList<State> states,
-           ArrayList<State> categories,
-           HashMap<State, HashSet<State>> aliases,
-           HashMap<State, Transition> stateMap)
+                  HashSet<Symbol> events,
+                  ArrayList<State> states,
+                  ArrayList<State> categories,
+                  HashMap<State, HashSet<State>> aliases,
+                  HashMap<State, Transition> stateMap)
     {
         this.startState = startState;
         this.events = new ArrayList<Symbol>(events);
