@@ -18,8 +18,8 @@ public class FSMEnables {
     private ArrayList<State> states;
     private ArrayList<State> categories;
     private HashMap<State, HashSet<State>> aliases;
-    private HashMap<State, Transition> stateMap;
-    private HashMap<State, HashSet<State>> reachability;
+    public HashMap<State, Transition> stateMap;
+    public HashMap<State, HashSet<State>> reachability;
     private String creationEvents = "";
     private HashMap<State, HashMap<Symbol, HashSet<HashSet<Symbol>>>> enables;
 
@@ -54,19 +54,19 @@ public class FSMEnables {
      */
     private void computeEnables() {
         for (State category : categories) {
-            HashMap<Symbol, HashSet<HashSet<Symbol>>> categoryEnable = new HashMap<Symbol, HashSet<HashSet<Symbol>>>();
-            enables.put(category, categoryEnable);
+            HashMap<Symbol, HashSet<HashSet<Symbol>>> categoryEnable = new HashMap<>();
             for (Symbol event : events) {
                 categoryEnable.put(event, new HashSet<HashSet<Symbol>>());
             }
+            enables.put(category, categoryEnable);
         }
         HashMap<State, HashSet<HashSet<Symbol>>> eventsSeen = new HashMap();
         for (State state : states) {
             eventsSeen.put(state, new HashSet<HashSet<Symbol>>());
         }
         computeEnables(startState, new HashSet<Symbol>(), eventsSeen);
-        HashSet<Symbol> nil = new HashSet<Symbol>();
-        HashSet<Symbol> creationEventsSet = new HashSet<Symbol>();
+        HashSet<Symbol> nil = new HashSet<>();
+        HashSet<Symbol> creationEventsSet = new HashSet<>();
         out: for (State category : categories) {
             for (Symbol event : events) {
                 if (enables.get(category).get(event).contains(nil)) {
@@ -83,9 +83,11 @@ public class FSMEnables {
 
     /**
      * Compute the monitor enable information for a particular state.
+     * This method implements the algorithm in Figure 8 of this paper (lines in the comments point to that algorithm):
+     * Fig 8: https://ieeexplore.ieee.org/abstract/document/5431757
      * @param state The state to compute the monitor enable information for.
      * @param eventPath The states passed so far on the current path.
-     * @param eventsSeen Storage of already processed information to avoid infinte looping.
+     * @param eventsSeen Storage of already processed information to avoid infinite looping.
      */
     private void computeEnables(State state, HashSet<Symbol> eventPath, HashMap<State, HashSet<HashSet<Symbol>>> eventsSeen) {
         // add this path to the mapping of seen event paths
@@ -96,9 +98,9 @@ public class FSMEnables {
         boolean nContainsDefault = true;
         State defaultDestination = null;
         HashSet<Symbol> definedSymbols = new HashSet();
-        Transition t = stateMap.get(state);
-        for (Symbol event : t.keySet()) {
-            State destination = t.get(event);
+        Transition transition = stateMap.get(state); // line 1
+        for (Symbol event : transition.keySet()) {
+            State destination = transition.get(event);
             if (event == null) {
                 nContainsDefault = false;
                 defaultDestination = destination;
@@ -107,13 +109,13 @@ public class FSMEnables {
             definedSymbols.add(event);
             for (State category : categories) {
                 if (reachability.get(category).contains(destination)) {
-                    enables.get(category).get(event).add(eventPath);
+                    enables.get(category).get(event).add(eventPath); // line 2
                 }
             }
             HashSet<Symbol> newPath = (HashSet<Symbol>) eventPath.clone();
-            newPath.add(event);
-            if (!eventsSeen.get(destination).contains(newPath))
-                computeEnables(destination, newPath, eventsSeen);
+            newPath.add(event); // line 3
+            if (!eventsSeen.get(destination).contains(newPath)) // line 4
+                computeEnables(destination, newPath, eventsSeen); // line 6
         }
         if (nContainsDefault) {
             // We need to add the current event path to the fail enable for all
@@ -129,7 +131,7 @@ public class FSMEnables {
     }
 
     /**
-     * Construct the internal rechabable state mapping with respect to the
+     * Construct the internal reachable state mapping with respect to the
      * starting state.
      */
     private void computeReachability() {
@@ -171,7 +173,7 @@ public class FSMEnables {
                 }
                 // the alias contains fail, we only need to check this
                 // if the alias does not already contain this state
-                // bcause adding the path to the category a second
+                // because adding the path to the category a second
                 // time accomplishes nothing
                 else if (aliasedStates.contains(fail) && !nContainsDefault(state) && (stateMap.get(state).size() < events.size())) {
                     addPath(category, newPath);
@@ -325,7 +327,7 @@ public class FSMEnables {
 
     /**
      * The formatted string for a state alias.
-     * @param state The state to find the alias for.
+     * @param alias The state to find the alias for.
      * @return A formatted string with the state and its alias.
      */
     private String stringOfAlias(State alias) {

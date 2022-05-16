@@ -75,10 +75,13 @@ public class FSMPlugin extends LogicPlugin {
         logicOutputXML.getMessage().add("MINIMIZED: " + fsmMin.FSMString());
         // compute the enables
         FSMEnables fsmEnables = new FSMEnables(fsmMin.getStartState(), events, fsmMin.getStates(), categories, fsmMin.getAliases(), fsmMin.getStateMap());
+        logicOutputXML.getMessage().add("REACHABILITY: " + fsmEnables.reachability);
+        logicOutputXML.getMessage().add("STATEMAP: " + fsmEnables.stateMap);
         // compute the coenables
         FSMCoenables fsmCoenables = new FSMCoenables(fsmMin.getStartState(), events, fsmMin.getStates(), categories, fsmMin.getAliases(), fsmMin.getStateMap());
         logicOutputXML.getMessage().add("FULL STATE: " + fsmCoenables.fullStateMap);
         logicOutputXML.getMessage().add("INVERSE STATE: " + fsmCoenables.inversedStateMap);
+        logicOutputXML.getMessage().add("REACHABLE STATES: " + fsmCoenables.reachableStates);
 
         logicOutputXML.getMessage().add("done");
         

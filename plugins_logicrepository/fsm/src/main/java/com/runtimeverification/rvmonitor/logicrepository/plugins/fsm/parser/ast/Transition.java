@@ -18,7 +18,7 @@ public class Transition {
      * Construct a Transition map with no transitions.
      */
     public Transition() {
-        contents = new HashMap<Symbol, State>();
+        contents = new HashMap<>();
     }
     
     /**

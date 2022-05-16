@@ -36,7 +36,7 @@ public class FSMCoenables {
     public HashMap<State, HashMap<Symbol, HashSet<State>>> inversedStateMap;
     private HashMap<State, HashMap<Symbol, HashSet<HashSet<Symbol>>>> coenables;
 
-    private HashSet<State> reachableStates;
+    public HashSet<State> reachableStates;
 
     /**
      * Construct the Finite State Machine representation and generate the monitor coenable information.
@@ -77,16 +77,16 @@ public class FSMCoenables {
         this.fullStateMap = makeFullStateMap(this.stateMap);
         this.inversedStateMap = inverseStateMap(this.fullStateMap);
 
-        computeRechability();
+        computeReachable();
         computeCoenables();
     }
 
     /**
-     * Construct the internal rechabable state list with respect to the
+     * Construct the internal reachable state list with respect to the
      * starting state.
      */
-    private void computeRechability() throws LogicException {
-        computeReachability(this.startState);
+    private void computeReachable() throws LogicException {
+        computeReachable(this.startState);
     }
 
     /**
@@ -94,7 +94,7 @@ public class FSMCoenables {
      * state.
      * @param state The state to search for reachability from.
      */
-    private void computeReachability(State state) throws LogicException {
+    private void computeReachable(State state) {
         this.reachableStates.add(state);
 
         Transition transitions = this.fullStateMap.get(state);
@@ -103,16 +103,16 @@ public class FSMCoenables {
             State destination = transitions.get(event);
 
             if (!this.reachableStates.contains(destination)) {
-                computeReachability(destination);
+                computeReachable(destination);
             }
         }
     }
 
     /**
-     * Compute all the coenable information accross the entire graph.
+     * Compute all the coenable information across the entire graph.
      */
     private void computeCoenables() throws LogicException {
-        HashMap<State, HashSet<HashSet<Symbol>>> eventsSeen = new HashMap<State, HashSet<HashSet<Symbol>>>();
+        HashMap<State, HashSet<HashSet<Symbol>>> eventsSeen = new HashMap<>();
         for (State state : this.fullstates) {
             eventsSeen.put(state, new HashSet<HashSet<Symbol>>());
         }
