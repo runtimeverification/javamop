@@ -22,8 +22,7 @@ public abstract class LogicPlugin {
 		return true;
 	}
 	
-	public ByteArrayOutputStream process(
-			ByteArrayInputStream logicPluginInputStream) throws LogicException {
+	public ByteArrayOutputStream process(ByteArrayInputStream logicPluginInputStream) throws LogicException {
 
 		// Parse Input
 		LogicRepositoryData logicData = new LogicRepositoryData(logicPluginInputStream);

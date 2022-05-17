@@ -54,7 +54,6 @@ public class FSMPlugin extends LogicPlugin {
         fsmParser.check();
 
         // check to see that all used events are defined
-//        HashSet<Symbol> defEvents = new HashSet(events);
         HashSet<Symbol> usedEvents = fsmParser.getEvents();
         if (!usedEvents.equals(events)) {
             boolean error = false;

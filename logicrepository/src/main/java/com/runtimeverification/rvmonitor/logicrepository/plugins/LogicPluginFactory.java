@@ -22,7 +22,7 @@ public class LogicPluginFactory {
 
 	static public LogicPlugin findLogicPlugin(String logicPluginDirPath, String logicName) {
 		String pluginName = logicName.toLowerCase() + "plugin";
-		ArrayList<Class<?>> logicPlugins = null;
+		ArrayList<Class<?>> logicPlugins;
 		try {
 			/* it should return only subclasses of LogicPlugins */
 			logicPlugins = getClassesFromPath(logicPluginDirPath);
@@ -45,7 +45,7 @@ public class LogicPluginFactory {
 		if(jarPath == null)
 			return null;
 		String pluginName = logicName.toLowerCase() + "plugin";
-		ArrayList<Class<?>> logicPlugins = null;
+		ArrayList<Class<?>> logicPlugins;
 		try {
 			/* it should return only subclasses of LogicPlugins */
 			logicPlugins = getClassesFromJar(jarPath);
@@ -63,8 +63,8 @@ public class LogicPluginFactory {
 		return null;
 	}
 
-	static private ArrayList<Class<?>> getClassesFromJar(String jarPath) throws LogicException {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+	static private ArrayList<Class<?>> getClassesFromJar(String jarPath) {
+		ArrayList<Class<?>> classes = new ArrayList<>();
 
 		try {
 			JarInputStream jarFile = new JarInputStream(new FileInputStream(jarPath));
@@ -233,14 +233,12 @@ public class LogicPluginFactory {
 
 		// 2. LogicPlugin Class from Jar file
 		if (ret == null) {
-			boolean logicJarExists = false;
 			File logicPluginDir = new File(logicPluginDirPath);
 			String logicJarPath = null;
 			if (logicPluginDir.exists()) {
 				for (File file : logicPluginDir.listFiles()) {
 					if (file.getName().toLowerCase().compareTo(logicName.toLowerCase() + ".jar") == 0) {
 						if (file.exists() && !file.isDirectory()) {
-							logicJarExists = true;
 							logicJarPath = logicPluginDirPath + "/" + file.getName();
 						}
 					}
