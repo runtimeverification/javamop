@@ -18,7 +18,7 @@ import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class JavaFSM extends LogicPluginShell {
     /**
-     * This constructor is invoked dynamically by the LoginPluginShellFactory(?)
+     * This constructor is invoked dynamically by the LogicPluginShellFactory(?)
      */
     public JavaFSM() {
         super();
