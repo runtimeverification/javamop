@@ -27,8 +27,8 @@ public class JavaTFSM extends LogicPluginShell {
 
     ArrayList<String> allEvents;
 
-    private ArrayList<String> getEvents(String eventStr) throws RVMException {
-        ArrayList<String> events = new ArrayList<String>();
+    private ArrayList<String> getEvents(String eventStr) {
+        ArrayList<String> events = new ArrayList<>();
 
         for (String event : eventStr.trim().split(" ")) {
             if (event.trim().length() != 0)
