@@ -19,8 +19,8 @@ public class PropertyAndHandlers extends Node {
     int propertyId; // will be defined in RVMonitorSpec
     private Properties logicResult; // will be defined by RVMProcessor
 
-    private final HashMap<String, String> eventMonitoringCodes = new HashMap<String, String>();
-    private final HashMap<String, String> aftereventMonitoringCodes = new HashMap<String, String>();
+    private final HashMap<String, String> eventMonitoringCodes = new HashMap<>();
+    private final HashMap<String, String> aftereventMonitoringCodes = new HashMap<>();
 
     public PropertyAndHandlers(int line, int column, Property property,
             HashMap<String, String> handlers) {
@@ -45,11 +45,9 @@ public class PropertyAndHandlers extends Node {
         return handlers;
     }
 
-    public RVMParameters getUsedParametersIn(String category,
-            RVMParameters specParam) {
+    public RVMParameters getUsedParametersIn(RVMParameters specParam) {
         // All of them. If you want to have a property that doesn't use all the
-        // parameters,
-        // put it in another specification.
+        // parameters, put it in another specification.
         return specParam;
     }
 
@@ -60,19 +58,18 @@ public class PropertyAndHandlers extends Node {
     public void setLogicShellOutput(LogicPluginShellResult logicShellOutput) {
         this.logicResult = logicShellOutput.properties;
 
-        if (this.logicResult == null)
+        if (this.logicResult == null) {
             return;
+        }
 
-        parseMonitoredEvent(eventMonitoringCodes,
-                this.logicResult.getProperty("monitored events"));
-        parseMonitoredEvent(aftereventMonitoringCodes,
-                this.logicResult.getProperty("after monitored events"));
+        parseMonitoredEvent(eventMonitoringCodes, this.logicResult.getProperty("monitored events"));
+        parseMonitoredEvent(aftereventMonitoringCodes, this.logicResult.getProperty("after monitored events"));
     }
 
-    public void parseMonitoredEvent(HashMap<String, String> codes,
-            String eventStr) {
-        if (eventStr == null)
+    public void parseMonitoredEvent(HashMap<String, String> codes, String eventStr) {
+        if (eventStr == null) {
             return;
+        }
 
         Pattern p = Pattern.compile("(\\!)?(\\#)?\\s*(\\w+):\\{\\n");
         Matcher matcher = p.matcher(eventStr);
@@ -82,27 +79,27 @@ public class PropertyAndHandlers extends Node {
 
         while (matcher.find()) {
             eventName = matcher.group();
-            eventName = eventName.replaceAll("(\\!)?(\\#)?\\s*(\\w+):\\{\\n",
-                    "$1$2$3");
+            eventName = eventName.replaceAll("(\\!)?(\\#)?\\s*(\\w+):\\{\\n", "$1$2$3");
 
-            int k = com.runtimeverification.rvmonitor.util.Tool.findBlockEnd(
-                    eventStr, matcher.end());
+            int k = com.runtimeverification.rvmonitor.util.Tool.findBlockEnd(eventStr, matcher.end());
 
             String eventActionTemp = eventStr.substring(matcher.end(), k);
             String[] eventActionTemp2 = eventActionTemp.split("\n");
 
             eventMonitoringCode = "";
             for (String eventActionTemp3 : eventActionTemp2) {
-                if (eventActionTemp3 != null && eventActionTemp3.length() != 0)
+                if (eventActionTemp3 != null && eventActionTemp3.length() != 0) {
                     eventMonitoringCode += eventActionTemp3 + "\n";
+                }
             }
             codes.put(eventName, eventMonitoringCode);
         }
     }
 
     public String getLogicProperty(String input) {
-        if (logicResult == null)
+        if (logicResult == null) {
             return null;
+        }
         return logicResult.getProperty(input);
     }
 

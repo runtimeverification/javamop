@@ -75,7 +75,7 @@ public class RVMonitorSpec extends Node implements Comparable<RVMonitorSpec> {
 
         for (PropertyAndHandlers prop : properties) {
             for (String category : prop.getHandlers().keySet()) {
-                RVMParameters param = prop.getUsedParametersIn(category,
+                RVMParameters param = prop.getUsedParametersIn(
                         this.parameters);
 
                 for (RVMParameter p : param) {
@@ -283,7 +283,7 @@ public class RVMonitorSpec extends Node implements Comparable<RVMonitorSpec> {
             return cachedHas__LOC.booleanValue();
 
         for (EventDefinition event : this.events) {
-            String eventAction = event.getAction().toString();
+            String eventAction = event.getAction();
             if (eventAction.indexOf("__LOC") != -1
                     || eventAction.indexOf("__DEFAULT_MESSAGE") != -1) {
                 cachedHas__LOC = new Boolean(true);
@@ -293,7 +293,7 @@ public class RVMonitorSpec extends Node implements Comparable<RVMonitorSpec> {
         for (PropertyAndHandlers prop : this.properties) {
             for (String handler : prop.getHandlers().values()) {
                 if (handler.indexOf("__LOC") != -1
-                        || handler.toString().indexOf("__DEFAULT_MESSAGE") != -1) {
+                        || handler.indexOf("__DEFAULT_MESSAGE") != -1) {
                     cachedHas__LOC = new Boolean(true);
                     return true;
                 }
@@ -310,7 +310,7 @@ public class RVMonitorSpec extends Node implements Comparable<RVMonitorSpec> {
             return cachedHas__ACTIVITY.booleanValue();
 
         for (EventDefinition event : this.events) {
-            String eventAction = event.getAction().toString();
+            String eventAction = event.getAction();
             if (eventAction.indexOf("__ACTIVITY") != -1) {
                 cachedHas__ACTIVITY = new Boolean(true);
                 return true;
@@ -337,7 +337,7 @@ public class RVMonitorSpec extends Node implements Comparable<RVMonitorSpec> {
         for (EventDefinition event : this.events) {
             if (event.getAction() == null)
                 continue;
-            String eventAction = event.getAction().toString();
+            String eventAction = event.getAction();
             if (eventAction.indexOf("__SKIP") != -1) {
                 cachedHas__SKIP = new Boolean(true);
                 return true;

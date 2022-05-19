@@ -34,7 +34,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         this.observer = new InternalBehaviorObservableCodeGenerator(
                 Main.options.internalBehaviorObserving);
 
-        this.services = new ArrayList<ServiceDefinition>();
+        this.services = new ArrayList<>();
 
         this.services.add(this.addCleanerService());
         this.services.add(this.addRuntimeBehaviorOption());

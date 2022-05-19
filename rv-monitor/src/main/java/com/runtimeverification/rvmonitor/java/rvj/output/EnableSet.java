@@ -38,8 +38,7 @@ public class EnableSet {
     public EnableSet(PropertyAndHandlers prop, List<EventDefinition> events, RVMParameters specParameters) {
         this(events, specParameters);
         for (String categoryName : prop.getHandlers().keySet()) {
-            String enableForCategory = prop.getLogicProperty(categoryName
-                    .toLowerCase() + " enables");
+            String enableForCategory = prop.getLogicProperty(categoryName.toLowerCase() + " enables");
 
             if (enableForCategory != null)
                 add(new EnableSet(enableForCategory, events, specParameters));
@@ -61,6 +60,13 @@ public class EnableSet {
         }
     }
 
+    /**
+     * Transform property (co)enable sets into property parameter (co)enable sets
+     * See Definition 12 in this paper: https://ieeexplore.ieee.org/abstract/document/5431757
+     *
+     * @param logicResultEnableSets the intermediate representation of the (co)enable set
+     * @return the property parameter enable set
+     */
     private Map<String, RVMParameterSet> parseSets(String logicResultEnableSets) {
         Map<String, RVMParameterSet> ret = new HashMap<String, RVMParameterSet>();
 
@@ -98,18 +104,15 @@ public class EnableSet {
                     String aLine3 = matcher3.group();
 
                     if (parametersOnSpec.get(aLine3.trim()) != null) {
-                        enableEntity
-                        .addAll(parametersOnSpec.get(aLine3.trim()));
+                        enableEntity.addAll(parametersOnSpec.get(aLine3.trim()));
                     }
                 }
 
                 enableEntity = specParameters.sortParam(enableEntity);
-
                 enables.add(enableEntity);
             }
 
             enables.sort();
-
             ret.put(eventName, enables);
         }
 

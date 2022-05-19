@@ -57,7 +57,7 @@ public class HandlerMethod {
         this.varsToRestore = new RVMParameters();
         this.savedParams = savedParams;
 
-        for (RVMParameter p : prop.getUsedParametersIn(category, specParam)) {
+        for (RVMParameter p : prop.getUsedParametersIn(specParam)) {
             if (!commonParamInEvents.contains(p)) {
                 this.varsToRestore.add(p);
             }

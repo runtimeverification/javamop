@@ -25,12 +25,12 @@ public class RVMJavaCode {
         this.monitorName = monitorName;
     }
 
-    public RVMJavaCode(PropertyAndHandlers prop, String code,
-            RVMVariable monitorName) {
+    public RVMJavaCode(PropertyAndHandlers prop, String code, RVMVariable monitorName) {
         this.prop = prop;
         this.code = code;
-        if (this.code != null)
+        if (this.code != null) {
             this.code = this.code.trim();
+        }
         this.monitorName = monitorName;
     }
 
@@ -51,18 +51,17 @@ public class RVMJavaCode {
             String varName = tagStr.replaceAll(tagPattern, "$1");
             RVMVariable var;
 
-            if (prop == null)
+            if (prop == null) {
                 var = new RVMVariable(varName);
-            else {
-                if (localVars != null && localVars.contains(varName))
+            } else {
+                if (localVars != null && localVars.contains(varName)) {
                     var = new RVMVariable(varName);
-                else
-                    var = new RVMVariable("Prop_" + prop.getPropertyId() + "_"
-                            + varName);
+                } else {
+                    var = new RVMVariable("Prop_" + prop.getPropertyId() + "_" + varName);
+                }
             }
 
-            ret = ret.replaceAll(tagStr.replaceAll("\\$", "\\\\\\$"),
-                    var.toString());
+            ret = ret.replaceAll(tagStr.replaceAll("\\$", "\\\\\\$"), var.toString());
         }
         return ret;
     }

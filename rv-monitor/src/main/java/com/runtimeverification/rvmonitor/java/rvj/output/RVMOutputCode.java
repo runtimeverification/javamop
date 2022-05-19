@@ -38,16 +38,14 @@ public class RVMOutputCode {
             OptimizedCoenableSet optimizedCoenableSet = new OptimizedCoenableSet(coenableSet);
 
             enableSets.put(rvmSpec, enableSet);
-//            TreeMap<RVMonitorSpec, CoEnableSet> coenableSets = new TreeMap<>();
-//            coenableSets.put(rvmSpec, optimizedCoenableSet);
 
             SuffixMonitor monitor = new SuffixMonitor(rvmSpec.getName(), rvmSpec, optimizedCoenableSet, true);
 
             monitors.put(rvmSpec, monitor);
 
-            monitorSets.put(rvmSpec, new MonitorSet(rvmSpec.getName(), rvmSpec, monitor));
+            monitorSets.put(rvmSpec, new MonitorSet(rvmSpec, monitor));
         }
-        // OWOLABI stopped here!
+
         output = new CombinedOutput(name, rvmSpecFile, monitorSets, monitors, enableSets);
 
         // Set monitor lock for each monitor set

@@ -221,7 +221,7 @@ public class BaseMonitor extends Monitor {
 
                 String handlerBody = handlerBodies.get(category);
 
-                if (handlerBody.toString().length() != 0) {
+                if (handlerBody.length() != 0) {
                     propMonitor.handlerMethods
                     .put(category, new HandlerMethod(prop, category,
                             specParam,
@@ -262,8 +262,7 @@ public class BaseMonitor extends Monitor {
         }
 
         for (EventDefinition event : events) {
-            if (event.getCondition() != null
-                    && event.getCondition().length() != 0) {
+            if (event.getCondition() != null && event.getCondition().length() != 0) {
                 existCondition = true;
                 break;
             }
@@ -289,7 +288,7 @@ public class BaseMonitor extends Monitor {
 
     @Override
     public Set<String> getNames() {
-        Set<String> ret = new HashSet<String>();
+        Set<String> ret = new HashSet<>();
 
         ret.add(monitorName.toString());
         return ret;
@@ -297,7 +296,7 @@ public class BaseMonitor extends Monitor {
 
     @Override
     public Set<RVMVariable> getCategoryVars() {
-        HashSet<RVMVariable> ret = new HashSet<RVMVariable>();
+        HashSet<RVMVariable> ret = new HashSet<>();
 
         for (PropertyAndHandlers prop : props) {
             ret.addAll(propMonitors.get(prop).categoryVars.values());
@@ -306,10 +305,8 @@ public class BaseMonitor extends Monitor {
         return ret;
     }
 
-    public String printEventMethod(PropertyAndHandlers prop,
-            EventDefinition event, String methodNamePrefix) {
-        String synch = this.getFeatures().isSelfSynchronizationNeeded() ? " synchronized "
-                : " ";
+    public String printEventMethod(PropertyAndHandlers prop, EventDefinition event, String methodNamePrefix) {
+        String synch = this.getFeatures().isSelfSynchronizationNeeded() ? " synchronized " : " ";
         String ret = "";
 
         PropMonitor propMonitor = propMonitors.get(prop);
@@ -323,16 +320,16 @@ public class BaseMonitor extends Monitor {
                 prop.getLogicProperty("monitoring body"), monitorName);
         RVMJavaCode stackManage = new RVMJavaCode(prop,
                 prop.getLogicProperty("stack manage"), monitorName);
-        HashMap<String, RVMJavaCode> categoryConditions = new HashMap<String, RVMJavaCode>();
+        HashMap<String, RVMJavaCode> categoryConditions = new HashMap<>();
         RVMJavaCode eventAction = null;
 
         for (String handlerName : prop.getHandlers().keySet()) {
             if (handlerName.equals("deadlock"))
                 continue;
             String conditionStr = prop.getLogicProperty(handlerName
-                    + " condition");
+                                                        + " condition");
             if (conditionStr.contains(":{")) {
-                HashMap<String, String> conditions = new HashMap<String, String>();
+                HashMap<String, String> conditions = new HashMap<>();
                 prop.parseMonitoredEvent(conditions, conditionStr);
                 conditionStr = conditions.get(event.getId());
             }
@@ -364,7 +361,7 @@ public class BaseMonitor extends Monitor {
                 eventActionStr = eventActionStr.replaceAll("__ACTIVITY",
                         "this." + activity);
                 eventActionStr = eventActionStr.replaceAll("__SKIP", "this."
-                        + skipEvent + " = true");
+                                                                     + skipEvent + " = true");
 
                 eventAction = new RVMJavaCode(eventActionStr);
             }
@@ -377,8 +374,8 @@ public class BaseMonitor extends Monitor {
         // hassle, I let it generate 'void' methods for monitoring.
         boolean retbool = !Main.options.generateVoidMethods;
         ret += "final" + synch + (retbool ? "boolean " : "void ")
-                + methodNamePrefix
-                + propMonitor.eventMethods.get(event.getId()) + "(";
+               + methodNamePrefix
+               + propMonitor.eventMethods.get(event.getId()) + "(";
         // CL: Let's not pass parameters that are never referred to by the
         // user's action code.
         {
@@ -399,7 +396,7 @@ public class BaseMonitor extends Monitor {
                     ret += p.getType() + " " + p.getName() + " = null;\n";
                     ret += "if(" + v + " != null){\n";
                     ret += p.getName() + " = (" + p.getType() + ")" + v
-                            + ".get();\n";
+                           + ".get();\n";
                     ret += "}\n";
                 }
             }
@@ -435,8 +432,9 @@ public class BaseMonitor extends Monitor {
 
         ret += stackManage + "\n";
 
-        if (!this.isAtomicMoniorUsed())
+        if (!this.isAtomicMoniorUsed()) {
             ret += eventMonitoringCode;
+        }
 
         ret += monitoringBody;
 
@@ -469,8 +467,7 @@ public class BaseMonitor extends Monitor {
         return ret;
     }
 
-    public String printEventMethod(PropertyAndHandlers prop,
-            EventDefinition event) {
+    public String printEventMethod(PropertyAndHandlers prop, EventDefinition event) {
         return this.printEventMethod(prop, event, "");
     }
 

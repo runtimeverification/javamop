@@ -73,17 +73,13 @@ public class MonitorSet {
     private TreeMap<EventDefinition, CodeMemberField> handlerfields;
     private final CodeMemberField typewiseLock;
 
-    public boolean isPartitionedSet() {
-        return this.usePartitionedSet;
-    }
-
-    public MonitorSet(String name, RVMonitorSpec rvmSpec, SuffixMonitor monitor) {
+    public MonitorSet(RVMonitorSpec rvmSpec, SuffixMonitor monitor) {
         this.rvmSpec = rvmSpec;
 
         this.monitorName = monitor.getOutermostName();
         this.monitor = monitor;
         this.setName = new RVMVariable(monitorName + "_Set");
-        this.events = new ArrayList<EventDefinition>(rvmSpec.getEvents());
+        this.events = new ArrayList<>(rvmSpec.getEvents());
 
         for (PropertyAndHandlers prop : rvmSpec.getPropertiesAndHandlers()) {
             for (String handler : prop.getHandlers().values()) {

@@ -23,15 +23,13 @@ import com.runtimeverification.rvmonitor.java.rvj.parser.ast.rvmspec.RVMonitorSp
 import com.runtimeverification.rvmonitor.util.RVMException;
 
 public class SuffixMonitor extends Monitor {
-    private final RVMVariable activity = new RVMVariable("RVM_activity");
     private final RVMVariable loc = new RVMVariable("RVM_loc");
     private final RVMVariable lastevent = new RVMVariable("RVM_lastevent");
 
     private List<EventDefinition> events;
 
-    Monitor innerMonitor = null;
+    Monitor innerMonitor;
 
-    private ArrayList<String> categories;
     private final RVMVariable monitorList = new RVMVariable("monitorList");
     private boolean existSkip = false;
 
@@ -57,28 +55,14 @@ public class SuffixMonitor extends Monitor {
                 monitorTermination = new MonitorTermination(outputName, rvmSpec, rvmSpec.getEvents(), coenableSet);
             }
 
-            if (rvmSpec.isEnforce()) {
-                // TODO Do we need raw monitor for enforcing properties?
-                innerMonitor = new EnforceMonitor(outputName, rvmSpec, coenableSet, false);
-                for (PropertyAndHandlers p : rvmSpec.getPropertiesAndHandlers()) {
-                    int totalHandlers = p.getHandlers().size();
-                    if (p.getHandlers().containsKey("deadlock"))
-                        totalHandlers--;
-                    // We only allow one handler (except deadlock handler) when
-                    // enforcing a property
-                    if (totalHandlers > 1)
-                        throw new RVMException(
-                                "Only one handler (except deadlock handler) is allowed when enforcing a property");
-                }
-
+            if (rvmSpec.getPropertiesAndHandlers().size() == 0) {
+                innerMonitor = new RawMonitor(outputName, rvmSpec, coenableSet, false);
             } else {
-                if (rvmSpec.getPropertiesAndHandlers().size() == 0)
-                    innerMonitor = new RawMonitor(outputName, rvmSpec, coenableSet, false);
-                else
-                    innerMonitor = new BaseMonitor(outputName, rvmSpec, coenableSet, false);
+                innerMonitor = new BaseMonitor(outputName, rvmSpec, coenableSet, false);
             }
             events = rvmSpec.getEvents();
 
+            // TODO: combine these two loops
             for (PropertyAndHandlers prop : rvmSpec.getPropertiesAndHandlers()) {
                 if (!existSkip) {
                     for (String handler : prop.getHandlers().values()) {
@@ -97,25 +81,10 @@ public class SuffixMonitor extends Monitor {
                 }
             }
         } else {
-            if (rvmSpec.isEnforce()) {
-                // TODO Do we need raw monitor for enforcing properties?
-                innerMonitor = new EnforceMonitor(outputName, rvmSpec,
-                        coenableSet, isOutermost);
-                for (PropertyAndHandlers p : rvmSpec.getPropertiesAndHandlers()) {
-                    int totalHandlers = p.getHandlers().size();
-                    if (p.getHandlers().containsKey("deadlock"))
-                        totalHandlers--;
-                    // We only allow one handler (except deadlock handler) when
-                    // enforcing a property
-                    if (totalHandlers > 1)
-                        throw new RVMException(
-                                "Only one handler (except deadlock handler) is allowed when enforcing a property");
-                }
+            if (rvmSpec.getPropertiesAndHandlers().size() == 0) {
+                innerMonitor = new RawMonitor(outputName, rvmSpec, coenableSet, isOutermost);
             } else {
-                if (rvmSpec.getPropertiesAndHandlers().size() == 0)
-                    innerMonitor = new RawMonitor(outputName, rvmSpec, coenableSet, isOutermost);
-                else
-                    innerMonitor = new BaseMonitor(outputName, rvmSpec, coenableSet, isOutermost);
+                innerMonitor = new BaseMonitor(outputName, rvmSpec, coenableSet, isOutermost);
             }
         }
 
