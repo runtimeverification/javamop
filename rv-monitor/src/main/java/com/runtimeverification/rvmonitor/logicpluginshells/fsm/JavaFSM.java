@@ -40,52 +40,50 @@ public class JavaFSM extends LogicPluginShell {
         return events;
     }
 
-    private Properties getMonitorCode(LogicRepositoryType logicOutput)
-            throws RVMException {
+    private Properties getMonitorCode(LogicRepositoryType logicOutput) throws RVMException {
         Properties result = new Properties();
 
-        String monitor = logicOutput.getProperty().getFormula();
+        String formula = logicOutput.getProperty().getFormula();
 
         FSMInput fsmInput;
         try {
-            fsmInput = FSMParser.parse(new ByteArrayInputStream(monitor.getBytes()));
+            fsmInput = FSMParser.parse(new ByteArrayInputStream(formula.getBytes()));
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new RVMException("FSM to Java Plugin cannot parse FSM formula");
-        }
-
-        if (fsmInput == null) {
             throw new RVMException("FSM to Java Plugin cannot parse FSM formula");
         }
 
         StringBuilder monitoredEventsStr = new StringBuilder();
 
         for (String event : allEvents) {
-            monitoredEventsStr.append(event).append(":{\n  $state$ = $transition_").append(event).append("$[$state$];\n}\n\n");
-        }
-
-        Map<String, Integer> StateNum = new HashMap<>(); // maps state names to unique IDs
-        Map<Integer, FSMItem> StateName = new HashMap<>(); // maps the unique IDs to states (not just state names)
-        int countState = 0;
-
-        if (fsmInput.getItems() != null) {
-            for (FSMItem i : fsmInput.getItems()) {
-                StateNum.put(i.getState(), countState);
-                StateName.put(countState, i);
-                countState++;
-            }
+            monitoredEventsStr.append(event)
+                    .append(":{\n  $state$ = $transition_")
+                    .append(event)
+                    .append("$[$state$];\n}\n\n");
         }
 
         result.setProperty("monitored events", monitoredEventsStr.toString());
 
         StringBuilder monitoredEventsStrForSet = new StringBuilder();
+
         for (String event : allEvents) {
             monitoredEventsStrForSet.append(event)
                     .append(":{\n  $monitor$.$state$ = $transition_")
                     .append(event)
                     .append("$[$monitor$.$state$];\n}\n\n");
         }
+
         result.setProperty("monitored events for set", monitoredEventsStrForSet.toString());
+
+        Map<String, Integer> StateNum = new HashMap<>(); // maps state names to unique IDs
+        Map<Integer, FSMItem> StateName = new HashMap<>(); // maps the unique IDs to states (not just state names)
+        int countState = 0;
+
+        for (FSMItem item : fsmInput.getItems()) {
+            StateNum.put(item.getState(), countState);
+            StateName.put(countState, item);
+            countState++;
+        }
 
         StringBuilder transitionArray = new StringBuilder();
 
@@ -96,22 +94,22 @@ public class JavaFSM extends LogicPluginShell {
 
                 int default_transition = countState;
 
-                for (FSMTransition t : state.getTransitions()) {
-                    if (t.isDefaultFlag()) {
-                        if (StateNum.get(t.getStateName()) == null) {
+                for (FSMTransition transition : state.getTransitions()) {
+                    if (transition.isDefaultFlag()) {
+                        if (StateNum.get(transition.getStateName()) == null) {
                             throw new RVMException("Incorrect Monitor");
                         }
-                        default_transition = StateNum.get(t.getStateName());
+                        default_transition = StateNum.get(transition.getStateName());
                     }
                 }
 
                 boolean found = false;
-                for (FSMTransition t : state.getTransitions()) {
-                    if (!t.isDefaultFlag() && t.getEventName().equals(event)) {
+                for (FSMTransition transition : state.getTransitions()) {
+                    if (!transition.isDefaultFlag() && transition.getEventName().equals(event)) {
                         found = true;
                         if (i != 0)
                             transitionArray.append(", ");
-                        transitionArray.append(StateNum.get(t.getStateName()));
+                        transitionArray.append(StateNum.get(transition.getStateName()));
                     }
                 }
 
