@@ -40,7 +40,7 @@ public class JavaFSM extends LogicPluginShell {
         return events;
     }
 
-    private Properties getMonitorCode(LogicRepositoryType logicOutput) throws RVMException {
+    private Properties getIntermediateMonitorCode(LogicRepositoryType logicOutput) throws RVMException {
         Properties result = new Properties();
 
         String formula = logicOutput.getProperty().getFormula();
@@ -172,7 +172,7 @@ public class JavaFSM extends LogicPluginShell {
 
         LogicPluginShellResult logicShellResult = new LogicPluginShellResult();
         logicShellResult.startEvents = getEvents(logicOutputXML.getCreationEvents());
-        logicShellResult.properties = getMonitorCode(logicOutputXML);
+        logicShellResult.properties = getIntermediateMonitorCode(logicOutputXML);
         logicShellResult.properties = addEnableSets(logicShellResult.properties, logicOutputXML);
 
         return logicShellResult;
