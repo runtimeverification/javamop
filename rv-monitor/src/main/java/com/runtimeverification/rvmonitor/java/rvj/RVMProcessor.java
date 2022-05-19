@@ -41,7 +41,6 @@ public class RVMProcessor {
     }
 
     public String process(RVMSpecFile rvmSpecFile) throws RVMException {
-        String result;
 
         // register all user variables to RVMNameSpace to avoid conflicts
         for (RVMonitorSpec rvmSpec : rvmSpecFile.getSpecs()) {
@@ -72,7 +71,7 @@ public class RVMProcessor {
         }
 
         // Generate output code
-        result = (new RVMOutputCode(name, rvmSpecFile)).toString();
+        String result = (new RVMOutputCode(name, rvmSpecFile)).toString();
 
         // Do indentation
         result = Tool.changeIndentation(result, "", "\t");
