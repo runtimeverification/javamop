@@ -5,13 +5,13 @@ package com.runtimeverification.rvmonitor.java.rt.map;
 import com.runtimeverification.rvmonitor.java.rt.RVMObject;
 
 public class RVMMapManager extends Thread implements RVMObject {
-	public static final int DEFAULT_MANAGEENT_PERIOD_NSEC = 400 * 1000;
+	public static final int DEFAULT_MANAGEMENT_PERIOD_NSEC = 400 * 1000;
 
 	boolean started = false;
 
 	int numCPU;
-	boolean multicore = false;
-	boolean loadSupported = false;
+	boolean multicore;
+	boolean loadSupported;
 
 	int numCleaner = 0;
 	protected RVMMapCleaner[] cleanerThreads;
@@ -87,7 +87,7 @@ public class RVMMapManager extends Thread implements RVMObject {
 							numCleaner++;
 						} else {
 							try {
-								Thread.sleep(0, RVMMapManager.DEFAULT_MANAGEENT_PERIOD_NSEC);
+								Thread.sleep(0, RVMMapManager.DEFAULT_MANAGEMENT_PERIOD_NSEC);
 							} catch (Exception e) {
 								System.err.println("[RVMMapCleaner] Thread cannot sleep.");
 							}
@@ -103,7 +103,7 @@ public class RVMMapManager extends Thread implements RVMObject {
 
 				while (tempHead.nextInQueue == null && !tempHead.repeat) {
 					try {
-						Thread.sleep(0, RVMMapManager.DEFAULT_MANAGEENT_PERIOD_NSEC);
+						Thread.sleep(0, RVMMapManager.DEFAULT_MANAGEMENT_PERIOD_NSEC);
 					} catch (Exception e) {
 						System.err.println("[RVMMapCleaner] Thread cannot sleep.");
 					}

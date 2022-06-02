@@ -526,7 +526,7 @@ public class RVMMapCleaner extends Thread {
 				if (map == null){
 					try {
 						//Thread.sleep(RVMMapManager.DEFAULT_MANAGEENT_PERIOD_MSEC);
-						Thread.sleep(0, RVMMapManager.DEFAULT_MANAGEENT_PERIOD_NSEC);
+						Thread.sleep(0, RVMMapManager.DEFAULT_MANAGEMENT_PERIOD_NSEC);
 					} catch (Exception e) {
 						System.err.println("[RVMMapCleaner] Thread cannot sleep.");
 					}
