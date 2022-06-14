@@ -105,13 +105,12 @@ public class BaseMonitor extends Monitor {
     // fields
     final RVMVariable lastevent = new RVMVariable("RVM_lastevent");
     public static RVMVariable skipEvent = new RVMVariable("skipEvent");
-    private final RVMVariable conditionFail = new RVMVariable(
-            "RVM_conditionFail");
+    private final RVMVariable conditionFail = new RVMVariable( "RVM_conditionFail");
 
     private boolean atomicMonitorTried = false;
     private CodeMemberField pairValueField;
 
-    public final boolean isAtomicMoniorUsed() {
+    public final boolean isAtomicMonitorUsed() {
         if (!this.atomicMonitorTried)
             throw new IllegalStateException();
         return this.pairValueField != null;
@@ -128,14 +127,12 @@ public class BaseMonitor extends Monitor {
 
     final HashMap<PropertyAndHandlers, PropMonitor> propMonitors = new HashMap<PropertyAndHandlers, PropMonitor>();
 
-    public BaseMonitor(String name, RVMonitorSpec rvmSpec,
-            OptimizedCoenableSet coenableSet, boolean isOutermost)
+    public BaseMonitor(String name, RVMonitorSpec rvmSpec, OptimizedCoenableSet coenableSet, boolean isOutermost)
                     throws RVMException {
         this(name, rvmSpec, coenableSet, isOutermost, "");
     }
 
-    public BaseMonitor(String name, RVMonitorSpec rvmSpec,
-            OptimizedCoenableSet coenableSet, boolean isOutermost,
+    public BaseMonitor(String name, RVMonitorSpec rvmSpec, OptimizedCoenableSet coenableSet, boolean isOutermost,
             String monitorNameSuffix) throws RVMException {
         super(name, rvmSpec, coenableSet, isOutermost);
         this.initialize(name, rvmSpec, coenableSet, isOutermost,
@@ -159,33 +156,28 @@ public class BaseMonitor extends Monitor {
             // It seems lastEvent is changed here only if isOutermost is true.
             if (simple && isOutermost && monitorInfo == null
                     && !feature.isTimeTrackingNeeded())
-                pair = new CodeMemberField("pairValue", false, false, false,
-                        CodeType.AtomicInteger());
+                pair = new CodeMemberField("pairValue", false, false, false, CodeType.AtomicInteger());
         }
         this.pairValueField = pair;
 
         this.atomicMonitorTried = true;
 
-        feature.setSelfSynchroniztionNeeded(Main.options.finegrainedlock
-                && !this.isAtomicMoniorUsed());
+        feature.setSelfSynchroniztionNeeded(Main.options.finegrainedlock && !this.isAtomicMonitorUsed());
     }
 
     public void initialize(String name, RVMonitorSpec rvmSpec,
             OptimizedCoenableSet coenableSet, boolean isOutermost,
             String monitorNameSuffix) {
         isDefined = true;
-        this.monitorName = new RVMVariable(getOutputName() + monitorNameSuffix
-                + "Monitor");
+        this.monitorName = new RVMVariable(getOutputName() + monitorNameSuffix + "Monitor");
         this.events = rvmSpec.getEvents();
         this.props = rvmSpec.getPropertiesAndHandlers();
         this.monitorDeclaration = new UserJavaCode(rvmSpec.getDeclarationsStr());
         this.specParam = rvmSpec.getParameters();
 
         if (isOutermost) {
-            varInOutermostMonitor = new VarInOutermostMonitor(name, rvmSpec,
-                    rvmSpec.getEvents());
-            monitorTermination = new MonitorTermination(name, rvmSpec,
-                    rvmSpec.getEvents(), coenableSet);
+            varInOutermostMonitor = new VarInOutermostMonitor(name, rvmSpec, rvmSpec.getEvents());
+            monitorTermination = new MonitorTermination(name, rvmSpec, rvmSpec.getEvents(), coenableSet);
         }
 
         String prefix = Main.options.merge ? this.monitorName + "_" : "";
@@ -240,7 +232,7 @@ public class BaseMonitor extends Monitor {
             propMonitors.put(prop, propMonitor);
         }
 
-        varsToSave = new HashMap<RVMParameter, RVMVariable>();
+        varsToSave = new HashMap<>();
         for (RVMParameter p : rvmSpec.getVarsToSave()) {
             varsToSave.put(p, new RVMVariable("Ref_" + p.getName()));
         }
@@ -421,7 +413,7 @@ public class BaseMonitor extends Monitor {
         }
 
         if (isOutermost) {
-            if (!this.isAtomicMoniorUsed())
+            if (!this.isAtomicMonitorUsed())
                 ret += lastevent + " = " + idnum + ";\n";
         }
 
@@ -432,13 +424,13 @@ public class BaseMonitor extends Monitor {
 
         ret += stackManage + "\n";
 
-        if (!this.isAtomicMoniorUsed()) {
+        if (!this.isAtomicMonitorUsed()) {
             ret += eventMonitoringCode;
         }
 
         ret += monitoringBody;
 
-        if (!this.isAtomicMoniorUsed()) {
+        if (!this.isAtomicMonitorUsed()) {
             String categoryCode = "";
             for (Entry<String, RVMJavaCode> entry : categoryConditions
                     .entrySet()) {
@@ -452,7 +444,7 @@ public class BaseMonitor extends Monitor {
                 ret += categoryCode;
         }
 
-        if (this.isAtomicMoniorUsed()) {
+        if (this.isAtomicMonitorUsed()) {
             String tablevar = eventMonitoringCode.extractTableVariable();
             ret += this.getInternalEventHandlerCallCode(idnum, tablevar, prop,
                     categoryConditions);
@@ -516,7 +508,7 @@ public class BaseMonitor extends Monitor {
                 ret += ");\n";
             } else {
                 // Copy parameters to final variables
-                List<String> finalParameters = new ArrayList<String>();
+                List<String> finalParameters = new ArrayList<>();
                 for (RVMParameter p : event.getRVMParameters()) {
                     ret += "final " + p.getType() + " " + p.getName()
                             + "_final = " + p.getName() + ";\n";
@@ -734,7 +726,7 @@ public class BaseMonitor extends Monitor {
 
         ret += "class " + monitorName;
         if (isOutermost) {
-            String clsname = this.isAtomicMoniorUsed() ? "AbstractAtomicMonitor"
+            String clsname = this.isAtomicMonitorUsed() ? "AbstractAtomicMonitor"
                     : "AbstractSynchronizedMonitor";
             ret += " extends com.runtimeverification.rvmonitor.java.rt.tablebase."
                     + clsname;
@@ -769,7 +761,7 @@ public class BaseMonitor extends Monitor {
             ret += "ret.trace = new ArrayList<String>();\n";
             ret += "ret.trace.addAll(this.trace);\n";
         }
-        if (this.isAtomicMoniorUsed()) {
+        if (this.isAtomicMonitorUsed()) {
             ret += "ret.pairValue = new AtomicInteger(pairValue.get());\n";
         }
         ret += "return ret;\n";
@@ -806,7 +798,7 @@ public class BaseMonitor extends Monitor {
         for (PropertyAndHandlers prop : props) {
             PropMonitor propMonitor = propMonitors.get(prop);
             ret += propMonitor.getStateDeclarationCode(this
-                    .isAtomicMoniorUsed());
+                    .isAtomicMonitorUsed());
         }
         ret += "\n";
 
@@ -814,7 +806,7 @@ public class BaseMonitor extends Monitor {
         for (PropertyAndHandlers prop : props) {
             PropMonitor propMonitor = propMonitors.get(prop);
             for (String category : propMonitor.categoryVars.keySet()) {
-                if (this.isAtomicMoniorUsed())
+                if (this.isAtomicMonitorUsed())
                     ret += "volatile ";
                 ret += "boolean " + propMonitor.categoryVars.get(category)
                         + " = false;\n";
@@ -822,7 +814,7 @@ public class BaseMonitor extends Monitor {
         }
         ret += "\n";
 
-        if (this.isAtomicMoniorUsed()) {
+        if (this.isAtomicMonitorUsed()) {
             ICodeFormatter fmt = CodeFormatters.getDefault();
             this.pairValueField.getCode(fmt);
             ret += fmt.getCode();
@@ -857,9 +849,8 @@ public class BaseMonitor extends Monitor {
         for (PropertyAndHandlers prop : props) {
             PropMonitor propMonitor = propMonitors.get(prop);
             ret += propMonitor.localDeclaration;
-            if (this.isAtomicMoniorUsed()) {
-                ret += propMonitor.getInitializationCode(this
-                        .isAtomicMoniorUsed());
+            if (this.isAtomicMonitorUsed()) {
+                ret += propMonitor.getInitializationCode(this.isAtomicMonitorUsed());
                 int initstate = propMonitor.getInitialState();
                 ret += this.getStateUpdateCode(initstate, true);
             } else
@@ -893,7 +884,7 @@ public class BaseMonitor extends Monitor {
         }
         // implements getState(), getLastEvent() and other related things
         if (isOutermost) {
-            if (this.isAtomicMoniorUsed())
+            if (this.isAtomicMonitorUsed())
                 ret += this.generatePairValueRelatedMethods();
             else {
                 String statevar = this.getStateVariable();
@@ -926,7 +917,7 @@ public class BaseMonitor extends Monitor {
             ret += "}\n\n";
         }
 
-        if (this.isAtomicMoniorUsed())
+        if (this.isAtomicMonitorUsed())
             ret += this.getInternalEventHandlerCode();
 
         // events
@@ -950,15 +941,15 @@ public class BaseMonitor extends Monitor {
         if (monitorInfo != null)
             ret += monitorInfo.initConnected();
         if (isOutermost) {
-            if (!this.isAtomicMoniorUsed())
+            if (!this.isAtomicMonitorUsed())
                 ret += lastevent + " = -1;\n";
         }
         for (PropertyAndHandlers prop : props) {
             PropMonitor propMonitor = propMonitors.get(prop);
 
             ret += propMonitor.localDeclaration;
-            if (this.isAtomicMoniorUsed()) {
-                ret += propMonitor.getResetCode(this.isAtomicMoniorUsed());
+            if (this.isAtomicMonitorUsed()) {
+                ret += propMonitor.getResetCode(this.isAtomicMonitorUsed());
                 int resetstate = propMonitor.getResetState();
                 ret += this.getStateUpdateCode(resetstate, false);
             } else
@@ -1039,9 +1030,9 @@ public class BaseMonitor extends Monitor {
 
         // endObject and some declarations
         if (isOutermost) {
-            String decl = this.isAtomicMoniorUsed() ? "int lastEvent = this.getLastEvent();\n"
+            String decl = this.isAtomicMonitorUsed() ? "int lastEvent = this.getLastEvent();\n"
                     : null;
-            String lastEventVar = this.isAtomicMoniorUsed() ? "lastEvent"
+            String lastEventVar = this.isAtomicMonitorUsed() ? "lastEvent"
                     : null;
             ret += monitorTermination.getCode(feature, decl, lastEventVar);
         }

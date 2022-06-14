@@ -20,7 +20,8 @@ full-binding SafeMapIterator(Map map, Collection c, Iterator i){
        // for UnsafeMapeIterator would be:
        // [](useIter => (not updateMap S (createIter S createColl)))
        // however, this logically simplifies to:
-       ltl: [](useIter => (not updateMap S createColl))
+       // ltl: [](useIter => (not updateMap S createColl))
+       ltl: [](useIter => (not updateMap S (createIter S createColl)))
 
 	@violation{
            System.out.println("unsafe iterator usage!");

@@ -24,7 +24,7 @@ public class MonitorTermination {
 
     private final RVMonitorStatistics stat;
 
-    final HashMap<RVMParameter, RVMVariable> references = new HashMap<RVMParameter, RVMVariable>();
+    final HashMap<RVMParameter, RVMVariable> references = new HashMap<>();
     private TreeMap<String, RefTree> refTrees;
 
     public MonitorTermination(String name, RVMonitorSpec rvmSpec,

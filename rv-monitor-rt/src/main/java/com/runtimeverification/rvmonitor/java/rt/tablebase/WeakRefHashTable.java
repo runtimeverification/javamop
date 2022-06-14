@@ -287,12 +287,12 @@ public abstract class WeakRefHashTable<TWeakRef extends CachedWeakReference, TVa
 
 		@SuppressWarnings("unchecked")
 		Segment<TWeakRef, TValue>[] segs = new Segment[NUM_SEGMENTS];
-		this.segments = new AtomicReferenceArray<Segment<TWeakRef, TValue>>(segs);
+		this.segments = new AtomicReferenceArray<>(segs);
 
 		if (RuntimeOption.isFineGrainedLockEnabled())
-			this.cacheWeakRef = new ThreadLocalCacheEntry<TWeakRef, TValue>();
+			this.cacheWeakRef = new ThreadLocalCacheEntry<>();
 		else
-			this.cacheWeakRef = new OrdinaryCacheEntry<TWeakRef, TValue>();
+			this.cacheWeakRef = new OrdinaryCacheEntry<>();
 	}
 	
 	private final int getSegmentIndex(int hashval) {
@@ -316,7 +316,7 @@ public abstract class WeakRefHashTable<TWeakRef extends CachedWeakReference, TVa
 		if (oldseg != null)
 			return oldseg;
 		
-		Segment<TWeakRef, TValue> newseg = new Segment<TWeakRef, TValue>(this);
+		Segment<TWeakRef, TValue> newseg = new Segment<>(this);
 		oldseg = this.segments.getAndSet(index, newseg);
 		return oldseg == null ? newseg : oldseg;
 	}
@@ -492,7 +492,7 @@ final class OrdinaryCacheEntry<TWeakRef extends CachedWeakReference, TValue> ext
 final class ThreadLocalCacheEntry<TWeakRef extends CachedWeakReference, TValue> extends CacheEntry<TWeakRef, TValue> {
 	protected final ThreadLocal<OrdinaryCacheEntry<TWeakRef, TValue>> tls = new ThreadLocal<OrdinaryCacheEntry<TWeakRef, TValue>>() {
 		@Override protected OrdinaryCacheEntry<TWeakRef, TValue> initialValue() {
-			return new OrdinaryCacheEntry<TWeakRef, TValue>();
+			return new OrdinaryCacheEntry<>();
 		}
 	};
 	

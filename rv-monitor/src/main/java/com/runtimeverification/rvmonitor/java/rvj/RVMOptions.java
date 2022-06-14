@@ -51,10 +51,12 @@ public class RVMOptions {
             "is invoked by the corresponding advice.")
     public boolean inline = false;
 
-    @Parameter(names={"-finegrainedlock"},description = "Use fine-grained lock for internal data structure.")
+    @Parameter(names={"-finegrainedlock"},description = "Use fine-grained lock for internal data structure. " +
+             "See paper details - RV-Monitor: Efficient Parametric Runtime Verification with Simultaneous Properties")
     public boolean finegrainedlock;
 
-    @Parameter(names={"-weakrefinterning"},description = "Use WeakReference interning in indexing trees.")
+    @Parameter(names={"-weakrefinterning"},description = "Use WeakReference interning in indexing trees. " +
+             "See paper details - RV-Monitor: Efficient Parametric Runtime Verification with Simultaneous Properties")
     public boolean weakrefinterning;
 
     @Parameter(names={"-partitionedset"},description = "Experimental(?)")
@@ -66,6 +68,9 @@ public class RVMOptions {
     @Parameter(names={"-version"},description = "Display RV-Monitor version information.")
     public boolean version;
 
+    @Parameter(names={"-internalBehaviorObserving"},description = "Track the internals of the monitoring process such as traces.")
+    public boolean internalBehaviorObserving;
+
     public boolean isJarFile;
 
     public String jarFilePath;
@@ -75,8 +80,6 @@ public class RVMOptions {
     public boolean generateVoidMethods;
 
     public boolean stripUnusedParameterInMonitor = true;
-
-    public boolean internalBehaviorObserving;
 
     public boolean eliminatePresumablyRemnantCode;
 
