@@ -43,8 +43,4 @@ public class RVMStat implements RVMObject {
 	
 	static public HashSet<String> locations = new HashSet<String>();
 	static public ArrayList<Boolean> idSet = new ArrayList<Boolean>();
-	
-	
-	
-	
 }

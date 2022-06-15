@@ -16,8 +16,7 @@ import javamop.parser.ast.mopspec.JavaMOPSpec;
  */
 public class MOPStatManager {
     
-    private final HashMap<JavaMOPSpec, MOPStatistics> stats = 
-        new HashMap<JavaMOPSpec, MOPStatistics>();
+    private final HashMap<JavaMOPSpec, MOPStatistics> stats = new HashMap<>();
     
     private final MOPVariable statClass;
     private final MOPVariable statObject;

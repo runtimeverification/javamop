@@ -59,7 +59,12 @@ public class RVMOptions {
              "See paper details - RV-Monitor: Efficient Parametric Runtime Verification with Simultaneous Properties")
     public boolean weakrefinterning;
 
-    @Parameter(names={"-partitionedset"},description = "Experimental(?)")
+    @Parameter(names={"-partitionedset"},description = "Use monitor sets that are partitioned into a list of arrays of " +
+             "monitors. This optimization is based on the fact that when an event occurs, only certain monitors are " +
+             "affected and all the other monitors do not make any transition. Even when set, the optimization will only " +
+             "work if *all* these conditions are met by a spec: (1) each starting event carries all parameters; (2) " +
+             "there are exactly two parameters; (3) non-creation events carry only one parameter; (4) there is at least " +
+             "one event that carries each parameter only.")
     public boolean partitionedset;
 
     @Parameter(names={"-atomicmonitor"},description = "Experimental(?)")
