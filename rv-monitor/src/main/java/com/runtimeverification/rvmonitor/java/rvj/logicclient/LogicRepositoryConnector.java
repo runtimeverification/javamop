@@ -52,7 +52,6 @@ public class LogicRepositoryConnector {
 
         try {
             logicOutput_OutputStream = connectToServer(logicInputData);
-            System.out.println("CONN TO SERVER");
             logicOutputData = new LogicRepositoryData(logicOutput_OutputStream);
             logicOutputXML = logicOutputData.getXML();
         } catch (Exception e) {
@@ -123,8 +122,6 @@ public class LogicRepositoryConnector {
                                                 + logicPluginFarFilePath + File.pathSeparator
                                                 + new File(Main.options.jarFilePath).getParent() + "/scala-library.jar",
                     "com.runtimeverification.rvmonitor.logicrepository.Main" };
-
-            System.out.println("CMD: " + Arrays.asList(cmdarray));
 
             logicOutput_OutputStream = executeProgram(cmdarray, executePath, logicInput_InputStream);
         } else {

@@ -1,5 +1,6 @@
 package com.runtimeverification.rvmonitor.logicpluginshells;
 
+import com.runtimeverification.rvmonitor.java.rvj.Main;
 import com.runtimeverification.rvmonitor.logicpluginshells.cfg.JavaCFG;
 import com.runtimeverification.rvmonitor.logicpluginshells.fsm.JavaFSM;
 import com.runtimeverification.rvmonitor.logicpluginshells.pda.JavaPDA;
@@ -37,8 +38,8 @@ public class LogicPluginShellFactory {
     static public LogicPluginShellResult process(LogicRepositoryType logicOutput, String events, String outputLanguage)
             throws RVMException {
         LogicPluginShell logicShellPlugin = findLogicShellPlugin(logicOutput.getProperty().getLogic());
-        System.out.println("LOGIC SHELL PLUGIN: " + logicShellPlugin.getClass().getName());
-        System.out.println("LOGIC SHELL LOGIC: " + logicOutput.getProperty().getLogic());
+//        System.out.println("LOGIC SHELL PLUGIN: " + logicShellPlugin.getClass().getName());
+//        System.out.println("LOGIC SHELL LOGIC: " + logicOutput.getProperty().getLogic());
         if (logicShellPlugin != null) {
             LogicPluginShellResult result = logicShellPlugin.process(logicOutput, events);
             // Support deadlock detection since deadlock is not a state.
