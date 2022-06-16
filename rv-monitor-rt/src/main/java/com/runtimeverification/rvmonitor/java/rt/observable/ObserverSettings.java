@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class ObserverSettings {
 	public static final boolean observeSetBehavior = false;
 	
-	private static final ArrayList<IObserver> observers = new ArrayList<IObserver>();
+	private static final ArrayList<IObserver> observers = new ArrayList<>();
 	
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
