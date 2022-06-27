@@ -1,5 +1,7 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ public class InternalBehaviorDumper implements IInternalBehaviorObserver {
 	private final Map<Class<?>, List<Object>> keyobjectmap;
 	
 	public InternalBehaviorDumper(PrintWriter writer) {
+
 		this.writer = writer;
 		this.keyobjectmap = new HashMap<Class<?>, List<Object>>();
 	}
@@ -328,5 +331,16 @@ public class InternalBehaviorDumper implements IInternalBehaviorObserver {
 		this.writer.println();
 		this.writer.flush();
 		this.writer.close();
+	}
+
+	public static void main(String[] args) {
+		try {
+			PrintWriter w =  new PrintWriter(new File("/tmp/internal.txt"));
+			InternalBehaviorDumper dumper = new InternalBehaviorDumper(w);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

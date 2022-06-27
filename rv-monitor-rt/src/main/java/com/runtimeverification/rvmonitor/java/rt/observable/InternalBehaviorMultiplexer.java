@@ -16,7 +16,7 @@ public class InternalBehaviorMultiplexer implements IInternalBehaviorObserver, I
 	private final List<IInternalBehaviorObserver> observers;
 	
 	public InternalBehaviorMultiplexer() {
-		this.observers = new ArrayList<IInternalBehaviorObserver>();
+		this.observers = new ArrayList<>();
 	}
 	
 	@Override
@@ -118,5 +118,9 @@ public class InternalBehaviorMultiplexer implements IInternalBehaviorObserver, I
 	public void onCompleted() {
 		for (IInternalBehaviorObserver o : this.observers)
 			o.onCompleted();
+	}
+
+	public List<IInternalBehaviorObserver> getObservers() {
+		return observers;
 	}
 }
