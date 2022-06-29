@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
-import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeAssignStmt;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeClassDef;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeCommentStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeExpr;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeExprStmt;
@@ -21,6 +21,7 @@ import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeStmtCollect
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeTryCatchFinallyStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeVarDeclStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeVarRefExpr;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeWhileStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.helper.CodeHelper;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.helper.CodeVariable;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.helper.ICodeFormatter;
@@ -118,10 +119,44 @@ public class RuntimeServiceManager implements ICodeGenerator {
     private CodeStmtCollection createObserverRegisterCode() {
         CodeCommentStmt comment = new CodeCommentStmt("Register observers");
         CodeTryCatchFinallyStmt observerCode = getObserverCode();
+        CodeExprStmt shutdownHookCode = getShutDownHookCode();
         CodeStmtCollection init = new CodeStmtCollection();
         init.add(comment);
         init.add(observerCode);
+        init.add(shutdownHookCode);
         return init;
+    }
+
+    private CodeExprStmt getShutDownHookCode() {
+        // List<IInternalBehaviorObserver> obs = observer.getObservers();
+        CodeType iObserverType = new CodeType("IInternalBehaviorObserver");
+        CodeType listType = new CodeType(null,"List", iObserverType);
+        CodeVariable obs = new CodeVariable(listType, "obs");
+        CodeVarDeclStmt createWriter = new CodeVarDeclStmt(obs,
+                new CodeMethodInvokeExpr(null, new CodeFieldRefExpr(this.observer.getField()), "getObservers"));
+        // for (IInternalBehaviorObserver o : obs) { o.onCompleted(); }
+        CodeType iteratorType = new CodeType(null,"Iterator", iObserverType);
+        CodeVariable iterator = new CodeVariable(iteratorType, "iter");
+        CodeVarDeclStmt createIterator = new CodeVarDeclStmt(iterator,
+                new CodeMethodInvokeExpr(null, new CodeVarRefExpr(obs), "iterator"));
+        CodeMethodInvokeExpr loopHeader = new CodeMethodInvokeExpr(null, new CodeVarRefExpr(iterator), "hasNext");
+        CodeMethodInvokeExpr nextElem = new CodeMethodInvokeExpr(null, new CodeVarRefExpr(iterator), "next");
+        CodeMethodInvokeExpr onCompleted = new CodeMethodInvokeExpr(null, nextElem, "onCompleted");
+        CodeStmtCollection body = new CodeStmtCollection();
+        body.add(new CodeExprStmt(onCompleted));
+        CodeWhileStmt loop =  new CodeWhileStmt(loopHeader, body);
+        CodeStmtCollection methodBody = new CodeStmtCollection();
+        methodBody.add(createWriter);
+        methodBody.add(createIterator);
+        methodBody.add(loop);
+        CodeMemberMethod run = new CodeMemberMethod("run", true, false, false, CodeType.foid(), true, methodBody);
+        CodeType threadType = new CodeType("Thread");
+        CodeClassDef thread = CodeClassDef.anonymous(threadType);
+        thread.addMethod(run);
+        CodeType runtimeType = new CodeType("Runtime");
+        CodeMethodInvokeExpr getRuntime = new CodeMethodInvokeExpr(runtimeType, CodeExpr.fromLegacy(runtimeType, "Runtime"), "getRuntime");
+        CodeMethodInvokeExpr addShutdownHook = new CodeMethodInvokeExpr(null, getRuntime, "addShutdownHook", new CodeNewExpr(threadType, thread));
+        return new CodeExprStmt(addShutdownHook);
     }
 
     private CodeTryCatchFinallyStmt getObserverCode() {
