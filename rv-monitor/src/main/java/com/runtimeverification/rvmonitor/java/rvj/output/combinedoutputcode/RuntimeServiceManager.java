@@ -133,10 +133,19 @@ public class RuntimeServiceManager implements ICodeGenerator {
 
     private CodeStmtCollection getTryBlock(CodeType fileType) {
         CodeType printWriter = new CodeType("PrintWriter");
-        CodeVarDeclStmt createWriter = new CodeVarDeclStmt(new CodeVariable(printWriter, "writer"),
+        CodeVariable writer = new CodeVariable(printWriter, "writer");
+        CodeType behaviorDumper = new CodeType("InternalBehaviorDumper");
+        CodeVarDeclStmt createWriter = new CodeVarDeclStmt(writer,
                 new CodeNewExpr(printWriter, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/internal.txt"))));
+        CodeVariable dumper = new CodeVariable(behaviorDumper, "dumper");
+        CodeVarDeclStmt createDumper = new CodeVarDeclStmt(dumper,
+                new CodeNewExpr(behaviorDumper, new CodeVarRefExpr(writer)));
+        CodeMethodInvokeExpr registerDumper = new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(dumper));
+        CodeExprStmt registerDumperStatement = new CodeExprStmt(registerDumper);
         CodeStmtCollection tryBlock = new CodeStmtCollection();
         tryBlock.add(createWriter);
+        tryBlock.add(createDumper);
+        tryBlock.add(registerDumperStatement);
         return tryBlock;
     }
 
