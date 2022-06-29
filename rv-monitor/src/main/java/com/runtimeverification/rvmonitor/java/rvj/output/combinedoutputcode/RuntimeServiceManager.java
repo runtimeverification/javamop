@@ -117,18 +117,18 @@ public class RuntimeServiceManager implements ICodeGenerator {
 
     private CodeStmtCollection createObserverRegisterCode() {
         CodeCommentStmt comment = new CodeCommentStmt("Register observers");
-        CodeTryCatchFinallyStmt tryCatchFinallyStmt = getObserverCode();
+        CodeTryCatchFinallyStmt observerCode = getObserverCode();
         CodeStmtCollection init = new CodeStmtCollection();
         init.add(comment);
-        init.add(tryCatchFinallyStmt);
+        init.add(observerCode);
         return init;
     }
 
     private CodeTryCatchFinallyStmt getObserverCode() {
         CodeType fileType = new CodeType("File");
         CodeStmtCollection tryBlock = getTryBlock(fileType);
-        CodeTryCatchFinallyStmt tryCatchFinallyStmt = new CodeTryCatchFinallyStmt(tryBlock, null, getCatchBlock(fileType));
-        return tryCatchFinallyStmt;
+        CodeTryCatchFinallyStmt observerCode = new CodeTryCatchFinallyStmt(tryBlock, null, getCatchBlock(fileType));
+        return observerCode;
     }
 
     private CodeStmtCollection getTryBlock(CodeType fileType) {
@@ -140,8 +140,8 @@ public class RuntimeServiceManager implements ICodeGenerator {
         CodeVariable dumper = new CodeVariable(behaviorDumper, "dumper");
         CodeVarDeclStmt createDumper = new CodeVarDeclStmt(dumper,
                 new CodeNewExpr(behaviorDumper, new CodeVarRefExpr(writer)));
-        CodeMethodInvokeExpr registerDumper = new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(dumper));
-        CodeExprStmt registerDumperStatement = new CodeExprStmt(registerDumper);
+        CodeExprStmt registerDumperStatement =
+                new CodeExprStmt(new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(dumper)));
         CodeStmtCollection tryBlock = new CodeStmtCollection();
         tryBlock.add(createWriter);
         tryBlock.add(createDumper);
