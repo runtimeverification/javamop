@@ -21,7 +21,7 @@ public class CodeTryCatchFinallyStmt extends CodeStmt {
         private final CodeVariable expr;
         private final CodeStmtCollection stmts;
 
-        CatchBlock(CodeVariable expr, CodeStmtCollection stmts) {
+        public CatchBlock(CodeVariable expr, CodeStmtCollection stmts) {
             this.expr = expr;
             this.stmts = stmts;
         }

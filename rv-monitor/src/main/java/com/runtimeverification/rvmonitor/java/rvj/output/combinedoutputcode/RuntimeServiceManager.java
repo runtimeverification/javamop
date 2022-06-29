@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.runtimeverification.rvmonitor.java.rvj.Main;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeAssignStmt;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeCommentStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeExpr;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeExprStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeFieldRefExpr;
@@ -12,9 +14,12 @@ import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeMemberField
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeMemberMethod;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeMemberStaticInitializer;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeMethodInvokeExpr;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeNewExpr;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeReturnStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeStmtCollection;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeTryCatchFinallyStmt;
+import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeVarDeclStmt;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeVarRefExpr;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.helper.CodeHelper;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.helper.CodeVariable;
@@ -105,7 +110,44 @@ public class RuntimeServiceManager implements ICodeGenerator {
             }
         }
 
-        return new ServiceDefinition(desc, fields, methods, null);
+        CodeStmtCollection init = createObserverRegisterCode();
+
+        return new ServiceDefinition(desc, fields, methods, init);
+    }
+
+    private CodeStmtCollection createObserverRegisterCode() {
+        CodeCommentStmt comment = new CodeCommentStmt("Register observers");
+        CodeTryCatchFinallyStmt tryCatchFinallyStmt = getObserverCode();
+        CodeStmtCollection init = new CodeStmtCollection();
+        init.add(comment);
+        init.add(tryCatchFinallyStmt);
+        return init;
+    }
+
+    private CodeTryCatchFinallyStmt getObserverCode() {
+        CodeType fileType = new CodeType("File");
+        CodeStmtCollection tryBlock = getTryBlock(fileType);
+        CodeTryCatchFinallyStmt tryCatchFinallyStmt = new CodeTryCatchFinallyStmt(tryBlock, null, getCatchBlock(fileType));
+        return tryCatchFinallyStmt;
+    }
+
+    private CodeStmtCollection getTryBlock(CodeType fileType) {
+        CodeType printWriter = new CodeType("PrintWriter");
+        CodeVarDeclStmt createWriter = new CodeVarDeclStmt(new CodeVariable(printWriter, "writer"),
+                new CodeNewExpr(printWriter, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/internal.txt"))));
+        CodeStmtCollection tryBlock = new CodeStmtCollection();
+        tryBlock.add(createWriter);
+        return tryBlock;
+    }
+
+    private CodeTryCatchFinallyStmt.CatchBlock getCatchBlock(CodeType fileType) {
+        CodeStmtCollection catchCode = new CodeStmtCollection();
+        CodeVariable fnf = new CodeVariable(new CodeType("FileNotFoundException"), "fnf");
+        CodeStmt printStackTrace = new CodeExprStmt(
+                new CodeMethodInvokeExpr(fileType, new CodeVarRefExpr(fnf), "printStackTrace"));
+        catchCode.add(printStackTrace);
+        CodeTryCatchFinallyStmt.CatchBlock catchBlock = new CodeTryCatchFinallyStmt.CatchBlock(fnf, catchCode);
+        return catchBlock;
     }
 
     private ServiceDefinition addRuntimeBehaviorOption() {

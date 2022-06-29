@@ -14,6 +14,7 @@ public class Imports {
             "java.util.concurrent.*",
             "java.util.concurrent.locks.*",
             "java.util.*",
+            "java.io.*",
             "java.lang.ref.*",
             "com.runtimeverification.rvmonitor.java.rt.*",
             "com.runtimeverification.rvmonitor.java.rt.ref.*",

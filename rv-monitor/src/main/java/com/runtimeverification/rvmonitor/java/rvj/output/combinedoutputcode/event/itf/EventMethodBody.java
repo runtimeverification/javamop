@@ -1322,8 +1322,7 @@ public class EventMethodBody extends AdviceBody implements ICodeGenerator {
                     throw new NotImplementedException();
             }
             CodeVarDeclStmt create = new CodeVarDeclStmt(new CodeVariable(
-                    dhtype, "holder"), new CodeNewExpr(dhtype,
-                            CodeLiteralExpr.integer(-1)));
+                    dhtype, "holder"), new CodeNewExpr(dhtype, CodeLiteralExpr.integer(-1)));
             CodeVarRefExpr createdref = new CodeVarRefExpr(create.getVariable());
             ifbody.add(create);
             ifbody.add(transition.generateLeafUpdateCode(createdref, false));
