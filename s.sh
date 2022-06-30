@@ -5,7 +5,9 @@ cd /tmp/commons-fileupload
 rm -rf violation-counts
 
 rm -rf /tmp/internal.txt
+rm -rf /tmp/traces.txt
 
-mvn test -Dtest=org.apache.commons.fileupload2.FileItemHeadersTest
+mvn test
 
 tail /tmp/internal.txt
+tail /tmp/traces.txt

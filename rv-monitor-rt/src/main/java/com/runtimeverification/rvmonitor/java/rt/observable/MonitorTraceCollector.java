@@ -26,6 +26,36 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
     }
 
     @Override
+    public <TMonitor extends IMonitor> void onMonitorTransitioned(AbstractMonitorSet<TMonitor> set) {
+        for (int i = 0; i < set.getSize(); ++i) {
+            // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
+            AbstractMonitor monitor = (AbstractMonitor) set.get(i);
+            traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
+        }
+    }
+
+    @Override
+    public <TMonitor extends IMonitor> void onMonitorTransitioned(AbstractPartitionedMonitorSet<TMonitor> set) {
+        for (AbstractPartitionedMonitorSet<TMonitor>.MonitorIterator i = set.monitorIterator(true); i.moveNext(); ) {
+            // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
+            AbstractMonitor monitor = (AbstractMonitor) i.getMonitor();
+            traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
+        }
+    }
+
+    @Override
+    public void onCompleted() {
+        for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
+            this.writer.println(entry.getKey() + entry.getValue());
+        }
+        this.writer.print("=== END OF TRACE ===");
+        this.writer.println();
+        this.writer.flush();
+        this.writer.close();
+    }
+
+    // TODO: We do not use any of the following methods; what's the runtime cost of keeping them?
+    @Override
     public void onEventMethodEnter(String evtname, Object... args) {
 
     }
@@ -81,36 +111,7 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
     }
 
     @Override
-    public <TMonitor extends IMonitor> void onMonitorTransitioned(AbstractMonitorSet<TMonitor> set) {
-        for (int i = 0; i < set.getSize(); ++i) {
-            // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
-            AbstractMonitor monitor = (AbstractMonitor) set.get(i);
-            traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
-        }
-    }
-
-    @Override
-    public <TMonitor extends IMonitor> void onMonitorTransitioned(AbstractPartitionedMonitorSet<TMonitor> set) {
-        for (AbstractPartitionedMonitorSet<TMonitor>.MonitorIterator i = set.monitorIterator(true); i.moveNext(); ) {
-            // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
-            AbstractMonitor monitor = (AbstractMonitor) i.getMonitor();
-            traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
-        }
-    }
-
-    @Override
     public void onEventMethodLeave() {
 
-    }
-
-    @Override
-    public void onCompleted() {
-        for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
-            this.writer.println(entry.getKey() + entry.getValue());
-        }
-        this.writer.print("=== END OF TRACE ===");
-        this.writer.println();
-        this.writer.flush();
-        this.writer.close();
     }
 }
