@@ -63,7 +63,7 @@ public class InternalBehaviorObservableCodeGenerator {
     }
 
     public CodeStmtCollection generateEventMethodEnterCode(EventDefinition event) {
-        List<CodeExpr> args = new ArrayList<CodeExpr>();
+        List<CodeExpr> args = new ArrayList<>();
         args.add(CodeLiteralExpr.string(event.getId()));
         for (RVMParameter param : event.getRVMParametersOnSpec()) {
             CodeVariable var = new CodeVariable(CodeType.object(),
@@ -115,7 +115,7 @@ public class InternalBehaviorObservableCodeGenerator {
         if (!this.isFullyFledgedIndexingTree(indexingtree))
             return CodeStmtCollection.empty();
 
-        List<CodeExpr> args = new ArrayList<CodeExpr>();
+        List<CodeExpr> args = new ArrayList<>();
         args.add(new CodeFieldRefExpr(indexingtree.getImplementation()
                 .getField()));
         args.add(CodeLiteralExpr.enumValue(purpose));
@@ -136,7 +136,7 @@ public class InternalBehaviorObservableCodeGenerator {
             IndexingTreeInterface indexingtree,
             WeakReferenceVariables weakrefs, CodeExpr source,
             CodeExpr candidate, CodeVarRefExpr definable) {
-        List<CodeExpr> args = new ArrayList<CodeExpr>();
+        List<CodeExpr> args = new ArrayList<>();
         args.add(new CodeFieldRefExpr(indexingtree.getImplementation()
                 .getField()));
         args.add(source);
@@ -156,7 +156,7 @@ public class InternalBehaviorObservableCodeGenerator {
         if (!this.isFullyFledgedIndexingTree(indexingtree))
             return CodeStmtCollection.empty();
 
-        List<CodeExpr> args = new ArrayList<CodeExpr>();
+        List<CodeExpr> args = new ArrayList<>();
         args.add(new CodeFieldRefExpr(indexingtree.getImplementation()
                 .getField()));
         args.add(inserted);

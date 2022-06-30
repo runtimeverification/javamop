@@ -27,7 +27,7 @@ public class InternalBehaviorDumper implements IInternalBehaviorObserver {
 	public InternalBehaviorDumper(PrintWriter writer) {
 
 		this.writer = writer;
-		this.keyobjectmap = new HashMap<Class<?>, List<Object>>();
+		this.keyobjectmap = new HashMap<>();
 	}
 	
 	private void printSpace() {
@@ -55,7 +55,7 @@ public class InternalBehaviorDumper implements IInternalBehaviorObserver {
 		Class<?> cls = key.getClass();
 		List<Object> objects = this.keyobjectmap.get(cls);
 		if (objects == null) {
-			objects = new ArrayList<Object>();
+			objects = new ArrayList<>();
 			this.keyobjectmap.put(cls, objects);
 		}
 		
@@ -331,16 +331,5 @@ public class InternalBehaviorDumper implements IInternalBehaviorObserver {
 		this.writer.println();
 		this.writer.flush();
 		this.writer.close();
-	}
-
-	public static void main(String[] args) {
-		try {
-			PrintWriter w =  new PrintWriter(new File("/tmp/internal.txt"));
-			InternalBehaviorDumper dumper = new InternalBehaviorDumper(w);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
 	}
 }

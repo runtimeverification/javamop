@@ -7,11 +7,11 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
 
 public class SetBehaviorObserver {
 	public static <TSender extends AbstractPartitionedMonitorSet<?>> ISetBehaviorObserver<TSender> nil() {
-		return new SetBehaviorNullObserver<TSender>();
+		return new SetBehaviorNullObserver<>();
 	}
 
 	public static <TSender extends AbstractPartitionedMonitorSet<?>> ISetBehaviorObserver<TSender> dumper(PrintWriter writer) {
-		return new SetBehaviorDumper<TSender>(writer);
+		return new SetBehaviorDumper<>(writer);
 	}
 }
 
