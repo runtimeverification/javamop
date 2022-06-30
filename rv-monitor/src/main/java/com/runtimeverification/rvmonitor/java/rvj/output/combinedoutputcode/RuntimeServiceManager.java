@@ -195,7 +195,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         tryBlock.add(createTraceWriter);
         tryBlock.add(createDumper);
         tryBlock.add(createTracer);
-        tryBlock.add(registerDumperStatement);
+//        tryBlock.add(registerDumperStatement);
         tryBlock.add(registerTracerStatement);
         return tryBlock;
     }

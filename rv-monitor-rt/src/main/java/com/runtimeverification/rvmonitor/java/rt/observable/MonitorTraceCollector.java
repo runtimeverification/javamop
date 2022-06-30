@@ -11,8 +11,10 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
@@ -48,8 +50,10 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
         for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
             this.writer.println(entry.getKey() + entry.getValue());
         }
-        this.writer.print("=== END OF TRACE ===");
-        this.writer.println();
+        this.writer.println("=== END OF TRACE ===");
+        this.writer.println("Total number of traces: " + traceDB.size());
+        Set<List<String>> unique = new HashSet<>(traceDB.values());
+        this.writer.println("Total number of unique traces: " + unique.size());
         this.writer.flush();
         this.writer.close();
     }
