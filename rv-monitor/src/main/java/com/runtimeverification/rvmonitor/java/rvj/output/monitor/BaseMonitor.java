@@ -398,8 +398,8 @@ public class BaseMonitor extends Monitor {
 
         if (Main.options.internalBehaviorObserving) {
             ret += "this.trace.add(\"";
-            ret += event.getId();
-            ret += "\");\n";
+            ret += event.getId() + "\" + \"~\" + com.runtimeverification.rvmonitor.java.rt.ViolationRecorder.getLineOfCode()" ;
+            ret += ");\n";
         }
 
         for (RVMParameter p : varsToSave.keySet()) {

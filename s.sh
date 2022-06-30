@@ -7,7 +7,7 @@ rm -rf violation-counts
 rm -rf /tmp/internal.txt
 rm -rf /tmp/traces.txt
 
-mvn test
+mvn test -Drat.skip &> gol.txt
 
 tail /tmp/internal.txt
 tail /tmp/traces.txt
