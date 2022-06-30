@@ -167,20 +167,36 @@ public class RuntimeServiceManager implements ICodeGenerator {
     }
 
     private CodeStmtCollection getTryBlock(CodeType fileType) {
-        CodeType printWriter = new CodeType("PrintWriter");
-        CodeVariable writer = new CodeVariable(printWriter, "writer");
+        CodeType writer = new CodeType("PrintWriter");
+        CodeVariable dumpWriterVar = new CodeVariable(writer, "dumpWriter");
         CodeType behaviorDumper = new CodeType("InternalBehaviorDumper");
-        CodeVarDeclStmt createWriter = new CodeVarDeclStmt(writer,
-                new CodeNewExpr(printWriter, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/internal.txt"))));
+        CodeVarDeclStmt createDumpWriter = new CodeVarDeclStmt(dumpWriterVar,
+                new CodeNewExpr(writer, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/internal.txt"))));
         CodeVariable dumper = new CodeVariable(behaviorDumper, "dumper");
         CodeVarDeclStmt createDumper = new CodeVarDeclStmt(dumper,
-                new CodeNewExpr(behaviorDumper, new CodeVarRefExpr(writer)));
+                new CodeNewExpr(behaviorDumper, new CodeVarRefExpr(dumpWriterVar)));
         CodeExprStmt registerDumperStatement =
                 new CodeExprStmt(new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(dumper)));
+
+
+        CodeVariable traceWriterVar = new CodeVariable(writer, "traceWriter");
+        CodeType traceWriter = new CodeType("MonitorTraceCollector");
+        CodeVarDeclStmt createTraceWriter = new CodeVarDeclStmt(traceWriterVar,
+                new CodeNewExpr(writer, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/traces.txt"))));
+        CodeVariable tracer = new CodeVariable(traceWriter, "tracer");
+        CodeVarDeclStmt createTracer = new CodeVarDeclStmt(tracer,
+                new CodeNewExpr(traceWriter, new CodeVarRefExpr(traceWriterVar)));
+        CodeExprStmt registerTracerStatement =
+                new CodeExprStmt(new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(tracer)));
+
+
         CodeStmtCollection tryBlock = new CodeStmtCollection();
-        tryBlock.add(createWriter);
+        tryBlock.add(createDumpWriter);
+        tryBlock.add(createTraceWriter);
         tryBlock.add(createDumper);
+        tryBlock.add(createTracer);
         tryBlock.add(registerDumperStatement);
+        tryBlock.add(registerTracerStatement);
         return tryBlock;
     }
 

@@ -35,6 +35,7 @@ public class Imports {
             "com.runtimeverification.rvmonitor.java.rt.observable.IObservable",
             "com.runtimeverification.rvmonitor.java.rt.observable.IObservableObject",
             "com.runtimeverification.rvmonitor.java.rt.observable.InternalBehaviorDumper",
+            "com.runtimeverification.rvmonitor.java.rt.observable.MonitorTraceCollector",
             "com.runtimeverification.rvmonitor.java.rt.observable.InternalBehaviorMultiplexer", };
 
     public Imports(RVMSpecFile rvmSpecFile) {

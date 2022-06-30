@@ -91,9 +91,9 @@ public class InternalBehaviorMultiplexer implements IInternalBehaviorObserver, I
 
 	@Override
 	public void onMonitorTransitioned(AbstractMonitor monitor) {
-		for (IInternalBehaviorObserver o : this.observers)
+		for (IInternalBehaviorObserver o : this.observers) {
 			o.onMonitorTransitioned(monitor);
-		
+		}
 	}
 
 	@Override

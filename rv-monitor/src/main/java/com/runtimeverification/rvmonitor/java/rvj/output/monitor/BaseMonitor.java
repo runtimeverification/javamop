@@ -1051,8 +1051,10 @@ public class BaseMonitor extends Monitor {
         }
 
         if (Main.options.internalBehaviorObserving) {
-            ret += "private List<String> trace;\n";
-            ret += "private int monitorid;\n";
+//            ret += "private List<String> trace;\n";
+//            ret += "public List<String> getTrace(){ return this.trace; };\n";
+//            ret += "private int monitorid;\n";
+//            ret += "public int getMonitorID(){ return this.monitorid; };\n";
             ret += "private static int nextid;\n";
             ret += "\n";
             ret += "@Override\n";

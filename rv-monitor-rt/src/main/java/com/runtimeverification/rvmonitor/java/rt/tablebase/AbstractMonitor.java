@@ -2,7 +2,12 @@ package com.runtimeverification.rvmonitor.java.rt.tablebase;
 
 import com.runtimeverification.rvmonitor.java.rt.RVMObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractMonitor implements IMonitor, RVMObject {
+	public int monitorid = -123;
+	public List<String> trace = new ArrayList<>();
 	/**
 	 * Terminates this monitor instance. The actual code depends on the specification and,
 	 * therefore, is to be implemented in the generated code.
