@@ -28,6 +28,11 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
     }
 
     @Override
+    public void onMonitorTransitioned(AbstractMonitor monitor) {
+        traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
+    }
+
+    @Override
     public <TMonitor extends IMonitor> void onMonitorTransitioned(AbstractMonitorSet<TMonitor> set) {
         for (int i = 0; i < set.getSize(); ++i) {
             // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
@@ -107,11 +112,6 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
     @Override
     public void onDisableFieldUpdated(IDisableHolder affected) {
 
-    }
-
-    @Override
-    public void onMonitorTransitioned(AbstractMonitor monitor) {
-        traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
     }
 
     @Override
