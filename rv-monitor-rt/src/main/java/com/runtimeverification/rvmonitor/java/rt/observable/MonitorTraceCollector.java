@@ -8,13 +8,17 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractPartitionedMo
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
+import com.runtimeverification.rvmonitor.java.rt.util.TraceUtil;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
@@ -52,15 +56,67 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
     @Override
     public void onCompleted() {
-        for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
+        Map<List<String>, Integer> frequencies =  new HashMap<>();
+        for(Entry<String, List<String>> entry : traceDB.entrySet()) {
             this.writer.println(entry.getKey() + entry.getValue());
+            if (frequencies.get(entry.getValue()) == null) {
+                frequencies.put(entry.getValue(), 1);
+            } else {
+                frequencies.put(entry.getValue(), frequencies.get(entry.getValue()) + 1);
+            }
         }
         this.writer.println("=== END OF TRACE ===");
         this.writer.println("Total number of traces: " + traceDB.size());
-        Set<List<String>> unique = new HashSet<>(traceDB.values());
-        this.writer.println("Total number of unique traces: " + unique.size());
+//        Set<List<String>> unique = new HashSet<>(traceDB.values());
+        this.writer.println("Total number of unique traces: " + frequencies.keySet().size());
+        try (PrintWriter locationWriter = new PrintWriter("/tmp/locations.txt");
+        PrintWriter uniqueWriter = new PrintWriter("/tmp/unique-traces.txt")) {
+            locationWriter.println("=== LOCATION MAP ===");
+            List<Entry<String, Integer>> locations = new ArrayList<>(TraceUtil.getLocationMap().entrySet());
+            locations.sort(Entry.comparingByValue());
+            for(Entry<String, Integer> location : locations) {
+                locationWriter.println(location.getValue() + " " + location.getKey());
+            }
+
+            uniqueWriter.println("=== UNIQUE TRACES ===");
+            List<Entry<List<String>, Integer>> freqList = new ArrayList<>(frequencies.entrySet());
+            freqList.sort(Entry.comparingByValue());
+            Integer maxSize = 0;
+            Integer minSize = 1000;
+            Integer maxFreq = 0;
+            Integer minFreq = 1000;
+            List<Integer> sizes = new ArrayList<>();
+            for (Entry<List<String>, Integer> entry : freqList) {
+                uniqueWriter.println(entry.getValue() + " " + entry.getKey());
+                int size = entry.getKey().size();
+                sizes.add(size);
+                int freq = entry.getValue();
+                maxSize = size > maxSize ? size : maxSize;
+                minSize = size < minSize ? size : minSize;
+                maxFreq = freq > maxFreq ? freq : maxFreq;
+                minFreq = freq < minFreq ? freq : minFreq;
+            }
+            DecimalFormat format = new DecimalFormat("0.00");
+            uniqueWriter.println("=== END UNIQUE TRACES ===");
+            uniqueWriter.println("Min Trace Frequency: " + minFreq);
+            uniqueWriter.println("Max Trace Frequency: " + maxFreq);
+            uniqueWriter.println("Average Trace Frequency: " + format.format(getAverage(frequencies.values())));
+            uniqueWriter.println("Min Trace Size: " + minSize);
+            uniqueWriter.println("Max Trace Size: " + maxSize);
+            uniqueWriter.println("Average Trace Size: " + format.format(getAverage(sizes)));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         this.writer.flush();
         this.writer.close();
+    }
+
+    private double getAverage(Collection<Integer> values) {
+        Double sum = 0.0;
+        for (Integer value : values) {
+            sum += value;
+        }
+        return sum / values.size();
     }
 
     // TODO: We do not use any of the following methods; what's the runtime cost of keeping them?

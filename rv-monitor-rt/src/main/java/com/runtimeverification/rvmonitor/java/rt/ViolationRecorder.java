@@ -17,7 +17,7 @@ public class ViolationRecorder {
      * Private constructor to make it a singleton.
      */
     private ViolationRecorder() {
-        occurrences = new HashMap<String, HashMap<List<StackTraceElement>, Integer>>();
+        occurrences = new HashMap<>();
     }
 
     private static final ViolationRecorder instance = new ViolationRecorder();
@@ -85,7 +85,7 @@ public class ViolationRecorder {
      * @return The relevant parts of the stack trace at time of violation.
      */
     private static List<StackTraceElement> makeRelevantList(StackTraceElement[] elements) {
-        final ArrayList<StackTraceElement> relevantList = new ArrayList<StackTraceElement>();
+        final ArrayList<StackTraceElement> relevantList = new ArrayList<>();
         for(int i = 0; i < elements.length; i++) {
             final String fileName = elements[i].getFileName();
             final String className = elements[i].getClassName();
