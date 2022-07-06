@@ -56,8 +56,8 @@ TOKEN : {
     | <PLUS  : "+" >
   	| <EPSILON : "epsilon" >
     | <CARET : "^" >
-	  | <EMPTY : "empty" >
-	  | <SYMBOL : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_")*>
+	| <EMPTY : "empty" >
+	| <SYMBOL : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_")*>
     | <DIGIT : ["0"-"9"]>
     | <LETTER : ["a"-"z","A"-"Z"]>
 }
