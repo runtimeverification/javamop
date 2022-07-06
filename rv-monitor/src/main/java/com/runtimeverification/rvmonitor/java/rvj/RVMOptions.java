@@ -99,7 +99,7 @@ public class RVMOptions {
             "Use only if traces are also being collected.")
     public boolean trackEventLocations;
 
-    @Parameter(names={"-storeEventMapFile"},description = "Store a file that maps symbolic events to concrete ones" +
+    @Parameter(names={"-storeEventLocationMapFile"},description = "Store a file that maps symbolic events to concrete ones" +
             "when traces are being collected and event locations are being tracked. If set, -trackEventLocations " +
             "is also set.")
     public boolean storeEventLocationMapFile;

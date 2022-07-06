@@ -8,14 +8,9 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractPartitionedMo
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
-import com.runtimeverification.rvmonitor.java.rt.util.TraceUtil;
 
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,57 +49,9 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
         }
     }
 
-//    @Override
-//    public void onCompleted() {
-//
-//    }
-
-        @Override
+    @Override
     public void onCompleted() {
-        Map<List<String>, Integer> frequencies =  new HashMap<>();
-        for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
-            this.writer.println(entry.getKey() + entry.getValue());
-            if (frequencies.get(entry.getValue()) == null) {
-                frequencies.put(entry.getValue(), 1);
-            } else {
-                frequencies.put(entry.getValue(), frequencies.get(entry.getValue()) + 1);
-            }
-        }
-        this.writer.println("=== END OF TRACE ===");
-        this.writer.println("Total number of traces: " + traceDB.size());
-//        Set<List<String>> unique = new HashSet<>(traceDB.values());
-        this.writer.println("Total number of unique traces: " + frequencies.keySet().size());
-        try (PrintWriter locationWriter = new PrintWriter("/tmp/locations.txt");
-        PrintWriter uniqueWriter = new PrintWriter("/tmp/unique-traces.txt")) {
-            locationWriter.println("=== LOCATION MAP ===");
-            List<Map.Entry<String, Integer>> locations = new ArrayList<>(TraceUtil.getLocationMap().entrySet());
-            locations.sort(Map.Entry.comparingByValue());
-            for(Map.Entry<String, Integer> location : locations) {
-                locationWriter.println(location.getValue() + " " + location.getKey());
-            }
 
-            uniqueWriter.println("=== UNIQUE TRACES ===");
-            List<Map.Entry<List<String>, Integer>> freqList = new ArrayList<>(frequencies.entrySet());
-            freqList.sort(Map.Entry.comparingByValue());
-            List<Integer> sizes = new ArrayList<>();
-            for (Map.Entry<List<String>, Integer> entry : freqList) {
-                uniqueWriter.println(entry.getValue() + " " + entry.getKey());
-                sizes.add(entry.getKey().size());
-            }
-            DecimalFormat format = new DecimalFormat("0.00");
-            Collections.sort(sizes);
-            uniqueWriter.println("=== END UNIQUE TRACES ===");
-            uniqueWriter.println("Min Trace Frequency: " + freqList.get(0).getValue());
-            uniqueWriter.println("Max Trace Frequency: " + freqList.get(freqList.size() - 1).getValue());
-            uniqueWriter.println("Average Trace Frequency: " + format.format(getAverage(frequencies.values())));
-            uniqueWriter.println("Min Trace Size: " + sizes.get(0));
-            uniqueWriter.println("Max Trace Size: " + sizes.get(sizes.size() - 1));
-            uniqueWriter.println("Average Trace Size: " + format.format(getAverage(sizes)));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        this.writer.flush();
-        this.writer.close();
     }
 
     private double getAverage(Collection<Integer> values) {

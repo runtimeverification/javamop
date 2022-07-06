@@ -79,5 +79,6 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
         }
         this.writer.println("=== END OF TRACE ===");
         this.writer.println("Total number of traces: " + traceDB.size());
+        this.writer.println("Total number of unique traces: " + frequencies.keySet().size());
     }
 }
