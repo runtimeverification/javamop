@@ -308,7 +308,7 @@ public class Main {
             options.internalBehaviorObserving = true;
         }
 
-        if (options.storeEventMapFile) {
+        if (options.storeEventLocationMapFile) {
             options.trackEventLocations = true;
         }
 

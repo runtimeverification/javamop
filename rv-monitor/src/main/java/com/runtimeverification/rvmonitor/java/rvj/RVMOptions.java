@@ -102,7 +102,7 @@ public class RVMOptions {
     @Parameter(names={"-storeEventMapFile"},description = "Store a file that maps symbolic events to concrete ones" +
             "when traces are being collected and event locations are being tracked. If set, -trackEventLocations " +
             "is also set.")
-    public boolean storeEventMapFile;
+    public boolean storeEventLocationMapFile;
 
     public boolean isJarFile;
 

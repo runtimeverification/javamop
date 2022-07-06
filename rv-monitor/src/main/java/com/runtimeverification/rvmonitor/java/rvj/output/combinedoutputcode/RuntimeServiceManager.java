@@ -194,7 +194,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         CodeStmtCollection tracerStatements;
         List<CodeExpr> args = new ArrayList<>();
         args.add(CodeLiteralExpr.bool(Main.options.computeUniqueTraceStats));
-        args.add(CodeLiteralExpr.bool(Main.options.storeEventMapFile));
+        args.add(CodeLiteralExpr.bool(Main.options.storeEventLocationMapFile));
         tracerStatements = getObserverStatements(fileType, writer, "traceWriter",
                 observerType, "/tmp/traces.txt", "tracer", args);
         return tracerStatements;
