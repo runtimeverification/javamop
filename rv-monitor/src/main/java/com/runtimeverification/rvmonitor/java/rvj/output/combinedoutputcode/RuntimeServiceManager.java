@@ -1,5 +1,6 @@
 package com.runtimeverification.rvmonitor.java.rvj.output.combinedoutputcode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,7 +196,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         args.add(CodeLiteralExpr.bool(Main.options.computeUniqueTraceStats));
         args.add(CodeLiteralExpr.bool(Main.options.storeEventLocationMapFile));
         tracerStatements = getObserverStatements(fileType, writer, "traceWriter",
-                observerType, "/tmp/traces.txt", "tracer", args);
+                observerType, String.valueOf(new File(Main.options.artifactsDir + "/traces.txt")), "tracer", args);
         return tracerStatements;
     }
 

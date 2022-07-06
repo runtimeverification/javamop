@@ -312,6 +312,10 @@ public class Main {
             options.trackEventLocations = true;
         }
 
+        File dotTraces = new File(options.artifactsDir, ".traces");
+        if (!dotTraces.exists()) {
+            dotTraces.mkdirs();
+        }
 
         ClassLoader loader = Main.class.getClassLoader();
         String mainClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rvj/Main.class").toString();

@@ -104,6 +104,11 @@ public class RVMOptions {
             "is also set.")
     public boolean storeEventLocationMapFile;
 
+    @Parameter(names="-artifactsDir",
+            description = "Directory in which to store a .traces directory that, in turn, contains trace-related files",
+            converter = JavaMOPOptions.FileConverter.class)
+    public File artifactsDir = new File(System.getProperty("user.dir"));
+
     public boolean isJarFile;
 
     public String jarFilePath;
