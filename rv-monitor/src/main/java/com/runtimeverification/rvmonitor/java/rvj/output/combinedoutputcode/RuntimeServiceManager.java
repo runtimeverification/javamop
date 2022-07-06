@@ -171,7 +171,6 @@ public class RuntimeServiceManager implements ICodeGenerator {
 
         CodeStmtCollection dumperStatements = new CodeStmtCollection();
         if (Main.options.collectAllMonitorSteps) {
-            System.out.println("BBBBBBB");
             List<CodeExpr> args = new ArrayList<>();
             dumperStatements = getObserverStatements(fileType, writer, "dumpWriter",
                     "InternalBehaviorDumper", "/tmp/internal.txt", "dumper", args);
