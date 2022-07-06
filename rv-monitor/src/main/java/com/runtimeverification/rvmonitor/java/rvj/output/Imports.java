@@ -36,6 +36,8 @@ public class Imports {
             "com.runtimeverification.rvmonitor.java.rt.observable.IObservableObject",
             "com.runtimeverification.rvmonitor.java.rt.observable.InternalBehaviorDumper",
             "com.runtimeverification.rvmonitor.java.rt.observable.MonitorTraceCollector",
+            "com.runtimeverification.rvmonitor.java.rt.observable.UniqueMonitorTraceCollector",
+            "com.runtimeverification.rvmonitor.java.rt.observable.AllMonitorTraceCollector",
             "com.runtimeverification.rvmonitor.java.rt.util.TraceUtil",
             "com.runtimeverification.rvmonitor.java.rt.observable.InternalBehaviorMultiplexer", };
 

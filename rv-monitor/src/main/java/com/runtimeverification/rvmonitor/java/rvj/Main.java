@@ -299,6 +299,20 @@ public class Main {
             options.merge = true;
         }
 
+        if (options.computeUniqueTraceStats) {
+            options.collectUniqueTraces = true;
+        }
+
+        if (options.collectAllTraces || options.collectUniqueTraces || options.collectAllMonitorSteps
+                || options.computeUniqueTraceStats) {
+            options.internalBehaviorObserving = true;
+        }
+
+        if (options.storeEventMapFile) {
+            options.trackEventLocations = true;
+        }
+
+
         ClassLoader loader = Main.class.getClassLoader();
         String mainClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rvj/Main.class").toString();
         if (mainClassPath.endsWith(".jar!/com/runtimeverification/rvmonitor/java/rvj/Main.class")

@@ -398,7 +398,11 @@ public class BaseMonitor extends Monitor {
 
         if (Main.options.internalBehaviorObserving) {
             ret += "this.trace.add(\"";
-            ret += event.getId() + "\" + \"~\" + TraceUtil.getShortLocation(com.runtimeverification.rvmonitor.java.rt.ViolationRecorder.getLineOfCode())" ;
+            if (Main.options.trackEventLocations) {
+                ret += event.getId() + "\" + \"~\" + TraceUtil.getShortLocation(com.runtimeverification.rvmonitor.java.rt.ViolationRecorder.getLineOfCode())";
+            } else {
+                ret += event.getId() + "\"";
+            }
             ret += ");\n";
         }
 

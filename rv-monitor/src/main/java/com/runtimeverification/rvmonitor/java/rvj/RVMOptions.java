@@ -73,8 +73,36 @@ public class RVMOptions {
     @Parameter(names={"-version"},description = "Display RV-Monitor version information.")
     public boolean version;
 
-    @Parameter(names={"-internalBehaviorObserving"},description = "Track the internals of the monitoring process such as traces.")
+    @Parameter(names={"-internalBehaviorObserving"},description = "Track some internals of the monitoring process" +
+            " such as traces, or monitoring steps.")
     public boolean internalBehaviorObserving;
+
+    @Parameter(names={"-collectAllTraces"},description = "Collect all the steps that are taken during runtime " +
+            "monitoring, including indexing lookups, monitor creations, monitor cloning, etc.")
+    public boolean collectAllTraces;
+
+    @Parameter(names={"-collectAllMonitorSteps"},description = "Collect all traces that all monitors observe." +
+            "If set, -internalBehaviorObserving is also set.")
+    public boolean collectAllMonitorSteps;
+
+    @Parameter(names={"-collectUniqueTraces"},description = "Collect traces that are unique among all monitors. " +
+            "Currently, this option merely post-processes all traces, so it will be more expensive than " +
+            "-collectAllTraces alone. If set, -internalBehaviorObserving is also set.")
+    public boolean collectUniqueTraces;
+
+    @Parameter(names={"-computeUniqueTraceStats"},description = "Compute stats about the unique traces, such as the" +
+            "frequencies and the lengths of the traces. If set, -collectUniqueTraces and -internalBehaviorObserving" +
+            " are also set.")
+    public boolean computeUniqueTraceStats;
+
+    @Parameter(names={"-trackEventLocations"},description = "Collect code locations where events are triggered. " +
+            "Use only if traces are also being collected.")
+    public boolean trackEventLocations;
+
+    @Parameter(names={"-storeEventMapFile"},description = "Store a file that maps symbolic events to concrete ones" +
+            "when traces are being collected and event locations are being tracked. If set, -trackEventLocations " +
+            "is also set.")
+    public boolean storeEventMapFile;
 
     public boolean isJarFile;
 

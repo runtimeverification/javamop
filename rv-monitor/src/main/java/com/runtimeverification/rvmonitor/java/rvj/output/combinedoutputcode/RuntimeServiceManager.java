@@ -168,36 +168,58 @@ public class RuntimeServiceManager implements ICodeGenerator {
 
     private CodeStmtCollection getTryBlock(CodeType fileType) {
         CodeType writer = new CodeType("PrintWriter");
-        CodeVariable dumpWriterVar = new CodeVariable(writer, "dumpWriter");
-        CodeType behaviorDumper = new CodeType("InternalBehaviorDumper");
+
+        CodeStmtCollection dumperStatements = new CodeStmtCollection();
+        if (Main.options.collectAllMonitorSteps) {
+            System.out.println("BBBBBBB");
+            List<CodeExpr> args = new ArrayList<>();
+            dumperStatements = getObserverStatements(fileType, writer, "dumpWriter",
+                    "InternalBehaviorDumper", "/tmp/internal.txt", "dumper", args);
+        }
+
+        CodeStmtCollection tracerStatements = new CodeStmtCollection();
+        if (Main.options.collectUniqueTraces) {
+            tracerStatements = getTraceCollectionStatements(fileType, writer, "UniqueMonitorTraceCollector");
+        } else if (Main.options.collectAllTraces) {
+            tracerStatements = getTraceCollectionStatements(fileType, writer, "AllMonitorTraceCollector");
+        }
+
+        CodeStmtCollection tryBlock = new CodeStmtCollection();
+        tryBlock.add(dumperStatements);
+        tryBlock.add(tracerStatements);
+        return tryBlock;
+    }
+
+    private CodeStmtCollection getTraceCollectionStatements(CodeType fileType, CodeType writer, String observerType) {
+        CodeStmtCollection tracerStatements;
+        List<CodeExpr> args = new ArrayList<>();
+        args.add(CodeLiteralExpr.bool(Main.options.computeUniqueTraceStats));
+        args.add(CodeLiteralExpr.bool(Main.options.storeEventMapFile));
+        tracerStatements = getObserverStatements(fileType, writer, "traceWriter",
+                observerType, "/tmp/traces.txt", "tracer", args);
+        return tracerStatements;
+    }
+
+    private CodeStmtCollection getObserverStatements(CodeType fileType, CodeType writer, String writerName,
+                                                     String observerType, String outputFileName,
+                                                     String observerVarName, List<CodeExpr> observerInitArgs) {
+        CodeVariable dumpWriterVar = new CodeVariable(writer, writerName);
+        CodeType behaviorDumper = new CodeType(observerType);
         CodeVarDeclStmt createDumpWriter = new CodeVarDeclStmt(dumpWriterVar,
-                new CodeNewExpr(writer, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/internal.txt"))));
-        CodeVariable dumper = new CodeVariable(behaviorDumper, "dumper");
-        CodeVarDeclStmt createDumper = new CodeVarDeclStmt(dumper,
-                new CodeNewExpr(behaviorDumper, new CodeVarRefExpr(dumpWriterVar)));
+                new CodeNewExpr(writer, new CodeNewExpr(fileType, CodeLiteralExpr.string(outputFileName))));
+        CodeVariable dumper = new CodeVariable(behaviorDumper, observerVarName);
+        List<CodeExpr> args = new ArrayList<>();
+        args.add(new CodeVarRefExpr(dumpWriterVar));
+        args.addAll(observerInitArgs);
+        CodeVarDeclStmt createDumper = new CodeVarDeclStmt(dumper, new CodeNewExpr(behaviorDumper, args));
         CodeExprStmt registerDumperStatement =
                 new CodeExprStmt(new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(dumper)));
 
-
-        CodeVariable traceWriterVar = new CodeVariable(writer, "traceWriter");
-        CodeType traceWriter = new CodeType("MonitorTraceCollector");
-        CodeVarDeclStmt createTraceWriter = new CodeVarDeclStmt(traceWriterVar,
-                new CodeNewExpr(writer, new CodeNewExpr(fileType, CodeLiteralExpr.string("/tmp/traces.txt"))));
-        CodeVariable tracer = new CodeVariable(traceWriter, "tracer");
-        CodeVarDeclStmt createTracer = new CodeVarDeclStmt(tracer,
-                new CodeNewExpr(traceWriter, new CodeVarRefExpr(traceWriterVar)));
-        CodeExprStmt registerTracerStatement =
-                new CodeExprStmt(new CodeMethodInvokeExpr(null, null, "subscribe", new CodeVarRefExpr(tracer)));
-
-
-        CodeStmtCollection tryBlock = new CodeStmtCollection();
-        tryBlock.add(createDumpWriter);
-        tryBlock.add(createTraceWriter);
-        tryBlock.add(createDumper);
-        tryBlock.add(createTracer);
-//        tryBlock.add(registerDumperStatement);
-        tryBlock.add(registerTracerStatement);
-        return tryBlock;
+        CodeStmtCollection dumperStatements = new CodeStmtCollection();
+        dumperStatements.add(createDumpWriter);
+        dumperStatements.add(createDumper);
+        dumperStatements.add(registerDumperStatement);
+        return dumperStatements;
     }
 
     private CodeTryCatchFinallyStmt.CatchBlock getCatchBlock(CodeType fileType) {
