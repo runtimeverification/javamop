@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.runtimeverification.rvmonitor.java.rt.util.TraceUtil;
 import com.runtimeverification.rvmonitor.java.rvj.logicclient.LogicRepositoryConnector;
 import com.runtimeverification.rvmonitor.java.rvj.output.CodeGenerationOption;
 import com.runtimeverification.rvmonitor.java.rvj.parser.ast.RVMSpecFile;
@@ -316,6 +317,8 @@ public class Main {
         if (!dotTraces.exists()) {
             dotTraces.mkdirs();
         }
+
+        TraceUtil.artifactsDir = dotTraces;
 
         ClassLoader loader = Main.class.getClassLoader();
         String mainClassPath = loader.getResource("com/runtimeverification/rvmonitor/java/rvj/Main.class").toString();

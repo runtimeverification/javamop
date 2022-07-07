@@ -1,5 +1,6 @@
 package com.runtimeverification.rvmonitor.java.rt.util;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,8 @@ public class TraceUtil {
     private static Map<String, Integer> locationMap = new HashMap<>();
 
     private static int freshID = 1;
+
+    public static File artifactsDir = null;
 
     /**
      * This method reduces the size of stored traces.
@@ -27,5 +30,9 @@ public class TraceUtil {
 
     public static Map<String, Integer> getLocationMap() {
         return locationMap;
+    }
+
+    public static String getAbsolutePath(String fileName) {
+        return new File(artifactsDir + File.separator + fileName).getAbsolutePath();
     }
 }

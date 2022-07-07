@@ -46,7 +46,7 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     }
 
     private void writeLocationMapToFile() {
-        try (PrintWriter locationWriter = new PrintWriter("/tmp/locations.txt")) {
+        try (PrintWriter locationWriter = new PrintWriter(TraceUtil.getAbsolutePath("locations.txt"))) {
             locationWriter.println("=== LOCATION MAP ===");
             List<Map.Entry<String, Integer>> locations = new ArrayList<>(TraceUtil.getLocationMap().entrySet());
             locations.sort(Map.Entry.comparingByValue());

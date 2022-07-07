@@ -26,7 +26,7 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     }
 
     private void analyzeUniqueTraces() {
-        try (PrintWriter uniqueWriter = new PrintWriter("/tmp/unique-traces.txt")) {
+        try (PrintWriter uniqueWriter = new PrintWriter(TraceUtil.getAbsolutePath("unique-traces.txt"))) {
             uniqueWriter.println("=== UNIQUE TRACES ===");
             List<Map.Entry<List<String>, Integer>> freqList = new ArrayList<>(getFrequencies().entrySet());
             freqList.sort(Map.Entry.comparingByValue());

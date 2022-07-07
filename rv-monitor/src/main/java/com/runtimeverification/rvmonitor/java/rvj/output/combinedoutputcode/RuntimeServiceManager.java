@@ -1,9 +1,9 @@
 package com.runtimeverification.rvmonitor.java.rvj.output.combinedoutputcode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.runtimeverification.rvmonitor.java.rt.util.TraceUtil;
 import com.runtimeverification.rvmonitor.java.rvj.Main;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeClassDef;
 import com.runtimeverification.rvmonitor.java.rvj.output.codedom.CodeCommentStmt;
@@ -179,7 +179,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         if (Main.options.collectAllMonitorSteps) {
             List<CodeExpr> args = new ArrayList<>();
             dumperStatements = getObserverStatements(fileType, writer, "dumpWriter",
-                    "InternalBehaviorDumper", "/tmp/internal.txt", "dumper", args);
+                    "InternalBehaviorDumper", TraceUtil.getAbsolutePath("internal.txt"), "dumper", args);
         }
 
         CodeStmtCollection tracerStatements = new CodeStmtCollection();
@@ -201,7 +201,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         args.add(CodeLiteralExpr.bool(Main.options.computeUniqueTraceStats));
         args.add(CodeLiteralExpr.bool(Main.options.storeEventLocationMapFile));
         tracerStatements = getObserverStatements(fileType, writer, "traceWriter",
-                observerType, String.valueOf(new File(Main.options.artifactsDir + "/traces.txt")), "tracer", args);
+                observerType, TraceUtil.getAbsolutePath("traces.txt"), "tracer", args);
         return tracerStatements;
     }
 
