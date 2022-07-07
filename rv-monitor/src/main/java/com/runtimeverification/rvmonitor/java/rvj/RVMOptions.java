@@ -107,7 +107,7 @@ public class RVMOptions {
     @Parameter(names="-artifactsDir",
             description = "Directory in which to store a .traces directory that, in turn, contains trace-related files",
             converter = JavaMOPOptions.FileConverter.class)
-    public File artifactsDir = new File(System.getProperty("user.dir"));
+    public File artifactsDir = new File(System.getProperty("java.io.tmpdir"));
 
     public boolean isJarFile;
 
