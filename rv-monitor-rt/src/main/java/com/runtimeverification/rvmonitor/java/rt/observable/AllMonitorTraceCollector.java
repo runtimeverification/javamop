@@ -16,6 +16,8 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     private boolean writeLocationMap;
 
     private Map<List<String>, Integer> frequencies;
+    
+    private PrintWriter locationMapWriter;
 
     public boolean isDoAnalysis() {
         return doAnalysis;
@@ -25,10 +27,12 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
         return Collections.unmodifiableMap(frequencies);
     }
 
-    public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap) {
+    public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap, 
+                                    PrintWriter locationMapWriter) {
         super(writer);
         this.doAnalysis = doAnalysis;
         this.writeLocationMap = writeLocationMap;
+        this.locationMapWriter = locationMapWriter;
     }
 
     @Override
@@ -46,17 +50,14 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     }
 
     private void writeLocationMapToFile() {
-        try (PrintWriter locationWriter = new PrintWriter(TraceUtil.getAbsolutePath("locations.txt"))) {
-            locationWriter.println("=== LOCATION MAP ===");
-            List<Map.Entry<String, Integer>> locations = new ArrayList<>(TraceUtil.getLocationMap().entrySet());
-            locations.sort(Map.Entry.comparingByValue());
-            for (Map.Entry<String, Integer> location : locations) {
-                locationWriter.println(location.getValue() + " " + location.getKey());
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-
+        locationMapWriter.println("=== LOCATION MAP ===");
+        List<Map.Entry<String, Integer>> locations = new ArrayList<>(TraceUtil.getLocationMap().entrySet());
+        locations.sort(Map.Entry.comparingByValue());
+        for (Map.Entry<String, Integer> location : locations) {
+            locationMapWriter.println(location.getValue() + " " + location.getKey());
         }
+        locationMapWriter.close();
+        locationMapWriter.flush();
     }
 
     private void processTracesWithoutAnalysis() {

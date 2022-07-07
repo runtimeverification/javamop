@@ -13,8 +13,12 @@ import java.util.Map;
 
 public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
 
-    public UniqueMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap) {
-        super(writer, doAnalysis, writeLocationMap);
+    private PrintWriter uniqueWriter;
+
+    public UniqueMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
+                                       PrintWriter locationWriter, PrintWriter uniqueWriter) {
+        super(writer, doAnalysis, writeLocationMap, locationWriter);
+        this.uniqueWriter = uniqueWriter;
     }
 
     @Override
@@ -26,27 +30,25 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     }
 
     private void analyzeUniqueTraces() {
-        try (PrintWriter uniqueWriter = new PrintWriter(TraceUtil.getAbsolutePath("unique-traces.txt"))) {
-            uniqueWriter.println("=== UNIQUE TRACES ===");
-            List<Map.Entry<List<String>, Integer>> freqList = new ArrayList<>(getFrequencies().entrySet());
-            freqList.sort(Map.Entry.comparingByValue());
-            List<Integer> sizes = new ArrayList<>();
-            for (Map.Entry<List<String>, Integer> entry : freqList) {
-                uniqueWriter.println(entry.getValue() + " " + entry.getKey());
-                sizes.add(entry.getKey().size());
-            }
-            DecimalFormat format = new DecimalFormat("0.00");
-            Collections.sort(sizes);
-            uniqueWriter.println("=== END UNIQUE TRACES ===");
-            uniqueWriter.println("Min Trace Frequency: " + freqList.get(0).getValue());
-            uniqueWriter.println("Max Trace Frequency: " + freqList.get(freqList.size() - 1).getValue());
-            uniqueWriter.println("Average Trace Frequency: " + format.format(getAverage(getFrequencies().values())));
-            uniqueWriter.println("Min Trace Size: " + sizes.get(0));
-            uniqueWriter.println("Max Trace Size: " + sizes.get(sizes.size() - 1));
-            uniqueWriter.println("Average Trace Size: " + format.format(getAverage(sizes)));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        uniqueWriter.println("=== UNIQUE TRACES ===");
+        List<Map.Entry<List<String>, Integer>> freqList = new ArrayList<>(getFrequencies().entrySet());
+        freqList.sort(Map.Entry.comparingByValue());
+        List<Integer> sizes = new ArrayList<>();
+        for (Map.Entry<List<String>, Integer> entry : freqList) {
+            uniqueWriter.println(entry.getValue() + " " + entry.getKey());
+            sizes.add(entry.getKey().size());
         }
+        DecimalFormat format = new DecimalFormat("0.00");
+        Collections.sort(sizes);
+        uniqueWriter.println("=== END UNIQUE TRACES ===");
+        uniqueWriter.println("Min Trace Frequency: " + freqList.get(0).getValue());
+        uniqueWriter.println("Max Trace Frequency: " + freqList.get(freqList.size() - 1).getValue());
+        uniqueWriter.println("Average Trace Frequency: " + format.format(getAverage(getFrequencies().values())));
+        uniqueWriter.println("Min Trace Size: " + sizes.get(0));
+        uniqueWriter.println("Max Trace Size: " + sizes.get(sizes.size() - 1));
+        uniqueWriter.println("Average Trace Size: " + format.format(getAverage(sizes)));
+        uniqueWriter.flush();
+        uniqueWriter.close();
     }
 
     private double getAverage(Collection<Integer> values) {
