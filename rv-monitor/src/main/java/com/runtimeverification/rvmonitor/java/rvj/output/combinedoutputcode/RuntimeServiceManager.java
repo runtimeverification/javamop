@@ -119,7 +119,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
 
     private CodeStmtCollection createObserverRegisterCode() {
         CodeCommentStmt comment = new CodeCommentStmt("Register observers");
-        CodeTryCatchFinallyStmt observerCode = getObserverCode();
+        CodeStmt observerCode = getObserverCode();
         CodeExprStmt shutdownHookCode = getShutDownHookCode();
         CodeStmtCollection init = new CodeStmtCollection();
         init.add(comment);
@@ -160,10 +160,15 @@ public class RuntimeServiceManager implements ICodeGenerator {
         return new CodeExprStmt(addShutdownHook);
     }
 
-    private CodeTryCatchFinallyStmt getObserverCode() {
+    private CodeStmt getObserverCode() {
         CodeType fileType = new CodeType("File");
         CodeStmtCollection tryBlock = getTryBlock(fileType);
-        CodeTryCatchFinallyStmt observerCode = new CodeTryCatchFinallyStmt(tryBlock, null, getCatchBlock(fileType));
+        CodeStmt observerCode;
+        if (!tryBlock.getStmts().isEmpty()) {
+            observerCode = new CodeTryCatchFinallyStmt(tryBlock, null, getCatchBlock(fileType));
+        } else {
+            observerCode = CodeStmt.fromLegacy("");
+        }
         return observerCode;
     }
 
