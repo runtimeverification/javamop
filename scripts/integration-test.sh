@@ -1,5 +1,12 @@
 SCRIPT_DIR=$( cd $( dirname $0 ) && pwd )
 
+emop_path=$1
+
+if [[ -n ${emop_path} ]]; then
+    dir=${emop_path}/scripts
+else
+    dir=~/projects/emop/scripts
+fi
 
 function check_status() {
     local myvar=$1
@@ -36,7 +43,7 @@ check_status "${mop_test_status}" " on mop's unit tests"
 (
     rm -rf ${HOME}/.m2/repository/javamop
     rm -rf ${SCRIPT_DIR}/agents
-    cd ~/projects/emop/scripts
+    cd ${dir}
     git checkout -f master
     git clean -ffxd
     bash make-agent-new.sh props/ ${SCRIPT_DIR}/agents quiet
@@ -59,7 +66,7 @@ echo ${error_status}
     cd /tmp/commons-fileupload
     git clean -ffxd
     git checkout -f 55dc6fe4d7
-    bash ~/projects/emop/scripts/mop-pom-modify/modify-project.sh `pwd` javamop
+    bash ${dir}/mop-pom-modify/modify-project.sh `pwd` javamop
     export RVMLOGGINGLEVEL=UNIQUE
     mvn test
 ) &> /tmp/fileupload-outcome.txt
