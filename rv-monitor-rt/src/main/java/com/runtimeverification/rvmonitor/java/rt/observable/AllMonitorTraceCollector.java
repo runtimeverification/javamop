@@ -1,33 +1,24 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
-import com.runtimeverification.rvmonitor.java.rt.util.TraceUtil;
-
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.runtimeverification.rvmonitor.java.rt.util.TraceUtil;
 
 public class AllMonitorTraceCollector extends MonitorTraceCollector {
 
     private boolean doAnalysis;
     private boolean writeLocationMap;
 
-    private Map<List<String>, Integer> frequencies;
-    
     private PrintWriter locationMapWriter;
 
     public boolean isDoAnalysis() {
         return doAnalysis;
     }
 
-    public Map<List<String>, Integer> getFrequencies() {
-        return Collections.unmodifiableMap(frequencies);
-    }
-
-    public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap, 
+    public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
                                     PrintWriter locationMapWriter) {
         super(writer);
         this.doAnalysis = doAnalysis;
@@ -61,25 +52,13 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     }
 
     private void processTracesWithoutAnalysis() {
-        for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
-            this.writer.println(entry.getKey() + entry.getValue());
-        }
         this.writer.println("=== END OF TRACE ===");
-        this.writer.println("Total number of traces: " + traceDB.size());
+        this.writer.println("Total number of traces: " + traceDB.getSize());
     }
 
     private void processTracesWithAnalysis() {
-        frequencies = new HashMap<>();
-        for(Map.Entry<String, List<String>> entry : traceDB.entrySet()) {
-            this.writer.println(entry.getKey() + entry.getValue());
-            if (frequencies.get(entry.getValue()) == null) {
-                frequencies.put(entry.getValue(), 1);
-            } else {
-                frequencies.put(entry.getValue(), frequencies.get(entry.getValue()) + 1);
-            }
-        }
         this.writer.println("=== END OF TRACE ===");
-        this.writer.println("Total number of traces: " + traceDB.size());
-        this.writer.println("Total number of unique traces: " + frequencies.keySet().size());
+        this.writer.println("Total number of traces: " + traceDB.getSize());
+        this.writer.println("Total number of unique traces: " + traceDB.getUniqueTraceCount());
     }
 }

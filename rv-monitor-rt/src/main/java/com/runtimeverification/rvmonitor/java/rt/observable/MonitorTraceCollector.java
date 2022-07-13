@@ -1,5 +1,7 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
+import java.io.PrintWriter;
+
 import com.runtimeverification.rvmonitor.java.rt.ref.CachedWeakReference;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractIndexingTree;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractMonitor;
@@ -8,22 +10,17 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractPartitionedMo
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
-
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.runtimeverification.rvmonitor.java.rt.util.TrieNode;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
     protected final PrintWriter writer;
 
-    protected final Map<String, List<String>> traceDB;
+    protected final TrieNode traceDB;
 
     public MonitorTraceCollector(PrintWriter writer) {
         this.writer = writer;
-        this.traceDB = new HashMap<>();
+        this.traceDB = new TrieNode();
     }
 
     @Override
@@ -52,14 +49,6 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
     @Override
     public void onCompleted() {
 
-    }
-
-    private double getAverage(Collection<Integer> values) {
-        Double sum = 0.0;
-        for (Integer value : values) {
-            sum += value;
-        }
-        return sum / values.size();
     }
 
     // TODO: We do not use any of the following methods; what's the runtime cost of keeping them?
