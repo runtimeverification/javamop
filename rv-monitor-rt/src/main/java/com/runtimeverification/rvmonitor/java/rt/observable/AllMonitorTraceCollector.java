@@ -2,6 +2,7 @@ package com.runtimeverification.rvmonitor.java.rt.observable;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -53,12 +54,12 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
 
     private void processTracesWithoutAnalysis() {
         this.writer.println("=== END OF TRACE ===");
-        this.writer.println("Total number of traces: " + traceDB.getSize());
+        this.writer.println("Total number of traces: " + traceDB.size());
     }
 
     private void processTracesWithAnalysis() {
         this.writer.println("=== END OF TRACE ===");
-        this.writer.println("Total number of traces: " + traceDB.getSize());
-        this.writer.println("Total number of unique traces: " + traceDB.getUniqueTraceCount());
+        this.writer.println("Total number of traces: " + traceDB.size());
+        this.writer.println("Total number of unique traces: " + new HashSet<>(traceDB.values()).size());
     }
 }

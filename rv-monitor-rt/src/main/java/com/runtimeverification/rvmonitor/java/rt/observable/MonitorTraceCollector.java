@@ -1,6 +1,7 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import com.runtimeverification.rvmonitor.java.rt.ref.CachedWeakReference;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractIndexingTree;
@@ -11,16 +12,17 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
 import com.runtimeverification.rvmonitor.java.rt.util.TrieNode;
+import org.apache.commons.collections4.trie.PatriciaTrie;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
     protected final PrintWriter writer;
 
-    protected final TrieNode traceDB;
+    protected final PatriciaTrie<List<String>> traceDB;
 
     public MonitorTraceCollector(PrintWriter writer) {
         this.writer = writer;
-        this.traceDB = new TrieNode();
+        this.traceDB = new PatriciaTrie<>();
     }
 
     @Override
