@@ -35,6 +35,8 @@ public class TrieNode {
 
     boolean uniqueComputed;
 
+    StringBuilder builder;
+
     public int getSize() {
         return size;
     }
@@ -54,6 +56,7 @@ public class TrieNode {
         minLength = 1;
         uniqueDepths = new ArrayList<>();
         uniqueFrequencies = new ArrayList<>();
+        builder = new StringBuilder();
     }
 
     public TrieNode() {
@@ -129,8 +132,7 @@ public class TrieNode {
         }
     }
 
-    @Override
-    public String toString() {
+    public String print() {
         StringBuilder b = new StringBuilder();
         print(rootNode, b, 1);
         return b.toString();
@@ -152,26 +154,26 @@ public class TrieNode {
 
     public int getUniqueTraceCount() {
         uniqueComputed = true;
-        return computeUnique(rootNode, 0);
+        return computeUnique(rootNode, 0, builder, new ArrayList<>());
     }
 
     public double averageTraceLength() {
         if (!uniqueComputed) {
-            computeUnique(rootNode, 0);
+            computeUnique(rootNode, 0, builder, new ArrayList<>());
         }
         return average(uniqueDepths);
     }
 
     public double averageTraceFrequencies() {
         if (!uniqueComputed) {
-            computeUnique(rootNode, 0);
+            computeUnique(rootNode, 0, builder, new ArrayList<>());
         }
         return average(uniqueFrequencies);
     }
 
     public int maxTraceFrequency() {
         if (!uniqueComputed) {
-            computeUnique(rootNode, 0);
+            computeUnique(rootNode, 0, builder, new ArrayList<>());
         }
         Collections.sort(uniqueFrequencies);
         return uniqueFrequencies.get(uniqueFrequencies.size() - 1);
@@ -185,11 +187,12 @@ public class TrieNode {
         return sum / uniqueDepths.size();
     }
 
-    private int computeUnique(TrieNode root, int depth) {
+    private int computeUnique(TrieNode root, int depth, StringBuilder builder, ArrayList<String> trace) {
         if (!root.monitors.isEmpty()) {
             uniqueTraces++;
             uniqueDepths.add(depth);
             uniqueFrequencies.add(root.monitors.size());
+            builder.append(root.monitors.size()).append(" ").append(trace).append("\n");
         }
         if (root.children.isEmpty()) {
             return uniqueTraces;
@@ -198,31 +201,17 @@ public class TrieNode {
         stack.addAll(root.children.values());
         while (!stack.isEmpty()) {
             TrieNode node = stack.pop();
-            computeUnique(node, depth + 1);
+            ArrayList<String> subtrace = new ArrayList<>(trace);
+            subtrace.add(node.currentEvent);
+            computeUnique(node, depth + 1, builder, subtrace);
         }
         return uniqueTraces;
     }
 
     public String printWords() {
-        StringBuilder builder = new StringBuilder();
-        getWords(rootNode, builder, new ArrayList<>());
+        if (!uniqueComputed) {
+            computeUnique(rootNode, 0, builder, new ArrayList<>());
+        }
         return builder.toString();
-    }
-
-    private void getWords(TrieNode root, StringBuilder builder, ArrayList<String> trace) {
-        if (!root.monitors.isEmpty()) {
-            builder.append(root.monitors.size()).append(" ").append(trace).append("\n");
-        }
-        if (root.children.isEmpty()) {
-            return;
-        }
-        Stack<TrieNode> stack = new Stack<>();
-        stack.addAll(root.children.values());
-        while (!stack.isEmpty()) {
-            TrieNode node = stack.pop();
-            ArrayList<String> subtrace = new ArrayList<>(trace);
-            subtrace.add(node.currentEvent);
-            getWords(node, builder, subtrace);
-        }
     }
 }
