@@ -138,9 +138,9 @@ public final class SeparateAgentGenerator {
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
-            if (!extractJar(verbose, agentDir, weaverJarName)) return;
-            if (!extractJar(verbose, agentDir, rvmRTJarName)) return;
-            if (!extractJar(verbose, agentDir, collectionsJarName)) return;
+            if (extractJar(verbose, agentDir, weaverJarName)) return;
+            if (extractJar(verbose, agentDir, rvmRTJarName)) return;
+            if (extractJar(verbose, agentDir, collectionsJarName)) return;
 
             //remove extracted jars to make agent lighter weight
             deleteFile(actualWeaverFile);
