@@ -61,6 +61,8 @@ public final class SeparateAgentGenerator {
 
         final String baseClasspath = getClasspath();
 
+        System.out.println("EEEEE: " + baseClasspath);
+
         // Step 1: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
         agentDir.deleteOnExit();
@@ -120,7 +122,7 @@ public final class SeparateAgentGenerator {
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
                 collectionsJarName = getJarName(rvMonitorRTJarPath);
             } else {
-                System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
+                throw new IOException("(missing jars) Could not find aspectjweaver or rvmonitorrt or commons-collections"
                         + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
             }
 
