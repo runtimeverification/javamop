@@ -168,9 +168,9 @@ public final class SeparateAgentGenerator {
     private static boolean extractJar(boolean verbose, File agentDir, String weaverJarName) throws IOException {
         if (runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName) != 0) {
             System.err.println("(jar) Failed to extract jar: " + weaverJarName);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     private static void deleteFile(File file) {
