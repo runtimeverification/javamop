@@ -109,13 +109,16 @@ public final class SeparateAgentGenerator {
             //running "mvn package", or similar, would set this java classpath appropriately
             String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
             String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
+            String collectionsJarPath = getJarLocation(baseClasspath, "commons-collections4");
 
             //get the actual jar name from the absolute path
             String weaverJarName = null;
             String rvmRTJarName = null;
-            if (rvMonitorRTJarPath != null && weaverJarPath != null) {
+            String collectionsJarName = null;
+            if (rvMonitorRTJarPath != null && weaverJarPath != null && collectionsJarPath != null) {
                 weaverJarName = getJarName(weaverJarPath);
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
+                collectionsJarName = getJarName(rvMonitorRTJarPath);
             } else {
                 System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
                         + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
@@ -124,35 +127,23 @@ public final class SeparateAgentGenerator {
             //make references so that these files can be referred to later
             File actualWeaverFile = new File(agentDir, weaverJarName);
             File actualRTFile = new File(agentDir, rvmRTJarName);
+            File actualCollectionsFile = new File(agentDir, collectionsJarName);
 
             // copy in the needed jar files
             copyFile(new File(weaverJarPath), actualWeaverFile);
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
+            copyFile(new File(collectionsJarPath), actualCollectionsFile);
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
-            int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the AspectJ weaver jar");
-                return;
-            }
-
-            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
-                return;
-            }
+            if (!extractJar(verbose, agentDir, weaverJarName)) return;
+            if (!extractJar(verbose, agentDir, rvmRTJarName)) return;
+            if (!extractJar(verbose, agentDir, collectionsJarName)) return;
 
             //remove extracted jars to make agent lighter weight
-            if (!actualWeaverFile.delete()) {
-                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
-                        + "have a bigger size than normal");
-            }
-
-            if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
-                        + " have a bigger size than normal");
-            }
+            deleteFile(actualWeaverFile);
+            deleteFile(actualRTFile);
+            deleteFile(actualCollectionsFile);
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
@@ -170,6 +161,21 @@ public final class SeparateAgentGenerator {
 
         System.out.println(aspectname + ".jar is generated.");
 
+    }
+
+    private static boolean extractJar(boolean verbose, File agentDir, String weaverJarName) throws IOException {
+        if (runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName) != 0) {
+            System.err.println("(jar) Failed to extract jar: " + weaverJarName);
+            return false;
+        }
+        return true;
+    }
+
+    private static void deleteFile(File file) {
+        if (!file.delete()) {
+            System.err.println("(delete) Failed to delete jar; generated jar will "
+                    + "have a bigger size than normal: " + file.getAbsolutePath());
+        }
     }
 
 
@@ -269,11 +275,8 @@ public final class SeparateAgentGenerator {
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
-            int extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", weaverJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the AspectJ weaver jar");
-                return;
-            }
+            if (extractJar(verbose, agentDir, weaverJarName)) return;
+            int extractReturn;
 
             extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
             if (extractReturn != 0) {
