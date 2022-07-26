@@ -46,16 +46,10 @@ public final class SeparateAgentGenerator {
     public static void generate(final File outputDir, final String aspectname, File agentAspect,
                                 File classDir, boolean verbose) throws IOException {
 
-        if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
-            System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
-            return;
-        }
-        if (!classOnClasspath("org.aspectj.tools.ajc.Main")) {
-            System.err.println("aspectjtools.jar is missing from the classpath. Halting.");
-            return;
-        }
-        if (!classOnClasspath("org.aspectj.weaver.Advice")) {
-            System.err.println("aspectjweaver.jar is missing from the classpath. Halting.");
+        if (!isOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl", "aspectjrt.jar") ||
+            !isOnClasspath("org.aspectj.tools.ajc.Main", "aspectjtools.jar") ||
+            !isOnClasspath("org.aspectj.weaver.Advice", "aspectjweaver.jar") ||
+            !isOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie", "commons-collections.jar")) {
             return;
         }
 
@@ -63,7 +57,7 @@ public final class SeparateAgentGenerator {
 
         // Step 1: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
-//        agentDir.deleteOnExit();
+        agentDir.deleteOnExit();
 
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
@@ -141,9 +135,9 @@ public final class SeparateAgentGenerator {
             if (extractJar(verbose, agentDir, collectionsJarName)) return;
 
             //remove extracted jars to make agent lighter weight
-//            deleteFile(actualWeaverFile);
-//            deleteFile(actualRTFile);
-//            deleteFile(actualCollectionsFile);
+            deleteFile(actualWeaverFile);
+            deleteFile(actualRTFile);
+            deleteFile(actualCollectionsFile);
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
@@ -178,6 +172,14 @@ public final class SeparateAgentGenerator {
         }
     }
 
+    private static boolean isOnClasspath(String klas, String jarName) {
+        if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
+            System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * Generate a JavaMOP agent. If {@code baseAspect} is null, a default base aspect will be used.
@@ -190,21 +192,10 @@ public final class SeparateAgentGenerator {
     public static void eMOPGenerate(final File outputDir, final String aspectname, File emopAspectDir,
                                 File classDir, boolean verbose) throws IOException {
 
-        if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
-            System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
-            return;
-        }
-        if (!classOnClasspath("org.aspectj.tools.ajc.Main")) {
-            System.err.println("aspectjtools.jar is missing from the classpath. Halting.");
-            return;
-        }
-        if (!classOnClasspath("org.aspectj.weaver.Advice")) {
-            System.err.println("aspectjweaver.jar is missing from the classpath. Halting.");
-            return;
-        }
-
-        if (!classOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie")) {
-            System.err.println("commons-collections.jar is missing from the classpath. Halting.");
+        if (!isOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl", "aspectjrt.jar") ||
+            !isOnClasspath("org.aspectj.tools.ajc.Main", "aspectjtools.jar") ||
+            !isOnClasspath("org.aspectj.weaver.Advice", "aspectjweaver.jar") ||
+            !isOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie", "commons-collections.jar")) {
             return;
         }
 
@@ -286,36 +277,13 @@ public final class SeparateAgentGenerator {
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
             if (extractJar(verbose, agentDir, weaverJarName)) return;
-            int extractReturn;
-
-
-            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", collectionsJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the collections jar");
-                return;
-            }
-
-            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
-            if (extractReturn != 0) {
-                System.err.println("(jar) Failed to extract the rvmonitorrt jar");
-                return;
-            }
+            if (extractJar(verbose, agentDir, rvmRTJarName)) return;
+            if (extractJar(verbose, agentDir, collectionsJarName)) return;
 
             // remove extracted jars to make agent lighter weight
-            if (!actualWeaverFile.delete()) {
-                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
-                        + "have a bigger size than normal");
-            }
-
-            if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
-                        + " have a bigger size than normal");
-            }
-
-            if (!actualCollectionsFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
-                                   + " have a bigger size than normal");
-            }
+            deleteFile(actualWeaverFile);
+            deleteFile(actualRTFile);
+            deleteFile(actualCollectionsFile);
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
