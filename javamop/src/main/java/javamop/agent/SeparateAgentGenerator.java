@@ -206,15 +206,13 @@ public final class SeparateAgentGenerator {
         if (!classOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie")) {
             System.err.println("commons-collections.jar is missing from the classpath. Halting.");
             return;
-        } else {
-            System.err.println("AAAAAAA");
         }
 
         final String baseClasspath = getClasspath();
 
         // Step 1: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
-//        agentDir.deleteOnExit();
+        agentDir.deleteOnExit();
 
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
@@ -303,18 +301,21 @@ public final class SeparateAgentGenerator {
                 return;
             }
 
+            // remove extracted jars to make agent lighter weight
+            if (!actualWeaverFile.delete()) {
+                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
+                        + "have a bigger size than normal");
+            }
 
-            System.err.println("EEEEEE");
-            //remove extracted jars to make agent lighter weight
-//            if (!actualWeaverFile.delete()) {
-//                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
-//                        + "have a bigger size than normal");
-//            }
-//
-//            if (!actualRTFile.delete()) {
-//                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
-//                        + " have a bigger size than normal");
-//            }
+            if (!actualRTFile.delete()) {
+                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
+                        + " have a bigger size than normal");
+            }
+
+            if (!actualCollectionsFile.delete()) {
+                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
+                                   + " have a bigger size than normal");
+            }
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
