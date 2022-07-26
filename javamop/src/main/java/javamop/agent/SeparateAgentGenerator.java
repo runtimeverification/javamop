@@ -61,11 +61,9 @@ public final class SeparateAgentGenerator {
 
         final String baseClasspath = getClasspath();
 
-        System.out.println("EEEEE: " + baseClasspath);
-
         // Step 1: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
-        agentDir.deleteOnExit();
+//        agentDir.deleteOnExit();
 
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
@@ -143,9 +141,9 @@ public final class SeparateAgentGenerator {
             if (extractJar(verbose, agentDir, collectionsJarName)) return;
 
             //remove extracted jars to make agent lighter weight
-            deleteFile(actualWeaverFile);
-            deleteFile(actualRTFile);
-            deleteFile(actualCollectionsFile);
+//            deleteFile(actualWeaverFile);
+//            deleteFile(actualRTFile);
+//            deleteFile(actualCollectionsFile);
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
@@ -205,11 +203,18 @@ public final class SeparateAgentGenerator {
             return;
         }
 
+        if (!classOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie")) {
+            System.err.println("commons-collections.jar is missing from the classpath. Halting.");
+            return;
+        } else {
+            System.err.println("AAAAAAA");
+        }
+
         final String baseClasspath = getClasspath();
 
         // Step 1: Prepare the directory from which the agent will be built
         final File agentDir = Files.createTempDirectory(outputDir.toPath(), "agent-jar").toFile();
-        agentDir.deleteOnExit();
+//        agentDir.deleteOnExit();
 
 
         // Step 2: Compile the generated AJC File (allMonitorAspect.aj)
@@ -255,13 +260,16 @@ public final class SeparateAgentGenerator {
             //running "mvn package", or similar, would set this java classpath appropriately
             String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
             String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
+            String collectionsJarPath = getJarLocation(baseClasspath, "commons-collections4");
 
             //get the actual jar name from the absolute path
             String weaverJarName = null;
             String rvmRTJarName = null;
+            String collectionsJarName = null;
             if (rvMonitorRTJarPath != null && weaverJarPath != null) {
                 weaverJarName = getJarName(weaverJarPath);
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
+                collectionsJarName = getJarName(collectionsJarPath);
             } else {
                 System.err.println("(missing jars) Could not find aspectjweaver or rvmonitorrt "
                         + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
@@ -270,15 +278,24 @@ public final class SeparateAgentGenerator {
             //make references so that these files can be referred to later
             File actualWeaverFile = new File(agentDir, weaverJarName);
             File actualRTFile = new File(agentDir, rvmRTJarName);
+            File actualCollectionsFile = new File(agentDir, collectionsJarName);
 
             // copy in the needed jar files
             copyFile(new File(weaverJarPath), actualWeaverFile);
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
+            copyFile(new File(collectionsJarPath), actualCollectionsFile);
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
             if (extractJar(verbose, agentDir, weaverJarName)) return;
             int extractReturn;
+
+
+            extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", collectionsJarName);
+            if (extractReturn != 0) {
+                System.err.println("(jar) Failed to extract the collections jar");
+                return;
+            }
 
             extractReturn = runCommandDir(agentDir, verbose, "jar", "xvf", rvmRTJarName);
             if (extractReturn != 0) {
@@ -286,16 +303,18 @@ public final class SeparateAgentGenerator {
                 return;
             }
 
-            //remove extracted jars to make agent lighter weight
-            if (!actualWeaverFile.delete()) {
-                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
-                        + "have a bigger size than normal");
-            }
 
-            if (!actualRTFile.delete()) {
-                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
-                        + " have a bigger size than normal");
-            }
+            System.err.println("EEEEEE");
+            //remove extracted jars to make agent lighter weight
+//            if (!actualWeaverFile.delete()) {
+//                System.err.println("(delete) Failed to delete weaver jar; generated jar will "
+//                        + "have a bigger size than normal");
+//            }
+//
+//            if (!actualRTFile.delete()) {
+//                System.err.println("(delete) Failed to delete rvmonitorrt jar; generated jar will"
+//                        + " have a bigger size than normal");
+//            }
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
@@ -530,8 +549,6 @@ public final class SeparateAgentGenerator {
             writer.println("    !within(javax..*) &&");
             writer.println("    !within(com.sun..*) &&");
             writer.println("    !within(org.dacapo.harness..*) &&");
-            writer.println("    !within(org.apache.commons..*) &&");
-            writer.println("    !within(org.apache.geronimo..*) &&");
             writer.println("    !within(net.sf.cglib..*) &&");
             writer.println("    !within(mop..*) &&");
             writer.println("    !within(javamoprt..*) &&");
