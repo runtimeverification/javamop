@@ -188,8 +188,8 @@ public final class SeparateAgentGenerator {
     }
 
     private static boolean isOnClasspath(String klas, String jarName) {
-        if (!classOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl")) {
-            System.err.println("aspectjrt.jar is missing from the classpath. Halting.");
+        if (!classOnClasspath(klas)) {
+            System.err.println(jarName + " is missing from the classpath. Halting.");
             return false;
         }
         return true;
