@@ -11,7 +11,6 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractPartitionedMo
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
-import com.runtimeverification.rvmonitor.java.rt.util.TrieNode;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver{
