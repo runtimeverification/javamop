@@ -1,7 +1,9 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.runtimeverification.rvmonitor.java.rt.ref.CachedWeakReference;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractIndexingTree;
@@ -11,22 +13,35 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.AbstractPartitionedMo
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
+import com.runtimeverification.rvmonitor.java.rt.util.TraceDB;
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
     protected final PrintWriter writer;
 
-    protected final PatriciaTrie<List<String>> traceDB;
+    protected final TraceDB traceDB;
+
+    protected final Set<String> monitors;
 
     public MonitorTraceCollector(PrintWriter writer) {
         this.writer = writer;
-        this.traceDB = new PatriciaTrie<>();
+        this.traceDB = new TraceDB();
+        this.monitors = new HashSet<>();
+        traceDB.createTable();
     }
 
     @Override
     public void onMonitorTransitioned(AbstractMonitor monitor) {
-        traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
+        insertOrUpdate(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace.toString());
+    }
+
+    private void insertOrUpdate(String monitorID, String trace) {
+        if (monitors.add(monitorID)) {
+            traceDB.put(monitorID, trace);
+        } else {
+            traceDB.update(monitorID, trace);
+        }
     }
 
     @Override
@@ -34,7 +49,7 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
         for (int i = 0; i < set.getSize(); ++i) {
             // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
             AbstractMonitor monitor = (AbstractMonitor) set.get(i);
-            traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
+            insertOrUpdate(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace.toString());
         }
     }
 
@@ -43,7 +58,7 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
         for (AbstractPartitionedMonitorSet<TMonitor>.MonitorIterator i = set.monitorIterator(true); i.moveNext(); ) {
             // AbstractMonitor is the only parent of all monitor types and it implements IMonitor
             AbstractMonitor monitor = (AbstractMonitor) i.getMonitor();
-            traceDB.put(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace);
+            insertOrUpdate(monitor.getClass().getSimpleName() + "#" + monitor.monitorid, monitor.trace.toString());
         }
     }
 

@@ -27,20 +27,19 @@ public class TraceDB {
         this.connection = getConnection();
     }
 
-    public void put(String monitorID, String trace, int count) {
+    public void put(String monitorID, String trace) {
         try {
-            insert(monitorID, new SerialClob(trace.toCharArray()), count);
+            insert(monitorID, new SerialClob(trace.toCharArray()));
         } catch (SQLException e) {
             printSQLException(e);
         }
     }
 
-    private void insert(String monitorID, Clob trace, int count) {
-        final String INSERT_TRACE_SQL = "INSERT INTO traces (monitorID, trace, count) VALUES (?, ?, ?);";
+    private void insert(String monitorID, Clob trace) {
+        final String INSERT_TRACE_SQL = "INSERT INTO traces (monitorID, trace) VALUES (?, ?);";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_TRACE_SQL)) {
             preparedStatement.setString(1, monitorID);
             preparedStatement.setClob(2, trace);
-            preparedStatement.setInt(3, count);
             System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -48,12 +47,11 @@ public class TraceDB {
         }
     }
 
-    public void update(String monitorID, String trace, int count) {
-        final String UPDATE_TRACE_SQL = "update users set trace = ?, count = ? where id = ?;";
+    public void update(String monitorID, String trace) {
+        final String UPDATE_TRACE_SQL = "update users set trace = ? where id = ?;";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE_TRACE_SQL)){
             preparedStatement.setClob(1, new SerialClob(trace.toCharArray()));
-            preparedStatement.setInt(2, count);
-            preparedStatement.setString(3, monitorID);
+            preparedStatement.setString(2, monitorID);
             System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -73,8 +71,7 @@ public class TraceDB {
     }
 
     public void createTable() {
-        final String createTableSQL = "create table traces (\r\n" + "  monitorID  varchar(150) primary key,\r\n" +
-                "  trace clob(10k),\r\n" + "  count int\r\n" + "  );";
+        final String createTableSQL = "create table traces (monitorID  varchar(150) primary key, trace clob(10k));";
         System.out.println(createTableSQL);
         try (Statement statement = getConnection().createStatement()) {
             statement.execute(createTableSQL);
