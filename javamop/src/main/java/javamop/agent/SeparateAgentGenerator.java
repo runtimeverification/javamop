@@ -48,7 +48,8 @@ public final class SeparateAgentGenerator {
         if (!isOnClasspath("org.aspectj.runtime.reflect.JoinPointImpl", "aspectjrt.jar") ||
             !isOnClasspath("org.aspectj.tools.ajc.Main", "aspectjtools.jar") ||
             !isOnClasspath("org.aspectj.weaver.Advice", "aspectjweaver.jar") ||
-            !isOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie", "commons-collections.jar")) {
+            !isOnClasspath("org.apache.commons.collections4.trie.PatriciaTrie", "commons-collections.jar") ||
+            !isOnClasspath("org.h2.tools.Csv", "h2.jar")) {
             return;
         }
 
@@ -110,15 +111,18 @@ public final class SeparateAgentGenerator {
             String weaverJarPath = getJarLocation(baseClasspath, "aspectjweaver");
             String rvMonitorRTJarPath = getJarLocation(baseClasspath, "rv-monitor-rt");
             String collectionsJarPath = getJarLocation(baseClasspath, "commons-collections4");
+            String h2JarPath = getJarLocation(baseClasspath, "h2");
 
             //get the actual jar name from the absolute path
             String weaverJarName = null;
             String rvmRTJarName = null;
             String collectionsJarName = null;
+            String h2JarName = null;
             if (rvMonitorRTJarPath != null && weaverJarPath != null && collectionsJarPath != null) {
                 weaverJarName = getJarName(weaverJarPath);
                 rvmRTJarName = getJarName(rvMonitorRTJarPath);
                 collectionsJarName = getJarName(collectionsJarPath);
+                h2JarName = getJarName(h2JarPath);
             } else {
                 throw new IOException("(missing jars) Could not find aspectjweaver or rvmonitorrt or commons-collections"
                                       + "in the \"java.class.path\" property. Did you run \"mvn package\"? ");
@@ -128,22 +132,26 @@ public final class SeparateAgentGenerator {
             File actualWeaverFile = new File(agentDir, weaverJarName);
             File actualRTFile = new File(agentDir, rvmRTJarName);
             File actualCollectionsFile = new File(agentDir, collectionsJarName);
+            File actualH2File = new File(agentDir, h2JarName);
 
             // copy in the needed jar files
             copyFile(new File(weaverJarPath), actualWeaverFile);
             copyFile(new File(rvMonitorRTJarPath), actualRTFile);
             copyFile(new File(collectionsJarPath), actualCollectionsFile);
+            copyFile(new File(h2JarPath), actualH2File);
 
             //extract aspectjweaver.jar and rvmonitorrt.jar (since their content will
             //be packaged with the agent.jar)
             if (extractJar(verbose, agentDir, weaverJarName)) return;
             if (extractJar(verbose, agentDir, rvmRTJarName)) return;
             if (extractJar(verbose, agentDir, collectionsJarName)) return;
+            if (extractJar(verbose, agentDir, h2JarName)) return;
 
             //remove extracted jars to make agent lighter weight
             deleteFile(actualWeaverFile);
             deleteFile(actualRTFile);
             deleteFile(actualCollectionsFile);
+            deleteFile(actualH2File);
         }
 
         // # Step 4: copy in the correct MANIFEST FILE
