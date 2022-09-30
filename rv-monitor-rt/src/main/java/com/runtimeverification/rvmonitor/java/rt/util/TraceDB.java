@@ -18,7 +18,7 @@ import org.h2.tools.Csv;
 public class TraceDB {
 
     private Connection connection;
-    private String jdbcURL = "jdbc:h2:/tmp/tracedb";
+    private String jdbcURL = "jdbc:h2:/tmp/tracedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
     private String jdbcUsername = "tdb";
     private String jdbcPassword = "";
 
@@ -27,7 +27,7 @@ public class TraceDB {
     }
 
     public TraceDB(String dbFilePath) {
-        this.jdbcURL =  "jdbc:h2:" + dbFilePath;
+        this.jdbcURL =  "jdbc:h2:" + dbFilePath + ";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
         this.connection = getConnection();
     }
 
@@ -44,7 +44,6 @@ public class TraceDB {
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_TRACE_SQL)) {
             preparedStatement.setString(1, monitorID);
             preparedStatement.setClob(2, trace);
-            System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             printSQLException(e);
@@ -52,11 +51,10 @@ public class TraceDB {
     }
 
     public void update(String monitorID, String trace) {
-        final String UPDATE_TRACE_SQL = "update users set trace = ? where id = ?;";
+        final String UPDATE_TRACE_SQL = "update traces set trace = ? where monitorID = ?;";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE_TRACE_SQL)){
             preparedStatement.setClob(1, new SerialClob(trace.toCharArray()));
             preparedStatement.setString(2, monitorID);
-            System.out.println(preparedStatement);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,7 +77,7 @@ public class TraceDB {
 
     public int uniqueTraces() {
         int count = -1;
-        final String TRACE_QUERY = "select count(distinct(traces)) from traces";
+        final String TRACE_QUERY = "select count(distinct(trace)) from traces";
         try (Statement statement = getConnection().createStatement()) {
             ResultSet rs = statement.executeQuery(TRACE_QUERY);
             if (rs.next()) {
@@ -94,7 +92,6 @@ public class TraceDB {
     public void dump(String csvDir) {
         final String SELECT_QUERY = "select * from traces";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(SELECT_QUERY)){
-            System.out.println(preparedStatement);
             ResultSet rs = preparedStatement.executeQuery();
             new Csv().write(csvDir, rs, null);
         } catch (SQLException e) {
@@ -103,8 +100,7 @@ public class TraceDB {
     }
 
     public void createTable() {
-        final String createTableSQL = "create table traces (monitorID  varchar(150) primary key, trace clob(10k));";
-        System.out.println(createTableSQL);
+        final String createTableSQL = "create table traces (monitorID  varchar(150) primary key, trace clob);";
         try (Statement statement = getConnection().createStatement()) {
             statement.execute(createTableSQL);
         } catch (SQLException e) {
@@ -126,7 +122,7 @@ public class TraceDB {
 
     public Map<String, Integer> getTraceFrequencies() {
         Map<String, Integer> traceFrequency = new HashMap<>();
-        final String FREQUENCY_QUERY = "select traces, count(*) from users group by traces";
+        final String FREQUENCY_QUERY = "select trace, count(*) from traces group by trace";
         try(Statement statement = getConnection().createStatement()) {
             ResultSet rs = statement.executeQuery(FREQUENCY_QUERY);
             while (rs.next()) {

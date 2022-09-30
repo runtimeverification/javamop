@@ -413,6 +413,7 @@ public final class SeparateAgentGenerator {
             writer.println("    !within(java..*) &&");
             writer.println("    !within(javax..*) &&");
             writer.println("    !within(com.sun..*) &&");
+            writer.println("    !within(org.h2..*) &&");
             writer.println("    !within(org.dacapo.harness..*) &&");
             writer.println("    !within(net.sf.cglib..*) &&");
             writer.println("    !within(mop..*) &&");
