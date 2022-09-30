@@ -7,8 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
-import org.apache.commons.collections4.trie.PatriciaTrie;
+import java.util.Map;
 
 public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
 
@@ -31,15 +30,10 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
         }
     }
 
-    private String getFrequencyMap(PatriciaTrie<List<String>> trie) {
+    private String getFrequencyMap(Map<String, Integer> traceFrequencyMap) {
         StringBuilder builder = new StringBuilder();
-        Collection<List<String>> values = trie.values();
-        HashSet<List<String>> set = new HashSet<>(values);
-        for (List<String> trace : set) {
-            int frequency = Collections.frequency(values, trace);
-            frequencies.add(frequency);
-            lengths.add(trace.size());
-            builder.append(frequency + " " + trace + "\n");
+        for (Map.Entry<String, Integer> entry : traceFrequencyMap.entrySet()) {
+            builder.append(entry.getValue() + " " + entry.getKey() + "\n");
         }
         return builder.toString();
     }
@@ -47,7 +41,7 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     private void analyzeUniqueTraces() {
         uniqueWriter.println("=== UNIQUE TRACES ===");
         DecimalFormat format = new DecimalFormat("0.00");
-        uniqueWriter.println(getFrequencyMap(traceDB));
+        uniqueWriter.println(getFrequencyMap(traceDB.getTraceFrequencies()));
         uniqueWriter.println("=== END UNIQUE TRACES ===");
         Collections.sort(frequencies);
         Collections.sort(lengths);

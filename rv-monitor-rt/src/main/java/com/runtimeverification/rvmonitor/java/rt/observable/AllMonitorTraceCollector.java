@@ -60,6 +60,6 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     private void processTracesWithAnalysis() {
         this.writer.println("=== END OF TRACE ===");
         this.writer.println("Total number of traces: " + traceDB.size());
-        this.writer.println("Total number of unique traces: " + new HashSet<>(traceDB.values()).size());
+        this.writer.println("Total number of unique traces: " + traceDB.uniqueTraces());
     }
 }

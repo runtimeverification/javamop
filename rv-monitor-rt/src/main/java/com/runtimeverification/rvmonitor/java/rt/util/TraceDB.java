@@ -8,7 +8,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.h2.tools.Csv;
 
 public class TraceDB {
@@ -59,6 +63,34 @@ public class TraceDB {
         }
     }
 
+    public int size() {
+        int count = -1;
+        final String COUNT_QUERY = "select count(*) from traces";
+        try(Statement statement =  getConnection().createStatement()){
+            ResultSet rs = statement.executeQuery(COUNT_QUERY);
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return count;
+    }
+
+    public int uniqueTraces() {
+        int count = -1;
+        final String TRACE_QUERY = "select count(distinct(traces)) from traces";
+        try (Statement statement = getConnection().createStatement()) {
+            ResultSet rs = statement.executeQuery(TRACE_QUERY);
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return count;
+    }
+
     public void dump(String csvDir) {
         final String SELECT_QUERY = "select * from traces";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(SELECT_QUERY)){
@@ -90,6 +122,20 @@ public class TraceDB {
             printSQLException(e);
         }
         return connection;
+    }
+
+    public Map<String, Integer> getTraceFrequencies() {
+        Map<String, Integer> traceFrequency = new HashMap<>();
+        final String FREQUENCY_QUERY = "select traces, count(*) from users group by traces";
+        try(Statement statement = getConnection().createStatement()) {
+            ResultSet rs = statement.executeQuery(FREQUENCY_QUERY);
+            while (rs.next()) {
+                traceFrequency.put(rs.getString(1), rs.getInt(2));
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return traceFrequency;
     }
 
     private void printSQLException(SQLException ex) {
