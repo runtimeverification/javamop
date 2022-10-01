@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,30 +32,32 @@ public class TraceDB {
         this.connection = getConnection();
     }
 
-    public void put(String monitorID, String trace) {
+    public void put(String monitorID, String trace, int length) {
         try {
-            insert(monitorID, new SerialClob(trace.toCharArray()));
+            insert(monitorID, new SerialClob(trace.toCharArray()), length);
         } catch (SQLException e) {
             printSQLException(e);
         }
     }
 
-    private void insert(String monitorID, Clob trace) {
-        final String INSERT_TRACE_SQL = "INSERT INTO traces (monitorID, trace) VALUES (?, ?);";
+    private void insert(String monitorID, Clob trace, int length) {
+        final String INSERT_TRACE_SQL = "INSERT INTO traces (monitorID, trace, length ) VALUES (?, ?, ?);";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_TRACE_SQL)) {
             preparedStatement.setString(1, monitorID);
             preparedStatement.setClob(2, trace);
+            preparedStatement.setInt(3, length);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             printSQLException(e);
         }
     }
 
-    public void update(String monitorID, String trace) {
-        final String UPDATE_TRACE_SQL = "update traces set trace = ? where monitorID = ?;";
+    public void update(String monitorID, String trace, int length) {
+        final String UPDATE_TRACE_SQL = "update traces set trace = ?, length = ? where monitorID = ?;";
         try(PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE_TRACE_SQL)){
             preparedStatement.setClob(1, new SerialClob(trace.toCharArray()));
-            preparedStatement.setString(2, monitorID);
+            preparedStatement.setInt(2, length);
+            preparedStatement.setString(3, monitorID);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,7 +103,7 @@ public class TraceDB {
     }
 
     public void createTable() {
-        final String createTableSQL = "create table traces (monitorID  varchar(150) primary key, trace clob);";
+        final String createTableSQL = "create table traces (monitorID  varchar(150) primary key, trace clob, length int);";
         try (Statement statement = getConnection().createStatement()) {
             statement.execute(createTableSQL);
         } catch (SQLException e) {
@@ -118,6 +121,20 @@ public class TraceDB {
             printSQLException(e);
         }
         return connection;
+    }
+
+    public List<Integer> getTraceLengths() {
+        List<Integer> lengths =  new ArrayList<>();
+        final String LENGTHS_QUERY = "select length from traces";
+        try (Statement statement = getConnection().createStatement()) {
+            ResultSet rs =  statement.executeQuery(LENGTHS_QUERY);
+            while (rs.next()) {
+                lengths.add(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            printSQLException(e);
+        }
+        return lengths;
     }
 
     public Map<String, Integer> getTraceFrequencies() {

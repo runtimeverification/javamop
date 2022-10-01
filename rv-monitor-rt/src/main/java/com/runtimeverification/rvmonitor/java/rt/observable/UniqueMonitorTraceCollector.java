@@ -43,6 +43,7 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
         DecimalFormat format = new DecimalFormat("0.00");
         uniqueWriter.println(getFrequencyMap(traceDB.getTraceFrequencies()));
         uniqueWriter.println("=== END UNIQUE TRACES ===");
+        lengths = traceDB.getTraceLengths();
         Collections.sort(frequencies);
         Collections.sort(lengths);
         uniqueWriter.println("Min Trace Frequency: " + frequencies.get(0));
