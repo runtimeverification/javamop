@@ -34,24 +34,27 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Integer> entry : traceFrequencyMap.entrySet()) {
             builder.append(entry.getValue() + " " + entry.getKey() + "\n");
+            frequencies.add(entry.getValue());
         }
         return builder.toString();
     }
 
     private void analyzeUniqueTraces() {
-        uniqueWriter.println("=== UNIQUE TRACES ===");
+        uniqueWriter.println("=== UNIQUE TRACE STATS ===");
         DecimalFormat format = new DecimalFormat("0.00");
-        uniqueWriter.println(getFrequencyMap(traceDB.getTraceFrequencies()));
-        uniqueWriter.println("=== END UNIQUE TRACES ===");
         lengths = traceDB.getTraceLengths();
-        Collections.sort(frequencies);
         Collections.sort(lengths);
-        uniqueWriter.println("Min Trace Frequency: " + frequencies.get(0));
-        uniqueWriter.println("Max Trace Frequency: " + frequencies.get(frequencies.size() -1 ));
-        uniqueWriter.println("Average Trace Frequency: " + format.format(average(frequencies)));
         uniqueWriter.println("Min Trace Size: " + lengths.get(0));
         uniqueWriter.println("Max Trace Size: " + lengths.get(lengths.size() -1 ));
         uniqueWriter.println("Average Trace Size: " + format.format(average(lengths)));
+        String frequencyString = getFrequencyMap(traceDB.getTraceFrequencies());
+        Collections.sort(frequencies);
+        uniqueWriter.println("Min Trace Frequency: " + frequencies.get(0));
+        uniqueWriter.println("Max Trace Frequency: " + frequencies.get(frequencies.size() -1 ));
+        uniqueWriter.println("Average Trace Frequency: " + format.format(average(frequencies)));
+        uniqueWriter.println("=== END UNIQUE TRACE STATS ===");
+        uniqueWriter.println("=== UNIQUE TRACES ===");
+        uniqueWriter.println(frequencyString);
         uniqueWriter.flush();
         uniqueWriter.close();
     }
