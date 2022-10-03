@@ -15,8 +15,8 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
     List<Integer> lengths = new ArrayList<>();
 
     public UniqueMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
-                                       PrintWriter locationWriter, PrintWriter uniqueWriter) {
-        super(writer, doAnalysis, writeLocationMap, locationWriter);
+                                       PrintWriter locationWriter, String dbPath, PrintWriter uniqueWriter) {
+        super(writer, doAnalysis, writeLocationMap, locationWriter, dbPath);
         this.uniqueWriter = uniqueWriter;
     }
 

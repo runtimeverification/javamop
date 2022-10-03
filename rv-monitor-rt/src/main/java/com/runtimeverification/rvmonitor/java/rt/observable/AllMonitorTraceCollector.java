@@ -19,8 +19,8 @@ public class AllMonitorTraceCollector extends MonitorTraceCollector {
     }
 
     public AllMonitorTraceCollector(PrintWriter writer, boolean doAnalysis, boolean writeLocationMap,
-                                    PrintWriter locationMapWriter) {
-        super(writer);
+                                    PrintWriter locationMapWriter, String dbPath) {
+        super(writer, dbPath);
         this.doAnalysis = doAnalysis;
         this.writeLocationMap = writeLocationMap;
         this.locationMapWriter = locationMapWriter;

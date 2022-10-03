@@ -22,9 +22,9 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver{
 
     protected final Set<String> monitors;
 
-    public MonitorTraceCollector(PrintWriter writer) {
+    public MonitorTraceCollector(PrintWriter writer, String dbPath) {
         this.writer = writer;
-        this.traceDB = new TraceDB();
+        this.traceDB = new TraceDB(dbPath);
         this.monitors = new HashSet<>();
         traceDB.createTable();
     }
