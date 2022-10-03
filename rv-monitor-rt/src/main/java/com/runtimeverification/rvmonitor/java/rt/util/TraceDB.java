@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,4 +167,17 @@ public class TraceDB {
             }
         }
     }
+
+//    public static void main(String[] args) {
+//        TraceDB traceDB = new TraceDB();
+//        traceDB.createTable();
+//        System.out.println("Start: " + new Date().toString());
+//        for (int i = 0; i < 10000000; i++) {
+//            traceDB.put("fy#"+i, "[a,b,b,c]", 4);
+//            traceDB.put("fy#"+ (i+10000000), "[a,b,b,c]", 6);
+//        }
+//        System.out.println("Filled: " + new Date().toString());
+//        System.out.println(traceDB.uniqueTraces());
+//        System.out.println("Queried: " + new Date().toString());
+//    }
 }
