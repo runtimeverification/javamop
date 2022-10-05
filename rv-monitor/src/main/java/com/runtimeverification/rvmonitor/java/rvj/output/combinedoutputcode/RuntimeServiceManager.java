@@ -201,7 +201,7 @@ public class RuntimeServiceManager implements ICodeGenerator {
         args.add(CodeLiteralExpr.bool(Main.options.computeUniqueTraceStats));
         args.add(CodeLiteralExpr.bool(Main.options.storeEventLocationMapFile));
         args.add(new CodeNewExpr(writer, CodeLiteralExpr.string(TraceUtil.getAbsolutePath("locations.txt"))));
-        args.add(new CodeNewExpr(writer, CodeLiteralExpr.string(TraceUtil.getAbsolutePath("tracedb"))));
+        args.add(CodeLiteralExpr.string(TraceUtil.getAbsolutePath("tracedb")));
         if (observerType.equals("UniqueMonitorTraceCollector")) {
             args.add(new CodeNewExpr(writer, CodeLiteralExpr.string(TraceUtil.getAbsolutePath("unique-traces.txt"))));
         }
