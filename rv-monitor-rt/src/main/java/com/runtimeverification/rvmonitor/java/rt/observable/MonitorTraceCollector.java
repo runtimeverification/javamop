@@ -14,7 +14,7 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
 import com.runtimeverification.rvmonitor.java.rt.util.TraceDB;
 
-public class MonitorTraceCollector implements IInternalBehaviorObserver{
+public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
     protected final PrintWriter writer;
 
