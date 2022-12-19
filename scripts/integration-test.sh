@@ -46,7 +46,8 @@ check_status "${mop_test_status}" " on mop's unit tests"
     cd ${dir}
     git checkout -f h2
     git clean -ffxd
-    bash make-agent.sh props/ ${SCRIPT_DIR}/agents quiet
+    bash make-agent.sh ${SCRIPT_DIR}/props ${SCRIPT_DIR}/agents "quiet" "no-track" ${SCRIPT_DIR}/logs JavaMOPAgent
+    # bash make-agent.sh props/ ${SCRIPT_DIR}/agents quiet
     mvn install:install-file -Dfile=${SCRIPT_DIR}/agents/JavaMOPAgent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
 ) &> /tmp/agent-outcome.txt
 
