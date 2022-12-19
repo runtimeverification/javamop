@@ -1,0 +1,41 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.nio.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if one tries to add a CharSequence object into a set.
+ * 
+ * According to the manual, this inferface does not refine the general contracts of the
+ * equals and hashCode methods. Therefore, it might not be safe to use CharSequence instances
+ * as elements in a set
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/CharSequence.html
+ * User should check whether the instance of CharSequence that he/she tries to use supports
+ * those methods.
+ * 
+ * @severity warning
+ */
+
+CharSequence_NotInSet() {
+	boolean flag = false;
+	
+	event set_add before() : call(* Set+.add(..)) && args(CharSequence) && !args(String) && !args(CharBuffer) && condition(!flag){
+		flag = true;
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "It might not be safe to add a CharSequence instance into a set"); 
+	}
+
+	event set_addall before(Collection c) : call(* Set+.addAll(Collection)) && args(c) && condition(!flag){
+		for(Object o : c){
+			if(o instanceof CharSequence && !(o instanceof String) && !(o instanceof CharBuffer)){
+				flag = true;
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "It might not be safe to add a CharSequence instance into a set");
+			}
+		} 
+	}
+	
+}

@@ -1,0 +1,45 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a set/collection from a map performs add() or addAll().
+ *
+ * The set/collection, which is returned by Map.keySet(), values() or
+ * entrySet(), supports element removal, but it does not support add() or
+ * addAll() operations.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#entrySet%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#keySet%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#values%28%29
+ *
+ * This property warns if a set/collection view of a map performs add() or
+ * addAll().
+ *
+ * @severity error
+ */
+
+Map_CollectionViewAdd(Map m, Collection c) {
+	creation event getset after(Map m) returning(Collection c) :
+		(
+			call(Set Map+.keySet()) ||
+			call(Set Map+.entrySet()) ||
+			call(Collection Map+.values())
+		) && target(m) {}
+
+	event add before(Collection c) :
+		(
+			call(* Collection+.add(..)) ||
+			call(* Collection+.addAll(..))
+		) && target(c) {}
+
+	ere : getset add+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A collection/set view of a map does not support add()/addAll().");
+	}
+}
+

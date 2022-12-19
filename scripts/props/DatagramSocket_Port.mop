@@ -1,0 +1,31 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a DatagramSocket object is created with an invalid port.
+ *
+ * The local port, a parameter of some DatagramSocket's constructors, must be
+ * between 0 and 65535 inclusive.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/DatagramSocket.html#DatagramSocket%28int,%20java.net.InetAddress%29
+ *
+ * @severity error
+ */
+
+DatagramSocket_Port() {
+	event construct_port before(int port) :
+		(
+			call(DatagramSocket.new(int)) ||
+			call(DatagramSocket.new(int, InetAddress))
+		) && args(port, ..)
+	{
+		if (0 <= port && port <= 65535)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The specified port " + port + " is out of range; [0 ~ 65535]");
+	}
+}
+

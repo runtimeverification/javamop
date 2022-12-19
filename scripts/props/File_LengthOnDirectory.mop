@@ -1,0 +1,24 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if length() is invoked on a File object that represents a directory.
+ *
+ * The return value of length() is unspecified if the File instance denotes a
+ * directory.
+ * http://download.oracle.com/javase/6/docs/api/java/io/File.html#length%28%29
+ *
+ * @severity error
+ */
+
+File_LengthOnDirectory() {
+	event bad_length before(File f) :
+		call(* File+.length()) && target(f) && condition(f.isDirectory()) {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "length() was invoked on a File instance that represents a directory.");
+	}
+}
+

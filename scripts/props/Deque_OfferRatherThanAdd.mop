@@ -1,0 +1,45 @@
+package mop;
+
+import java.util.*;
+import java.util.concurrent.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a capacity-restricted deque performs a less preferable operation.
+ *
+ * According to the documentation, when using a capacity-restricted deque, it
+ * is generally preferable to use offerFirst(), offerLast() and offer()
+ * instead of addFirst(), addLast() and add(). Since push() is equivalent to
+ * addFirst(), push() is not perferable either.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Deque.html
+ *
+ * This property warns if addFirst(), addLast(), add() or push() is invoked on
+ * a capacity-restricted deque. Since there is no general way to detect whether
+ * or not a deque is capacity-restricted, this property warns only when the
+ * object is of LinkedBlockingDeque type and it is created with a specific
+ * capacity.
+ *
+ * @severity suggestion
+ */
+
+Deque_OfferRatherThanAdd(Deque q) {
+	creation event create after() returning(Deque q) :
+		call(LinkedBlockingDeque+.new(int)) {}
+
+	event add before(Deque q) :
+		(
+			call(* Deque+.addFirst(..)) ||
+			call(* Deque+.addLast(..)) ||
+			call(* Deque+.add(..)) ||
+			call(* Deque+.push(..))
+		) && target(q) {}
+
+	ere : create add+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "When using a capacity-restricted deque, it is generally preferable to use offerFirst(), offerLast() and offer() instead of addFirt(), addLast() and add().");
+	}
+}
+

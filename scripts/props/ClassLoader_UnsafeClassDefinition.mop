@@ -1,0 +1,26 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ *
+ * Warns if one tries to define a class whose name starts with "java."
+ *
+ * According to the manual, for security reasons, one cannot define a class whose name
+ * starts with "java." outside of the bootstrap class loader. 
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/ClassLoader.html#defineClass%28java.lang.String,%20byte[],%20int,%20int,%20java.security.ProtectionDomain%29
+ *
+ * @severity error
+ */
+ClassLoader_UnsafeClassDefinition() {
+	event defineClass before(String name) :
+		call(* ClassLoader+.defineClass(String, ..)) && args(name, ..) && condition(name.startsWith("java.")){
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "An invalid binary name is used");
+		}
+}
+
+

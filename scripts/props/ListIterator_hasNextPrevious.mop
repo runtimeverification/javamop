@@ -1,0 +1,71 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if next()/previous() is invoked when hasNext()/hasPrevious() is not
+ * invoked or returns false.
+ *
+ * This property requires that hasNext()/hasPrevious() be called before
+ * next()/previous() and that hasNext()/hasPrevious() return true.
+ *
+ * @severity warning
+ */
+
+ListIterator_hasNextPrevious(ListIterator i) {
+	event hasnexttrue after(ListIterator i) returning(boolean b) :
+		call(* ListIterator.hasNext()) && target(i) &&
+		condition(b) {}
+	event hasnextfalse after(ListIterator i) returning(boolean b) :
+		call(* ListIterator.hasNext()) && target(i) &&
+		condition(!b) {}
+	event next before(ListIterator i) :
+		call(* ListIterator.next()) && target(i) {}
+
+	event hasprevioustrue after(ListIterator i) returning(boolean b) :
+		call(* ListIterator.hasPrevious()) && target(i) &&
+		condition(b) {}
+	event haspreviousfalse after(ListIterator i) returning(boolean b) :
+		call(* ListIterator.hasPrevious()) && target(i) &&
+		condition(!b) {}
+	event previous before(ListIterator i) :
+		call(* ListIterator.previous()) && target(i) {}
+
+	fsm :
+		na [
+			hasnexttrue -> nextavailable
+			hasnextfalse -> na
+			hasprevioustrue -> prevavailable
+			haspreviousfalse -> na
+		]
+		nextavailable [
+			hasprevioustrue -> bothavailable
+			haspreviousfalse -> nextavailable
+			hasnexttrue -> nextavailable
+			hasnextfalse -> na
+			next -> prevavailable
+		]
+		prevavailable [
+			hasnexttrue -> bothavailable
+			hasnextfalse -> prevavailable
+			hasprevioustrue -> prevavailable
+			haspreviousfalse -> na
+			previous -> nextavailable
+		]
+		bothavailable [
+			hasnexttrue -> bothavailable
+			hasnextfalse -> prevavailable
+			hasprevioustrue -> bothavailable
+			haspreviousfalse -> nextavailable
+			next -> prevavailable
+			previous -> nextavailable
+		]
+
+	@fail {
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "ListIterator.hasNext()/hasPrevious() was not called before calling next()/previous().");
+	}
+}
+

@@ -1,0 +1,33 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if clone method is called on an Object instance.
+ *
+ * According to the manual, Object class itself does not implement Cloneable.
+ * Calling clone() will cause an exception on runtime.  
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#clone%28%29
+ *
+ * @severity error
+ */
+ 
+Object_NoClone() {
+	event clone before(Object o):
+		call(* Object.clone())
+		&& !within(org.apache.xerces.dom.NodeImpl)
+		&& !within(org.apache.batik.bridge.UpdateManager)
+		&& !within(org.codehaus.janino.ScriptEvaluator)
+		&& !within(org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam)
+		&& !within(org.apache.batik.ext.awt.image.spi.MagicNumberRegistryEntry)
+		&& !within(org.apache.xerces.util.XMLCatalogResolver)
+		&& target(o) && condition(o.getClass().getCanonicalName().equals("java.lang.Object")){
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "Using the clone method on an Object instance will result in throwing an exception.");
+	}
+
+}
+

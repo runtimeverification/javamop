@@ -1,0 +1,72 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if options are specified after URLConnection is connected.
+ *
+ * After being created, and before being connected, various options can be
+ * specified (e.g., doInput and UseCaches). After connecting, it is an error
+ * to try to set them.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/URLConnection.html#connect%28%29
+ *
+ * Besides the connect() method, there are many other ways for a URLConnection
+ * object to be connected. It seems that the rule of thumb is any method that
+ * requires server's information, such as response headers and contents,
+ * causes th URLConnection object to be connected. Such methods include, but
+ * not limited to, the following methods:
+ *  URLConnection.connect()
+ *  URLConnection.getContent()
+ *  URLConnection.getContentEncoding()
+ *  URLConnection.getContentLength()
+ *  URLConnection.getContentType()
+ *  URLConnection.getDate()
+ *  URLConnection.getExpiration()
+ *  URLConnection.getHeaderField()
+ *  URLConnection.getHeaderFieldInt()
+ *  URLConnection.getHeaderFields()
+ *  URLConnection.getInputStream()
+ *  URLConnection.getLastModified()
+ *  URLConnection.getOutputStream()
+ *
+ * It should be noted that the above list is not comprehensive since a
+ * subclass may define its own connection-triggering method. For example, the
+ * HttpURLConnection class in the sun.net.www.protocol.http package, a
+ * subclass of java.net.HttpURLConnection, defines one such method,
+ * doTunneling().
+ *
+ * This property may give false warnings.
+ *
+ * @severity error
+ */
+URLConnection_SetBeforeConnect(URLConnection c) {
+	event set before(URLConnection c) :
+		call(* URLConnection+.set*(..)) && target(c) {}
+
+	event connect before(URLConnection c) :
+		(
+			call(* URLConnection+.connect(..)) ||
+			call(* URLConnection+.getContent(..)) ||
+			call(* URLConnection+.getContentEncoding(..)) ||
+			call(* URLConnection+.getContentLength(..)) ||
+			call(* URLConnection+.getContentType(..)) ||
+			call(* URLConnection+.getDate(..)) ||
+			call(* URLConnection+.getExpiration(..)) ||
+			call(* URLConnection+.getHeaderField(..)) ||
+			call(* URLConnection+.getHeaderFieldInt(..)) ||
+			call(* URLConnection+.getHeaderFields(..)) ||
+			call(* URLConnection+.getInputStream(..)) ||
+			call(* URLConnection+.getLastModified(..)) ||
+			call(* URLConnection+.getOutputStream(..))
+		) && target(c) {}
+
+	ere : set* connect*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Options were specified after the connection was made.");
+	}
+}
+

@@ -1,0 +1,50 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a large receive buffer is set after the socket is connected.
+ *
+ * Generally, the window size can be modified at any time when a socket is
+ * connected. However, if a receive window larger than 64K is required then
+ * this must be requested before the socket is connected to the remote peer.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/Socket.html#setReceiveBufferSize%28int%29
+ *
+ * @severity error
+ */
+
+Socket_LargeReceiveBuffer(Socket sock) {
+	creation event create_connected after() returning(Socket sock) :
+		(
+			call(Socket.new(InetAddress, int)) ||
+			call(Socket.new(InetAddress, int, boolean)) ||
+			call(Socket.new(InetAddress, int, InetAddress, int)) ||
+			call(Socket.new(String, int)) ||
+			call(Socket.new(String, int, boolean)) ||
+			call(Socket.new(String, int, InetAddress, int))
+		) {}
+
+	creation event create_unconnected after() returning(Socket sock) :
+		(
+			call(Socket.new()) ||
+			call(Socket.new(Proxy)) ||
+			call(Socket.new(SocketImpl))
+		) {}
+
+	event connect before(Socket sock) :
+		call(* Socket+.connect(..)) && target(sock) {}
+
+	event set before(Socket sock, int size) :
+		call(* Socket+.setReceiveBufferSize(int)) &&
+		target(sock) && args(size) && condition(size > 65536) {}
+
+	ere : (create_connected | create_unconnected set* connect+) set
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A receive window large than 64K bytes must be set before the socket is connected.");
+	}
+}
+

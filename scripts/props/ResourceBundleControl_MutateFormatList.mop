@@ -1,0 +1,41 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a list returned by ResourceBundle.Control.getFormats() or
+ * getCandidateLocales() is mutated.
+ *
+ * The List object returned by ResourceBundle.Control.getFormats() or
+ * getCandidateLocales() must not be mutated.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.Control.html#getFormats%28java.lang.String%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.Control.html#getCandidateLocales%28java.lang.String,%20java.util.Locale%29
+ *
+ * @severity error
+ */
+
+ResourceBundleControl_MutateFormatList(List l) {
+	creation event create after() returning(List l) :
+		(
+			call(List ResourceBundle.Control.getFormats(..)) ||
+			call(List ResourceBundle.Control.getCandidateLocales(..))
+		) {}
+
+	event mutate before(List l) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(l) {}
+
+	ere : create mutate
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The list returned by ResourceBundle.Control.getFormats() or getCandidateLocales() was mutated.");
+	}
+}
+

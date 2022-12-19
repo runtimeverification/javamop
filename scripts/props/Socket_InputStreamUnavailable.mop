@@ -1,0 +1,55 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if Socket.getInputStream() is invoked when the input stream is
+ * unavailable.
+ *
+ * An input stream is unavailable if the socket is closed, is not connected,
+ * or the socket input has been shutdown.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/Socket.html#getInputStream%28%29
+ *
+ * @severity error
+ */
+
+Socket_InputStreamUnavailable(Socket sock) {
+	creation event create_connected after() returning(Socket sock) :
+		(
+			call(Socket.new(InetAddress, int)) ||
+			call(Socket.new(InetAddress, int, boolean)) ||
+			call(Socket.new(InetAddress, int, InetAddress, int)) ||
+			call(Socket.new(String, int)) ||
+			call(Socket.new(String, int, boolean)) ||
+			call(Socket.new(String, int, InetAddress, int))
+		) {}
+
+	creation event create_unconnected after() returning(Socket sock) :
+		(
+			call(Socket.new()) ||
+			call(Socket.new(Proxy)) ||
+			call(Socket.new(SocketImpl))
+		) {}
+
+	event connect before(Socket sock) :
+		call(* Socket+.connect(..)) && target(sock) {}
+
+	event get before(Socket sock) :
+		call(* Socket+.getInputStream(..)) && target(sock) {}
+
+	event close before(Socket sock) :
+		call(* Socket+.close()) && target(sock) {}
+
+	event shutdown before(Socket sock) :
+		call(* Socket+.shutdownInput()) && target(sock) {}
+
+	ere : (create_connected | create_unconnected connect) get* (close | shutdown)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An input stream is unavailable if the socket is closed, is not connected, or the socket input has been shutdown.");
+	}
+}
+

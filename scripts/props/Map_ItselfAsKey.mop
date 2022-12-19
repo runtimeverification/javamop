@@ -1,0 +1,43 @@
+package mop;
+
+import java.util.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a subclass of Map contains itself as a key.
+ *
+ * The behavior of a map is not specified if the value of an object is changed
+ * in a manner that affects equals() comparisons while the object is a key in
+ * the map. A special case of this prohibition is that it is not permissible
+ * for a map to contain itself as a key.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html
+ *
+ * This property checks if the special case: a map contains itself by capturing put() and
+ * putAll(). It is hard to detect whether or not equals() comparisons are
+ * affected.
+ *
+ * @severity error
+ */
+
+Map_ItselfAsKey() {
+	event put before(Map map, Object key, Object value) :
+		call(* Map+.put(Object, Object)) && target(map) && args(key, value) {
+		if (key == map) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "A map cannot contain itself as a key.");
+		}
+	}
+
+	event putall before(Map map, Map src) :
+		call(* Map+.putAll(Map)) && target(map) && args(src) {
+		for (Map.Entry entry : (Set<Map.Entry>)src.entrySet()) {
+			if (entry.getKey() == map) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "A map cannot contain itself as a key.");
+			}
+		}
+	}
+}
+

@@ -1,0 +1,34 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns write operation after close().
+ *
+ * According to the FileOutputStream.close(), a file output stream may no
+ * longer be used for writing bytes, once the stream has been closed.
+ *
+ * @severity error
+ */
+
+ObjectStreamClass_Initialize(ObjectStreamClass c) {
+	event create after() returning(ObjectStreamClass c) :
+		call(ObjectStreamClass+.new()) {}
+	event init before(ObjectStreamClass c) :
+		(
+			call(* ObjectStreamClass+.initProxy(..)) ||
+			call(* ObjectStreamClass+.initNonProxy(..)) ||
+			call(* ObjectStreamClass+.readNonProxy(..))
+		) && target(c) {}
+	event endProg before() : endProgram() {}
+
+	ltl : [](create => o init)
+
+	@violation {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An ObjectStreamClass object was instantiated, but was not initialized using initProxy(), initNonProxy() or readNonProxy()");
+	}
+}
+

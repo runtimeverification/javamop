@@ -1,0 +1,46 @@
+package mop;
+
+import java.util.*;
+import java.lang.reflect.*;
+import org.aspectj.lang.Signature;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if equals() is overriden but hashCode() is not.
+ *
+ * The general contract for hashCode() is that any class that overrides
+ * Object.equals() must also overrides Object.hashCode().
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collection.html#hashCode%28%29
+ *
+ * The Collection interface does not add any stipulation to the above general
+ * contract. This property warns if a subclass of Collection overrides
+ * equals() but does not override hashCode().
+ *
+ * @severity error
+ */
+
+Collection_HashCode() {
+	event staticinit after() : staticinitialization(Collection+) {
+		Signature initsig = __STATICSIG;
+		Class klass = initsig.getDeclaringType();		
+
+		if (klass != null) {
+			Method equalsmethod = null;
+			Method hashcodemethod = null;
+
+			try {
+				equalsmethod = klass.getDeclaredMethod("equals", Object.class);
+				hashcodemethod = klass.getDeclaredMethod("hashCode", (Class[]) null);
+			}
+			catch (NoSuchMethodException e) {
+			}
+
+			if (equalsmethod != null && hashcodemethod == null) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, klass.getName() + " overrides equals() but does not override hashCode().");
+			}
+		}
+	}
+}
+

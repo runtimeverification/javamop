@@ -1,0 +1,36 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if DatagramPacket.setLength() is called with an invalid length.
+ *
+ * According to the reference of DatagramPacket.setLength(), the length, a
+ * parameter of DatagramPacket.setLength(), must be lesser or equal to the
+ * offset plus the length of the packet's buffer.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/DatagramPacket.html#setLength%28int%29
+ *
+ * It is considered that the explanation is incorrect. It seems the offset
+ * plus the new length must be lesser or equal to the length of the packet's
+ * buffer. This property is based on this interpretation.
+ *
+ * @severity error
+ */
+
+DatagramPacket_SetLength() {
+	event setlength before(DatagramPacket packet, int length) :
+		call(void DatagramPacket.setLength(int)) && target(packet) && args(length)
+	{
+		int offset = packet.getOffset();
+		byte[] buffer = packet.getData();
+		if (length + offset <= buffer.length)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The length argument is out of range; " + offset + " + " + length + " > " + buffer.length);
+	}
+}
+
+

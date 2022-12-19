@@ -1,0 +1,46 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if two threads attempt to use the same StringBuilder object.
+ *
+ * According to the manual, this class is not synchronized.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/StringBuilder.html
+ * User should use StringBuffer in this case.
+ *
+ * @severity warning
+ */
+
+StringBuilder_ThreadSafe(StringBuilder b){
+    Thread owner = null;
+
+    event safe_oper before(StringBuilder b, Thread t) : 
+        call(* StringBuilder.*(..)) && target(b) && thread(t)
+        && condition(this.owner == null || this.owner == t) {
+            this.owner = t;
+        }
+    
+    event unsafe_oper before(StringBuilder b, Thread t) : 
+        call(* StringBuilder.*(..)) && target(b) && thread(t)
+        && condition(this.owner != null && this.owner != t) {}
+
+	ere: safe_oper*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "More than two threads attempted to use a StringBuilder instance, which may lead to a race condition. Use StringBuffer instead.");
+		__RESET;
+	}
+}
+		
+
+
+
+
+
+

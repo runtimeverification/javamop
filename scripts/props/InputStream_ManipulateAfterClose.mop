@@ -1,0 +1,42 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns read(), available(), reset() or skip() after close().
+ *
+ * According to the BufferedInputStream.close() documentation, read(),
+ * available(), reset() or skip() invocations will throw an IOException, once
+ * the stream has been closed.
+ * http://download.oracle.com/javase/6/docs/api/java/io/BufferedInputStream.html#close%28%29
+ *
+ * Other subclasses of InputStream are deemed to be similar, except
+ * ByteArrayInputStream and StringBufferInputStream.
+ * http://docs.oracle.com/javase/6/docs/api/java/io/ByteArrayInputStream.html#close%28%29
+ *
+ * @severity error
+ */
+
+InputStream_ManipulateAfterClose(InputStream i) {
+	event manipulate before(InputStream i) :
+		(
+			call(* InputStream+.read(..)) ||
+			call(* InputStream+.available(..)) ||
+			call(* InputStream+.reset(..)) ||
+			call(* InputStream+.skip(..))
+		) && target(i) &&
+		!target(ByteArrayInputStream) && !target(StringBufferInputStream) {}
+	creation event close before(InputStream i) :
+		call(* InputStream+.close(..)) && target(i) &&
+		!target(ByteArrayInputStream) && !target(StringBufferInputStream) {}
+
+	ere : close+ manipulate
+
+	@match {
+		RVMLogging.err.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.err.println(Level.CRITICAL, "read(), available(), reset() or skip() was invoked after close().");
+	}
+}
+

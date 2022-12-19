@@ -1,0 +1,42 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the source map is modified while Map.putAll() is running.
+ *
+ * The behavior of Map.putAll() is undefined if the specified source map is
+ * modified while the operation is in progress.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#putAll%28java.util.Map%29
+ *
+ * This property assumes that putAll() of all Map and its subclasses behave
+ * similarly, and warns if put*(), remove*() or clear() is called on the map
+ * that is passed to putAll() as an argument.
+ *
+ * @severity error
+ */
+
+Map_UnsynchronizedAddAll(Map t, Map s) {
+	creation event enter before(Map t, Map s) :
+		call(boolean Map+.putAll(..)) && target(t) && args(s) {}
+
+	event modify before(Map s) :
+		(
+			call(* Map+.clear(..)) ||
+			call(* Map+.put*(..)) ||
+			call(* Map+.remove*(..))
+		) && target(s) {}
+
+	event leave after(Map t, Map s) :
+		call(void Map+.putAll(..)) && target(t) && args(s) {}
+
+	ere : (enter leave modify*)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The source map of putAll() has been modified.");
+	}
+}
+

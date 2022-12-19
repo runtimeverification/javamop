@@ -1,0 +1,32 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if close() is invoked on the object returned by Console.writer().
+ *
+ * Invoking close() on the objects returned by Console.writer() does not close
+ * the underlying streams.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Console.html
+ *
+ * This specification warns if such useless invocation is detected.
+ *
+ * @severity suggestion
+ */
+
+Console_CloseWriter(Writer w) {
+	event getwriter after returning(Writer w) :
+		call(Writer+ Console+.writer()) {}
+	event close before(Writer w) :
+		call(* Writer+.close(..)) && target(w) {}
+
+	ere : getwriter close+
+
+	@match {
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "Invoking close() on the object returned by Console.writer() does not close the underlying stream.");
+	}
+}
+

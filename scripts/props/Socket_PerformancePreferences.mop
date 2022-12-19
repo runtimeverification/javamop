@@ -1,0 +1,49 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if ServerSocket.setPerformancePreferences() is invoked after the
+ * socket has been bound.
+ *
+ * Invoking ServerSocket.setPerformancePreferences() after the socket has been
+ * bound will have no effect.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/Socket.html#setPerformancePreferences%28int,%20int,%20int%29
+ *
+ * @severity warning
+ */
+
+Socket_PerformancePreferences(Socket sock) {
+	creation event create_connected after() returning(Socket sock) :
+		(
+			call(Socket.new(InetAddress, int)) ||
+			call(Socket.new(InetAddress, int, boolean)) ||
+			call(Socket.new(InetAddress, int, InetAddress, int)) ||
+			call(Socket.new(String, int)) ||
+			call(Socket.new(String, int, boolean)) ||
+			call(Socket.new(String, int, InetAddress, int))
+		) {}
+
+	creation event create_unconnected after() returning(Socket sock) :
+		(
+			call(Socket.new()) ||
+			call(Socket.new(Proxy)) ||
+			call(Socket.new(SocketImpl))
+		) {}
+
+	event connect before(Socket sock) :
+		call(* Socket+.connect(..)) && target(sock) {}
+
+	event set before(Socket sock) :
+		call(* Socket+.setPerformancePreferences(..)) && target(sock) {}
+
+	ere : (create_connected | create_unconnected set* connect+) set
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Invoking Socket.setPerformancePreferences() after the socket has been bound will have no effect.");
+	}
+}
+

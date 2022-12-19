@@ -1,0 +1,36 @@
+package mop;
+
+import java.util.*;
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a closed Scanner object attempts to perform search operations.
+ *
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Scanner.html#close%28%29
+ *
+ * @severity error
+ */
+
+Scanner_SearchAfterClose(Scanner s) {
+	creation event close before(Scanner s) :
+		call(* Scanner+.close(..)) && target(s) {}
+
+	event search before(Scanner s) :
+		(
+			call(* Scanner+.find*(..)) ||
+			call(* Scanner+.has*(..)) ||
+			call(* Scanner+.match(..)) ||
+			call(* Scanner+.next*(..)) ||
+			call(* Scanner+.skip(..))
+		) && target(s) {}
+
+	ere : close+ search+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A closed Scanner object attempted to perform search operations.");
+	}
+}
+

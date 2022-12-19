@@ -1,0 +1,46 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if two threads attempt to use the same ProcessBuilder object.
+ *
+ * According to the manual, this class is not synchronized.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/ProcessBuilder.html
+ * User should use external synchronization.
+ *
+ * @severity warning
+ */
+
+ProcessBuilder_ThreadSafe(ProcessBuilder p){
+    Thread owner = null;
+
+    event safe_oper before(ProcessBuilder p, Thread t) : 
+        call(* ProcessBuilder.*(..)) && target(p) && thread(t)
+        && condition(this.owner == null || this.owner == t) {
+            this.owner = t;
+        }
+    
+    event unsafe_oper before(ProcessBuilder p, Thread t) : 
+        call(* ProcessBuilder.*(..)) && target(p) && thread(t)
+        && condition(this.owner != null && this.owner != t) {}
+
+	ere: safe_oper*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "More than two threads attempted to use a ProcessBuilder instance, which may lead to a race condition");
+		__RESET;
+	}
+}
+		
+
+
+
+
+
+
