@@ -16,6 +16,9 @@
 *.class
 *.jar
 *.class
+*.rvm
+scripts/props/BaseAspect.aj
+scripts/props/classes/*
 
 \#*\#
 .\#*
