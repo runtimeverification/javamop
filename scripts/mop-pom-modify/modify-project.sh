@@ -13,7 +13,7 @@ crnt=`pwd`
 working_dir=`dirname $0`
 
 cd ${project_path}
-find -name pom.xml | xargs git checkout -f
+find . -name pom.xml | xargs git checkout -f
 cd - > /dev/null
 
 cd ${working_dir}
