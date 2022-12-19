@@ -5,7 +5,7 @@ emop_path=$1
 if [[ -n ${emop_path} ]]; then
     dir=${emop_path}/scripts
 else
-    dir=~/projects/emop-legacy/scripts
+    dir=${SCRIPT}
 fi
 
 function check_status() {
