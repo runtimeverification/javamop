@@ -44,7 +44,7 @@ check_status "${mop_test_status}" " on mop's unit tests"
     rm -rf ${HOME}/.m2/repository/javamop
     rm -rf ${SCRIPT_DIR}/agents
     cd ${dir}
-    git checkout -f master
+    git checkout -f h2
     git clean -ffxd
     bash make-agent-new.sh props/ ${SCRIPT_DIR}/agents quiet
     mvn install:install-file -Dfile=${SCRIPT_DIR}/agents/JavaMOPAgent.jar -DgroupId="javamop-agent" -DartifactId="javamop-agent" -Dversion="1.0" -Dpackaging="jar"
