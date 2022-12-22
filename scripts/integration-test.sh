@@ -34,6 +34,7 @@ function check_reverse_status() {
 
 (
     cd ${SCRIPT_DIR}/..
+    git checkout -f unified
     mvn clean package -DskipITs
 ) &> /tmp/mop-unit-tests.txt
 
@@ -44,7 +45,7 @@ check_status "${mop_test_status}" " on mop's unit tests"
     rm -rf ${HOME}/.m2/repository/javamop
     rm -rf ${SCRIPT_DIR}/agents
     cd ${dir}
-    git checkout -f h2
+    git checkout -f unified
     git clean -ffxd
     bash make-agent.sh ${SCRIPT_DIR}/props ${SCRIPT_DIR}/agents "quiet" "no-track" ${SCRIPT_DIR}/logs JavaMOPAgent
     # bash make-agent.sh props/ ${SCRIPT_DIR}/agents quiet
