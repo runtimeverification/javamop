@@ -80,7 +80,7 @@ public class TraceDBH2 extends TraceDB{
     }
 
     public Map<String, Integer> getTraceFrequencies() {
-        return super.getTraceFrequencies("select trace, count(*) from traces group by trace");
+        return super.getTraceFrequencies("select count(*), trace from traces group by trace");
     }
 
     public static void main(String[] args) {
