@@ -1,7 +1,12 @@
 package com.runtimeverification.rvmonitor.java.rt.observable;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import com.runtimeverification.rvmonitor.java.rt.ref.CachedWeakReference;
@@ -13,6 +18,8 @@ import com.runtimeverification.rvmonitor.java.rt.tablebase.IDisableHolder;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IIndexingTreeValue;
 import com.runtimeverification.rvmonitor.java.rt.tablebase.IMonitor;
 import com.runtimeverification.rvmonitor.java.rt.util.TraceDB;
+import com.runtimeverification.rvmonitor.java.rt.util.TraceDBH2;
+import com.runtimeverification.rvmonitor.java.rt.util.TraceDBH2Normalized;
 
 public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
@@ -24,9 +31,45 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
     public MonitorTraceCollector(PrintWriter writer, String dbPath) {
         this.writer = writer;
-        this.traceDB = new TraceDB(dbPath);
+        this.traceDB = getTraceDB(dbPath);
         this.monitors = new HashSet<>();
         traceDB.createTable();
+    }
+
+    private TraceDB getTraceDB(String dbPath) {
+        TraceDB traceDB = null;
+        // does the user have a config file in their home directory
+        File traceDBConfigFile = new File(System.getProperty("user.home"), ".trace-db.config");
+        if (traceDBConfigFile.exists()) {
+            try(FileInputStream inputStream = new FileInputStream(traceDBConfigFile)) {
+                Properties configs = new Properties();
+                configs.load(inputStream);
+                if (configs.containsKey("db")) {
+                    String dbType = configs.getProperty("db");
+                    switch (dbType) {
+                        case "h2":
+                            traceDB = new TraceDBH2(dbPath);
+                            break;
+                        case "h2-normalized":
+                            traceDB = new TraceDBH2Normalized(dbPath);
+                            break;
+                        default:
+                            traceDB = new TraceDBH2(dbPath);
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // some problem occurred while reading from config; use the default
+        if (traceDB == null) {
+            traceDB = new TraceDBH2();
+        }
+
+        return traceDB;
     }
 
     @Override

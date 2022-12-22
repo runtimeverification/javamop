@@ -4,22 +4,16 @@ import javax.sql.rowset.serial.SerialClob;
 import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
 import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.h2.tools.Csv;
-
-public class TraceDB {
-
-    private Connection connection;
-    private String jdbcURL = "jdbc:h2:/tmp/tracedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;DEFRAG_ALWAYS=TRUE;LOB_TIMEOUT=30000000;CACHE_SIZE=2048000";
-    private String jdbcUsername = "tdb";
-    private String jdbcPassword = "";
+public class TraceDBH2Normalized extends TraceDB {
 
     // cache of traces and their IDs that we know of, to save trips to the DB
     private Map<Clob, Long> traceIDMap = new HashMap<>();
@@ -27,13 +21,12 @@ public class TraceDB {
     // has the DB been cleaned since we last updated its contents?
     private boolean isCleaned = true;
 
-    public TraceDB() {
-        this.connection = getConnection();
+    public TraceDBH2Normalized() {
+        super();
     }
 
-    public TraceDB(String dbFilePath) {
-        this.jdbcURL =  "jdbc:h2:" + dbFilePath + ";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
-        this.connection = getConnection();
+    public TraceDBH2Normalized(String dbFilePath) {
+        super(dbFilePath);
     }
 
     public void put(String monitorID, String trace, int length) {
@@ -142,43 +135,17 @@ public class TraceDB {
 
     public int size() {
         cleanDB();
-        int count = -1;
-        final String COUNT_QUERY = "select count(*) from traces";
-        try(Statement statement =  getConnection().createStatement()){
-            ResultSet rs = statement.executeQuery(COUNT_QUERY);
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-        return count;
+        return super.size("select count(*) from traces");
     }
 
     public int uniqueTraces() {
         cleanDB();
-        int count = -1;
-        final String TRACE_QUERY = "select count(distinct(traceID)) from monitors";
-        try (Statement statement = getConnection().createStatement()) {
-            ResultSet rs = statement.executeQuery(TRACE_QUERY);
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-        return count;
+        return super.uniqueTraces("select count(distinct(traceID)) from monitors");
     }
 
     public void dump(String csvDir, String tableName) {
         cleanDB();
-        final String SELECT_QUERY = "select * from " + tableName;
-        try(PreparedStatement preparedStatement = getConnection().prepareStatement(SELECT_QUERY)){
-            ResultSet rs = preparedStatement.executeQuery();
-            new Csv().write(csvDir, rs, null);
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
+        super.dump(csvDir, tableName);
     }
 
     private void cleanDB() {
@@ -205,68 +172,20 @@ public class TraceDB {
         }
     }
 
-    private Connection getConnection() {
-        if (connection != null) {
-            return connection;
-        }
-        try {
-            connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-        return connection;
-    }
-
     public List<Integer> getTraceLengths() {
         cleanDB();
-        List<Integer> lengths =  new ArrayList<>();
-        final String LENGTHS_QUERY = "select length from traces inner join monitors on traces.traceID = monitors.traceID";
-        try (Statement statement = getConnection().createStatement()) {
-            ResultSet rs =  statement.executeQuery(LENGTHS_QUERY);
-            while (rs.next()) {
-                lengths.add(rs.getInt(1));
-            }
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-        return lengths;
+        return super.getTraceLengths("select length from traces inner join monitors on traces.traceID = monitors.traceID");
     }
 
     public Map<String, Integer> getTraceFrequencies() {
         cleanDB();
-        Map<String, Integer> traceFrequency = new HashMap<>();
-        final String FREQUENCY_QUERY = "select count(*), trace from monitors inner join traces on monitors.traceID = traces.traceID group by monitors.traceID ";
-        try(Statement statement = getConnection().createStatement()) {
-            ResultSet rs = statement.executeQuery(FREQUENCY_QUERY);
-            while (rs.next()) {
-                traceFrequency.put(rs.getString(2), rs.getInt(1));
-            }
-        } catch (SQLException e) {
-            printSQLException(e);
-        }
-        return traceFrequency;
-    }
-
-    private void printSQLException(SQLException ex) {
-        for (Throwable e : ex) {
-            if (e instanceof SQLException) {
-                e.printStackTrace(System.err);
-                System.err.println("SQLState: " + ((SQLException) e).getSQLState());
-                System.err.println("Error Code: " + ((SQLException) e).getErrorCode());
-                System.err.println("Message: " + e.getMessage());
-                Throwable t = ex.getCause();
-                while (t != null) {
-                    System.out.println("Cause: " + t);
-                    t = t.getCause();
-                }
-            }
-        }
+        return super.getTraceFrequencies("select count(*), trace from monitors inner join traces on monitors.traceID = traces.traceID group by monitors.traceID ");
     }
 
     public static void main(String[] args) throws SQLException, IOException {
         System.setProperty("h2.objectCacheMaxPerElementSize", "12288");
         System.setProperty("h2.objectCacheSize", "2048");
-        TraceDB traceDB = new TraceDB();
+        TraceDBH2 traceDB = new TraceDBH2();
         traceDB.createTable();
         System.out.println("Start: " + new Date());
         traceDB.put("fy#"+1, "[a,b,b,c]", 4);
