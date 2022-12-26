@@ -1,6 +1,7 @@
 package com.runtimeverification.rvmonitor.java.rt.util;
 
 import javax.sql.rowset.serial.SerialClob;
+import java.io.File;
 import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -63,7 +64,7 @@ public class TraceDBH2 extends TraceDB{
 
     public void dump() {
         System.out.println(getDbDir() + "::::traces");
-        super.dump(getDbDir(), "traces");
+        super.dump(getDbDir()+ File.pathSeparator + "monitor-table.csv", "traces");
     }
 
     public void createTable() {
