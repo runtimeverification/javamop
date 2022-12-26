@@ -138,7 +138,7 @@ public class TraceDBH2Normalized extends TraceDB {
 
     public int size() {
         cleanDB();
-        return super.size("select count(*) from traces");
+        return super.size("select count(*) from monitors");
     }
 
     public int uniqueTraces() {
