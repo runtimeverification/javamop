@@ -15,16 +15,20 @@ import java.util.Map;
 
 public abstract class TraceDB {
     private Connection connection;
-    private String jdbcURL = "jdbc:h2:/tmp/tracedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;DEFRAG_ALWAYS=TRUE;LOB_TIMEOUT=30000000;CACHE_SIZE=2048000";
-    private String jdbcUsername = "tdb";
-    private String jdbcPassword = "";
 
+    String dbDir = "/tmp/tracedb";
+
+    private String jdbcURL = "jdbc:h2:" + dbDir + ";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;DEFRAG_ALWAYS=TRUE;LOB_TIMEOUT=30000000;CACHE_SIZE=2048000";
+    private String jdbcUsername = "tdb";
+
+    private String jdbcPassword = "";
     public TraceDB() {
         this.connection = getConnection();
     }
 
     public TraceDB(String dbFilePath) {
         this.jdbcURL =  "jdbc:h2:" + dbFilePath + ";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
+        setDbDir(dbFilePath);
         this.connection = getConnection();
     }
 
@@ -130,4 +134,14 @@ public abstract class TraceDB {
     public abstract List<Integer> getTraceLengths();
 
     public abstract Map<String, Integer> getTraceFrequencies();
+
+    public abstract void dump();
+
+    public String getDbDir() {
+        return dbDir;
+    }
+
+    public void setDbDir(String dbDir) {
+        this.dbDir = dbDir;
+    }
 }

@@ -2,6 +2,7 @@ package com.runtimeverification.rvmonitor.java.rt.util;
 
 import javax.sql.rowset.serial.SerialClob;
 import javax.sql.rowset.serial.SerialException;
+import java.io.File;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.PreparedStatement;
@@ -20,6 +21,8 @@ public class TraceDBH2Normalized extends TraceDB {
 
     // has the DB been cleaned since we last updated its contents?
     private boolean isCleaned = true;
+
+    // the file path that is being used for the trace database
 
     public TraceDBH2Normalized() {
         super();
@@ -143,9 +146,10 @@ public class TraceDBH2Normalized extends TraceDB {
         return super.uniqueTraces("select count(distinct(traceID)) from monitors");
     }
 
-    public void dump(String csvDir, String tableName) {
+    public void dump() {
         cleanDB();
-        super.dump(csvDir, tableName);
+        super.dump(getDbDir() + File.pathSeparator + "monitor-table.csv", "monitors");
+        super.dump(getDbDir() + File.pathSeparator + "trace-table.csv", "traces");
     }
 
     private void cleanDB() {
@@ -185,7 +189,7 @@ public class TraceDBH2Normalized extends TraceDB {
     public static void main(String[] args) throws SQLException, IOException {
         System.setProperty("h2.objectCacheMaxPerElementSize", "12288");
         System.setProperty("h2.objectCacheSize", "2048");
-        TraceDBH2 traceDB = new TraceDBH2();
+        TraceDB traceDB = new TraceDBH2Normalized();
         traceDB.createTable();
         System.out.println("Start: " + new Date());
         traceDB.put("fy#"+1, "[a,b,b,c]", 4);
@@ -227,13 +231,8 @@ public class TraceDBH2Normalized extends TraceDB {
 //        System.out.println("Freq: " + traceFrequency);
 //
 //        System.out.println("FFF: " + s);
-        traceDB.dump("/tmp/trace-table.csv", "traces");
-        traceDB.dump("/tmp/monitor-table.csv", "monitors");
+        traceDB.dump();
 
 //        traceDB.put("fy#"+6, "[a,b,b,c]", 4);
-//
-//        traceDB.dump("/tmp/trace-table-2.csv", "traces");
-//        traceDB.dump("/tmp/monitor-table.-2csv", "monitors");
-
     }
 }

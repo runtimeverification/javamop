@@ -61,9 +61,8 @@ public class TraceDBH2 extends TraceDB{
         return super.uniqueTraces("select count(distinct(trace)) from traces");
     }
 
-    @Override
-    public void dump(String csvDir, String tableName) {
-        super.dump(csvDir, tableName);
+    public void dump() {
+        super.dump(getDbDir(), "traces");
     }
 
     public void createTable() {
