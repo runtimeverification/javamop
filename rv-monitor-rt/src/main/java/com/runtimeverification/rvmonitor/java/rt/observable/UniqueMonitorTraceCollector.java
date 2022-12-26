@@ -26,9 +26,9 @@ public class UniqueMonitorTraceCollector extends AllMonitorTraceCollector {
         if (isDoAnalysis()) {
             analyzeUniqueTraces();
         }
-        if (isDumpingTraces()) {
+//        if (isDumpingTraces()) {
             traceDB.dump();
-        }
+//        }
     }
 
     private String getFrequencyMap(Map<String, Integer> traceFrequencyMap) {
