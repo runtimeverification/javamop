@@ -103,7 +103,7 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
 
         // some problem occurred while reading from config; use the default
         if (traceDB == null) {
-            traceDB = new TraceDBH2();
+            traceDB = new TraceDBH2(dbPath);
         }
 
         return traceDB;

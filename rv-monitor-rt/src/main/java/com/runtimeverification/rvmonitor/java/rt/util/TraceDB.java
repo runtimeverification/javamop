@@ -18,7 +18,7 @@ public abstract class TraceDB {
 
     String dbDir = "/tmp/tracedb";
 
-    private final String h2Options =" ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;DEFRAG_ALWAYS=TRUE;LOB_TIMEOUT=30000000;CACHE_SIZE=2048000";
+    private final String h2Options =";DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=TRUE;DEFRAG_ALWAYS=TRUE;LOB_TIMEOUT=30000000;CACHE_SIZE=2048000";
 
     private String jdbcURL = "jdbc:h2:" + dbDir + h2Options;
     private String jdbcUsername = "tdb";
