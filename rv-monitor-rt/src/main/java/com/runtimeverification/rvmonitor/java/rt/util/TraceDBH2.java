@@ -62,6 +62,7 @@ public class TraceDBH2 extends TraceDB{
     }
 
     public void dump() {
+        System.out.println(getDbDir() + "::::traces");
         super.dump(getDbDir(), "traces");
     }
 
