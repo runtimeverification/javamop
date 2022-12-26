@@ -63,6 +63,7 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
     }
 
     private Properties getUserConfigs() {
+        System.err.println("LOADINGGGGG");
         if (configs != null) {
             return configs;
         }
@@ -71,7 +72,6 @@ public class MonitorTraceCollector implements IInternalBehaviorObserver {
         File traceDBConfigFile = new File(System.getProperty("user.home"), ".trace-db.config");
         if (traceDBConfigFile.exists()) {
             try(FileInputStream inputStream = new FileInputStream(traceDBConfigFile)) {
-                System.err.println("LOADINGGGGG");
                 configs.load(inputStream);
                 setUserConfigLoaded(true);
             } catch (FileNotFoundException e) {
