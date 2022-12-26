@@ -1,0 +1,37 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if ListIterator.remove() is called multiple times per
+ * next()/previous().
+ *
+ * Iterator.remove() can be called only once per call to next()/previous().
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ListIterator.html#remove%28%29
+ *
+ * This property warns if remove() is not preceded by next() or previous().
+ *
+ * @severity error
+ */
+
+ListIterator_RemoveOnce(ListIterator i) {
+	event remove before(ListIterator i) :
+		call(void Iterator+.remove()) && target(i) {}
+
+	event next before(ListIterator i) :
+		call(* Iterator+.next()) && target(i) {}
+
+	event previous before(ListIterator i) :
+		call(* ListIterator+.previous()) && target(i) {}
+
+	ere : ((next | previous)+ (remove | epsilon))*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "ListIterator.remove() can be called only once per call to next()/previous().");
+	}
+}
+

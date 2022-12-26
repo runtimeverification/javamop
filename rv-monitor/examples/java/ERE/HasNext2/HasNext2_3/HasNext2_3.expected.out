@@ -1,0 +1,3 @@
+@:HasNext2_3.HasNext2_3.main(HasNext2_3.java:23) ! hasNext not called before next
+@:HasNext2_3.HasNext2_3.main(HasNext2_3.java:25) ! hasNext not called before next
+sum: 6

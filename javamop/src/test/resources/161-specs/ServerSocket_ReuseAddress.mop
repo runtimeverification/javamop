@@ -1,0 +1,37 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if SO_REUSEADDR is enabled or disabled after a ServerSocket is bound.
+ *
+ * The behavior when SO_REUSEADDR is enabled or disabled after a socket is
+ * bound is not defined.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html#setReuseAddress%28boolean%29
+ *
+ * @severity warning
+ */
+
+ServerSocket_ReuseAddress(ServerSocket sock) {
+	creation event create_bound after() returning(ServerSocket sock) :
+		call(ServerSocket.new(int, ..)) {}
+
+	creation event create_unbound after() returning(ServerSocket sock) :
+		call(ServerSocket.new()) {}
+
+	event bind before(ServerSocket sock) :
+		call(* ServerSocket+.bind(..)) && target(sock) {}
+
+	event set before(ServerSocket sock) :
+		call(* ServerSocket+.setReuseAddress(..)) && target(sock) {}
+
+	ere : (create_bound | create_unbound set* bind+) set
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The behavior of setting SO_REUSEADDR after a socket is bound is not defined.");
+	}
+}
+

@@ -1,0 +1,36 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if notify(), notifyAll(), and wait(..) methods are called without holding the monitor of the object.
+ *
+ * According to the manual, those methods can only be called by a thread that is the owner of the object's monitor.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#notify%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#notifyAll%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#wait%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#wait%28long%29
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Object.html#wait%28long,%20int%29
+ *
+ * @severity error
+ */
+ 
+Object_MonitorOwner() {
+	event bad_notify before(Object o): 
+		(call(* Object+.notify(..)) || call(* Object+.notifyAll(..)))&& target(o) && if(!Thread.holdsLock(o)) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "notify() and notifyAll() can be called only by the owner of this object's monitor.");
+		}
+        
+	event bad_wait before(Object o): 
+		call(* Object+.wait(..)) && target(o) && if(!Thread.holdsLock(o)) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "wait() can be called only by the owner of this object's monitor.");
+		}
+        
+    
+}
+

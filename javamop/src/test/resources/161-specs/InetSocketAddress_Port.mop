@@ -1,0 +1,31 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if an InetSocketAddress_Port object is created with an invalid port.
+ *
+ * A valid port value is between 0 and 65535 inclusive.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/InetSocketAddress.html#InetSocketAddress%28int%29
+ *
+ * @severity error
+ */
+InetSocketAddress_Port() {
+	event construct before(int port) :
+		(
+			call(InetSocketAddress.new(int)) ||
+			call(InetSocketAddress.new(InetAddress, int)) ||
+			call(InetSocketAddress.new(String, int)) ||
+			call(* InetSocketAddress.createUnresolved(String, int))
+		) && args(.., port)
+	{
+		if (0 <= port && port <= 65535)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The specified port " + port + " is out of range; [0 ~ 65535]");
+	}
+}
+

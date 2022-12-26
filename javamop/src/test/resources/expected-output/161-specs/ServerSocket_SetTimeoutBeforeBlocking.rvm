@@ -1,0 +1,26 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ServerSocket_SetTimeoutBeforeBlocking(ServerSocket sock) {
+	creation event enter(ServerSocket sock){
+	}
+	event leave(ServerSocket sock){
+	}
+	event set(ServerSocket sock, int timeout){
+		if ( ! (timeout != 0) ) {
+			return false;
+		}
+		{
+		}
+	}
+	ere:  set* (enter leave)* set*
+
+	@fail
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "ServerSocket.setSoTimeout() should be set prior to entering the blocking operation.");
+		__RESET;
+	}
+}

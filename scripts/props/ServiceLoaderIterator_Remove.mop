@@ -1,0 +1,31 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if an iterator from a ServiceLoader object attempts to invoke
+ * remove().
+ *
+ * The iterator returned by ServiceLoader.iterator() does not support removal.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ServiceLoader.html#iterator%28%29
+ *
+ * @severity error
+ */
+
+ServiceLoaderIterator_Remove(Iterator i) {
+	creation event create after(ServiceLoader s) returning(Iterator i) :
+		call(Iterator ServiceLoader.iterator()) && target(s) {}
+
+	event remove before(Iterator i) :
+		call(* Iterator+.remove(..)) && target(i) {}
+
+	ere : create remove
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The iterator returned by ServiceLoader.iterator() does not support removal.");
+	}
+}
+

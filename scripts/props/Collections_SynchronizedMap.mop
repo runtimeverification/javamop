@@ -1,0 +1,59 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a synchronized collection is accessed in an unsynchronized manner.
+ *
+ * According to the manual, it is imperative that the user manually
+ * synchronize on the returned map when iterating over its collection views.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#synchronizedMap%28java.util.Map%29
+ *
+ * This property is designed to match a case where either a map is
+ * synchronized and an non-synchronized iterator is created for the map, or a
+ * synchronized iterator is created, but accessed in an unsynchronized manner.
+ * The difference from Collections_SynchronizedCollection is that a set must
+ * be created from the synchronized map.
+ *
+ * @severity error
+ */
+
+Collections_SynchronizedMap(Map syncMap, Collection col, Iterator iter) {
+	Map map;
+	creation event sync after() returning(Map syncMap) : 
+		call(* Collections.synchronizedMap(Map)) ||
+		call(* Collections.synchronizedSortedMap(SortedMap))
+	{
+		this.map = syncMap;
+	}
+
+	event createSet after(Map syncMap) returning(Collection col) : 
+		(
+			call(Set Map+.keySet()) ||
+			call(Set Map+.entrySet()) ||
+			call(Collection Map+.values())
+		) && target(syncMap) {}
+
+	event syncCreateIter after(Collection col) returning(Iterator iter) : 
+		call(* Collection+.iterator()) && target(col) &&
+		condition(Thread.holdsLock(map)) {}
+
+	event asyncCreateIter after(Collection col) returning(Iterator iter) : 
+		call(* Collection+.iterator()) && target(col) &&
+		condition(!Thread.holdsLock(map)) {}
+
+	event accessIter before(Iterator iter) : 
+		call(* Iterator.*(..)) && target(iter) &&
+		condition(!Thread.holdsLock(map)) {}
+
+	ere : sync createSet (asyncCreateIter | (syncCreateIter accessIter))
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A collection view of a synchronized map was accessed in a thread-unsafe manner.");
+	}
+}
+

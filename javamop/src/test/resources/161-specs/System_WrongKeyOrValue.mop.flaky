@@ -1,0 +1,49 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if null key or value is inserted, or non-String key or value is used.
+ *
+ * According to the manual, the returned map from getenv() does not permit null keys or values.
+ * Also, attempting to query the presence of a key or value which is not of type String is not allowed.   
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/System.html#getenv%28%29
+ *
+ * @severity error
+ */
+
+System_WrongKeyOrValue(Map map){
+
+	creation event createMap after() returning(Map map) : 
+        call(Map System.getenv()) {}
+              
+	event nullPut before(Map map, Object key, Object value) : 
+        call(* Map.put(..)) && args(key, value) && target(map) && condition(key == null || value == null){}
+
+	event nullPut before(Map map, Map map2) : 
+        call(* Map.putAll(Map)) && args(map2) && target(map) && condition(map2.containsKey(null) || map2.containsValue(null)){}
+
+	event nullQuery before(Map map, Object o) : 
+	    (call(* Map.containsKey(..)) || call(* Map.containsValue(..)) || call(* Map.get(..)) || call(* Map.remove(..))) && target(map) && args(o) && condition(o == null){}
+
+	event notStringQuery before(Map map, Object o) : 
+	    (call(* Map.containsKey(..)) || call(* Map.containsValue(..)) || call(* Map.get(..)) || call(* Map.remove(..))) && target(map) && args(o) && condition(!(o instanceof String)){}
+
+    ere : createMap (nullPut | nullQuery | notStringQuery)+ 
+
+	@match{
+           RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+           RVMLogging.out.println(Level.WARNING, "null key or value is not permitted in the map from System.getenv(). Also key or value which is not of type String is not allowed.");
+	}
+}
+		
+
+
+
+
+
+

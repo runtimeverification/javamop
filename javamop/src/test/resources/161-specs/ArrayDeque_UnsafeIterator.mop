@@ -1,0 +1,54 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a deque is modified while an iterator is being used.
+ *
+ * If a deque is modified at any time after an iterator is created, in any
+ * way except through the iterator's own remove() method, the iterator will
+ * generally throw a ConcurrentModificationException. However, the fail-fast
+ * behavior is not guaranteed.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/ArrayDeque.html
+ *
+ * This property warns if a deque is modified while an iterator is being
+ * used. Unlike the underlying system, where the fail-fast behavior is not
+ * guaranteed, this property always detects the problematic behavior.
+ *
+ * @severity error
+ */
+
+ArrayDeque_UnsafeIterator(ArrayDeque q, Iterator i) {
+	creation event create after(ArrayDeque q) returning(Iterator i) :
+		target(ArrayDeque) &&
+		(
+			call(Iterator Iterable+.iterator()) ||
+			call(Iterator Deque+.descendingIterator())
+		) && target(q) {}
+
+	event modify before(ArrayDeque q) :
+		target(ArrayDeque) &&
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.offer*(..)) ||
+			call(* Collection+.pop(..)) ||
+			call(* Collection+.push(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(q) {}
+
+	event useiter before(Iterator i) :
+		call(* Iterator.*(..)) && target(i) {}
+
+	ere : create useiter* modify+ useiter
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The deque was modified while an iterator is being used.");
+	}
+}
+

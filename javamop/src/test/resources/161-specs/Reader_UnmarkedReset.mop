@@ -1,0 +1,38 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Prevents premature invocations of reset().
+ *
+ * Some subclasses of Reader allows reset() only after mark() is called.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Reader.html#reset%28%29
+ *
+ * BufferedReader and LineNumberReader allow reset() only after mark() has
+ * been invoked. This specification catches the violation of this.
+ *
+ * @severity error
+ */
+
+Reader_UnmarkedReset(Reader r) {
+	event mark before(Reader r) : 
+		call(* Reader+.mark(..)) && target(r) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {}
+
+	event reset before(Reader r) : 
+		call(* Reader+.reset(..)) && target(r) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {}
+
+	ere : mark (mark | reset)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "BufferedReader and LineNumberReader allow reset() only after mark() has been invoked.");
+	}
+}

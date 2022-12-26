@@ -1,0 +1,41 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a ServerSocket object is constructed with an invalid backlog
+ * value.
+ *
+ * The backlog argument must be a positive value greater than 0. If the value
+ * passed if equal or less than 0, then the default value will be assumed.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html#ServerSocket%28int,%20int%29
+ *
+ * @severity warning
+ */
+ServerSocket_Backlog() {
+	private void check(int backlog, String msg) {
+		if (backlog > 0)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, msg);
+		RVMLogging.out.println(Level.CRITICAL, "The backlog argument " + backlog + " is invalid; it should be greater than 0.");
+	}
+
+	event construct before(int backlog) :
+		(
+			call(ServerSocket.new(int, int)) ||
+			call(ServerSocket.new(int, int, InetAddress))
+		) && args(*, backlog, ..)
+	{
+		this.check(backlog, __DEFAULT_MESSAGE);
+	}
+
+	event set before(int backlog) :
+		call(* ServerSocket+.bind(SocketAddress, int)) && args(*, backlog)
+	{
+		this.check(backlog, __DEFAULT_MESSAGE);
+	}
+}
+

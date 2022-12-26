@@ -1,0 +1,57 @@
+package mop;
+
+import java.net.*;
+import java.io.OutputStream;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the timeout option is set after the blocking operation starts.
+ *
+ * The timeout option must be enabled prior to entering the blocking operation
+ * to have effect.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/Socket.html#setSoTimeout%28int%29
+ *
+ * This property ensures that the timeout option is enabled prior to entering
+ * the write operation, which can block, on the corresponding output stream.
+ * The read operation on the corresponding input stream is checked by the
+ * companion property of this one.
+ *
+ * @severity warning
+ */
+Socket_SetTimeoutBeforeBlockingOutput(Socket sock, OutputStream output) {
+	creation event getoutput after(Socket sock) returning(OutputStream output) :
+		call(OutputStream Socket+.getOutputStream()) && target(sock) {}
+
+	event enter before(OutputStream output) :
+		call(* OutputStream+.write(..)) && target(output) {}
+
+	event leave after(OutputStream output) :
+		call(* OutputStream+.write(..)) && target(output) {}
+
+	event set before(Socket sock, int timeout) :
+		call(* Socket+.setSoTimeout(int)) && target(sock) && args(timeout)
+		&& condition(timeout != 0) {}
+
+	fsm :
+		start [
+			getoutput -> unblocked
+		]
+		unblocked [
+			getoutput -> unblocked
+			set -> unblocked
+			enter -> blocked
+		]
+		blocked [
+			getoutput -> blocked
+			leave -> unblocked
+		]
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Socket.setSoTimeout() should be set prior to entering the blocking operation.");
+
+		__RESET;
+	}
+}
+

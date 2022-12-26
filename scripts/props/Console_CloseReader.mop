@@ -1,0 +1,32 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if close() is invoked on the object returned by Console.reader().
+ *
+ * Invoking close() on the objects returned by Console.reader() does not close
+ * the underlying streams.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Console.html
+ *
+ * This specification warns if such useless invocation is detected.
+ *
+ * @severity suggestion
+ */
+
+Console_CloseReader(Reader r) {
+	event getreader after returning(Reader r) :
+		call(Reader+ Console+.reader()) {}
+	event close before(Reader r) :
+		call(* Reader+.close(..)) && target(r) {}
+
+	ere : getreader close+
+
+	@match {
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "Invoking close() on the object returned by Console.reader() does not close the underlying stream.");
+	}
+}
+

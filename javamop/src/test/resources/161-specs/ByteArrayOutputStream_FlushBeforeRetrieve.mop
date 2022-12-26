@@ -1,0 +1,66 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Flushes OutputStream before using the underlying ByteArrayOutputStream.
+ *
+ * When an OutputStream (or its subclass) instance is built on top of an
+ * underlying ByteArrayOutputStream instance, it should be flushed or closed
+ * before the underlying instance's toByteArray() is invoked. Failing to
+ * fulfill this requirement may cause toByteArray() to return incomplete
+ * contents.
+ *
+ * @severity warning
+ */
+ByteArrayOutputStream_FlushBeforeRetrieve(ByteArrayOutputStream b, OutputStream o) {
+	creation event outputstreaminit after(ByteArrayOutputStream b) returning(OutputStream o) :
+		call(OutputStream+.new(..)) && args(b, ..) {
+		}
+	event write before(OutputStream o) : call(* OutputStream+.write*(..)) && target(o) {
+	}
+	event flush before(OutputStream o) : call(* OutputStream+.flush(..)) && target(o) {
+	}
+	event close before(OutputStream o) : call(* OutputStream+.close(..)) && target(o) {
+	}
+	event tobytearray before(ByteArrayOutputStream b) :
+		call(* ByteArrayOutputStream+.toByteArray(..)) && target(b) {
+		}
+	event tostring before(ByteArrayOutputStream b) :
+		call(* ByteArrayOutputStream+.toString(..)) && target(b) {
+		}
+
+	fsm :
+		initial [
+			outputstreaminit -> outputstreamcreated
+		]
+		outputstreamcreated [
+			write -> writing
+			flush -> flushed
+			close -> closed
+		]
+		writing [
+			write -> writing
+			flush -> flushed
+			close -> closed
+		]
+		flushed [
+			flush -> flushed
+			write -> writing
+			tobytearray -> flushed
+			tostring -> flushed
+			close -> closed
+		]
+		closed [
+			tobytearray -> closed
+			tostring -> closed
+		]
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "flush() or close() should be invoked before toByteArray() or toString() to get the complete contents." + __LOC);
+	}
+}
+

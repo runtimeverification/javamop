@@ -1,0 +1,51 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// This property detects whether a user connects multiple
+// times simultaneously to a Postfix server
+
+MultipleConnectionCheck(String sourceHost) {
+    
+    String sourceHost;
+    String time;
+
+    event connect(String sourceHost, String time) {
+        this.sourceHost = sourceHost;
+        this.time = time;
+    }
+
+    event disconnect(String sourceHost, String time) {
+        this.sourceHost = sourceHost;
+        this.time = time;
+    }  
+
+    fsm :
+       start [
+           connect -> connected
+       ]
+       connected [
+           connect -> multipleConnect
+           disconnect -> disconnected
+       ]
+       disconnected [
+           connect -> connected
+       ]
+       multipleConnect [
+           disconnect -> connected
+           connect -> connected
+       ]
+
+
+    alias match = multipleConnect
+
+    @match {
+        System.err.println("Multiple connection attempts detected for " + sourceHost + " at " + time + ".");
+    }
+
+    @fail {
+        System.err.println("Unknown state reached for " + sourceHost + " at " + time +
+            ".  Please inspect the logs manually (disconnect-before-connect detected).");
+    }
+}

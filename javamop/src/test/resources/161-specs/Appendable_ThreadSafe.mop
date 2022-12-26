@@ -1,0 +1,40 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if two threads attempt to use the same Appendable object.
+ *
+ * According to the manual, thread safety is not guaranteed.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Appendable.html
+ * While there are some thread-safe Appendable classes, many Appendable
+ * classes are not thread-safe. 
+ *
+ * This property warns if that attempt is detected.
+ *
+ * @severity warning
+ */
+Appendable_ThreadSafe(Appendable a) {
+    Thread owner = null;
+
+    event safe_append before(Appendable a, Thread t) : 
+        call(* Appendable+.append(..)) && target(a) && thread(t) && !target(StringBuffer)
+        && condition(this.owner == null || this.owner == t) {
+            this.owner = t;
+        }
+    
+    event unsafe_append before(Appendable a, Thread t) : 
+        call(* Appendable+.append(..)) && target(a) && thread(t) && !target(StringBuffer)
+        && condition(this.owner != null && this.owner != t) {}
+
+	ere: safe_append*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "More than two threads attempted to use an Appendable instance, which may lead to a race condition");
+	}
+}
+

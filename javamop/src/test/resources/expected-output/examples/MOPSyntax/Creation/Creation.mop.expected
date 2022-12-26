@@ -1,0 +1,24 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+Creation(Object o) {
+	creation event fun1(Object o){
+	}
+	event fun2(Object o){
+	}
+	event mainend(){
+	}
+	ere:  fun1 (fun1 | fun2)* mainend
+
+	@fail
+	{
+		System.out.println("fail");
+	}
+	@match
+	{
+		System.out.println("match");
+	}
+}
+

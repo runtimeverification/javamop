@@ -1,0 +1,16 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ArrayDeque_NonNull() {
+	event insertnull(Object e){
+		if ( ! (e == null) ) {
+			return false;
+		}
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "ArrayDeque does not permit null.");
+		}
+	}
+}

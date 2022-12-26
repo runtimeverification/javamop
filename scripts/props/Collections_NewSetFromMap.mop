@@ -1,0 +1,37 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the map passed to Collections.newSetFromMap() is either non-empty,
+ * or empty but directly accessed after the method returns.
+ *
+ * The specified map must be empty at the time Collections.newSetFromMap() is
+ * invoked, and should not be accessed directly after this method returns.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#newSetFromMap%28java.util.Map%29
+ *
+ * @severity error
+ */
+
+Collections_NewSetFromMap(Map map) {
+	creation event create before(Map map) :
+		call(* Collections.newSetFromMap(Map)) && args(map) &&
+		condition(map.size() == 0) {}
+
+	creation event bad_create before(Map map) :
+		call(* Collections.newSetFromMap(Map)) && args(map) &&
+		condition(map.size() > 0) {}
+
+	event access before(Map map) :
+		call(* Map+.*(..)) && target(map) {}
+
+	ere : bad_create | (create access)
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The map used in Collections.newSetFromMap() must be empty before calling this method, and should not be accessed directly after this method returns.");
+	}
+}
+

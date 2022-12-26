@@ -1,0 +1,27 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if URLEncoder.encode() is used for non-UTF-8 encoding.
+ *
+ * The World Wide Web Consortium Recommendation states that UTF-8 should be
+ * used. Not doing so may introduce incompatibilites.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/URLEncoder.html#encode%28java.lang.String,%20java.lang.String%29
+ *
+ * @severity warning
+ */
+URLEncoder_EncodeUTF8() {
+	event encode before(String enc) :
+		call(* URLEncoder.encode(String, String)) && args(*, enc)
+	{
+		if (enc.equalsIgnoreCase("utf-8") || enc.equalsIgnoreCase("utf8"))
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The used encoding '" + enc + "' may introduce incompatibilites.");
+	}
+}
+

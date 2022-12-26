@@ -1,0 +1,37 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Prevents invocations of mark() if the InputStream does not support.
+ *
+ * Some subclasses of InputStream do not support mark() and reset().
+ * http://download.oracle.com/javase/6/docs/api/java/io/InputStream.html#reset%28%29
+ *
+ * FileInputStream, PushbackInputStream, ObjectInputStream, PipedInputStream
+ * and SequenceInputStream do not support mark() and reset(). This
+ * specification warns if mark() or reset() is invoked. Users tend to assume
+ * that OpenJDK implementation will always raise an exception if a stream does
+ * not support mark(), but this is not guaranteed. In fact,
+ * PushbackInputStream.mark() does nothing.
+ *
+ * @severity error
+ */
+
+InputStream_MarkReset() {
+	event mark_or_reset before() : 
+		(call(* InputStream+.mark(..)) || call(* InputStream+.reset(..)))
+		&& (
+			target(FileInputStream)
+			|| target(PushbackInputStream)
+			|| target(ObjectInputStream)
+			|| target(PipedInputStream)
+			|| target(SequenceInputStream)
+		)
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "FileInputStream, PushbackInputStream, ObjectInputStream, PipedInputStream and SequenceInputStream do not support mark() and reset().");
+		}
+}

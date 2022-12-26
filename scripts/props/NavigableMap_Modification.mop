@@ -1,0 +1,70 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if there are a NavigableMap object and its descending map, and either
+ * map is modified while an iterator over a collection view of either map is
+ * in progress (except through the iterator's own remove() operation).
+ *
+ * http://docs.oracle.com/javase/6/docs/api/java/util/NavigableMap.html#descendingMap%28%29
+ *
+ * @severity error
+ */
+
+NavigableMap_Modification(NavigableMap m1, NavigableMap m2, Collection c, Iterator i) {
+	creation event create after(NavigableMap m1) returning(NavigableMap m2) :
+		call(NavigableMap NavigableMap+.descendingMap()) && target(m1) {}
+
+	event getset1 after(NavigableMap m1) returning(Collection c) :
+		(
+			call(Set Map+.keySet()) ||
+			call(Set Map+.entrySet()) ||
+			call(Collection Map+.values())
+		) && target(m1) {}
+	event getset2 after(NavigableMap m2) returning(Collection c) :
+		(
+			call(Set Map+.keySet()) ||
+			call(Set Map+.entrySet()) ||
+			call(Collection Map+.values())
+		) && target(m2) {}
+
+	event getiter after(Collection c) returning(Iterator i) :
+		call(Iterator Iterable+.iterator()) && target(c) {}
+
+	event modify1 before(NavigableMap m1) :
+		(
+			call(* Map+.clear*(..)) ||
+			call(* Map+.put*(..)) ||
+			call(* Map+.remove(..))
+		) && target(m1) {}
+	event modify2 before(NavigableMap m2) :
+		(
+			call(* Map+.clear*(..)) ||
+			call(* Map+.put*(..)) ||
+			call(* Map+.remove(..))
+		) && target(m2) {}
+
+	event modify3 before(Collection c) :
+		(
+			call(* Collection+.add(..)) ||
+			call(* Collection+.addAll(..))
+		) && target(c) {}
+
+	event useiter before(Iterator i) :
+		(
+			call(* Iterator.hasNext(..)) ||
+			call(* Iterator.next(..)) 
+		) && target(i) {}
+
+	ere : create (modify1 | modify2)* (getset1 | getset2) (modify1 | modify2 | modify3)* getiter useiter* (modify1 | modify2 | modify3)+ useiter
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The NavigableMap was modified while an iteration over a collection view of a NavigableMap that shares the same storage.");
+	}
+}
+

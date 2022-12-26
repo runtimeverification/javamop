@@ -1,0 +1,38 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns read(), ready(), mark(), reset() or skip() after close().
+ *
+ * According to the Reader.close() documentation, read(), ready(), mark(),
+ * reset() or skip() invocations will throw an IOException, once the stream
+ * has been closed.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Reader.html#close%28%29
+ *
+ * This property warns if a closed Reader object invokes the aforementioned
+ * methods.
+ *
+ * @severity error
+ */
+
+Reader_ManipulateAfterClose(Reader r) {
+	event manipulate before(Reader r) :
+		(
+			call(* Reader+.read(..)) ||
+			call(* Reader+.ready(..)) ||
+			call(* Reader+.mark(..)) ||
+			call(* Reader+.reset(..)) ||
+			call(* Reader+.skip(..))
+		) && target(r) {}
+	creation event close before(Reader r) : call(* Reader+.close(..)) && target(r) {}
+
+	ere : close+ manipulate+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "read(), ready(), mark(), reset() or skip() was invoked after close().");
+	}
+}

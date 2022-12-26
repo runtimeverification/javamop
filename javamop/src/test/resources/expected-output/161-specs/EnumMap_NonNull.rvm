@@ -1,0 +1,24 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+EnumMap_NonNull() {
+	event insertnull(Object e){
+		if ( ! (e == null) ) {
+			return false;
+		}
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "EnumMap does not permit null.");
+		}
+	}
+	event insertnull(Map m){
+		for (Map.Entry entry : (Set<Map.Entry>) m.entrySet()) {
+			if (entry.getKey() == null) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "EnumMap does not permit null.");
+			}
+		}
+	}
+}

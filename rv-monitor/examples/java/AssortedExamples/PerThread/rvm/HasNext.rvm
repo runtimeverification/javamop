@@ -1,0 +1,28 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies that a program 
+// always calls the hasnext method  before 
+// the next method of an iterator. 
+// It is monitored for the pattern fail 
+// condition.  This property is borrowed 
+// from tracematches (see ECOOP'07 
+// http://abc.comlab.ox.ac.uk/papers)
+
+perthread HasNext(Iterator i) {
+	event hasnext(Iterator i) {} // after 
+	event next(Iterator i) {} // before
+
+	ere : (hasnext hasnext* next)*
+
+	@fail {
+	  System.err.println(
+             "! hasNext() has not been called"
+           + " before calling next() for an" 
+           + " iterator");
+          __RESET;
+	}
+}
+

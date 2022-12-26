@@ -1,0 +1,39 @@
+if ($cat$ != 2) {
+    $event$--; 
+    $cat$ = 1; 
+    for (int $i$ = $stacks$.size()-1; $i$ >=0; $i$--) {
+        IntStack stack = $stacks$.get($i$); 
+        $stacks$.set($i$,null); 
+        while (stack != null) { 
+            int s = stack.peek();
+            if (s >= 0 && $at$[s][$event$].length >= 0) { 
+                /* not in an error state and something to do? */
+                for (int j = 0; j < $at$[s][$event$].length; j++) { 
+                    IntStack tstack; 
+                    if ($at$[s][$event$].length > 1){
+                        tstack = stack.fclone(); 
+                    } else{ 
+                        tstack = stack; 
+                    } 
+                    switch ($at$[s][$event$][j].length) { 
+                        case 1:/* Shift */
+                            tstack.push($at$[s][$event$][j][0]); 
+                            $stacks$.add(tstack); 
+                            if ($acc$[$at$[s][$event$][j][0]]) $cat$ = 0; 
+                            break;
+                        case 2: /* Reduce */ 
+                            tstack.pop($at$[s][$event$][j][1]); 
+                            int $old$ = tstack.peek();
+                            tstack.push($gt$[$old$][$at$[s][$event$][j][0]]); 
+                            $stacks$.add($i$,tstack); 
+                            break; 
+                    } 
+                } 
+            }
+            stack = $stacks$.get($i$); 
+            $stacks$.remove($i$); 
+        }
+    } 
+    if ($stacks$.isEmpty()) 
+        $cat$ = 2; 
+};

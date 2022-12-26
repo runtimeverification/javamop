@@ -1,0 +1,26 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if mark() is invoked after close().
+ *
+ * According to the InputStream.mark() documentation, mark() after close()
+ * does nothing. This property warns if such useless mark() is invoked.
+ *
+ * @severity warning
+ */
+
+InputStream_MarkAfterClose(InputStream i) {
+	event mark before(InputStream i) : call(* InputStream+.mark(..)) && target(i) {}
+	event close before(InputStream i) : call(* InputStream+.close(..)) && target(i) {}
+
+	ere : close+ mark+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "mark() after close() had no effect.");
+	}
+}

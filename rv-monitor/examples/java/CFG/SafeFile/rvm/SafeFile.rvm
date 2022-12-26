@@ -1,0 +1,32 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// SafeFile is designed to match nested, matched 
+// open closes within a method. This follows the 
+// software engineering practice of closing files
+// within the method they are opened.  It should
+// be monitored with an @fail handler, because
+// the CFG specifies the correct behavior.
+
+SafeFile(FileReader f, Thread t) {
+   event open(FileReader f, Thread t) {} // after
+   event close(FileReader f, Thread t) {} // after
+   event beginCall(Thread t) {} // before
+   event endCall(Thread t) {} // after
+
+   cfg : 
+      S -> A S | epsilon, 
+      A -> A beginCall A endCall | A open A close | epsilon
+
+   @fail {
+      System.out.println("improper use of files");
+   }
+}
+
+
+
+
+
+

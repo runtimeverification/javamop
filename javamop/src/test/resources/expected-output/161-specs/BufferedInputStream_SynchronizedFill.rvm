@@ -1,0 +1,16 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+BufferedInputStream_SynchronizedFill(BufferedInputStream i) {
+	event fill(BufferedInputStream i){
+	}
+	ere:  fill
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "BufferedInputStream.fill() is being called by a non-synchronized method.");
+	}
+}

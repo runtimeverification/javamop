@@ -1,0 +1,38 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+import java.io.OutputStream;
+
+/**
+ * Warns if an output stream of a closed socket is used.
+ *
+ * If you write to a socket output stream after invoking shutdownOutput() on
+ * the socket, the stream will throw an IOException. 
+ * http://docs.oracle.com/javase/6/docs/api/java/net/SocketImpl.html#shutdownOutput%28%29
+ *
+ * @severity error
+ */
+
+SocketImpl_CloseOutput(SocketImpl sock, OutputStream output) {
+	creation event getoutput after(SocketImpl sock) returning(OutputStream output) :
+		call(OutputStream SocketImpl+.getOutputStream()) && target(sock) {}
+
+	event close before(SocketImpl sock) :
+		(
+			call(* SocketImpl+.close(..)) ||
+			call(* SocketImpl+.shutdownOutput(..))
+		)  && target(sock) {}
+
+	event use before(OutputStream output) :
+		call(* OutputStream+.*(..)) && target(output) {}
+
+	ere : getoutput close use+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The output stream of a closed socket is about to be used.");
+	}
+}
+

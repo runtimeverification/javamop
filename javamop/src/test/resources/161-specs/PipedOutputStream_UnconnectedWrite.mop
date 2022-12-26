@@ -1,0 +1,51 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if an unconnected PipedOutputStream object performs a write operation.
+ *
+ * If the pipe is broken, write() fails and a runtime exception is raised.
+ * http://download.oracle.com/javase/6/docs/api/java/io/PipedOutputStream.html#write%28int%29
+ *
+ * @severity error
+ */
+PipedOutputStream_UnconnectedWrite(PipedOutputStream o) {
+	creation event create after() returning(PipedOutputStream o) :
+		call(PipedOutputStream+.new()) {}
+	creation event create_io after() returning(PipedOutputStream o) :
+		call(PipedOutputStream+.new(PipedInputStream+)) {}
+
+	event create_oi before(PipedOutputStream o) :
+		call(PipedInputStream+.new(PipedOutputStream+)) && args(o) {}
+
+	event connect1 before(PipedOutputStream o) :
+		call(* PipedInputStream+.connect(PipedOutputStream+)) && args(o) {}
+	event connect2 before(PipedOutputStream o) :
+		call(* PipedOutputStream+.connect(PipedInputStream+)) && target(o) {}
+
+	event write before(PipedOutputStream o) :
+		call(* PipedOutputStream+.write(..)) && target(o) {}
+
+	fsm :
+		initial [
+			create -> unconnected
+			create_io -> connected
+		]
+		unconnected [
+			create_oi -> connected
+			connect1 -> connected
+			connect2 -> connected
+		]
+		connected [
+			write -> connected
+		]
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An unconnected PipedOutputStream performed write() operation.");
+	}
+}
+

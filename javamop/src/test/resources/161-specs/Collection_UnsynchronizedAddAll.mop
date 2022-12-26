@@ -1,0 +1,44 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the source collection is modified while Collection.addAll() is
+ * running.
+ *
+ * The behavior of Collection.addAll() is undefined if the specified source
+ * collection is modified while the operation is in progress.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collection.html#addAll%28java.util.Collection%29
+ *
+ * This property assumes that addAll() of all Collection and its subclasses
+ * behave similarly, and warns if add*(), remove*(), clear() or retain*() is
+ * called on the collection that is passed to addAll() as an argument.
+ *
+ * @severity error
+ */
+
+Collection_UnsynchronizedAddAll(Collection t, Collection s) {
+	creation event enter before(Collection t, Collection s) :
+		call(boolean Collection+.addAll(..)) && target(t) && args(s) {}
+
+	event modify before(Collection s) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(s) {}
+
+	event leave after(Collection t, Collection s) :
+		call(boolean Collection+.addAll(..)) && target(t) && args(s) {}
+
+	ere : (enter leave modify*)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The source collection of addAll() has been modified.");
+	}
+}
+

@@ -1,0 +1,56 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+InputStream_ReadAheadLimit(InputStream i) {
+
+	int limit = 0;
+
+	int rest = 0;
+
+	String LOC = null;
+	creation event mark(InputStream i, int l){
+		this.limit = l;
+		this.rest = l;
+	}
+	event read1(InputStream i, int n){
+		if (n != -1) {
+			this.rest -= 1;
+			if (this.rest < 0) this.LOC = __LOC;
+		}
+	}
+	event readn(InputStream i, int n){
+		if (n != -1) {
+			this.rest -= n;
+			if (this.rest < 0) this.LOC = __LOC;
+		}
+	}
+	event badreset(InputStream i){
+		if ( ! (rest < 0) ) {
+			return false;
+		}
+		{
+			this.limit = 0;
+			this.rest = 0;
+		}
+	}
+	event goodreset(InputStream i){
+		if ( ! (rest >= 0) ) {
+			return false;
+		}
+		{
+			this.rest = this.limit;
+		}
+	}
+	ere:  (mark | read1 | readn | goodreset)* badreset+
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The position mark has been invalidated.");
+		if (this.LOC != null) {
+			RVMLogging.out.println(Level.CRITICAL, "read() at line " + this.LOC + " invalidated the mark.");
+		}
+	}
+}

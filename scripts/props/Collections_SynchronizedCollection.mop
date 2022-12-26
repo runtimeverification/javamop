@@ -1,0 +1,53 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a synchronized collection is accessed in an unsynchronized manner.
+ *
+ * According to the manual, it is imperative that the user manually
+ * synchronize on the returned collection when iterating over it.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#synchronizedCollection%28java.util.Collection%29
+ *
+ * This property is designed to match a case where either a collection is
+ * synchronized and an non-synchronized iterator is created for the
+ * collection, or a synchronized iterator is created, but accessed in an
+ * unsynchronized manner.
+ *
+ * @severity error
+ */
+
+Collections_SynchronizedCollection(Collection col, Iterator iter) {
+	Collection col;
+
+	creation event sync after() returning(Collection col) : 
+		call(* Collections.synchronizedCollection(Collection)) ||
+		call(* Collections.synchronizedSet(Set)) ||
+		call(* Collections.synchronizedSortedSet(SortedSet)) ||
+		call(* Collections.synchronizedList(List))
+	{
+		this.col = col;
+	}
+
+	event syncCreateIter after(Collection col) returning(Iterator iter) : 
+		call(* Collection+.iterator()) && target(col) &&
+		condition(Thread.holdsLock(col)) {}
+
+	event asyncCreateIter after(Collection col) returning(Iterator iter) : 
+		call(* Collection+.iterator()) && target(col) &&
+		condition(!Thread.holdsLock(col)) {}
+
+	event accessIter before(Iterator iter) : 
+		call(* Iterator.*(..)) && target(iter) &&
+		condition(!Thread.holdsLock(this.col)) {}
+
+	ere : (sync asyncCreateIter) | (sync syncCreateIter accessIter)
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A synchronized collection was accessed in a thread-unsafe manner.");
+	}
+}
+

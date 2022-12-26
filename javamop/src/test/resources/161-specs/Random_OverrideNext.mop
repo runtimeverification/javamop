@@ -1,0 +1,35 @@
+package mop;
+
+import java.util.*;
+import java.lang.reflect.*;
+import org.aspectj.lang.Signature;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a Random subclass does not override next(int).
+ *
+ * A subclass of Random should override next(int), according to the
+ * documentation.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Random.html#next%28int%29
+ *
+ * @severity warning
+ */
+
+Random_OverrideNext() {
+	event staticinit after() : staticinitialization(Random+) {
+		Signature initsig = __STATICSIG;
+		Class klass = initsig.getDeclaringType();		
+
+		if (klass != null) {
+			try {
+				Method nextmethod = klass.getDeclaredMethod("next", Integer.class);
+			}
+			catch (NoSuchMethodException e) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, klass.getName() + " does not override int next(int bits).");
+			}
+		}
+	}
+}
+

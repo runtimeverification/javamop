@@ -1,0 +1,19 @@
+package mop;
+
+import java.util.*;
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Scanner_SearchAfterClose(Scanner s) {
+	creation event close(Scanner s){
+	}
+	event search(Scanner s){
+	}
+	ere:  close+ search+
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A closed Scanner object attempted to perform search operations.");
+	}
+}

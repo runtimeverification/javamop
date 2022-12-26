@@ -1,0 +1,47 @@
+package mop;
+
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Prevents registering a shutdown hook that has been started.
+ *
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Runtime.html
+ * According to the manual, addShutdownHook() registers a shutdown hook, 
+ * an initialized but unstarted thread that will be started 
+ * when the VM begins the shutdown sequence. 
+ * Since a shutdown hook is started by the VM, it should not be started prematurely
+ * by the user code. This specification captures the premature start.
+ *
+ * @severity error
+ */
+
+ShutdownHook_PrematureStart(Thread t) {
+
+	creation event good_register before(Thread t) : call(* Runtime+.addShutdownHook(..)) && args(t) && condition(t.getState() == Thread.State.NEW) {}
+
+	creation event bad_register before(Thread t) : call(* Runtime+.addShutdownHook(..)) && args(t) && condition(t.getState() != Thread.State.NEW) {}
+
+	event unregister before(Thread t) : call(* Runtime+.removeShutdownHook(..)) && args(t) {}
+
+	event userstart before(Thread t) : call(* Thread+.start(..)) && target(t) {}
+
+	fsm :
+		unregistered [
+			good_register -> registered
+			bad_register -> err
+		]
+		registered [
+			unregister -> unregistered
+			userstart -> err
+		]
+		err [
+		]
+
+	@err {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A virtual-machine shutdown hook has been started by the user code.");
+	}
+}
+

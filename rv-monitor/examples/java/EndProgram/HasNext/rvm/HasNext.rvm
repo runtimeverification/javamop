@@ -1,0 +1,23 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+
+HasNext(Iterator i) {
+	creation event hasnext(Iterator i) {} // after
+	creation event next(Iterator i) {} // before
+	event endProg() { // before
+		System.out.println("Program has ended.");}
+
+	ere : (hasnext+ next)* hasnext* endProg
+
+	@fail {
+	  System.out.println(
+             "! hasNext() has not been called"
+           + " before calling next() for an" 
+           + " iterator");
+          __RESET;
+	}
+}
+

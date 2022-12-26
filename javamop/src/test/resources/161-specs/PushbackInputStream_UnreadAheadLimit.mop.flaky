@@ -1,0 +1,116 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if unread() is invoked when the internal pushback buffer is full.
+ *
+ * A PushbackInputStream is capable of pushing back multiple bytes to the front of
+ * the stream. Typically, it is used for reading indefinite number of bytes until
+ * a delimiter is detected, and pushing back that delimiter so that the very next
+ * read() operation can see the delimiter again.
+ * http://download.oracle.com/javase/6/docs/api/java/io/PushbackInputStream.html
+ *
+ * Since the internal pushback buffer has limited capacity, performing
+ * unread() beyond its capacity causes a runtime error.
+ * http://download.oracle.com/javase/6/docs/api/java/io/PushbackInputStream.html#unread%28byte[]%29
+ *
+ * This property records the capacity of the pushback buffer, keeps track of
+ * read() and unread() operations, and warns if the buffer is full but
+ * unread() is invoked.
+ *
+ * @severity error
+ */
+
+PushbackInputStream_UnreadAheadLimit(PushbackInputStream p) {
+	int limit;
+	int pos;
+
+	creation event create after() returning(PushbackInputStream p) :
+		call(PushbackInputStream+.new(InputStream)) {
+		this.limit = 1;
+		this.pos = 1;
+	}
+	creation event create after(int size) returning(PushbackInputStream p) :
+		call(PushbackInputStream+.new(InputStream, int)) && args(.., size) {
+		this.limit = size;
+		this.pos = size;
+	}
+
+	event read1 after(PushbackInputStream p) returning(int r) :
+		call(* PushbackInputStream+.read()) && target(p) {
+		if (this.pos < this.limit)
+			this.pos++;
+	}
+	event read2 after(PushbackInputStream p) returning(int n) :
+		call(* PushbackInputStream+.read(byte[], int, int)) && target(p) {
+		int avail = this.limit - this.pos;
+		if (avail > 0) {
+			if (n < avail)
+				avail = n;
+			this.pos += avail;
+		}
+	}
+
+	/* XXX The order of event definitions matters here!
+	 * Although pos > 0 and pos == 0 can never be satisfied at the same time,
+	 * one of them is executed first and then the condition is re-evaluated;
+	 * i.e., the modification made by the first event handler affects the
+	 * condition of the second event.
+	 */
+	event safeunread before(PushbackInputStream p) :
+		call(* PushbackInputStream+.unread(int)) && target(p) &&
+		condition(pos > 0) {
+		--this.pos;
+	}
+	event unsafeunread before(PushbackInputStream p) :
+		call(* PushbackInputStream+.unread(int)) && target(p) &&
+		condition(pos == 0) {
+	}
+
+	/* XXX byte[] causes a parsing error. One can rewrite byte[] with Object,
+	 * but it's tedious and looks ugly.
+	 */
+/*
+	event safeunread before(PushbackInputStream p, byte[] b) :
+		call(* PushbackInputStream+.unread(byte[])) && target(p) && args(b) &&
+		condition(pos >= b.length) {
+		this.pos -= b.length;
+	}
+	event unsafeunread before(PushbackInputStream p, byte[] b) :
+		call(* PushbackInputStream+.unread(byte[])) && target(p) && args(b) &&
+		condition(pos < b.length) {
+	}
+*/
+	event safeunread before(PushbackInputStream p, Object b) :
+		call(* PushbackInputStream+.unread(byte[])) && target(p) && args(b) &&
+		condition(pos >= ((byte[])b).length) {
+		this.pos -= ((byte[])b).length;
+	}
+	event unsafeunread before(PushbackInputStream p, Object b) :
+		call(* PushbackInputStream+.unread(byte[])) && target(p) && args(b) &&
+		condition(pos < ((byte[])b).length) {
+	}
+
+	event safeunread before(PushbackInputStream p, int len) :
+		call(* PushbackInputStream+.unread(byte[], int, int)) && target(p) &&
+		args(.., len) &&
+		condition(pos >= len) {
+		this.pos -= len;
+	}
+	event unsafeunread before(PushbackInputStream p, int len) :
+		call(* PushbackInputStream+.unread(byte[], int, int)) && target(p) &&
+		args(.., len) &&
+		condition(pos < len) {
+	}
+
+	ere : create (read1 | read2 | safeunread)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "unread() cannot be performed because the internal pushback buffer is full.");
+	}
+}
+

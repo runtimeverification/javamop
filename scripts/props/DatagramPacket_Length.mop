@@ -1,0 +1,52 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a DatagramPacket object is constructed with a wrong length.
+ *
+ * According to the reference of DatagramPacket's constructors, the length
+ * parameter, which specifies the number of bytes to read, must be less than
+ * or equal to the length of buffer, another parameter of the constructors.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/DatagramPacket.html#DatagramPacket%28byte[],%20int%29
+ *
+ * It is considered that the explanation of the length parameter is incorrect
+ * when a constructor takes an offset as another parameter. Unlike the
+ * reference, specifying length < buffer.length, this property warns if
+ * (offset + length) < buffer.length is violated, when offset is available.
+ *
+ * @severity error
+ */
+
+DatagramPacket_Length() {
+	void validateOffsetLength(byte[] buffer, int offset, int length, String msg) {
+		if (offset + length <= buffer.length)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, msg);
+		RVMLogging.out.println(Level.CRITICAL, "The offset argument and/or the length argument are out of range; " + offset + " + " + length + " > " + buffer.length);
+	}
+
+	event construct_len before(byte[] buffer, int length) :
+		(
+			call(DatagramPacket.new(byte[], int)) ||
+			call(DatagramPacket.new(byte[], int, InetAddress, int)) ||
+			call(DatagramPacket.new(byte[], int, SocketAddress))
+		) && args(buffer, length, ..)
+	{
+		this.validateOffsetLength(buffer, 0, length, __DEFAULT_MESSAGE);
+	}
+
+	event construct_offlen before(byte[] buffer, int offset, int length) :
+		(
+			call(DatagramPacket.new(byte[], int, int)) ||
+			call(DatagramPacket.new(byte[], int, int, InetAddress, int)) ||
+			call(DatagramPacket.new(byte[], int, int, SocketAddress))
+		) && args(buffer, offset, length, ..)
+	{
+		this.validateOffsetLength(buffer, offset, length, __DEFAULT_MESSAGE);
+	}
+}
+

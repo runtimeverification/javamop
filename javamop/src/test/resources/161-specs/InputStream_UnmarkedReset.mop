@@ -1,0 +1,41 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Prevents premature invocations of reset().
+ *
+ * Some subclasses of InputStream allows reset() only after mark() is called.
+ * http://download.oracle.com/javase/6/docs/api/java/io/InputStream.html#reset%28%29
+ *
+ * BufferedInputStream, DataInputStream and LineNumberInputStream allow reset()
+ * only after mark() has been invoked. This specification catches the
+ * violation of this.
+ *
+ * @severity error
+ */
+
+InputStream_UnmarkedReset(InputStream i) {
+	event mark before(InputStream i) : 
+		call(* InputStream+.mark(..)) && target(i) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {}
+
+	event reset before(InputStream i) : 
+		call(* InputStream+.reset(..)) && target(i) && if (
+			i instanceof BufferedInputStream ||
+			i instanceof DataInputStream ||
+			i instanceof LineNumberInputStream
+		) {}
+
+	ere : mark (mark | reset)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "BufferedInputStream, DataInputStream and LineNumberInputStream allow reset() only after mark() has been invoked.");
+	}
+}

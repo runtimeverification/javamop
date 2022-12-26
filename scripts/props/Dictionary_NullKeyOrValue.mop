@@ -1,0 +1,27 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if null key or value is inserted into a Dictionary object.
+ *
+ * Neither the key nor the value can be null in a Dictionary object, according
+ * to the manual.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Dictionary.html#put%28K,%20V%29
+ *
+ * This property warns if such case is detected.
+ *
+ * @severity error
+ */
+
+Dictionary_NullKeyOrValue() {
+	event putnull before(Dictionary d, Object key, Object value) :
+		call(* Dictionary+.put(..)) && args(key, value) && target(d) &&
+		condition(key == null || value == null) {
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "Dictionary allow neither null key nor null value.");
+	}
+}
+

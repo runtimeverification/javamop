@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Enum_NoExtraWhiteSpace() {
+	event valueOf(Class c, String name){
+		if ( ! (name.length() != name.trim().length()) ) {
+			return false;
+		}
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "Please use the exact name. No extraneous whitespace characters are permitted");
+		}
+	}
+}

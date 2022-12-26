@@ -1,0 +1,58 @@
+package mop;
+
+import java.lang.*;
+import javax.swing.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a shutdown hook attempts to use thread-based services such as
+ * SwingUtilities because it may lead to deadlocks.
+ *
+ * According to the manual, a shutdown hook, which is started by the VM 
+ * during the shutdown sequence, should not use thread-based services, 
+ * in order to avoid deadlocks.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Runtime.html
+ *
+ * @severity error
+ */
+ShutdownHook_UnsafeSwingCall(Thread t) {
+	creation event register before(Thread t) : call(* Runtime+.addShutdownHook(..)) && args(t) {}
+	creation event unregister before(Thread t) : call(* Runtime+.removeShutdownHook(..)) && args(t) {}
+	event start before(Thread t) : startThread() && thread(t) {}
+	event swingcall1 void around(Thread t) :
+		(
+			call(* SwingUtilities+.invokeAndWait(..))
+			|| call(* SwingUtilities+.invokeLater(..))
+			|| call(* SwingWorker+.execute(..))
+		)
+		&& thread(t) {__SKIP;}
+	event swingcall2 Object around(Thread t) :
+		(
+			call(* SwingWorker+.get(..))
+		)
+		&& thread(t) {__SKIP;}
+
+	fsm :
+		unregistered [
+			register -> registered
+		]
+		registered [
+			unregister -> unregistered
+			start -> started
+		]
+		started [
+			swingcall1 -> unsafe
+			swingcall2 -> unsafe
+		]
+		unsafe [
+			swingcall1 -> unsafe
+			swingcall2 -> unsafe
+		]
+
+	@unsafe {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An operation that potentially leads to deadlocks was performed in a shutdown hook.");
+	}
+}
+

@@ -1,0 +1,44 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the arguments for an InetAddress.isReachable() call are invalid.
+ *
+ * Both the timeout parameter and the ttl parameter must be 0 or a positive
+ * value.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/InetAddress.html#isReachable%28int%29
+ *
+ * @severity error
+ */
+InetAddress_IsReachable() {
+	event isreachable before(int timeout) :
+		call(* InetAddress+.isReachable(int)) && args(timeout)
+	{
+		if (timeout < 0) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The timeout value for InetAddress.isReachable() should not be a negative value.");
+		}
+	}
+
+	event isreachable before(int ttl, int timeout) :
+		call(* InetAddress+.isReachable(NetworkInterface, int, int)) && args(*, ttl, timeout)
+	{
+		if (ttl < 0 || timeout < 0) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+
+			if (ttl < 0 && timeout < 0) {
+				RVMLogging.out.println(Level.CRITICAL, "The ttl value and the timeout value for InetAddress.isReachable() should not be negative values.");
+			}
+			else if (ttl < 0) {
+				RVMLogging.out.println(Level.CRITICAL, "The ttl value for InetAddress.isReachable() should not be a negative value.");
+			}
+			else {
+				RVMLogging.out.println(Level.CRITICAL, "The timeout value for InetAddress.isReachable() should not be a negative value.");
+			}
+		}
+	}
+}
+

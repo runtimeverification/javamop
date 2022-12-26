@@ -1,0 +1,26 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the index passed to insertElementAt() is invalid.
+ *
+ * The index passed to insertElementAt() must be a value greater than or equal
+ * to 0 and less than or equal to the current size of the vector.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Vector.html#insertElementAt%28E,%20int%29
+ *
+ * @severity error
+ */
+
+Vector_InsertIndex() {
+	event insert before(Vector v, int index) :
+		call(* Vector+.insertElementAt(Object, int)) && target(v) && args(.., index) {
+		if (!(0 <= index && index <= v.size())) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The index passed to insertElementAt() is invalid.");
+		}
+	}
+}
+

@@ -1,0 +1,34 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if Iterator.remove() is called multiple times per next().
+ *
+ * Iterator.remove() can be called only once per call to next().
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Iterator.html#remove%28%29
+ *
+ * This property warns if remove() is not preceded by next().
+ *
+ * @severity error
+ */
+
+Iterator_RemoveOnce(Iterator i) {
+
+	event remove before(Iterator i) :
+		call(void Iterator+.remove()) && target(i) {}
+
+	event next before(Iterator i) :
+		call(* Iterator+.next()) && target(i) {}
+
+	ere : (next+ (remove | epsilon))*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Iterator.remove() can be called only once per call to next().");
+	}
+}
+

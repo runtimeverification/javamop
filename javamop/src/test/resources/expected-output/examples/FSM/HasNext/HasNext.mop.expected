@@ -1,0 +1,32 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+full-binding HasNext(Iterator i) {
+	event hasnext(Iterator i){
+	}
+	event next(Iterator i){
+	}
+	fsm:
+	start [
+	next -> unsafe
+	hasnext -> safe
+	]
+	safe [
+	next -> start
+	hasnext -> safe
+	]
+	unsafe [
+	next -> unsafe
+	hasnext -> safe
+	]
+
+	alias match = unsafe
+
+	@match
+	{
+		System.out.println("next called without hasNext!");
+	}
+}
+

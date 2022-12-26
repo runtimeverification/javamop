@@ -1,0 +1,68 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns when the argument to decode is wrong
+ *
+ * According to the manual, the argument cannot contain any whitespace.
+ * Also, there is a format to follow. 
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Long.html#decode%28java.lang.String%29
+ *
+ * @severity error
+ */
+Long_BadDecodeArg() {
+
+    event decode before(Long l, String nm) : 
+        call(* Long.decode(String)) && args(nm) && target(l) {
+        if(nm == null || nm.length() == 0){
+            RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+            RVMLogging.out.println(Level.CRITICAL, "Wrong argument to Long.decode(String nm)");
+        } else {
+            //whitespace check
+            for(int j = 0; j < nm.length(); j++){
+                if(Character.isWhitespace(nm.charAt(j))){
+                    RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+                    RVMLogging.out.println(Level.CRITICAL, "Wrong argument to Long.decode(String nm)");
+                }
+            }
+            
+            //formatcheck
+            String sub;
+            if(nm.charAt(0) == '-'){
+                sub = nm.substring(1);
+            } else {
+                sub = nm;
+            }
+            
+            int radix = 0;
+            if(sub.startsWith("0x") || sub.startsWith("0X")){
+                sub = sub.substring(2);
+                radix = 16;
+            } else if(sub.startsWith("#")){
+                sub = sub.substring(1);
+                radix = 16;
+            } else if(sub.startsWith("0")){
+                sub = sub.substring(1);
+                radix = 8;
+            } else {
+                radix = 10;
+            }
+            
+            try{
+                if(Long.parseLong(sub, radix) < 0){
+                    RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+                    RVMLogging.out.println(Level.CRITICAL, "Wrong argument to Long.decode(String nm)");
+                }
+            } catch(Exception e){
+                RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+                RVMLogging.out.println(Level.CRITICAL, "Wrong argument to Long.decode(String nm)");
+            }
+            
+        }
+    }
+}
+

@@ -1,0 +1,22 @@
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+full-binding UnsafeMapIterator(Map map, Collection c, Iterator i) {
+	event createColl(Map map, Collection c){
+	}
+	event createIter(Collection c, Iterator i){
+	}
+	event useIter(Iterator i){
+	}
+	event updateMap(Map map){
+	}
+	ere:  createColl updateMap* createIter useIter* updateMap updateMap* useIter
+
+	@match
+	{
+		System.out.println("unsafe iterator usage!");
+	}
+}
+

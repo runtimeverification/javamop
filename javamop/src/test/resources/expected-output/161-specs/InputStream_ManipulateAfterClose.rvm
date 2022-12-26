@@ -1,0 +1,18 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+InputStream_ManipulateAfterClose(InputStream i) {
+	event manipulate(InputStream i){
+	}
+	creation event close(InputStream i){
+	}
+	ere:  close+ manipulate
+
+	@match
+	{
+		RVMLogging.err.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.err.println(Level.CRITICAL, "read(), available(), reset() or skip() was invoked after close().");
+	}
+}

@@ -1,0 +1,21 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+import java.io.InputStream;
+Socket_CloseInput(Socket sock, InputStream input) {
+	creation event getinput(Socket sock, InputStream input){
+	}
+	event close(Socket sock){
+	}
+	event use(InputStream input){
+	}
+	ere:  getinput close use+
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The input stream of a closed socket is about to be used.");
+	}
+}

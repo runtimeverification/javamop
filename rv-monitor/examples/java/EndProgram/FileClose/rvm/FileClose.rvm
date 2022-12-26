@@ -1,0 +1,30 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+
+FileClose(FileWriter f) {
+	FileWriter saved_fw;
+	creation event write(FileWriter f) { // before
+		saved_fw = f;
+	}
+	event close(FileWriter f) {} // after
+
+	event endProg() { // before
+		System.out.println("Program has ended.");
+	}
+
+	ere : write* close+ endProg
+
+	@fail {
+		System.err.println("You should close the file you wrote.");
+		try{
+			saved_fw.close();
+		} catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+		__RESET;
+	}
+}
+

@@ -1,0 +1,25 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+InetAddress_IsReachable() {
+	event isreachable(int timeout){
+		if (timeout < 0) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The timeout value for InetAddress.isReachable() should not be a negative value.");
+		}
+	}
+	event isreachable(int ttl, int timeout){
+		if (ttl < 0 || timeout < 0) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			if (ttl < 0 && timeout < 0) {
+				RVMLogging.out.println(Level.CRITICAL, "The ttl value and the timeout value for InetAddress.isReachable() should not be negative values.");
+			} else if (ttl < 0) {
+				RVMLogging.out.println(Level.CRITICAL, "The ttl value for InetAddress.isReachable() should not be a negative value.");
+			} else {
+				RVMLogging.out.println(Level.CRITICAL, "The timeout value for InetAddress.isReachable() should not be a negative value.");
+			}
+		}
+	}
+}

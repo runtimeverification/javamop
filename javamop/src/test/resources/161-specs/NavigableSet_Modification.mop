@@ -1,0 +1,57 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if there are a NavigableSet object and its descending set, and either
+ * set is modified while an iterator over either set is in progress (except
+ * through the iterator's own remove() operation).
+ *
+ * http://docs.oracle.com/javase/6/docs/api/java/util/NavigableSet.html#descendingSet%28%29
+ *
+ * @severity error
+ */
+
+NavigableSet_Modification(NavigableSet s1, NavigableSet s2, Iterator i) {
+	creation event create after(NavigableSet s1) returning(NavigableSet s2) :
+		call(NavigableSet NavigableSet+.descendingSet()) && target(s1) {}
+
+	event getiter1 after(NavigableSet s1) returning(Iterator i) :
+		call(Iterator Iterable+.iterator()) && target(s1) {}
+
+	event getiter2 after(NavigableSet s2) returning(Iterator i) :
+		call(Iterator Iterable+.iterator()) && target(s2) {}
+
+	event modify1 before(NavigableSet s1) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(s1) {}
+		
+	event modify2 before(NavigableSet s2) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(s2) {}
+
+	event useiter before(Iterator i) :
+		(
+			call(* Iterator.hasNext(..)) ||
+			call(* Iterator.next(..)) 
+		) && target(i) {}
+
+	ere : create (modify1 | modify2)* (getiter1 | getiter2) useiter* (modify1 | modify2)+ useiter
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The NavigableSet was modified while an iteration over a NavigableSet that shares the same storage.");
+	}
+}
+

@@ -1,0 +1,50 @@
+package mop;
+
+import java.lang.*;
+import java.awt.EventQueue;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a shutdown hook attempts to use thread-based services such as the
+ * AWT event-dispatch thread because it may lead to deadlocks.
+ *
+ * According to the manual, a shutdown hook, which is started by the VM 
+ * during the shutdown sequence, should not use thread-based services, 
+ * in order to avoid deadlocks.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Runtime.html
+ *
+ * @severity error
+ */
+ShutdownHook_UnsafeAWTCall(Thread t) {
+	creation event register before(Thread t) : call(* Runtime+.addShutdownHook(..)) && args(t) {}
+	creation event unregister before(Thread t) : call(* Runtime+.removeShutdownHook(..)) && args(t) {}
+	event start before(Thread t) : startThread() && thread(t) {}
+	event awtcall void around(Thread t) :
+		(
+			call(* EventQueue.invokeAndWait(..))
+			|| call(* EventQueue.invokeLater(..))
+		)
+		&& thread(t) {__SKIP;}
+
+	fsm :
+		unregistered [
+			register -> registered
+		]
+		registered [
+			unregister -> unregistered
+			start -> started
+		]
+		started [
+			awtcall -> unsafe
+		]
+		unsafe [
+			awtcall -> unsafe
+		]
+
+	@unsafe {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An operation that potentially leads to deadlocks was performed in a shutdown hook.");
+	}
+}
+

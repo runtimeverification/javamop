@@ -1,0 +1,33 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+ServiceLoader_MultipleConcurrentThreads(ServiceLoader s) {
+
+	Thread t;
+	creation event create(Thread t2, ServiceLoader s){
+		this.t = t2;
+	}
+	event gooduse(ServiceLoader s, Thread t2){
+		if ( ! (this.t == t2) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event baduse(ServiceLoader s, Thread t2){
+		if ( ! (this.t != t2) ) {
+			return false;
+		}
+		{
+		}
+	}
+	ere:  create gooduse* baduse
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "A ServiceLoader object has been used by multiple threads.");
+	}
+}

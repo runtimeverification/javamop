@@ -1,0 +1,47 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the 'actions' parameter is invalid.
+ *
+ * The 'actions' parameter contains a comma-separated list of the actions
+ * granted for the specified host (and port(s)). Possible actions are
+ * "connect", "listen", "accept", "resolve", or any combination of those.
+ * "resolve" is automatically added when any of the other three are specified.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/SocketPermission.html#SocketPermission%28java.lang.String,%20java.lang.String%29
+ *
+ * @severity error
+ */
+SocketPermission_Actions() {
+	event construct before(String actions) :
+		call(SocketPermission.new(String, String)) && args(*, actions)
+	{
+		HashSet<String> possible = new HashSet<String>();
+		possible.add("connect");
+		possible.add("listen");
+		possible.add("accept");
+		possible.add("resolve");
+
+		boolean valid = true;
+		String[] split = actions.split(",");
+		if (split.length == 0)
+			valid = false;
+		else {
+			for (String act : split) {
+				if (!possible.contains(act)) {
+					valid = false;
+					break;
+				}
+			}
+		}
+
+		if (!valid) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The 'actions' parameter '" + actions + "' is invalid.");
+		}
+	}
+}
+

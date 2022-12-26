@@ -1,0 +1,44 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if PriorityQueue is about to have a non-comparable object.
+ *
+ * PriorityQueue does not permit non-comparable elements.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/PriorityQueue.html
+ *
+ * The definition of a non-comparable object is not clear, but it is assumed
+ * that an object that does not implement the Comparable interface is deemed
+ * to be non-comparable.
+ *
+ * @severity error
+ */
+
+PriorityQueue_NonComparable() {
+	event insertnull before(Object e) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Queue+.offer*(..))
+		) && target(PriorityQueue) && args(e) {
+		if (!(e instanceof Comparable)) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "PriorityQueue does not permit non-comparable objects.");
+		}
+	}
+
+	event insertnull before(Collection c) :
+		call(* Collection+.addAll(Collection)) &&
+		target(PriorityQueue) && args(c) {
+		for (Object elem : c) {
+			if (!(elem instanceof Comparable)) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "PriorityQueue does not permit non-comparable objects.");
+			}
+		}
+	}
+}
+

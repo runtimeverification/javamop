@@ -1,0 +1,18 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Console_CloseReader(Reader r) {
+	event getreader(Reader r){
+	}
+	event close(Reader r){
+	}
+	ere:  getreader close+
+
+	@match
+	{
+		RVMLogging.out.println(Level.WARNING, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.WARNING, "Invoking close() on the object returned by Console.reader() does not close the underlying stream.");
+	}
+}

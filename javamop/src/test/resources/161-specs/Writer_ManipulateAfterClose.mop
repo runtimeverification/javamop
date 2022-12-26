@@ -1,0 +1,39 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns write(), or flush() after close().
+ *
+ * According to the Writer.close() documentation, further write() or flush()
+ * invocations will cause an IOException to be thrown.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Writer.html#close%28%29
+ *
+ * Other subclasses of Writer are deemed to be similar, except CharArrayWriter
+ * and StringWriter.
+ * http://docs.oracle.com/javase/6/docs/api/java/io/CharArrayWriter.html#close%28%29
+ * http://docs.oracle.com/javase/6/docs/api/java/io/StringWriter.html#close%28%29
+ *
+ * @severity error
+ */
+
+Writer_ManipulateAfterClose(Writer w) {
+	event manipulate before(Writer w) :
+		(
+			call(* Writer+.write*(..)) ||
+			call(* Writer+.flush(..))
+		) && target(w) &&
+		!target(CharArrayWriter) && !target(StringWriter) {}
+	creation event close before(Writer w) :
+		call(* Writer+.close(..)) && target(w) &&
+		!target(CharArrayWriter) && !target(StringWriter) {}
+
+	ere : close+ manipulate+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "write() or flush() was invoked after close().");
+	}
+}

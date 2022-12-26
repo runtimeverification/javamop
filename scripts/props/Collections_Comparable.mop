@@ -1,0 +1,59 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the argument of Collections.sort(List<T>, Comparator) is not comparable.
+ *
+ * All elements in the argument of Collections.sort(List<T>, Comparator) must
+ * be mutually comparable.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#sort%28java.util.List%29
+ *
+ * Similarly, the argument of Collections.min(Collectio<T>, Comparator) and
+ * Collections.max(Collection<T>, Comparator) must satisfy the requirement.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#min%28java.util.Collection,%20java.util.Comparator%29
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Collections.html#max%28java.util.Collection,%20java.util.Comparator%29
+ *
+ * This property verifies that comparing each pair of elements does not raise
+ * a ClassCastException. This property requires O(n^2) time for n elements.
+ *
+ * @severity error
+ */
+
+Collections_Comparable() {
+	private void validate(Object[] arr, Comparator comp, String msg)
+	{
+		for (int i = 0; i < arr.length; ++i) {
+			Object o1 = arr[i];
+
+			for (int j = i + 1; j < arr.length; ++j) {
+				Object o2 = arr[j];
+				try {
+					comp.compare(o1, o2);
+					comp.compare(o2, o1);
+				}
+				catch (ClassCastException e) {
+					RVMLogging.out.println(Level.CRITICAL, msg);
+					RVMLogging.out.println(Level.CRITICAL, i + "-th element and " + j + "-th element are not comparable.");
+				}
+			}
+		}
+	}
+
+	event invalid_sort before(List list, Comparator comp) :
+		call(void Collections.sort(List, Comparator)) && args(list, comp) {
+		this.validate(list.toArray(), comp, __DEFAULT_MESSAGE);
+	}
+
+	event invalid_minmax before(Collection col, Comparator comp) :
+		(
+			call(* Collections.min(Collection, Comparator)) ||
+			call(* Collections.max(Collection, Comparator))
+		) && args(col, comp) {
+		this.validate(col.toArray(), comp, __DEFAULT_MESSAGE);
+	}
+}
+

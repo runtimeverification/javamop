@@ -1,0 +1,26 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the "actions' value for NetPermission is not null.
+ *
+ * The "actions" value, a parameter of a NetPermission constructor, is unused,
+ * as of Java 6, and should be null.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/NetPermission.html#NetPermission%28java.lang.String,%20java.lang.String%29
+ *
+ * @severity error
+ */
+NetPermission_Actions() {
+	event construct before(String actions) :
+		call(NetPermission.new(String, String)) && args(.., actions)
+	{
+		if (actions != null) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The 'actions' value should be null.");
+		}
+	}
+}
+

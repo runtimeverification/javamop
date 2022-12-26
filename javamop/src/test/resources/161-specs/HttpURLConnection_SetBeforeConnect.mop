@@ -1,0 +1,90 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if HttpURLConnection.setFixedLengthStreamingMode(),
+ * setChunkedStreamingMode() or setRequestMethod() is invoked after the
+ * connection was made.
+ *
+ * According to the reference, both setFixedLengthStreamingMode() and
+ * setChunkedStreamingMode() must be called before the URLConnection, which is
+ * a superclass of HttpURLConnection, is connected.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/HttpURLConnection.html#setFixedLengthStreamingMode%28int%29
+ * http://docs.oracle.com/javase/6/docs/api/java/net/HttpURLConnection.html#setChunkedStreamingMode%28int%29
+ *
+ * Although it is not documented, setRequestMethod() must be called before a
+ * connection is made.
+ *
+ * Besides the connect() method, there are many other ways for a URLConnection
+ * object to be connected. It seems that the rule of thumb is any method that
+ * requires server's information, such as response headers and contents,
+ * causes th URLConnection object to be connected. Such methods include, but
+ * not limited to, the following methods:
+ *  URLConnection.connect()
+ *  URLConnection.getContent()
+ *  URLConnection.getContentEncoding()
+ *  URLConnection.getContentLength()
+ *  URLConnection.getContentType()
+ *  URLConnection.getDate()
+ *  URLConnection.getExpiration()
+ *  URLConnection.getHeaderField()
+ *  URLConnection.getHeaderFieldInt()
+ *  URLConnection.getHeaderFields()
+ *  URLConnection.getInputStream()
+ *  URLConnection.getLastModified()
+ *  URLConnection.getOutputStream()
+ *  HttpURLConnection.getErrorStream()
+ *  HttpURLConnection.getHeaderFieldDate()
+ *  HttpURLConnection.getHeaderFieldKey()
+ *  HttpURLConnection.getResponseCode()
+ *  HttpURLConnection.getResponseMessage()
+ *
+ * It should be noted that the above list is not comprehensive since a
+ * subclass may define its own connection-triggering method. For example, the
+ * HttpURLConnection class in the sun.net.www.protocol.http package, a
+ * subclass of java.net.HttpURLConnection, defines one such method,
+ * doTunneling().
+ *
+ * @severity error
+ */
+HttpURLConnection_SetBeforeConnect(HttpURLConnection c) {
+	event set before(HttpURLConnection c) :
+		(
+			call(* HttpURLConnection+.setFixedLengthStreamingMode(..)) ||
+			call(* HttpURLConnection+.setChunkedStreamingMode(..)) ||
+			call(* HttpURLConnection+.setRequestMethod(..))
+		) && target(c) {}
+
+	event connect before(HttpURLConnection c) :
+		(
+			call(* URLConnection+.connect(..)) ||
+			call(* URLConnection+.getContent(..)) ||
+			call(* URLConnection+.getContentEncoding(..)) ||
+			call(* URLConnection+.getContentLength(..)) ||
+			call(* URLConnection+.getContentType(..)) ||
+			call(* URLConnection+.getDate(..)) ||
+			call(* URLConnection+.getExpiration(..)) ||
+			call(* URLConnection+.getHeaderField(..)) ||
+			call(* URLConnection+.getHeaderFieldInt(..)) ||
+			call(* URLConnection+.getHeaderFields(..)) ||
+			call(* URLConnection+.getInputStream(..)) ||
+			call(* URLConnection+.getLastModified(..)) ||
+			call(* URLConnection+.getOutputStream(..)) ||
+			call(* HttpURLConnection+.getErrorStream(..)) ||
+			call(* HttpURLConnection+.getHeaderFieldDate(..)) ||
+			call(* HttpURLConnection+.getHeaderFieldKey(..)) ||
+			call(* HttpURLConnection+.getResponseCode(..)) ||
+			call(* HttpURLConnection+.getResponseMessage(..))
+		) && target(c) {}
+
+	ere : set* connect*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "setFixedLengthStreamingMode(), setChunkedStreamingMode() or setRequestMethod() should not be invoked after the connection was made.");
+	}
+}
+

@@ -1,0 +1,52 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if Arrays.deepHashCode() is invoked on an array that contains itself
+ * as an element.
+ *
+ * Arrays.deepHashCode() returns a hash code based on the "deep contents" of
+ * the specified array; i.e., if an element is an array, deepHashCode() is
+ * recursively invoked to get the hash code of that array. As a result,
+ * invoking deepHashCode() on an array that contains itself as an element,
+ * either directly or indirectly, is unacceptable.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Arrays.html#deepHashCode%28java.lang.Object[]%29
+ *
+ * This property tests if an array can reach itself by recursively iterating
+ * all the elements. If it reaches, this property warns because the behavior
+ * of deepHashCode() is undefined.
+ *
+ * @severity error
+ */
+
+Arrays_DeepHashCode() {
+	private boolean cycle(ArrayList<Object[]> enclosing, Object[] arr) {
+		for (Object[] e : enclosing) {
+			if (e == arr)
+				return true;
+		}
+
+		enclosing.add(arr);
+		for (Object e : arr) {
+			if (e instanceof Object[]) {
+				if (cycle(enclosing, (Object[])e))
+					return true;
+			}
+		}
+		enclosing.remove(enclosing.size() - 1);
+		return false;
+	}
+
+	event invalid_deephashcode before(Object[] arr) :
+		call(int Arrays.deepHashCode(Object[])) && args(arr) {
+		ArrayList<Object[]> enclosing = new ArrayList<Object[]>();
+		if (cycle(enclosing, arr)){
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The specified array contains itself as an element.");
+		}
+	}
+}
+

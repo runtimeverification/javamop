@@ -1,0 +1,88 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Raises an error if mark() is invalidated by reading.
+ *
+ * Some subclasses of Reader support mark() but the mark position can be
+ * invalidated.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Reader.html#reset%28%29
+ *
+ * BufferedReader and LineNumberReader support mark() and reset(), but after
+ * reading the specified number of bytes, the mark is not preserved and,
+ * consequently, calling reset() is prevented.
+ *
+ * This specification keeps track of validity of the mark, and raises an error
+ * when the mark is invalidated and read() is invoked.
+ *
+ * @severity error
+ */
+
+Reader_ReadAheadLimit(Reader r) {
+	int limit = 0;
+	int rest = 0;
+	String LOC = null;
+
+	event mark before(Reader r, int l) :
+		call(* Reader+.mark(int)) && target(r) && args(l) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {
+		this.limit = l;
+		this.rest = l;
+	}
+
+	event read1 after(Reader r) returning(int n) :
+		call(* Reader+.read()) && target(r) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {
+		if (n != -1) {
+			this.rest -= 1;
+			if (this.rest < 0)
+				this.LOC = __LOC;
+		}
+	}
+
+	event readn after(Reader r) returning(int n) :
+		call(* Reader+.read(char[], ..)) && target(r) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {
+		if (n != -1) {
+			this.rest -= n;
+			if (this.rest < 0)
+				this.LOC = __LOC;
+		}
+	}
+
+	event badreset before(Reader r) :
+		call(* Reader+.reset(..)) && target(r) && condition(rest < 0) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {
+		this.limit = 0;
+		this.rest = 0;
+	}
+
+	event goodreset before(Reader r) :
+		call(* Reader+.reset(..)) && target(r) && condition(rest >= 0) && if (
+			r instanceof BufferedReader ||
+			r instanceof LineNumberReader
+		) {
+		this.rest = this.limit;
+	}
+
+	ere : (mark | read1 | readn | goodreset)* badreset+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The position mark has been invalidated.");
+		if (this.LOC != null) {
+			RVMLogging.out.println(Level.CRITICAL, "read() at line " + this.LOC + " invalidated the mark.");
+		}
+	}
+}

@@ -1,0 +1,54 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if DatagramSocket.setTrafficClass() is called with an invalid traffic
+ * class value.
+ *
+ * The traffic class value, the only parameter of
+ * DatagramSocket.setTrafficClass(), must be between 0 and 255 inclusive.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/DatagramSocket.html#setTrafficClass%28int%29
+ *
+ * According to the reference, when IPv4 is used, the last low order bit is
+ * always ignored and setting bits in the precedence field may result in a
+ * SocketException indicating that the operation is not permitted. To inform
+ * the user that some bits are ignored and may cause an error, this property
+ * warns if the last low bit or the precedence field is set.
+ *
+ * @severity error
+ */
+
+DatagramSocket_TrafficClass() {
+	event settc before(DatagramSocket socket, int tc) :
+		call(void DatagramSocket.setTrafficClass(int)) && target(socket) && args(tc)
+	{
+		boolean outofrange = !(0 <= tc && tc <= 255);
+		boolean mbz = false;
+		boolean precedence = false;
+
+		InetAddress addr = socket.getLocalAddress();
+		if (addr instanceof Inet4Address) {
+			mbz = (tc & 1) != 0 ? true : false;
+			precedence = (tc >> (4 + 1)) != 0;
+		}
+
+		if (outofrange || mbz || precedence) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			if (outofrange) {
+				RVMLogging.out.println(Level.CRITICAL, "The traffic class value " + tc + " is out of range; [0 ~ 255].");
+			}
+			else {
+				if (mbz) {
+					RVMLogging.out.println(Level.CRITICAL, "The traffic class value sets 1 to MBZ.");
+				}
+				if (precedence) {
+					RVMLogging.out.println(Level.CRITICAL, "The traffic class value sets non-zero precedence.");
+				}
+			}
+		}
+	}
+}
+

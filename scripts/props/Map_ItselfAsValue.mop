@@ -1,0 +1,38 @@
+package mop;
+
+import java.util.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a subclass of Map contains itself as a value.
+ *
+ * While it is permissible for a map to contain itself as a value, extreme
+ * caution is advised: the equals() and hashCode() methods are no longer well
+ * defined on such a map.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Map.html
+ *
+ * @severity warning
+ */
+
+Map_ItselfAsValue() {
+	event put before(Map map, Object key, Object value) :
+		call(* Map+.put(Object, Object)) && target(map) && args(key, value) {
+		if (value == map) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "A map cannot contain itself as a value.");
+		}
+	}
+
+	event putall before(Map map, Map src) :
+		call(* Map+.putAll(Map)) && target(map) && args(src) {
+		for (Map.Entry entry : (Set<Map.Entry>)src.entrySet()) {
+			if (entry.getValue() == map) {
+				RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+				RVMLogging.out.println(Level.CRITICAL, "A map cannot contain itself as a value.");
+			}
+		}
+	}
+}
+

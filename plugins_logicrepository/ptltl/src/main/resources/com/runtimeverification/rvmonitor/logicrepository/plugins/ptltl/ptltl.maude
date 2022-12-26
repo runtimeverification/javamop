@@ -1,0 +1,703 @@
+--- ----------------------------- ---
+--- Genric K stuff; please ignore ---
+--- ----------------------------- ---
+
+fmod K is
+  sorts KConfigurationItem KConfiguration .
+  subsort KConfigurationItem < KConfiguration .
+  op empty : -> KConfiguration .
+  op __ : KConfiguration KConfiguration -> KConfiguration [assoc comm id: empty] . 
+
+  sorts KComputationItem KNeComputation KComputation .
+  subsort KComputationItem < KNeComputation < KComputation .
+  op nil : -> KComputation .
+  op _->_ : KComputation KComputation -> KComputation [assoc id: nil] .
+  op _->_ : KNeComputation KNeComputation -> KNeComputation [ditto] .
+
+  sort KComputationList .
+  subsort KComputation < KComputationList .
+  op nil : -> KComputationList .
+  op _,_ : KComputationList KComputationList -> KComputationList [assoc id: nil] .
+
+  sort KResult KResultList .
+  subsorts KResult < KResultList < KComputation .
+  op nil : -> KResultList .
+  op _,_ : KResultList KResultList -> KResultList [assoc id: nil] .
+
+  op [_] : KComputationList -> KComputationItem .
+  op [_] : KResultList -> KComputationItem .
+  op [_|_] : KComputationList KResultList -> KComputationItem .
+
+  var K : KNeComputation .  var Kl : KComputationList .
+  var R : KResult .       var Rl : KResultList .
+  eq [K,Kl] = K -> [Kl | nil] .
+  eq R -> [K,Kl | Rl] = K -> [Kl | Rl,R] .
+  eq R -> [nil | Rl] = [Rl,R] .
+endfm
+
+
+----------------------
+--- It starts here ---
+----------------------
+
+--- boolean expressions needed both in ptLTL and in the generated code
+fmod BOOLEAN-EXPRESSIONS is protecting QID .
+  sort Exp .  --- the sort of boolean expressions
+--- we next allow quoted identifiers, as well as true, false and the C/R operators
+--- to be boolean expressions
+  subsort Qid < Exp .
+  ops true false call begin end return : -> Exp .
+--- NOTE: we assume that traces follow the common convention that call is followed by begin
+--- and end is followed by return; call/return take place in caller's context, while begin/end in callee's.
+  op not_ : Exp -> Exp [prec 15] .
+  op _and_ : Exp Exp -> Exp [assoc comm prec 55] .
+  op _or_ : Exp Exp -> Exp [assoc comm prec 59] .
+  op _xor_ : Exp Exp -> Exp [assoc comm prec 57] .
+  op _implies_ : Exp Exp -> Exp [prec 61 gather (e E)] .
+
+--- aliases  
+  op !_ : Exp -> Exp [prec 15] .
+  op _->_ : Exp Exp -> Exp [prec 61 gather (e E)] .
+  op _/\_ : Exp Exp -> Exp [assoc comm prec 55] .
+  op _\/_ : Exp Exp -> Exp [assoc comm prec 59] .
+
+--- some boolean simplification rules; more can be added if needed
+  eq not (true).Exp = false .
+  eq not (false).Exp = true .
+  
+  vars A B C : Exp .
+  eq (true).Exp and A = A .
+  eq (false).Exp and A = false .
+  eq (true).Exp or A  = true .
+  eq (false).Exp or A = A .
+  eq A and A = A .
+  eq A or A = A .
+  eq (false).Exp xor A = A .
+  eq (true).Exp xor A = not A .
+  eq A xor A = false .
+  eq A and (B xor C) = A and B xor A and C .
+  ---eq not A = A xor true .
+  ---eq A or B = A and B xor A xor B .
+  eq A implies B = B or not A . 
+
+  eq A -> B = A implies B .
+  eq A /\ B = A and B .
+  eq A \/ B = A or B .
+  eq ! A = not A .
+endfm
+
+fmod PTLTL-SYNTAX is protecting BOOLEAN-EXPRESSIONS .
+  sort Formula .  subsort Exp < Formula .
+--- we need to explicitely lift the boolean operators to formulae
+  op _and_ : Formula Formula -> Formula [ditto] .
+  op _/\_ : Formula Formula -> Formula [ditto] .
+  op _or_ : Formula Formula -> Formula [ditto] .
+  op _\/_ : Formula Formula -> Formula [ditto] .
+  op not_ : Formula -> Formula [ditto] .
+  op !_ : Formula -> Formula [ditto] .
+  op _implies_ : Formula Formula -> Formula [ditto] .
+  op _->_ : Formula Formula -> Formula [ditto] .
+
+  vars A B : Formula .
+  eq A -> B = A implies B .
+  eq A /\ B = A and B .
+  eq A \/ B = A or B .
+  eq ! A = not A .
+
+--- past time operators
+  op `(*`)_ : Formula -> Formula [prec 30] .
+  op _S_ : Formula Formula -> Formula [prec 40] .
+  op _Since_ : Formula Formula -> Formula [prec 40] .
+  eq A Since B = A S B .
+
+--- Simplification rules; more can be added if needed
+--- the reason we didn't add these in BOOLEAN-EXPRESSIONS is because we want them to apply
+--- on formulae, too, not only on boolean expressions
+  vars F F' : Formula .
+  eq true and F = F .  eq false and F = false .
+  eq true or F = true .  eq false or F = F .
+  eq F implies F' = not F or F' .
+  eq not not F = F .
+  eq not(F and F') = not F or not F' .
+  eq not(F or F') = not F and not F' .
+
+--- Derived operators
+
+--- eventually in the past
+  op <*>_ : Formula -> Formula .
+  eq <*> F = true S F .
+
+--- always in the past
+  op [*]_ : Formula -> Formula .
+  eq [*] F = not(<*> not F) .
+
+--- strong interval
+  op [_,_} : Formula Formula -> Formula .
+  eq [F,F'} 
+      = (not F') S ((not F') and F) .
+endfm
+
+--- the following is the simple PL that we use to code our monitors
+--- it can be easily changed to Java, C# or whatever
+fmod CODE is extending BOOLEAN-EXPRESSIONS + INT .
+  sorts Bit Code QidSet QidList .  subsort Bit < Exp . subsort Qid < QidList < QidSet .
+
+
+  op b[_] : Nat -> Bit .
+  op _:=_ : Bit Exp -> Code [prec 72 format(ni d d d)] .  --- sequential
+  op _=_ : Bit Exp -> Code [prec 72 format(ni d d d)] .  --- parallel
+  op output : Exp -> Code [format(ni d)] .
+  ops nil empty : -> Code .
+  op empty : -> QidSet .
+  op nil : -> QidList .
+  op _;_ : Code Code -> Code [assoc id: nil prec 88] . --- sequential composition
+  op __ : Code Code -> Code [assoc comm id: empty prec 90] . --- code to be executed in parallel
+  op __ : QidSet QidSet -> QidSet [assoc comm id: empty prec 89] . --- QidSet constructor
+  op _;_ : QidList QidList -> QidList [assoc id: nil prec 88] . --- QidList constructor 
+  op qids : Code -> QidSet [memo] .
+  op qids : Exp -> QidSet [memo] .
+  op _-_ : QidSet QidSet -> QidSet [prec 91] .
+  op card : QidSet -> Nat [memo] .
+  op card : QidList -> Nat [memo] .
+  ***
+  *** take a simple QidSet and produce a Set of QidLists 
+  *** the codomain QidSet will actaully be a set of QidLists due
+  *** to my ugly subsorting of Qid QidList and QidSet
+  ***
+  ---op qidPerms : QidSet -> QidSet .
+ 
+  vars V V' : Bit .  vars E E' : Exp .  var Q : Qid .
+  var QS QS' : QidSet . var B : Bool . var C : Code .
+  var QL : QidList .
+
+  op _in_ : Bit Exp -> Bool .
+  eq V in V' = (V == V') .
+  eq V in Q = false .
+  eq V in true = false .
+  eq V in false = false .
+  eq V in not E = V in E .
+  eq V in (E and E') = (V in E) or (V in E') .
+  eq V in (E or E') = (V in E) or (V in E') .
+  eq V in (E xor E') = (V in E) or (V in E') .
+  eq V in (E implies E') = (V in E) or (V in E') .
+
+  eq QL QL QS = QL QS .
+  eq qids((nil).Code) = empty .
+  eq qids(V) = empty .
+  eq qids(Q) = Q .
+  eq qids(true) = empty .
+  eq qids(false) = empty .
+  eq qids(not E) = qids(E) .
+  eq qids(E and E') = qids(E) qids(E') .
+  eq qids(E or E') = qids(E) qids(E') .
+  eq qids(E xor E') = qids(E) qids(E') .
+  eq qids(E implies E') = qids(E) qids(E') .
+  eq qids(V := E ; C) = qids(E) qids(C) .
+  eq qids(V = E C) = qids(E) qids(C) . 
+  eq qids((empty).Code) = (empty).QidSet .
+
+  eq QL QS - QL QS' = QS - QS' .
+  eq QS - QS' = QS [owise] .
+ 
+  eq card(QL QS) = 1 + card(QS) .
+  eq card(empty) = 0 .
+
+  eq card(Q ; QL) = 1 + card(QL) .
+  eq card(nil) = 0 .
+
+  ***
+  *** generating permuatations of a QidSet
+  ***
+  op addElem : Qid QidSet -> QidSet .
+  op addElem : QidSet Qid QidSet -> QidSet .
+  eq addElem(Q, QS) = addElem(empty, Q, QS) .
+  eq addElem(QS, Q, QL QS') = addElem(QS (Q ; QL), Q, QS') .  
+  eq addElem(QS, Q, empty) = QS .
+
+  op qidPerms : QidSet -> QidSet .
+  eq qidPerms(empty) = empty .
+  eq qidPerms(Q) = Q .
+  eq qidPerms(QS) = forEachElem(QS) .
+
+  op forEachElem : QidSet -> QidSet .
+  op forEachElem : QidSet QidSet -> QidSet .
+  eq forEachElem(QS) = forEachElem(empty, QS) .
+  eq forEachElem(QS, empty) = empty .
+  eq forEachElem(QS, Q QS') 
+   = addElem(Q, qidPerms(QS QS')) 
+     forEachElem(QS Q, QS') .  
+endfm
+
+fmod MONITOR-GENERATION is protecting K + PTLTL-SYNTAX + CODE .
+  op k : KComputation -> KConfigurationItem .
+  op code : Code Code Code -> KConfigurationItem .
+  op nextBit : Nat -> KConfigurationItem .
+  op process : Formula -> KConfiguration .
+  op form : Formula -> KComputationItem .
+  op exp : Exp -> KResult .
+
+  vars F F1 F2 : Formula .  vars I C1 C2  : Code .  var N : Nat .  vars E E1 E2 : Exp .  var K : KComputation .
+
+--- creating the initial configuration
+  eq process(F) = k(form(F)) code(nil,nil,nil) nextBit(0) .
+
+--- getting rid of the special case when the formula is a simple boolean expression
+  eq k(form(E) -> K) = k(exp(E) -> K) .
+
+--- processing for the PTLTL operators; more can be added in the same style
+  ops not and or ((*)) S : -> KComputationItem .
+
+  eq form(not F) = form(F) -> not .
+  eq exp(E) -> not = exp(not E) .
+  eq form(F1 and F2) = [form(F1),form(F2)] -> and .
+  eq [exp(E1),exp(E2)] -> and = exp(E1 and E2) .
+  eq form(F1 or F2) = [form(F1),form(F2)] -> or .
+  eq [exp(E1),exp(E2)] -> or = exp(E1 or E2) .
+
+  eq form((*) F) = form(F) -> (*) .
+  eq k(exp(E) -> (*) -> K) code(I,C1,C2) nextBit(N)
+   = k(exp(b[N]) -> K) code(I (b[N] := false), C1, (b[N] := E) ; C2) nextBit(N + 1) .
+
+  eq form(F1 S F2) = [form(F1), form(F2)] -> S .
+  eq k([exp(E1),exp(E2)] -> S -> K) code(I,C1,C2) nextBit(N)
+   = k(exp(b[N]) -> K) code(I (b[N] := false), C1 ; (b[N] := E2 or E1 and b[N]), C2) nextBit(N + 1) .
+endfm
+
+fmod SUBSTITUTION is protecting CODE .
+--- substitution infrastructure useful for code optimizations
+  sort Substitution .
+  op _<-_ : Exp Exp -> Substitution [prec 10] .
+
+  op _[_] : Code Substitution -> Code .
+  op _[_] : Exp Substitution -> Exp .
+
+  vars C C1 C2 : Code . var S : Substitution . 
+  vars V V' : Bit . vars E E' : Exp .  var Q : Qid .
+
+---  eq (V = E C)[V' <- E'] = V = E[V' <- E'] if V in E' then C else C[V' <- E'] fi .
+
+  *** code substitution
+  eq (V = E C)[V' <- E'] 
+    = V = E[V' <- E'] C[V' <- E'] .
+
+  eq output(E)[S] = output(E[S]) .
+  eq ((empty).Code)[S] = empty .
+  eq ((nil).Code)[S] = nil .
+
+  *** expression substitution
+  eq true[S] = true .
+  eq false[S] = false .
+  eq (not(E))[S] = not(E[S]) .
+  eq (E and E')[S] = (E[S]) and (E'[S]) .
+  eq (E or E')[S] = (E[S]) or (E'[S]) .
+  eq (E xor E')[S] = (E[S]) xor (E'[S]) .
+  eq (E implies E')[S] = (E[S]) implies (E'[S]) .
+  eq Q[S] = Q .
+  eq V[V <- E] = E .
+
+--- make sure all the constructs for boolean expressions are covered above!
+  eq V[S] = V [owise] .
+endfm
+
+fmod DFA is protecting SUBSTITUTION + BOOL + PTLTL-SYNTAX .
+  sorts MultiOutEl MultiOut SwitchEl Switch StateEl State StateSet .
+  sorts InputEl Input InputSet .
+  subsort SwitchEl < Switch . subsort StateEl < State < StateSet . 
+  subsort MultiOutEl < MultiOut . subsort InputEl < Input < InputSet .
+ 
+  op . : -> State .
+  op n : Int -> State .
+  op q : Qid -> State .
+  op !_ : State -> State . 
+  op . : -> Switch .
+  op . : -> MultiOut .
+  op . : -> Input .
+  op _=>_ : Bit Bool -> StateEl .
+  op _:_ : State State -> State [assoc comm id: . prec 89] .
+  op _<=_ : Qid Bool -> InputEl .
+  op _:_ : Input Input -> Input [assoc comm id: . prec 89] .
+  op _?__ : Input State Bool -> SwitchEl . 
+  op _|_ : Switch Switch -> Switch [assoc comm id: . prec 88 format(d nt d d)] .
+  op [_::_] : State Switch -> MultiOutEl [format(n d nt d d d)] .
+  op __ : MultiOut MultiOut -> MultiOut [assoc comm id: . prec 88] .
+  op empty : -> StateSet . 
+  op _,_ : StateSet StateSet -> StateSet [assoc comm id: empty prec 90] .
+  op _-_ : StateSet StateSet -> StateSet [memo] .
+  op empty : -> InputSet .
+  op _,_ : InputSet InputSet -> InputSet [assoc comm id: empty prec 88 format(d d n d)] .  
+  op inputs : QidSet -> InputSet [memo] .
+  op inputs : InputSet QidSet QidSet -> InputSet [memo] .
+  op allFalse : QidSet -> InputSet [memo] . 
+  op chop : InputSet Nat -> InputSet [memo] .
+  op card : Input -> Nat .
+  op card : Switch -> Nat .
+
+  var S S' : State . var SE : StateEl . var SS SS' : StateSet . 
+  var I' : Switch . var I : SwitchEl . var IN : Input . var IS : InputSet .
+  var M' : MultiOut . var M : MultiOutEl . var Q : Qid . var QS QS' : QidSet .
+  var N : Nat . var INE : InputEl . var B : Bool . var MOD COUNT : Int .
+  eq SE : SE : S = SE : S .
+  eq INE : INE : IN = INE : IN . 
+  eq I | I | I' = I | I' .
+  eq M M M' = M M' .
+  eq S, S, SS = S, SS .
+
+  eq (S, SS) - (S, SS') = SS - SS' .
+  eq SS - SS' = SS [owise] .
+
+  eq card(INE : IN) = 1 + card(IN) .
+  eq card((.).InputSet) = 0 .
+
+  eq card(I | I') = 1 + card(I') .
+  eq card((.).Switch) = 0 .
+
+  eq inputs(QS) = inputs(allFalse(QS), QS, QS) .
+  eq inputs(IS, Q QS, QS') 
+   = inputs( (IS , (Q <= true : allFalse(QS' - Q))) , QS, QS') .
+  eq inputs(IS, empty, QS) = IS .
+  eq allFalse(Q QS) = (Q <= false) : allFalse(QS) .
+  eq allFalse(empty) = . .
+
+  ***
+  *** DFA generation
+  ***
+  op makeInitialState : Code -> State .
+  op transitions : State InputSet Code -> StateSet [memo] .
+  op transition : State Input Code -> State [memo] .
+  op transExp : State Input Exp -> Bool [memo] .
+  op makeDFA : Code -> MultiOut .
+  op makeDFA : StateSet Code Exp -> MultiOut .
+  op makeDFA : StateSet StateSet MultiOut Code State Exp -> MultiOut .
+ 
+  var MO : MultiOut . var J : Int .
+  var SS'' : StateSet . vars V V' : Bit . 
+  var S'' : State .  vars E E' : Exp .
+  var F : Formula .  vars C C' : Code .  
+ 
+  *** assume that all bits are initially false ...
+  eq makeInitialState(V = E C) 
+   = V => (false).Bool : makeInitialState(C) .
+  eq makeInitialState(empty) = . .
+
+  eq transitions(S, (IN, IS), C) 
+   = transition(S, IN, C), transitions(S, IS, C) .  
+  eq transitions(S, empty, C) = empty .
+
+  eq transition(S, IN, V = E  C) 
+   = V => transExp(S, IN, E) : transition(S, IN, C) .
+  eq transition(S, IN, empty) = . . 
+ 
+  eq transExp(V => B : S, IN, V) = B .
+  eq transExp(S, Q <= B : IN, Q) = B .
+  eq transExp(S, IN, true) = true .
+  eq transExp(S, IN, false) = false .
+  eq transExp(S, IN, E or E') = transExp(S, IN, E) or transExp(S, IN, E') .
+  eq transExp(S, IN, E and E') = transExp(S, IN, E) and transExp(S, IN, E') .
+  eq transExp(S, IN, E implies E') = transExp(S, IN, E) or (not transExp(S, IN, E')) .
+  eq transExp(S, IN, E xor E') = transExp(S, IN, E) xor (not transExp(S, IN, E')) .
+  eq transExp(S, IN, not E) = not transExp(S, IN, E) .    
+
+  eq makeDFA(output(E))  
+   = makeMO(inputs(qids(E)), [n(0) :: .], empty, E) .
+  eq makeDFA(C output(E)) = makeDFA(makeInitialState(C), C, E) .       
+  eq makeDFA(SS, C, E) = makeDFA((empty).StateSet, SS, (.).MultiOut, C, SS, E) .
+  eq makeDFA(SS, (S, SS'), MO, C, SS'', E) 
+   = makeDFA((SS, S), (SS', transitions(S, inputs(qids(C) qids(E)) , C)  - (SS, S)), 
+              MO makeMO(inputs(qids(C) qids(E)), [S :: .], C, E), C, SS'', E) .   
+  eq makeDFA(SS, empty, MO, C, SS'', E) = number(collapse(MO, SS''), 0, SS'') . 
+
+ 
+  vars SW : Switch . 
+  op makeMO : InputSet MultiOut Code Exp -> MultiOut .
+  eq makeMO((IN, IS), [S :: SW], C, E) 
+   = makeMO(IS, [S :: SW | IN ? transition(S, IN, C) transExp(S, IN, E)], C, E) [owise] .   
+  eq makeMO((IN, IS), [n(0) :: SW], C, E)
+   = makeMO(IS, [n(0) :: SW | IN ? n(0) transExp(n(0), IN, E)], C, E) .
+  eq makeMO(empty, MO, C, E) = MO .
+
+  op collapse : MultiOut State -> MultiOut .
+  ***
+  *** make sure that we don't remove the start state!
+  *** anything isomorphic to the start state should collapse to the
+  *** start state not vice versa, S'' is the start state
+  ***
+  eq collapse([S :: SW] [S' :: SW] MO, S'')
+   = collapse( if S == S'' 
+               then ([S :: SW] MO) [S' <- S]
+               else ([S' :: SW] MO) [S <- S']
+               fi, S'') .
+  eq collapse(MO, S) = MO [owise] .
+
+  op _[_<-_] : MultiOut State State -> MultiOut . 
+  eq (MO [S :: SW | IN ? S' B]) [S' <- S'']
+   = (MO [S :: SW | IN ? S'' B]) [S' <- S''] .
+  eq MO [S' <- S''] = MO [owise] .
+
+  op number : MultiOut Int State -> MultiOut .
+  eq number( MO [S :: SW], 0, S)
+   = number( (MO [n(0) :: SW])[ S <- n(0)], 1, S) .
+  eq number( MO [(V => B : S) :: SW], s J, S')
+   = number( (MO [n(s J) :: SW])[(V => B : S) <- n(s J)], s s J, S') .
+  eq number( MO, J, S) = MO [owise] . 
+endfm
+
+fmod FSM is
+  extending DFA .
+
+  sorts FSM FSM-item Transition Transition-item .
+  subsort  FSM-item < FSM  .
+  subsort Transition-item < Transition .
+
+  op _[_] : State Transition -> FSM-item [prec 40 format(n d nss n d)] .
+  op emptyTransition : -> Transition .
+  op emptyFSM : -> FSM .
+   
+  var S S1 S2 : State . var F F1 F2 : FSM-item .
+  var FSM FSM1 FSM2 : FSM .  var SW SW1 SW2 : Switch . 
+  var MO : MultiOut . var J : Int .
+  var SS'' : StateSet . vars V V' : Bit . 
+  var T T1 T2 : Transition .  var Q : Qid . 
+  var IN : Input .  var B : Bool .
+  var N : Nat . var SS1 SS2 : StateSet .
+ 
+  op __ : FSM FSM -> FSM [assoc prec 60 id: emptyFSM] .
+   
+  op _,_ : Transition Transition -> Transition [assoc comm prec 50 format(d d nss d) id: emptyTransition ] . 
+
+  op _->_ : Qid State -> Transition-item [prec 30] .
+  op default _ : State -> Transition-item [prec 30] .
+  op alias validation =_ : StateSet -> FSM-item [format(n d d d d)] .
+  op alias violation =_ : StateSet -> FSM-item [format(n d d d d)] .
+
+  op makeFSM : MultiOut ~> FSM .
+  op makeFSMAux : MultiOut ~> FSM . 
+  op renameFSM : FSM FSM FSM-item FSM-item Nat ~> FSM .
+  op renameFSM-item : FSM-item ~> FSM-item .
+  op rename : FSM State State ~> FSM .
+  op renameTrans : Transition State State ~> Transition .
+  op makeFSM-item : MultiOut ~> FSM-item .
+  op makeTransition : Switch ~> Transition .
+  op trim : FSM ~> FSM .
+  op trimAux : Transition FSM ~> FSM .
+
+  op [_|_] : State Bool -> State .
+
+  eq makeFSM(MO) = renameFSM(emptyFSM, trim(makeFSMAux(MO)), alias violation = empty, alias validation = empty, 0) .
+  ---eq makeFSM(MO) = trim(makeFSMAux(MO)) .
+  eq makeFSMAux([S :: SW] MO) = makeFSM-item([S :: SW]) makeFSMAux(MO) .
+  eq makeFSMAux(.) = emptyFSM .  
+
+ ceq makeFSM-item([S :: SW]) = [S | false] [T] [S | true] [T] 
+  if T := makeTransition(SW)  .  
+
+  eq makeTransition(SW | (Q <= true : IN) ? S B)
+   = makeTransition(SW) , Q -> [S | B] .
+  eq makeTransition(SW | IN ? S B) 
+   = makeTransition(SW) , default [S | B] .
+  eq makeTransition(. ? S B) = emptyTransition [owise] .
+  eq makeTransition(.) = emptyTransition .
+
+  eq renameFSM(FSM1, [S | true] [T] FSM2, alias violation = SS1, alias validation = SS2, N) 
+   = renameFSM(rename(FSM1 n(N) [T], [S | true], n(N)), rename(FSM2, [S | true], n(N)), 
+               alias violation = SS1, alias validation = (SS2, n(N)), s(N)) .
+ 
+  eq renameFSM(FSM1, [S | false] [T] FSM2, alias violation = SS1, alias validation = SS2, N) 
+   = renameFSM(rename(FSM1 n(N) [T], [S | false], n(N)), rename(FSM2, [S | false], n(N)), 
+               alias violation = (SS1, n(N)), alias validation = SS2, s(N)) .
+ 
+
+  eq renameFSM(FSM1, FSM2, alias violation = SS1, alias validation = SS2, N)
+   = FSM1 alias violation = SS1 alias validation = SS2 [owise] .
+  
+  eq rename(FSM S1 [T], S2, n(N))
+   = rename(FSM, S2, n(N)) if S1 == S2 then n(N) else S1 fi [renameTrans(T, S2, n(N))] .
+  eq rename(emptyFSM, S1, S2) = emptyFSM .
+  
+  eq renameTrans((T, Q -> S1), S1, S2) = Q -> S2, renameTrans(T, S1, S2) .
+  eq renameTrans((T, default S1), S1, S2) = default S2, renameTrans(T, S1, S2) .
+  eq renameTrans(T, S1, S2) = T [owise] .
+
+  eq trim(S [T] FSM) 
+   = S [T] trimAux(T, FSM) . 
+
+  eq trimAux((Q -> S, T1), FSM1 S[T2] FSM2)
+   = trim(S [T2] FSM1 FSM2) trimAux(T1, FSM1 FSM2) .
+  eq trimAux((default S, T1), FSM1 S[T2] FSM2)
+   = trim(S [T2] FSM1 FSM2) trimAux(T1, FSM1 FSM2) .
+
+
+  eq trim(FSM) = FSM [owise] .
+  eq trimAux(T, FSM) = emptyFSM [owise] .
+endfm
+
+fmod BTT-DFA is 
+  extending DFA .
+  sorts Bdt BdtSet BdtDFAEl BdtDFA .
+  subsort State Bool < Bdt < BdtSet .
+  subsort BdtDFAEl < BdtDFA .
+
+  op _||_ : BdtSet BdtSet -> BdtSet [assoc comm id: empty] .
+
+  op _?_:_ : Qid BdtSet BdtSet -> BdtSet .
+  op _?_:_ : Qid Bdt Bdt -> Bdt .
+
+  op [_:: state=_out=_] : State BdtSet BdtSet -> BdtDFAEl [format(d d d n d n d d n)] .
+  
+  op . : -> BdtDFA .
+  ***
+  *** no need for comm, since there will be no repeats
+  *** as they were removed in the MultiOut phase
+  ***
+  op __ : BdtDFA BdtDFA -> BdtDFA [assoc id: . format(n d d)] .
+
+  op bdtify : QidSet MultiOut -> BdtDFA .
+  op allBdts : QidSet MultiOutEl -> BdtDFAEl .
+  op allBdts : BdtDFAEl QidSet Switch -> BdtDFAEl .
+  op optBdt : BdtDFAEl -> BdtDFAEl .
+  op minBdt : Bdt BdtSet -> Bdt .
+  op |_| : Bdt -> Nat [memo] .
+  op bdt : QidList Switch -> BdtSet [memo] .
+  op bbtt : QidList Switch -> BdtSet [memo] .
+  op switchSubSet : Qid Bool Switch -> Switch [memo] .
+
+  var S S' : State . var SW : Switch . var QL : QidList . var Q : Qid .
+  var B B' : Bool . var IN IN' : Input . var SWE : SwitchEl . 
+  var Bs Bs' : BdtSet . var BD : BdtDFAEl .
+  var QS : QidSet . var Bdt Bdt' : Bdt .
+  var MO :  MultiOut . var MOE : MultiOutEl .
+
+  eq Q ? Bs : Bs = Bs .
+  eq Q ? true : false = q(Q) .
+  eq Q ? false : true = ! q(Q) .
+
+  eq bdtify(QS, MOE MO) 
+   = optBdt(allBdts(qidPerms(QS), MOE)) bdtify(QS, MO) .
+  eq bdtify(QS, .) = . .
+
+  eq allBdts(QL QS, [S :: SW])
+   = allBdts([S :: state= bdt(QL, SW) out= bbtt(QL, SW)], QS, SW) .
+  eq allBdts([S :: state= Bs out= Bs'], QL QS, SW)
+   = allBdts([S :: state= Bs || bdt(QL, SW) out= Bs' || bbtt(QL, SW)], QS, SW) .
+  eq allBdts(BD, empty, SW)
+   = BD .
+
+  eq optBdt([S :: state= (Bdt || Bs) out= (Bdt' || Bs')]) 
+   = [S :: state= minBdt(Bdt, Bs) out= minBdt(Bdt', Bs')] . 
+  ***
+  *** This equation shouldn't be necessary, not sure why Maude
+  *** is being stupid about this
+  ***
+  eq optBdt([S :: state= Bdt out= Bdt']) 
+   = [S :: state= Bdt out= Bdt'] . 
+  eq minBdt(Bdt, empty) = Bdt .
+  eq minBdt(Bdt, Bdt' || Bs) 
+   = minBdt(if | Bdt | < | Bdt' | then Bdt else Bdt' fi, Bs) .
+  ***
+  *** This one shouldn't be necessary either
+  *** there is obviously a problem with my BdtSets
+  ***
+  eq minBdt(Bdt, Bdt')
+   = if | Bdt | < | Bdt' | then Bdt else Bdt' fi .
+
+  eq | S | = 0 .
+  eq | B | = 0 .
+  eq | Q ? Bdt : Bdt' | = 1 + | Bdt | + | Bdt' | .
+
+
+  eq bdt(Q ; QL, (IN : Q <= true) ? S B | (IN' : Q <= false) ? S' B' | SW) 
+   = Q ? (if switchSubSet(Q, true, (IN : Q <= true) ? S B | SW)  == . 
+          then S
+          else bdt(QL, switchSubSet(Q, true, (IN : Q <= true) ? S B | SW)) 
+          fi)
+       : (if switchSubSet(Q, false,(IN' : Q <= false) ? S' B' |  SW)  == .
+          then S'
+          else bdt(QL, switchSubSet(Q, false, (IN' : Q <= false) ? S' B' | SW)) 
+          fi) [owise] .
+  eq bdt(QL, (IN : Q <= B) ? S B') = S .
+  
+  eq bbtt(Q ; QL, (IN : Q <= true) ? S B | (IN' : Q <= false) ? S' B' | SW) 
+   = Q ? (if switchSubSet(Q, true, (IN : Q <= true) ? S B | SW)  == . 
+          then B
+          else bbtt(QL, switchSubSet(Q, true, (IN : Q <= true) ? S B | SW)) 
+          fi)
+       : (if switchSubSet(Q, false,(IN' : Q <= false) ? S' B' |  SW)  == .
+          then B'
+          else bbtt(QL, switchSubSet(Q, false, (IN' : Q <= false) ? S' B' | SW)) 
+          fi) [owise] .
+  eq bbtt(QL, (IN : Q <= B) ? S B') = B' .
+ 
+
+
+  eq switchSubSet(Q, B, (Q <= B : IN) ? S B' | SW) 
+   = switchSubSet(Q, B, SW) | (Q <= B : IN) ? S B' .
+  eq switchSubSet(Q, B, SWE | SW) = switchSubSet(Q, B, SW) [owise] .
+  eq switchSubSet(Q, B, .) = . .  
+endfm
+
+fmod PRETTY-PRINT-AND-OPTIMIZATION is
+  protecting MONITOR-GENERATION + BTT-DFA + FSM .
+  sort Monitor .
+  
+  op genMonitor : Formula -> Code .
+  op makeMonitor : KConfiguration -> Code .
+--- call this only on a sequence of assignments and only if you want to parallize them
+  op makeParallel : Code -> Code [memo] . 
+  op makeParallel : Code Code -> Code [memo] .
+  op filter : Code -> Code [memo] .
+  op filter : Code Code -> Code [memo] .
+  op renumber : Code -> Code .
+  op renumber : Code Code Nat -> Code .
+
+  var F : Formula .  vars V V' : Bit .  vars E E' : Exp .  vars I C C' C1 C2 : Code .  
+  var N M N' : Nat .  
+
+  op // _ bits_ : Nat Code -> Code [format(ni d d d d) prec 120] .
+  op // initialization of monitor state_ : Code -> Code [format(ni d d d d d d) prec 90] .
+  op // sequential monitoring code_ : Code -> Code [format(ni d d d d n) prec 89] .
+  op // parallel monitoring code_ : Code -> Code [format(ni d d d d d) prec 89] .
+  op // DFA monitoring code_ : MultiOut -> Code [format(ni d d d d d) prec 89] .
+  op // BdtDFA monitoring code_ : BdtDFA -> Code [format(ni d d d d d) prec 89] .
+  op genFSM : Formula ~> FSM .
+  op KFSM : KConfiguration ~> FSM .
+
+  eq genFSM(F) = KFSM(process(F)) .
+  eq KFSM(k(exp(E)) code(I, C1, C2) nextBit(N))
+   = makeFSM(makeDFA(makeParallel(C1 ; output(E) ; C2))) .
+ 
+  eq genMonitor(F) = makeMonitor(process(F)) .
+  eq makeMonitor(k(exp(E)) code(I,C1,C2) nextBit(N))
+   = // N bits
+     // initialization of monitor state
+        I ;
+     ( // sequential monitoring code
+     C1 ;
+     output(E) ;
+     C2 ) 
+   .
+
+
+  op extractFromProcess : KConfiguration ~> Code .
+  eq extractFromProcess(k(exp(E)) code(I, C1, C2) nextBit(N))
+   = (C1 ; output(E) ; C2) .
+
+  op processAndParallel : Formula ~> Code .
+  eq processAndParallel(F) = makeParallel(extractFromProcess(process(F))) .
+
+
+  eq makeParallel(C) = makeParallel(C, empty) .
+  eq makeParallel(C1 ; V := E, C2) = makeParallel(C1, V = E (C2[V <- E])) .
+  eq makeParallel(C1 ; output(E), C2) = makeParallel(C1, output(E) C2) .
+  eq makeParallel(nil, C) = C .
+
+  eq filter(C output(E)) = filter(C, output(E)) [label f0] .
+ ceq filter(V = E C, output(E') C') = filter(C, V = E output(E') C') if V in E' [label f1] .
+ ceq filter(V = E C, V' = E' C') = filter(C, V = E V' = E' C') if V in E' [label f2] .
+  eq filter(C,C') = C' [owise label f3] .
+
+  eq renumber(C) = renumber(C, empty, 0) .
+  eq renumber(b[N'] = E C1, C2, N)
+   = renumber(C1, (C2[b[N'] <- b[N]]) (b[N] = (E [b[N'] <- b[N]])), N + 1) . 
+  eq renumber(output(E) C1, C2, N) 
+   = renumber(C1, output(E) C2, N) . 
+  eq renumber(empty, C, N) = C .
+  endfm

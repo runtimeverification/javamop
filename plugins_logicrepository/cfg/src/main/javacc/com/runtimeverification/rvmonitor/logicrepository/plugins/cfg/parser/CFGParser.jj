@@ -1,0 +1,179 @@
+options {
+   STATIC = false;
+   ERROR_REPORTING = true;
+}
+
+PARSER_BEGIN(CFGParser)
+   package com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.parser;
+
+   import com.runtimeverification.rvmonitor.logicrepository.plugins.cfg.util.*;
+   import java.util.ArrayList;
+   import java.util.HashMap;
+   import java.util.HashSet;
+   import java.io.*;
+
+   public class CFGParser {
+      public static CFGParser parse(InputStream input) {
+         CFGParser cfgParser = new CFGParser(input);
+
+         try{
+            cfgParser.Start();
+         }
+         catch(Exception e){
+            System.err.println(e.getMessage());
+            System.exit(1);
+         }
+         return cfgParser;
+      }
+
+      public static void main(String[] args)
+      throws ParseException, TokenMgrError {
+         CFGParser parser = new CFGParser(System.in);
+         parser.Start();
+         CFG g = parser.getCFG();
+         g.simplify();
+         System.out.println(g.toString());
+      }
+
+      private CFG cfg;
+      private int namenum = 0;
+      private HashMap<ArrayList<Symbol>,NonTerminal> starmap = new HashMap<ArrayList<Symbol>,NonTerminal>();
+
+      private NonTerminal freshNT(){ return new NonTerminal(Integer.toString(namenum++)); }
+
+      private NonTerminal addstar(ArrayList<Symbol> body){
+         if (starmap.containsKey(body)) return starmap.get(body);
+         ArrayList<Symbol> e = new ArrayList<Symbol>();
+         NonTerminal nt = freshNT();
+         starmap.put((ArrayList<Symbol>)body.clone(),nt);
+         e.add(new Epsilon());
+         body.add(nt);
+         cfg.add(new Production(nt,body));
+         cfg.add(new Production(nt,e));
+         return nt;
+      }
+
+      public CFG getCFG(){ return cfg; }
+
+      private void specializeSymbols(){
+         HashSet<NonTerminal> nts = cfg.nonTerminals();
+         ArrayList<Symbol> rhs;
+         Symbol s;
+         for (Production p : cfg.getProds()) {
+            rhs = p.getRhs();
+            for (int j = 0; j < rhs.size(); j++) {
+               s = rhs.get(j);
+               if (s instanceof Epsilon){
+                  rhs.set(j,new Epsilon());
+               }
+               else{
+                  if (nts.contains(s))
+                     rhs.set(j,new NonTerminal(s));
+                  else {rhs.set(j,new Terminal(s)); }}
+            }
+         }
+      }
+
+   }
+
+PARSER_END(CFGParser)
+
+   SKIP : {
+      <WHITESPACE: [" ","\t","\r","\n"]>
+   }
+
+TOKEN : {
+           <ALT  : "|" >
+              | <EPSILON : "epsilon" >
+              | <COMMA : "," >
+              | <SYMBOL : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_")*>
+              | <DIGIT : ["0"-"9"]>
+              | <LETTER : ["a"-"z","A"-"Z"]>
+              | <ARROW: "->">
+              | <PLUS: "+">
+              | <STAR: "*">
+              | <LPAREN: "(">
+              | <RPAREN: ")">
+        }
+
+void Start() : {
+   cfg = new CFG();
+}
+{
+   Cfg() <EOF>
+   {specializeSymbols();}
+}
+
+void Cfg() : {
+   ArrayList<Production> ps;
+}
+{
+   ps = Production()
+   { cfg.add(ps); cfg.setStart(ps.get(0).getLhs());}
+   (
+    <COMMA>
+    ps = Production()
+    { cfg.add(ps); }
+   )*
+}
+
+ArrayList<Production> Production() : {
+   Token t;
+   ArrayList<Production> ps = new ArrayList<Production>();
+   NonTerminal nt;
+   ArrayList<Symbol> alt = new ArrayList<Symbol>();
+}
+{
+   t=<SYMBOL> <ARROW>
+   { nt = new NonTerminal(t.image); }
+   alt = Alternative()
+   { ps.add(new Production(nt,alt)); }
+   (
+    <ALT>
+    alt = Alternative()
+    { ps.add(new Production(nt,alt)); }
+   )*
+   { return ps; }
+}
+
+ArrayList<Symbol> Alternative() : {
+   ArrayList<Symbol> e;
+   ArrayList<Symbol> ss = new ArrayList<Symbol>();
+}
+{
+   <EPSILON>
+   {ss.add(new Epsilon()); return ss;}
+   | e = Expression() {return e;}
+}
+
+ArrayList<Symbol> Expression() : {
+   Token t;
+   ArrayList<Symbol> s = new ArrayList<Symbol>();
+   ArrayList<Symbol> e = new ArrayList<Symbol>();
+   ArrayList<Symbol> r = new ArrayList<Symbol>();
+   ArrayList<Symbol> body = new ArrayList<Symbol>();
+   boolean isPlus;
+}
+{
+   (t = <SYMBOL>
+   {body.add(new Symbol(t.image));}
+   [ isPlus = Mods()
+      { if (isPlus) r.addAll(body); r.add(addstar(body));} ]
+   {if (r.isEmpty()) r.addAll(body); e.addAll(r); r.clear(); body.clear();}
+   | <LPAREN> body = Expression() <RPAREN>
+   [ isPlus = Mods()
+      { if (isPlus) r.addAll(body); r.add(addstar(body));} ]
+   {if (r.isEmpty()) r.addAll(body); e.addAll(r); r.clear(); body.clear();})+
+   {return e;}
+}
+
+boolean Mods() : {
+   boolean isPlus = true;
+}
+{
+   (
+   <PLUS> { isPlus = true && isPlus;}
+   | <STAR> { isPlus = false;}
+   )+
+   {return isPlus;}
+}

@@ -1,0 +1,38 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if ServerSocket.setPerformancePreferences() is invoked after the
+ * socket has been bound.
+ *
+ * Invoking ServerSocket.setPerformancePreferences() after the socket has been
+ * bound will have no effect.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html#setPerformancePreferences%28int,%20int,%20int%29
+ *
+ * @severity warning
+ */
+
+ServerSocket_PerformancePreferences(ServerSocket sock) {
+	creation event create_bound after() returning(ServerSocket sock) :
+		call(ServerSocket.new(int, ..)) {}
+
+	creation event create_unbound after() returning(ServerSocket sock) :
+		call(ServerSocket.new()) {}
+
+	event bind before(ServerSocket sock) :
+		call(* ServerSocket+.bind(..)) && target(sock) {}
+
+	event set before(ServerSocket sock) :
+		call(* ServerSocket+.setPerformancePreferences(..)) && target(sock) {}
+
+	ere : (create_bound | create_unbound set* bind+) set
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Invoking ServerSocket.setPerformancePreferences() after the socket has been bound will have no effect.");
+	}
+}
+

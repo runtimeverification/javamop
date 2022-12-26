@@ -1,0 +1,17 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+RuntimePermission_NullAction() {
+	event constructor_runtimeperm(String name, String actions, RuntimePermission r){
+		if ( ! (actions != null) ) {
+			return false;
+		}
+		{
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The actions string should be null.");
+		}
+	}
+}

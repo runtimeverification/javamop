@@ -1,0 +1,54 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if Socket.getOutputStream() is invoked when the output stream is
+ * unavailable.
+ *
+ * Although it is not documented, an output stream is unavailable if the
+ * socket is closed, is not connected, or the socket output has been shutdown.
+ *
+ * @severity error
+ */
+
+Socket_OutputStreamUnavailable(Socket sock) {
+	creation event create_connected after() returning(Socket sock) :
+		(
+			call(Socket.new(InetAddress, int)) ||
+			call(Socket.new(InetAddress, int, boolean)) ||
+			call(Socket.new(InetAddress, int, InetAddress, int)) ||
+			call(Socket.new(String, int)) ||
+			call(Socket.new(String, int, boolean)) ||
+			call(Socket.new(String, int, InetAddress, int))
+		) {}
+
+	creation event create_unconnected after() returning(Socket sock) :
+		(
+			call(Socket.new()) ||
+			call(Socket.new(Proxy)) ||
+			call(Socket.new(SocketImpl))
+		) {}
+
+	event connect before(Socket sock) :
+		call(* Socket+.connect(..)) && target(sock) {}
+
+	event get before(Socket sock) :
+		call(* Socket+.getOutputStream(..)) && target(sock) {}
+
+	event close before(Socket sock) :
+		call(* Socket+.close()) && target(sock) {}
+
+	event shutdown before(Socket sock) :
+		call(* Socket+.shutdownOutput()) && target(sock) {}
+
+	ere : (create_connected | create_unconnected connect) get* (close | shutdown)*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An output stream is unavailable if the socket is closed, is not connected, or the socket output has been shutdown.");
+	}
+}
+

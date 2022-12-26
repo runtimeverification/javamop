@@ -1,0 +1,44 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the argument of Arrays.sort(T[], Comparator) or Arrays.sort(T[],
+ * int, int, Comparator) is not comparable.
+ *
+ * All elements in the argument of Arrays.sort() must be mutually comparable.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Arrays.html#sort%28T[],%20java.util.Comparator%29
+ *
+ * This property verifies that comparing each pair of elements does not raise
+ * a ClassCastException. This property requires O(n^2) time for n elements.
+ *
+ * @severity error
+ */
+
+Arrays_MutuallyComparable() {
+	event invalid_sort before(Object[] arr, Comparator comp) :
+		(
+			call(void Arrays.sort(Object[], Comparator)) ||
+			call(void Arrays.sort(Object[], int, int, Comparator))
+		) && args(arr, .., comp) {
+		for (int i = 0; i < arr.length; ++i) {
+			Object o1 = arr[i];
+
+			for (int j = i + 1; j < arr.length; ++j) {
+				Object o2 = arr[j];
+				try {
+					comp.compare(o1, o2);
+					comp.compare(o2, o1);
+				}
+				catch (ClassCastException e) {
+					RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+					RVMLogging.out.println(Level.CRITICAL, i + "-th element and " + j + "-th element are not comparable.");
+				}
+			}
+		}
+	}
+}
+

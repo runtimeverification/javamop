@@ -1,0 +1,24 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if src or dest is null.
+ *
+ * According to the manual, src and dest should not be null. 
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/System.html#arraycopy%28java.lang.Object,%20int,%20java.lang.Object,%20int,%20int%29
+ *
+ * @severity error
+ */
+ 
+System_NullArrayCopy() {
+	event null_arraycopy before(Object src, int srcPos, Object dest, int destPos, int length): 
+		call(* System.arraycopy(Object, int, Object, int, int)) && args(src, srcPos, dest, destPos, length) && condition(src == null || dest == null) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "src or dest should not be null.");
+		}
+}
+

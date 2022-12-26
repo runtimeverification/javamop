@@ -1,0 +1,72 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the name of an HttpCookie object has invalid character.
+ *
+ * According to the Java documentation, a HttpCookie name must conform to RFC
+ * 2965.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/HttpCookie.html#HttpCookie%28java.lang.String,%20java.lang.String%29
+ *
+ * There is inconsistency between the Java documentation and RFC 2965,
+ * referred to by the Java documentation. The former states that the name can
+ * contain only ASCII alphanumeric characters and cannot contain commas,
+ * semicolons, or white space or begin with a $ character. The latter sets
+ * slightly different restriction: the name is a token, which is defined as follows
+ * in RFC 2616:
+ *
+ *      token      = 1*<any CHAR except CTLs or separators>
+ *      CHAR       = <any US-ASCII character (octets 0 - 127)>
+ *      CTL        = <any US-ASCII control character
+ *                   (octets 0 - 31) and DEL (127)>
+ *      separators = "(" | ")" | "<" | ">" | "@"
+ *                 | "," | ";" | ":" | "\" | <">
+ *                 | "/" | "[" | "]" | "?" | "="
+ *                 | "{" | "}" | SP | HT
+ *
+ * Since the definition of ASCII alphanumeric character is unclear, this
+ * property is based on RFC 2696; i.e., a name that does not conform to RFC
+ * 2616 will be warned.
+ *
+ * @severity error
+ */
+
+HttpCookie_Name() {
+	event construct before(String name) :
+		call(HttpCookie.new(String, String)) && args(name, ..)
+	{
+		String separators = "()<>@,;:\\\"/[]?={} \t";
+
+		char ch = '0';
+		boolean outofrange = false;
+		boolean hasctrl = false;
+		boolean hassep = false;
+
+		for (int i = 0; i < name.length(); ++i) {
+			ch = name.charAt(i);
+
+			if (!(0 <= ch && ch <= 127)) {
+				outofrange = true;
+				break;
+			}
+			else if (ch <= 31 || ch == 127) {
+				hasctrl = true;
+				break;
+			}
+			else if (separators.indexOf(ch) != -1) {
+				hassep = true;
+				break;
+			}
+		}
+
+		if (outofrange || hasctrl || hassep) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The specified cookie name '" + name + "' is invalid; it cannot contain '" + ch + "'.");
+		}
+	}
+}
+
+

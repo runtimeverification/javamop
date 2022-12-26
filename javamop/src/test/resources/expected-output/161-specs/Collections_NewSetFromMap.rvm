@@ -1,0 +1,30 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+Collections_NewSetFromMap(Map map) {
+	creation event create(Map map){
+		if ( ! (map.size() == 0) ) {
+			return false;
+		}
+		{
+		}
+	}
+	creation event bad_create(Map map){
+		if ( ! (map.size() > 0) ) {
+			return false;
+		}
+		{
+		}
+	}
+	event access(Map map){
+	}
+	ere:  bad_create | (create access)
+
+	@match
+	{
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The map used in Collections.newSetFromMap() must be empty before calling this method, and should not be accessed directly after this method returns.");
+	}
+}

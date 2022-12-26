@@ -1,0 +1,43 @@
+package mop;
+
+import java.util.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the list is modified while subList() is running.
+ *
+ * The semantics of the list returned by subList() become undefined if the
+ * backing list (i.e., this list) is structurally modified in any way other
+ * than via the returned list.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/List.html#subList%28int,%20int%29
+ *
+ * This property warns if the backing list is modified while a sub-list,
+ * returned by subList(), is being used.
+ *
+ * @severity error
+ */
+
+List_UnsynchronizedSubList(List b, List s) {
+	creation event createsublist after(List b) returning(List s) :
+		call(* List.subList(..)) && target(b) {}
+
+	event modifybackinglist before(List b) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(b) {}
+
+	event usesublist before(List s) :
+		call(* List.*(..)) && target(s) {}
+
+	ere : createsublist usesublist* modifybackinglist+ usesublist
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The backing list was modified while a sub-list is being used.");
+	}
+}
+

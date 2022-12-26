@@ -1,0 +1,57 @@
+package mop;
+
+import java.util.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a list is modified while a list iterator is being used.
+ *
+ * If the list is structurally modified at any time after the list iterator is
+ * created, in any way except through the list-iterator's own remove() or
+ * add() methods, the list-iterator will throw
+ * ConcurrentModificationException.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/LinkedList.html#listIterator%28int%29
+ *
+ * This property considers as using an iterator all the ListIterator
+ * operations except add(), remove() and set(). (The first two methods are
+ * allowed according to the documentation, and set() does not structurally
+ * modify the list.)
+ *
+ * Unlike the underlying system, where the fail-fast behavior is not
+ * guaranteed, this property always detects the problematic behavior.
+ *
+ * @severity error
+ */
+
+List_UnsafeListIterator(List l, ListIterator i) {
+	creation event create after(List l) returning(ListIterator i) :
+		call(ListIterator List+.listIterator()) && target(l) {}
+
+	event modify before(List l) :
+		(
+			call(* Collection+.add*(..)) ||
+			call(* Collection+.clear(..)) ||
+			call(* Collection+.remove*(..)) ||
+			call(* Collection+.retain*(..))
+		) && target(l) {}
+
+	event useiter before(ListIterator i) :
+		(
+			call(* Iterator+.hasNext(..)) ||
+			call(* ListIterator+.hasPrevious(..)) ||
+			call(* Iterator+.next(..)) ||
+			call(* ListIterator+.previous(..)) ||
+			call(* ListIterator+.nextIndex(..)) ||
+			call(* ListIterator+.previousIndex(..))
+		) && target(i) {}
+
+	ere : create useiter* modify+ useiter
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The list was modified while a list iterator is being used.");
+	}
+}
+

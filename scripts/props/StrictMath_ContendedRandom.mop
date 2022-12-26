@@ -1,0 +1,36 @@
+package mop;
+
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * suggests if a StrictMath.random() is used by multiple threads.
+ *
+ * According to the manual, StrictMath.random() is thread-safe.  
+ * However, when multiple threads need to generate random numbers,
+ * it may reduce contention for each thread to have its own pseudorandom-number generator.
+ * Random.nextDouble() is recommended in such a case.
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/StrictMath.html#random%28%29
+ * 
+ * @severity suggestion
+ */
+ 
+StrictMath_ContendedRandom() {
+	Thread th = null;
+
+	event onethread_use before(Thread t) :
+		call(* StrictMath.random(..)) && thread(t) && condition(this.th == null || this.th == t){
+			this.th = t;
+		}
+	event otherthread_use before(Thread t) :
+		call(* StrictMath.random(..)) && thread(t) && condition(this.th != t){
+		}
+
+	ere : onethread_use*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "StrictMath.random() is used by multiple threads. If there is contention, we recommend you to use Random.nextDouble().");
+	}
+}

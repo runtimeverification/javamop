@@ -1,0 +1,24 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the name argument to valueOf() method of Enum contains any whitespace.
+ * 
+ * According to the manual, extraneous whitespace characters are not permitted in the name
+ * for an enum constant.  
+ * http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Enum.html#valueOf%28java.lang.Class,%20java.lang.String%29
+ * 
+ * @severity error
+ */
+
+Enum_NoExtraWhiteSpace() {
+	event valueOf before(Class c, String name) : call(* Enum+.valueOf(Class, String)) && args(c, name) 
+		&& condition(name.length() != name.trim().length()) {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "Please use the exact name. No extraneous whitespace characters are permitted");
+	}
+}

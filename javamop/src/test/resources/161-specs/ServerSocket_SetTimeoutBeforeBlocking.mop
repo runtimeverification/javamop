@@ -1,0 +1,36 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if the timeout option is set after the blocking operation starts.
+ *
+ * The timeout option must be enabled prior to entering the blocking operation
+ * to have effect.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html#setSoTimeout%28int%29
+ *
+ * @severity warning
+ */
+ServerSocket_SetTimeoutBeforeBlocking(ServerSocket sock) {
+	creation event enter before(ServerSocket sock) :
+		call(* ServerSocket+.accept(..)) && target(sock) {}
+
+	event leave after(ServerSocket sock) :
+		call(* ServerSocket+.accept(..)) && target(sock) {}
+
+	event set before(ServerSocket sock, int timeout) :
+		call(* ServerSocket+.setSoTimeout(int)) && target(sock) && args(timeout)
+		&& condition(timeout != 0) {}
+
+	ere : set* (enter leave)* set*
+
+	@fail {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "ServerSocket.setSoTimeout() should be set prior to entering the blocking operation.");
+
+		__RESET;
+	}
+}
+

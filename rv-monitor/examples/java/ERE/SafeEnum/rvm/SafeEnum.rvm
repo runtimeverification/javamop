@@ -1,0 +1,38 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+
+// The SafeEnum property is designed 
+// to match a case where a Collection 
+// with an associated Enumeration is 
+// modified while the Enumeration is 
+// in use. 
+
+full-binding SafeEnum(Vector v, Enumeration e) {
+  String location;
+ 
+        event create (Vector v, Enumeration e) {} // after
+        event updatesource(Vector v) { location = __LOC; } //  after
+//                (call(* Vector+.remove*(..))
+//             || call(* Vector+.add*(..))
+//             || call(* Vector+.clear(..))
+//             || call(* Vector+.insertElementAt(..))
+//             || call(* Vector+.set*(..))
+//             || call(* Vector+.retainAll(..)))
+        event next(Enumeration e) {} // before
+//                call(* Enumeration+.nextElement())
+
+        ere : create next* updatesource updatesource* next
+
+        @match {
+       	    System.out.println("improper enumeration usage at " + __LOC + ".\n Collection was modified at " + location + ".");
+	    __RESET;
+        }
+}
+
+
+
+
+

@@ -1,0 +1,45 @@
+package mop;
+
+import java.util.*;
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns read(), available(), reset() or skip() after close().
+ *
+ * Properties.loadFromXML() takes an InputStream object, uses it, and then
+ * closes it when it returns. That is, calling loadFromXML() is like calling
+ * InputStream.close(), and the InputStream object should be considered
+ * closed.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Properties.html#loadFromXML%28java.io.InputStream%29
+ *
+ * This property is similar to InputStream_ManipulateAfterClose; only 'close'
+ * event is different.
+ *
+ * @severity error
+ */
+
+Properties_ManipulateAfterLoad(InputStream i) {
+	event manipulate before(InputStream i) :
+		(
+			call(* InputStream+.read(..)) ||
+			call(* InputStream+.available(..)) ||
+			call(* InputStream+.reset(..)) ||
+			call(* InputStream+.skip(..))
+		) && target(i) &&
+		!target(ByteArrayInputStream) && !target(StringBufferInputStream) {}
+
+	creation event close after(InputStream i) :
+		call(* Properties+.loadFromXML(InputStream)) && args(i) &&
+		!args(ByteArrayInputStream) && !args(StringBufferInputStream) {}
+
+	ere : close+ manipulate
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "read(), available(), reset() or skip() was invoked after Properties.loadFromXML() closes the stream.");
+	}
+}
+
+

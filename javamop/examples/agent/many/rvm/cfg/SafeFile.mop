@@ -1,0 +1,37 @@
+// Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
+package mop;
+
+import java.io.*;
+import java.util.*;
+
+// SafeFile is designed to match nested, matched 
+// open closes within a method. This follows the 
+// software engineering practice of closing files
+// within the method they are opened.  It should
+// be monitored with an @fail handler, because
+// the CFG specifies the correct behavior.
+
+SafeFile(FileReader f, Thread t) {
+   event openf after(Thread t) returning(FileReader f) : 
+      call(FileReader.new(..)) && thread(t){}
+   event close after(FileReader f, Thread t) : 
+      call(* FileReader.close(..)) && target(f) && thread(t){}
+   event begin before(Thread t) :
+      execution(* *.*(..)) && thread(t) {}
+   event end after(Thread t) :
+      execution(* *.*(..)) && thread(t) {}
+
+   cfg : 
+      S -> A S | epsilon, 
+      A -> A begin A end | A openf A close | epsilon
+
+   @fail {
+      System.out.println("improper use of files");
+   }
+}
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+Creation(Object o) {
+	creation event fun1(Object o) {} // after
+	event fun2(Object o) {} // after
+	event mainend() {} // before
+
+	ere : fun1 (fun1 | fun2)* mainend
+
+	@match {
+		System.out.println("match");
+	}
+	@fail {
+		System.out.println("fail");
+	}
+}
+

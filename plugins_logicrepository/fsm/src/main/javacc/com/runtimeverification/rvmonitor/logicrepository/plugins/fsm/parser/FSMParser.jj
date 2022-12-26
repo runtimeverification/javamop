@@ -1,0 +1,199 @@
+options {
+ STATIC = false;
+}
+
+PARSER_BEGIN(FSMParser)
+package com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.parser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.io.*;
+import com.runtimeverification.rvmonitor.logicrepository.LogicException;
+import com.runtimeverification.rvmonitor.logicrepository.plugins.fsm.parser.ast.*;
+
+public class FSMParser {
+  public static FSMParser parse(String input) {
+    Reader reader = new StringReader(input);
+	FSMParser fsmParser = new FSMParser(reader);	
+	 
+	fsmParser.states = new ArrayList();
+    fsmParser.usedStates = new HashSet();
+    fsmParser.aliases = new HashMap();
+    fsmParser.stateMap = new HashMap();
+    fsmParser.events = new HashSet();
+
+    try{
+      fsmParser.Start();
+    }
+	 catch(ParseException e){
+      System.err.println(e.getMessage());
+	 }
+	 catch(TokenMgrError e){
+      System.err.println(e.getMessage());
+	 }
+	 return fsmParser;
+  }
+
+  private State startState;
+  private ArrayList<State> states;
+  private HashMap<State, HashSet<State>> aliases;
+  private HashMap<State, Transition> stateMap;
+  private HashSet<State> usedStates;
+  private HashSet<Symbol> events;
+
+  public void check() throws LogicException {
+    HashSet<State> stateSet = new HashSet(states); 
+    boolean error = false;
+    if(!usedStates.equals(stateSet)){
+       String msg = "The following states are used but never defined: ";
+       for(State s : usedStates){
+         if(!stateSet.contains(s)){
+           msg += s + " ";
+           error = true;
+         }
+       }
+       if(error) throw new LogicException(msg); 
+     }
+  }
+
+  public State getStartState(){
+    return startState;
+  }
+
+  public HashSet<Symbol> getEvents(){
+     return events;
+  }
+
+  public ArrayList<State> getStates(){
+	  return states;
+  }
+  
+  public HashMap<State, HashSet<State>> getAliases (){
+	  return aliases;
+  }
+  
+  public HashMap<State, Transition> getStateMap() {
+	  return stateMap;
+  }
+}
+PARSER_END(FSMParser)
+
+SKIP : {
+ 	<WHITESPACE: [" ","\t","\r","\n"]>
+}
+TOKEN : {
+     <ARROW : "->">
+	| <LBRACE : "[">
+	| <RBRACE : "]">
+	| <EQUAL : "=" >
+	| <COMMA : "," >
+	| <ALIAS : "alias">
+	| <FAIL : "fail">
+	| <DEF : "default">
+	| <ID : (<LETTER>|"_")(<LETTER>|<DIGIT>|"_")*> 
+	| <DIGIT : ["0"-"9"]>
+	| <LETTER : ["a"-"z","A"-"Z"]>
+}
+
+void Start() : {}
+{ 
+  startState = State()
+  ( LOOKAHEAD(2)
+    State()
+  )*
+  (Alias())* <EOF>
+}
+
+State State() : {
+  Token stateToken;
+  Transition transition = null;
+}
+{ 
+  stateToken = <ID>
+  {
+	 states.add(State.get(stateToken.image));
+  }
+  "[" [ transition = Transition() ] "]" 
+  {
+    if(transition == null) {
+      stateMap.put(State.get(stateToken.image), new Transition());
+	 } else {
+      stateMap.put(State.get(stateToken.image), transition);
+	 }
+	 return State.get(stateToken.image);
+  }
+}
+
+Transition Transition() : {
+  Token eventToken;
+  Token destinationToken;
+  Transition retval;
+  State s;
+  Symbol sym;
+}
+{
+	{
+     retval = new Transition();
+	}
+  (
+      eventToken = <ID> "->" destinationToken = <ID> [ "," ]
+      {
+        s = State.get(destinationToken.image);
+        sym = Symbol.get(eventToken.image);
+        retval.put(sym, s);
+        usedStates.add(s);
+        events.add(sym);
+      }
+	 |
+      "default"  destinationToken = <ID> [ "," ]
+		{
+        s = State.get(destinationToken.image);
+        retval.put(null, s);
+        usedStates.add(s);
+      }
+  )+
+  {
+    return retval;
+  }
+}
+
+void Alias() : {
+  Token aliasToken;
+  HashSet<State> aliasedStates = null;
+}
+{
+  <ALIAS> aliasToken = <ID> "=" aliasedStates = StateList() 
+  {
+    aliases.put(State.get(aliasToken.image), aliasedStates);
+  }
+}
+
+HashSet<State> StateList() :{
+  Token stateToken;
+  HashSet<State> stateList = new HashSet();
+  State s;
+}
+{
+//  ( 
+//      stateToken = <ID> {   
+//                          s = State.get(stateToken.image);
+//                          stateList.add(s);                           
+//                          usedStates.add(s);
+//                        }
+//	 | "fail" { stateList.add(State.get("fail"));}
+//  )
+  (
+     ( 
+	        stateToken = <ID> { 
+                          s = State.get(stateToken.image);
+                          stateList.add(s);                           
+                          usedStates.add(s);
+                              }
+	      | "fail" { stateList.add(State.get("fail"));}
+	 )
+	 [","]
+  )*
+  {return stateList; }
+}
+

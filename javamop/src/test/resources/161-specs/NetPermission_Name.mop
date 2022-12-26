@@ -1,0 +1,40 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a target name for NetPermission does not conform to the naming
+ * convention.
+ *
+ * The naming convention follows the hierarchical property naming convention.
+ * Also, an asterisk may appear at the end of the name, following a ".", or by
+ * itself, to signify a wildcard match.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/NetPermission.html#NetPermission%28java.lang.String%29
+ *
+ * @severity error
+ */
+NetPermission_Name() {
+	event construct before(String name) :
+		(
+			call(NetPermission.new(String)) ||
+			call(NetPermission.new(String, String))
+		) && args(name, ..)
+	{
+		boolean valid = true;
+		for (int i = 0; i < name.length() - 1; ++i) {
+			char c = name.charAt(i);
+			if (c == '*') {
+				valid = false;
+				break;
+			}
+		}
+
+		if (!valid) {
+			RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+			RVMLogging.out.println(Level.CRITICAL, "The target name " + name + " does not conform to the naming convention.");
+		}
+	}
+}
+

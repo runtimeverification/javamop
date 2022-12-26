@@ -1,0 +1,3645 @@
+// Copyright (c) 2002-2014 JavaMOP Team. All Rights Reserved.
+ /*
+ * Copyright (C) 2008 Feng Chen.
+ * 
+ * This file is part of JavaMOP parser.  It is based on the Java 1.5 parser developed by Julio Vilmar Gesser
+ *
+ * The original parser is under the LGPL, you should have recieve a copy of the LGPL with this
+ * parser code.  If not see <http://www.gnu.org/licenses/>.
+ */
+options
+{
+  LOOKAHEAD= 1;
+
+  STATIC = false;
+  CACHE_TOKENS = true;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = true;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+
+  JDK_VERSION = "1.8";
+  COMMON_TOKEN_ACTION=true;
+  TOKEN_EXTENDS ="javamop.parser.main_parser.TokenBase";
+}
+
+PARSER_BEGIN(AspectJParser)
+
+package com.github.javaparser;
+
+import java.io.*;
+import java.util.*;
+
+import javamop.parser.ast.*;
+import javamop.parser.ast.aspectj.*;
+import javamop.parser.ast.body.*;
+import com.github.javaparser.GeneratedParserBase;
+import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.ast.stmt.*;
+import com.github.javaparser.ast.type.*;
+import javamop.parser.astex.aspectj.*;
+
+public class AspectJParser extends GeneratedParserBase
+{
+  private static AspectJParser parser;
+
+    @Override
+    JavaToken token()
+    {
+        return token.javaToken;
+    }
+
+    public AspectJParserTokenManager getMOPTokenSource() {
+            return token_source;
+    }
+
+    void setTokenSourceStoreTokens(boolean storeTokens) {
+        getMOPTokenSource().setStoreTokens(storeTokens);
+    }
+
+  public static void main(String[] args) throws IOException {
+    FileReader reader = new FileReader(args[0]);
+    AspectJParser parser = new AspectJParser(reader);
+    parser.setStoreTokens(true);
+    parser.setTokenSourceStoreTokens(true);
+    try {
+      parser.PointCut();
+    } catch (ParseException pe) {
+      pe.printStackTrace();
+    }
+  }
+
+  public static PointCut parse(InputStream in, String encoding) throws ParseException
+  {
+    if (parser == null)
+    {
+      parser = new AspectJParser(in, encoding);
+      parser.setStoreTokens(true);
+      parser.setTokenSourceStoreTokens(true);
+    }
+    else
+    {
+      parser.ReInit(in);
+    }
+    return parser.PointCut();
+  }
+
+  public static PointCut parse(InputStream in) throws ParseException
+  {
+    return parse(in, null);
+  }
+
+  public static PointCut parse(File file, String encoding) throws ParseException
+  {
+    try
+    {
+      FileInputStream in = new FileInputStream(file);
+      try
+      {
+        return parse(in, encoding);
+      }
+      finally
+      {
+        in.close();
+      }
+    }
+    catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static PointCut parse(File file) throws ParseException
+  {
+    return parse(file, null);
+  }
+
+  private class Modifier
+  {
+    final int modifiers;
+
+    final int not_modifiers;
+
+    final List annotations;
+    int line, column;
+
+    public Modifier(int modifiers, List annotations)
+    {
+      this.modifiers = modifiers;
+      this.not_modifiers = 0;
+      this.annotations = annotations;
+    }
+
+    public Modifier(int modifiers, int not_modifiers, int line, int column)
+    {
+      this.modifiers = modifiers;
+      this.not_modifiers = not_modifiers;
+      this.annotations = null;
+      this.line = line;
+      this.column = column;
+    }
+  }
+
+  private class PositionString
+  {
+    int line, column;
+    String str;
+
+    public PositionString(int line, int column, String str)
+    {
+      this.line = line;
+      this.column = column;
+      this.str = str;
+    }
+  }
+}
+
+PARSER_END(AspectJParser)
+
+TOKEN_MGR_DECLS :
+{
+    private List<JavaToken> tokens = new ArrayList<JavaToken>();
+    private JavaToken homeToken;
+    private Stack<Token> tokenWorkStack = new Stack<Token>();
+    private boolean storeTokens;
+
+   public static void main(String[] args) throws IOException {
+      FileReader reader = new FileReader(args[0]);
+      JavaCharStream stream = new JavaCharStream(reader);
+      AspectJParserTokenManager manager = new AspectJParserTokenManager(stream);
+      for (Token token = manager.getNextToken(); token.kind != EOF; token = manager.getNextToken()) {
+         manager.debugStream.println("Found token: " + token.image);
+      }
+   }
+
+   void reset() {
+           tokens = new ArrayList<JavaToken>();
+           homeToken = null;
+       }
+
+       List<JavaToken> getTokens() {
+           if(storeTokens) {
+               return tokens;
+           }
+           return null;
+       }
+
+       /* Get the very first token in the file */
+       JavaToken getHomeToken() {
+           return homeToken;
+       }
+
+       /* Makes the parser keep a list of tokens */
+       public void setStoreTokens(boolean storeTokens) {
+           this.storeTokens = storeTokens;
+       }
+
+       public void CommonTokenAction(Token token) {
+//           if(token.kind == EOF) {
+//               System.out.println("Found AJ end of file token");
+//           } else {
+//               System.out.println("Found AJ token: " + token.image);
+//           }
+
+           // copied from javaparser's java.jj
+           // Use an intermediary stack to avoid recursion, see issue 1003
+           do {
+               tokenWorkStack.push(token);
+               token = token.specialToken;
+           } while (token != null);
+
+           // The stack is now filled with tokens in left-to-right order. Process them.
+           while(!tokenWorkStack.empty()) {
+               token = tokenWorkStack.pop();
+               token.javaToken = new JavaToken(token, tokens);
+
+               if(storeTokens) {
+                   tokens.add(token.javaToken);
+               }
+
+               if (homeToken == null) {
+                   homeToken = token.javaToken;
+               }
+
+           }
+       }
+}
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+/* RESERVED WORDS AND LITERALS */
+TOKEN :
+{
+  < ABSTRACT : "abstract" >
+| < ASSERT : "assert" >
+| < BOOLEAN : "boolean" >
+| < BREAK : "break" >
+| < BYTE : "byte" >
+| < CASE : "case" >
+| < CATCH : "catch" >
+| < CHAR : "char" >
+| < CLASS : "class" >
+| < CONST : "const" >
+| < CONTINUE : "continue" >
+| < _DEFAULT : "default" >
+| < DO : "do" >
+| < DOUBLE : "double" >
+| < ELSE : "else" >
+| < ENUM : "enum" >
+| < EXTENDS : "extends" >
+| < FALSE : "false" >
+| < FINAL : "final" >
+| < FINALLY : "finally" >
+| < FLOAT : "float" >
+| < FOR : "for" >
+| < GOTO : "goto" >
+| < NEW : "new" >
+| < IF : "if" >
+| < IMPLEMENTS : "implements" >
+| < IMPORT : "import" >
+| < INSTANCEOF : "instanceof" >
+| < INT : "int" >
+| < INTERFACE : "interface" >
+| < LONG : "long" >
+| < NATIVE : "native" >
+| < NULL : "null" >
+| < PACKAGE : "package" >
+| < PRIVATE : "private" >
+| < PROTECTED : "protected" >
+| < PUBLIC : "public" >
+| < RETURN : "return" >
+| < SHORT : "short" >
+| < STATIC : "static" >
+| < STRICTFP : "strictfp" >
+| < SUPER : "super" >
+| < SWITCH : "switch" >
+| < SYNCHRONIZED : "synchronized" >
+| < THIS : "this" >
+| < THROW : "throw" >
+| < THROWS : "throws" >
+| < TRANSIENT : "transient" >
+| < TRUE : "true" >
+| < TRY : "try" >
+| < VOID : "void" >
+| < VOLATILE : "volatile" >
+| < WHILE : "while" >
+}
+
+/* RESERVED WORDS AND LITERALS for AspectJ and JavaMOP */
+TOKEN :
+{
+  < EVENT : "event" >
+| < CREATION : "creation" >
+| < UNSYNC : "unsynchronized" >
+| < DECENT : "decentralized" >
+| < PERTHREAD : "perthread" >
+| < SUFFIX : "suffix" >
+| < BEFORE : "before" >
+| < AFTER : "after" >
+| < AROUND : "around" >
+| < CALL : "call" >
+| < EXEC : "execution" >
+| < GET : "get" >
+| < SET : "set" >
+| < TARGET : "target" >
+| < WITHIN : "within" >
+| < ARGS : "args" >
+| < THREAD : "thread" >
+| < THREADNAME: "threadName" >
+| < THREADBLOCKED: "threadBlocked" >
+| < CONDITION : "condition" >
+| < COUNTCOND : "countCond" >
+| < CFLOW : "cflow" >
+| < CFLOWBELOW : "cflowbelow" >
+| < RETURNING : "returning" >
+| < THROWING : "throwing" >
+| < ENDPROGRAM : "endProgram" >
+| < ENDTHREAD : "endThread" >
+| < ENDOBJECT : "endObject" >
+| < STARTTHREAD : "startThread" >
+| < HANDLER : "handler" >
+}
+
+/* LITERALS */
+TOKEN :
+{
+  < LONG_LITERAL :
+    < DECIMAL_LITERAL > ([ "l", "L" ])
+  | < HEX_LITERAL > ([ "l", "L" ])
+  | < OCTAL_LITERAL > ([ "l", "L" ]) >
+| < INTEGER_LITERAL :
+    < DECIMAL_LITERAL >
+  | < HEX_LITERAL >
+  | < OCTAL_LITERAL > >
+| < #DECIMAL_LITERAL : [ "1"-"9" ] ([ "0"-"9" ])* >
+| < #HEX_LITERAL : "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ >
+| < #OCTAL_LITERAL : "0" ([ "0"-"7" ])* >
+| < FLOATING_POINT_LITERAL :
+    < DECIMAL_FLOATING_POINT_LITERAL >
+  | < HEXADECIMAL_FLOATING_POINT_LITERAL > >
+| < #DECIMAL_FLOATING_POINT_LITERAL :
+    ([ "0"-"9" ])+ "." ([ "0"-"9" ])* (< DECIMAL_EXPONENT >)? ([ "f", "F", "d", "D" ])?
+  | "." ([ "0"-"9" ])+ (< DECIMAL_EXPONENT >)? ([ "f", "F", "d", "D" ])?
+  | ([ "0"-"9" ])+ < DECIMAL_EXPONENT > ([ "f", "F", "d", "D" ])?
+  | ([ "0"-"9" ])+ (< DECIMAL_EXPONENT >)? [ "f", "F", "d", "D" ] >
+| < #DECIMAL_EXPONENT : [ "e", "E" ] ([ "+", "-" ])? ([ "0"-"9" ])+ >
+| < #HEXADECIMAL_FLOATING_POINT_LITERAL :
+    "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])+ (".")? < HEXADECIMAL_EXPONENT > ([ "f", "F", "d", "D" ])?
+  | "0" [ "x", "X" ] ([ "0"-"9", "a"-"f", "A"-"F" ])* "." ([ "0"-"9", "a"-"f", "A"-"F" ])+ < HEXADECIMAL_EXPONENT > ([ "f", "F", "d", "D" ])? >
+| < #HEXADECIMAL_EXPONENT : [ "p", "P" ] ([ "+", "-" ])? ([ "0"-"9" ])+ >
+| < CHARACTER_LITERAL :
+    "'"
+    (
+      (~[ "'", "\\", "\n", "\r" ])
+    |
+      (
+        "\\"
+        (
+          [ "n", "t", "b", "r", "f", "\\", "'", "\"" ]
+        | [ "0"-"7" ] ([ "0"-"7" ])?
+        | [ "0"-"3" ] [ "0"-"7" ] [ "0"-"7" ]
+        )
+      )
+    | ("\\u" [ "0"-"9", "A"-"F", "a"-"f" ] [ "0"-"9", "A"-"F", "a"-"f" ] [ "0"-"9", "A"-"F", "a"-"f" ] [ "0"-"9", "A"-"F", "a"-"f" ])
+    )
+    "'" >
+| < STRING_LITERAL :
+    "\""
+    (
+      (~[ "\"", "\\", "\n", "\r" ])
+    |
+      (
+        "\\"
+        (
+          [ "n", "t", "b", "r", "f", "\\", "'", "\"" ]
+        | [ "0"-"7" ] ([ "0"-"7" ])?
+        | [ "0"-"3" ] [ "0"-"7" ] [ "0"-"7" ]
+        )
+      )
+    | ("\\u" [ "0"-"9", "A"-"F", "a"-"f" ] [ "0"-"9", "A"-"F", "a"-"f" ] [ "0"-"9", "A"-"F", "a"-"f" ] [ "0"-"9", "A"-"F", "a"-"f" ])
+    )*
+    "\"" >
+}
+
+/* IDENTIFIERS */
+TOKEN :
+{
+  < IDPATTERN : < LETTER > (< PART_LETTER >)* >
+| 
+  < #LETTER : 
+    [ "*", 
+    // all chars for which Character.isIdentifierStart is true      
+    "\u0024", // "$"
+    "\u0041"-"\u005a", // "A"-"Z"
+    "\u005f", // "_"
+    "\u0061"-"\u007a", // "a"-"z"
+    "\u00a2"-"\u00a5", 
+    "\u00aa", 
+    "\u00b5", 
+    "\u00ba", 
+    "\u00c0"-"\u00d6", 
+    "\u00d8"-"\u00f6", 
+    "\u00f8"-"\u0236", 
+    "\u0250"-"\u02c1", 
+    "\u02c6"-"\u02d1", 
+    "\u02e0"-"\u02e4", 
+    "\u02ee", 
+    "\u037a", 
+    "\u0386", 
+    "\u0388"-"\u038a", 
+    "\u038c", 
+    "\u038e"-"\u03a1", 
+    "\u03a3"-"\u03ce", 
+    "\u03d0"-"\u03f5", 
+    "\u03f7"-"\u03fb", 
+    "\u0400"-"\u0481", 
+    "\u048a"-"\u04ce", 
+    "\u04d0"-"\u04f5", 
+    "\u04f8"-"\u04f9", 
+    "\u0500"-"\u050f", 
+    "\u0531"-"\u0556", 
+    "\u0559", 
+    "\u0561"-"\u0587", 
+    "\u05d0"-"\u05ea", 
+    "\u05f0"-"\u05f2", 
+    "\u0621"-"\u063a", 
+    "\u0640"-"\u064a", 
+    "\u066e"-"\u066f", 
+    "\u0671"-"\u06d3", 
+    "\u06d5", 
+    "\u06e5"-"\u06e6", 
+    "\u06ee"-"\u06ef", 
+    "\u06fa"-"\u06fc", 
+    "\u06ff", 
+    "\u0710", 
+    "\u0712"-"\u072f", 
+    "\u074d"-"\u074f", 
+    "\u0780"-"\u07a5", 
+    "\u07b1", 
+    "\u0904"-"\u0939", 
+    "\u093d", 
+    "\u0950", 
+    "\u0958"-"\u0961", 
+    "\u0985"-"\u098c", 
+    "\u098f"-"\u0990", 
+    "\u0993"-"\u09a8", 
+    "\u09aa"-"\u09b0", 
+    "\u09b2", 
+    "\u09b6"-"\u09b9", 
+    "\u09bd", 
+    "\u09dc"-"\u09dd", 
+    "\u09df"-"\u09e1", 
+    "\u09f0"-"\u09f3", 
+    "\u0a05"-"\u0a0a", 
+    "\u0a0f"-"\u0a10", 
+    "\u0a13"-"\u0a28", 
+    "\u0a2a"-"\u0a30", 
+    "\u0a32"-"\u0a33", 
+    "\u0a35"-"\u0a36", 
+    "\u0a38"-"\u0a39", 
+    "\u0a59"-"\u0a5c", 
+    "\u0a5e", 
+    "\u0a72"-"\u0a74", 
+    "\u0a85"-"\u0a8d", 
+    "\u0a8f"-"\u0a91", 
+    "\u0a93"-"\u0aa8", 
+    "\u0aaa"-"\u0ab0", 
+    "\u0ab2"-"\u0ab3", 
+    "\u0ab5"-"\u0ab9", 
+    "\u0abd", 
+    "\u0ad0", 
+    "\u0ae0"-"\u0ae1", 
+    "\u0af1", 
+    "\u0b05"-"\u0b0c", 
+    "\u0b0f"-"\u0b10", 
+    "\u0b13"-"\u0b28", 
+    "\u0b2a"-"\u0b30", 
+    "\u0b32"-"\u0b33", 
+    "\u0b35"-"\u0b39", 
+    "\u0b3d", 
+    "\u0b5c"-"\u0b5d", 
+    "\u0b5f"-"\u0b61", 
+    "\u0b71", 
+    "\u0b83", 
+    "\u0b85"-"\u0b8a", 
+    "\u0b8e"-"\u0b90", 
+    "\u0b92"-"\u0b95", 
+    "\u0b99"-"\u0b9a", 
+    "\u0b9c", 
+    "\u0b9e"-"\u0b9f", 
+    "\u0ba3"-"\u0ba4", 
+    "\u0ba8"-"\u0baa", 
+    "\u0bae"-"\u0bb5", 
+    "\u0bb7"-"\u0bb9", 
+    "\u0bf9", 
+    "\u0c05"-"\u0c0c", 
+    "\u0c0e"-"\u0c10", 
+    "\u0c12"-"\u0c28", 
+    "\u0c2a"-"\u0c33", 
+    "\u0c35"-"\u0c39", 
+    "\u0c60"-"\u0c61", 
+    "\u0c85"-"\u0c8c", 
+    "\u0c8e"-"\u0c90", 
+    "\u0c92"-"\u0ca8", 
+    "\u0caa"-"\u0cb3", 
+    "\u0cb5"-"\u0cb9", 
+    "\u0cbd", 
+    "\u0cde", 
+    "\u0ce0"-"\u0ce1", 
+    "\u0d05"-"\u0d0c", 
+    "\u0d0e"-"\u0d10", 
+    "\u0d12"-"\u0d28", 
+    "\u0d2a"-"\u0d39", 
+    "\u0d60"-"\u0d61", 
+    "\u0d85"-"\u0d96", 
+    "\u0d9a"-"\u0db1", 
+    "\u0db3"-"\u0dbb", 
+    "\u0dbd", 
+    "\u0dc0"-"\u0dc6", 
+    "\u0e01"-"\u0e30", 
+    "\u0e32"-"\u0e33", 
+    "\u0e3f"-"\u0e46", 
+    "\u0e81"-"\u0e82", 
+    "\u0e84", 
+    "\u0e87"-"\u0e88", 
+    "\u0e8a", 
+    "\u0e8d", 
+    "\u0e94"-"\u0e97", 
+    "\u0e99"-"\u0e9f", 
+    "\u0ea1"-"\u0ea3", 
+    "\u0ea5", 
+    "\u0ea7", 
+    "\u0eaa"-"\u0eab", 
+    "\u0ead"-"\u0eb0", 
+    "\u0eb2"-"\u0eb3", 
+    "\u0ebd", 
+    "\u0ec0"-"\u0ec4", 
+    "\u0ec6", 
+    "\u0edc"-"\u0edd", 
+    "\u0f00", 
+    "\u0f40"-"\u0f47", 
+    "\u0f49"-"\u0f6a", 
+    "\u0f88"-"\u0f8b", 
+    "\u1000"-"\u1021", 
+    "\u1023"-"\u1027", 
+    "\u1029"-"\u102a", 
+    "\u1050"-"\u1055", 
+    "\u10a0"-"\u10c5", 
+    "\u10d0"-"\u10f8", 
+    "\u1100"-"\u1159", 
+    "\u115f"-"\u11a2", 
+    "\u11a8"-"\u11f9", 
+    "\u1200"-"\u1206", 
+    "\u1208"-"\u1246", 
+    "\u1248", 
+    "\u124a"-"\u124d", 
+    "\u1250"-"\u1256", 
+    "\u1258", 
+    "\u125a"-"\u125d", 
+    "\u1260"-"\u1286", 
+    "\u1288", 
+    "\u128a"-"\u128d", 
+    "\u1290"-"\u12ae", 
+    "\u12b0", 
+    "\u12b2"-"\u12b5", 
+    "\u12b8"-"\u12be", 
+    "\u12c0", 
+    "\u12c2"-"\u12c5", 
+    "\u12c8"-"\u12ce", 
+    "\u12d0"-"\u12d6", 
+    "\u12d8"-"\u12ee", 
+    "\u12f0"-"\u130e", 
+    "\u1310", 
+    "\u1312"-"\u1315", 
+    "\u1318"-"\u131e", 
+    "\u1320"-"\u1346", 
+    "\u1348"-"\u135a", 
+    "\u13a0"-"\u13f4", 
+    "\u1401"-"\u166c", 
+    "\u166f"-"\u1676", 
+    "\u1681"-"\u169a", 
+    "\u16a0"-"\u16ea", 
+    "\u16ee"-"\u16f0", 
+    "\u1700"-"\u170c", 
+    "\u170e"-"\u1711", 
+    "\u1720"-"\u1731", 
+    "\u1740"-"\u1751", 
+    "\u1760"-"\u176c", 
+    "\u176e"-"\u1770", 
+    "\u1780"-"\u17b3", 
+    "\u17d7", 
+    "\u17db"-"\u17dc", 
+    "\u1820"-"\u1877", 
+    "\u1880"-"\u18a8", 
+    "\u1900"-"\u191c", 
+    "\u1950"-"\u196d", 
+    "\u1970"-"\u1974", 
+    "\u1d00"-"\u1d6b", 
+    "\u1e00"-"\u1e9b", 
+    "\u1ea0"-"\u1ef9", 
+    "\u1f00"-"\u1f15", 
+    "\u1f18"-"\u1f1d", 
+    "\u1f20"-"\u1f45", 
+    "\u1f48"-"\u1f4d", 
+    "\u1f50"-"\u1f57", 
+    "\u1f59", 
+    "\u1f5b", 
+    "\u1f5d", 
+    "\u1f5f"-"\u1f7d", 
+    "\u1f80"-"\u1fb4", 
+    "\u1fb6"-"\u1fbc", 
+    "\u1fbe", 
+    "\u1fc2"-"\u1fc4", 
+    "\u1fc6"-"\u1fcc", 
+    "\u1fd0"-"\u1fd3", 
+    "\u1fd6"-"\u1fdb", 
+    "\u1fe0"-"\u1fec", 
+    "\u1ff2"-"\u1ff4", 
+    "\u1ff6"-"\u1ffc", 
+    "\u203f"-"\u2040", 
+    "\u2054", 
+    "\u2071", 
+    "\u207f", 
+    "\u20a0"-"\u20b1", 
+    "\u2102", 
+    "\u2107", 
+    "\u210a"-"\u2113", 
+    "\u2115", 
+    "\u2119"-"\u211d", 
+    "\u2124", 
+    "\u2126", 
+    "\u2128", 
+    "\u212a"-"\u212d", 
+    "\u212f"-"\u2131", 
+    "\u2133"-"\u2139", 
+    "\u213d"-"\u213f", 
+    "\u2145"-"\u2149", 
+    "\u2160"-"\u2183", 
+    "\u3005"-"\u3007", 
+    "\u3021"-"\u3029", 
+    "\u3031"-"\u3035", 
+    "\u3038"-"\u303c", 
+    "\u3041"-"\u3096", 
+    "\u309d"-"\u309f", 
+    "\u30a1"-"\u30ff", 
+    "\u3105"-"\u312c", 
+    "\u3131"-"\u318e", 
+    "\u31a0"-"\u31b7", 
+    "\u31f0"-"\u31ff", 
+    "\u3400"-"\u4db5", 
+    "\u4e00"-"\u9fa5", 
+    "\ua000"-"\ua48c", 
+    "\uac00"-"\ud7a3", 
+    "\ud801", //for supplementary characters suport
+    "\ud802", //for supplementary characters suport
+    "\uf900"-"\ufa2d", 
+    "\ufa30"-"\ufa6a", 
+    "\ufb00"-"\ufb06", 
+    "\ufb13"-"\ufb17", 
+    "\ufb1d", 
+    "\ufb1f"-"\ufb28", 
+    "\ufb2a"-"\ufb36", 
+    "\ufb38"-"\ufb3c", 
+    "\ufb3e", 
+    "\ufb40"-"\ufb41", 
+    "\ufb43"-"\ufb44", 
+    "\ufb46"-"\ufbb1", 
+    "\ufbd3"-"\ufd3d", 
+    "\ufd50"-"\ufd8f", 
+    "\ufd92"-"\ufdc7", 
+    "\ufdf0"-"\ufdfc", 
+    "\ufe33"-"\ufe34", 
+    "\ufe4d"-"\ufe4f", 
+    "\ufe69", 
+    "\ufe70"-"\ufe74", 
+    "\ufe76"-"\ufefc", 
+    "\uff04", 
+    "\uff21"-"\uff3a", 
+    "\uff3f", 
+    "\uff41"-"\uff5a", 
+    "\uff65"-"\uffbe", 
+    "\uffc2"-"\uffc7", 
+    "\uffca"-"\uffcf", 
+    "\uffd2"-"\uffd7", 
+    "\uffda"-"\uffdc", 
+    "\uffe0"-"\uffe1", 
+    "\uffe5"-"\uffe6" 
+    ] 
+    >
+| 
+  < #PART_LETTER : 
+    [ "*", 
+    // all chars for which Character.isIdentifierPart is true
+    "\u0000"-"\u0008", 
+    "\u000e"-"\u001b", 
+    "\u0024", // "$"
+    "\u0030"-"\u0039", // "0"-"9"
+    "\u0041"-"\u005a", // "A"-"Z"
+    "\u005f", // "_"
+    "\u0061"-"\u007a", // "a"-"z"
+    "\u007f"-"\u009f", 
+    "\u00a2"-"\u00a5", 
+    "\u00aa", 
+    "\u00ad", 
+    "\u00b5", 
+    "\u00ba", 
+    "\u00c0"-"\u00d6", 
+    "\u00d8"-"\u00f6", 
+    "\u00f8"-"\u0236", 
+    "\u0250"-"\u02c1", 
+    "\u02c6"-"\u02d1", 
+    "\u02e0"-"\u02e4", 
+    "\u02ee", 
+    "\u0300"-"\u0357", 
+    "\u035d"-"\u036f", 
+    "\u037a", 
+    "\u0386", 
+    "\u0388"-"\u038a", 
+    "\u038c", 
+    "\u038e"-"\u03a1", 
+    "\u03a3"-"\u03ce", 
+    "\u03d0"-"\u03f5", 
+    "\u03f7"-"\u03fb", 
+    "\u0400"-"\u0481", 
+    "\u0483"-"\u0486", 
+    "\u048a"-"\u04ce", 
+    "\u04d0"-"\u04f5", 
+    "\u04f8"-"\u04f9", 
+    "\u0500"-"\u050f", 
+    "\u0531"-"\u0556", 
+    "\u0559", 
+    "\u0561"-"\u0587", 
+    "\u0591"-"\u05a1", 
+    "\u05a3"-"\u05b9", 
+    "\u05bb"-"\u05bd", 
+    "\u05bf", 
+    "\u05c1"-"\u05c2", 
+    "\u05c4", 
+    "\u05d0"-"\u05ea", 
+    "\u05f0"-"\u05f2", 
+    "\u0600"-"\u0603", 
+    "\u0610"-"\u0615", 
+    "\u0621"-"\u063a", 
+    "\u0640"-"\u0658", 
+    "\u0660"-"\u0669", 
+    "\u066e"-"\u06d3", 
+    "\u06d5"-"\u06dd", 
+    "\u06df"-"\u06e8", 
+    "\u06ea"-"\u06fc", 
+    "\u06ff", 
+    "\u070f"-"\u074a", 
+    "\u074d"-"\u074f", 
+    "\u0780"-"\u07b1", 
+    "\u0901"-"\u0939", 
+    "\u093c"-"\u094d", 
+    "\u0950"-"\u0954", 
+    "\u0958"-"\u0963", 
+    "\u0966"-"\u096f", 
+    "\u0981"-"\u0983", 
+    "\u0985"-"\u098c", 
+    "\u098f"-"\u0990", 
+    "\u0993"-"\u09a8", 
+    "\u09aa"-"\u09b0", 
+    "\u09b2", 
+    "\u09b6"-"\u09b9", 
+    "\u09bc"-"\u09c4", 
+    "\u09c7"-"\u09c8", 
+    "\u09cb"-"\u09cd", 
+    "\u09d7", 
+    "\u09dc"-"\u09dd", 
+    "\u09df"-"\u09e3", 
+    "\u09e6"-"\u09f3", 
+    "\u0a01"-"\u0a03", 
+    "\u0a05"-"\u0a0a", 
+    "\u0a0f"-"\u0a10", 
+    "\u0a13"-"\u0a28", 
+    "\u0a2a"-"\u0a30", 
+    "\u0a32"-"\u0a33", 
+    "\u0a35"-"\u0a36", 
+    "\u0a38"-"\u0a39", 
+    "\u0a3c", 
+    "\u0a3e"-"\u0a42", 
+    "\u0a47"-"\u0a48", 
+    "\u0a4b"-"\u0a4d", 
+    "\u0a59"-"\u0a5c", 
+    "\u0a5e", 
+    "\u0a66"-"\u0a74", 
+    "\u0a81"-"\u0a83", 
+    "\u0a85"-"\u0a8d", 
+    "\u0a8f"-"\u0a91", 
+    "\u0a93"-"\u0aa8", 
+    "\u0aaa"-"\u0ab0", 
+    "\u0ab2"-"\u0ab3", 
+    "\u0ab5"-"\u0ab9", 
+    "\u0abc"-"\u0ac5", 
+    "\u0ac7"-"\u0ac9", 
+    "\u0acb"-"\u0acd", 
+    "\u0ad0", 
+    "\u0ae0"-"\u0ae3", 
+    "\u0ae6"-"\u0aef", 
+    "\u0af1", 
+    "\u0b01"-"\u0b03", 
+    "\u0b05"-"\u0b0c", 
+    "\u0b0f"-"\u0b10", 
+    "\u0b13"-"\u0b28", 
+    "\u0b2a"-"\u0b30", 
+    "\u0b32"-"\u0b33", 
+    "\u0b35"-"\u0b39", 
+    "\u0b3c"-"\u0b43", 
+    "\u0b47"-"\u0b48", 
+    "\u0b4b"-"\u0b4d", 
+    "\u0b56"-"\u0b57", 
+    "\u0b5c"-"\u0b5d", 
+    "\u0b5f"-"\u0b61", 
+    "\u0b66"-"\u0b6f", 
+    "\u0b71", 
+    "\u0b82"-"\u0b83", 
+    "\u0b85"-"\u0b8a", 
+    "\u0b8e"-"\u0b90", 
+    "\u0b92"-"\u0b95", 
+    "\u0b99"-"\u0b9a", 
+    "\u0b9c", 
+    "\u0b9e"-"\u0b9f", 
+    "\u0ba3"-"\u0ba4", 
+    "\u0ba8"-"\u0baa", 
+    "\u0bae"-"\u0bb5", 
+    "\u0bb7"-"\u0bb9", 
+    "\u0bbe"-"\u0bc2", 
+    "\u0bc6"-"\u0bc8", 
+    "\u0bca"-"\u0bcd", 
+    "\u0bd7", 
+    "\u0be7"-"\u0bef", 
+    "\u0bf9", 
+    "\u0c01"-"\u0c03", 
+    "\u0c05"-"\u0c0c", 
+    "\u0c0e"-"\u0c10", 
+    "\u0c12"-"\u0c28", 
+    "\u0c2a"-"\u0c33", 
+    "\u0c35"-"\u0c39", 
+    "\u0c3e"-"\u0c44", 
+    "\u0c46"-"\u0c48", 
+    "\u0c4a"-"\u0c4d", 
+    "\u0c55"-"\u0c56", 
+    "\u0c60"-"\u0c61", 
+    "\u0c66"-"\u0c6f", 
+    "\u0c82"-"\u0c83", 
+    "\u0c85"-"\u0c8c", 
+    "\u0c8e"-"\u0c90", 
+    "\u0c92"-"\u0ca8", 
+    "\u0caa"-"\u0cb3", 
+    "\u0cb5"-"\u0cb9", 
+    "\u0cbc"-"\u0cc4", 
+    "\u0cc6"-"\u0cc8", 
+    "\u0cca"-"\u0ccd", 
+    "\u0cd5"-"\u0cd6", 
+    "\u0cde", 
+    "\u0ce0"-"\u0ce1", 
+    "\u0ce6"-"\u0cef", 
+    "\u0d02"-"\u0d03", 
+    "\u0d05"-"\u0d0c", 
+    "\u0d0e"-"\u0d10", 
+    "\u0d12"-"\u0d28", 
+    "\u0d2a"-"\u0d39", 
+    "\u0d3e"-"\u0d43", 
+    "\u0d46"-"\u0d48", 
+    "\u0d4a"-"\u0d4d", 
+    "\u0d57", 
+    "\u0d60"-"\u0d61", 
+    "\u0d66"-"\u0d6f", 
+    "\u0d82"-"\u0d83", 
+    "\u0d85"-"\u0d96", 
+    "\u0d9a"-"\u0db1", 
+    "\u0db3"-"\u0dbb", 
+    "\u0dbd", 
+    "\u0dc0"-"\u0dc6", 
+    "\u0dca", 
+    "\u0dcf"-"\u0dd4", 
+    "\u0dd6", 
+    "\u0dd8"-"\u0ddf", 
+    "\u0df2"-"\u0df3", 
+    "\u0e01"-"\u0e3a", 
+    "\u0e3f"-"\u0e4e", 
+    "\u0e50"-"\u0e59", 
+    "\u0e81"-"\u0e82", 
+    "\u0e84", 
+    "\u0e87"-"\u0e88", 
+    "\u0e8a", 
+    "\u0e8d", 
+    "\u0e94"-"\u0e97", 
+    "\u0e99"-"\u0e9f", 
+    "\u0ea1"-"\u0ea3", 
+    "\u0ea5", 
+    "\u0ea7", 
+    "\u0eaa"-"\u0eab", 
+    "\u0ead"-"\u0eb9", 
+    "\u0ebb"-"\u0ebd", 
+    "\u0ec0"-"\u0ec4", 
+    "\u0ec6", 
+    "\u0ec8"-"\u0ecd", 
+    "\u0ed0"-"\u0ed9", 
+    "\u0edc"-"\u0edd", 
+    "\u0f00", 
+    "\u0f18"-"\u0f19", 
+    "\u0f20"-"\u0f29", 
+    "\u0f35", 
+    "\u0f37", 
+    "\u0f39", 
+    "\u0f3e"-"\u0f47", 
+    "\u0f49"-"\u0f6a", 
+    "\u0f71"-"\u0f84", 
+    "\u0f86"-"\u0f8b", 
+    "\u0f90"-"\u0f97", 
+    "\u0f99"-"\u0fbc", 
+    "\u0fc6", 
+    "\u1000"-"\u1021", 
+    "\u1023"-"\u1027", 
+    "\u1029"-"\u102a", 
+    "\u102c"-"\u1032", 
+    "\u1036"-"\u1039", 
+    "\u1040"-"\u1049", 
+    "\u1050"-"\u1059", 
+    "\u10a0"-"\u10c5", 
+    "\u10d0"-"\u10f8", 
+    "\u1100"-"\u1159", 
+    "\u115f"-"\u11a2", 
+    "\u11a8"-"\u11f9", 
+    "\u1200"-"\u1206", 
+    "\u1208"-"\u1246", 
+    "\u1248", 
+    "\u124a"-"\u124d", 
+    "\u1250"-"\u1256", 
+    "\u1258", 
+    "\u125a"-"\u125d", 
+    "\u1260"-"\u1286", 
+    "\u1288", 
+    "\u128a"-"\u128d", 
+    "\u1290"-"\u12ae", 
+    "\u12b0", 
+    "\u12b2"-"\u12b5", 
+    "\u12b8"-"\u12be", 
+    "\u12c0", 
+    "\u12c2"-"\u12c5", 
+    "\u12c8"-"\u12ce", 
+    "\u12d0"-"\u12d6", 
+    "\u12d8"-"\u12ee", 
+    "\u12f0"-"\u130e", 
+    "\u1310", 
+    "\u1312"-"\u1315", 
+    "\u1318"-"\u131e", 
+    "\u1320"-"\u1346", 
+    "\u1348"-"\u135a", 
+    "\u1369"-"\u1371", 
+    "\u13a0"-"\u13f4", 
+    "\u1401"-"\u166c", 
+    "\u166f"-"\u1676", 
+    "\u1681"-"\u169a", 
+    "\u16a0"-"\u16ea", 
+    "\u16ee"-"\u16f0", 
+    "\u1700"-"\u170c", 
+    "\u170e"-"\u1714", 
+    "\u1720"-"\u1734", 
+    "\u1740"-"\u1753", 
+    "\u1760"-"\u176c", 
+    "\u176e"-"\u1770", 
+    "\u1772"-"\u1773", 
+    "\u1780"-"\u17d3", 
+    "\u17d7", 
+    "\u17db"-"\u17dd", 
+    "\u17e0"-"\u17e9", 
+    "\u180b"-"\u180d", 
+    "\u1810"-"\u1819", 
+    "\u1820"-"\u1877", 
+    "\u1880"-"\u18a9", 
+    "\u1900"-"\u191c", 
+    "\u1920"-"\u192b", 
+    "\u1930"-"\u193b", 
+    "\u1946"-"\u196d", 
+    "\u1970"-"\u1974", 
+    "\u1d00"-"\u1d6b", 
+    "\u1e00"-"\u1e9b", 
+    "\u1ea0"-"\u1ef9", 
+    "\u1f00"-"\u1f15", 
+    "\u1f18"-"\u1f1d", 
+    "\u1f20"-"\u1f45", 
+    "\u1f48"-"\u1f4d", 
+    "\u1f50"-"\u1f57", 
+    "\u1f59", 
+    "\u1f5b", 
+    "\u1f5d", 
+    "\u1f5f"-"\u1f7d", 
+    "\u1f80"-"\u1fb4", 
+    "\u1fb6"-"\u1fbc", 
+    "\u1fbe", 
+    "\u1fc2"-"\u1fc4", 
+    "\u1fc6"-"\u1fcc", 
+    "\u1fd0"-"\u1fd3", 
+    "\u1fd6"-"\u1fdb", 
+    "\u1fe0"-"\u1fec", 
+    "\u1ff2"-"\u1ff4", 
+    "\u1ff6"-"\u1ffc", 
+    "\u200c"-"\u200f", 
+    "\u202a"-"\u202e", 
+    "\u203f"-"\u2040", 
+    "\u2054", 
+    "\u2060"-"\u2063", 
+    "\u206a"-"\u206f", 
+    "\u2071", 
+    "\u207f", 
+    "\u20a0"-"\u20b1", 
+    "\u20d0"-"\u20dc", 
+    "\u20e1", 
+    "\u20e5"-"\u20ea", 
+    "\u2102", 
+    "\u2107", 
+    "\u210a"-"\u2113", 
+    "\u2115", 
+    "\u2119"-"\u211d", 
+    "\u2124", 
+    "\u2126", 
+    "\u2128", 
+    "\u212a"-"\u212d", 
+    "\u212f"-"\u2131", 
+    "\u2133"-"\u2139", 
+    "\u213d"-"\u213f", 
+    "\u2145"-"\u2149", 
+    "\u2160"-"\u2183", 
+    "\u3005"-"\u3007", 
+    "\u3021"-"\u302f", 
+    "\u3031"-"\u3035", 
+    "\u3038"-"\u303c", 
+    "\u3041"-"\u3096", 
+    "\u3099"-"\u309a", 
+    "\u309d"-"\u309f", 
+    "\u30a1"-"\u30ff", 
+    "\u3105"-"\u312c", 
+    "\u3131"-"\u318e", 
+    "\u31a0"-"\u31b7", 
+    "\u31f0"-"\u31ff", 
+    "\u3400"-"\u4db5", 
+    "\u4e00"-"\u9fa5", 
+    "\ua000"-"\ua48c", 
+    "\uac00"-"\ud7a3", 
+    "\ud801", //for supplementary characters suport
+    "\ud802", //for supplementary characters suport
+    "\ud834", //for supplementary characters suport
+    "\udc00", //for supplementary characters suport
+    "\udc01", //for supplementary characters suport
+    "\udd7b", //for supplementary characters suport
+    "\uf900"-"\ufa2d", 
+    "\ufa30"-"\ufa6a", 
+    "\ufb00"-"\ufb06", 
+    "\ufb13"-"\ufb17", 
+    "\ufb1d"-"\ufb28", 
+    "\ufb2a"-"\ufb36", 
+    "\ufb38"-"\ufb3c", 
+    "\ufb3e", 
+    "\ufb40"-"\ufb41", 
+    "\ufb43"-"\ufb44", 
+    "\ufb46"-"\ufbb1", 
+    "\ufbd3"-"\ufd3d", 
+    "\ufd50"-"\ufd8f", 
+    "\ufd92"-"\ufdc7", 
+    "\ufdf0"-"\ufdfc", 
+    "\ufe00"-"\ufe0f", 
+    "\ufe20"-"\ufe23", 
+    "\ufe33"-"\ufe34", 
+    "\ufe4d"-"\ufe4f", 
+    "\ufe69", 
+    "\ufe70"-"\ufe74", 
+    "\ufe76"-"\ufefc", 
+    "\ufeff", 
+    "\uff04", 
+    "\uff10"-"\uff19", 
+    "\uff21"-"\uff3a", 
+    "\uff3f", 
+    "\uff41"-"\uff5a", 
+    "\uff65"-"\uffbe", 
+    "\uffc2"-"\uffc7", 
+    "\uffca"-"\uffcf", 
+    "\uffd2"-"\uffd7", 
+    "\uffda"-"\uffdc", 
+    "\uffe0"-"\uffe1", 
+    "\uffe5"-"\uffe6", 
+    "\ufff9"-"\ufffb" 
+    ] 
+    >
+}
+
+/* SEPARATORS */
+TOKEN :
+{
+  < LPAREN : "(" >
+| < RPAREN : ")" >
+| < LBRACE : "{" >
+| < RBRACE : "}" >
+| < LBRACKET : "[" >
+| < RBRACKET : "]" >
+| < SEMICOLON : ";" >
+| < COMMA : "," >
+| < AT : "@" >
+}
+
+/* OPERATORS */
+TOKEN :
+{
+  < ASSIGN : "=" >
+| < LT : "<" >
+| < BANG : "!" >
+| < TILDE : "~" >
+| < HOOK : "?" >
+| < COLON : ":" >
+| < EQ : "==" >
+| < LE : "<=" >
+| < GE : ">=" >
+| < NE : "!=" >
+| < SC_OR : "||" >
+| < SC_AND : "&&" >
+| < INCR : "++" >
+| < DECR : "--" >
+| < PLUS : "+" >
+| < MINUS : "-" >
+| < SLASH : "/" >
+| < BIT_AND : "&" >
+| < BIT_OR : "|" >
+| < XOR : "^" >
+| < REM : "%" >
+| < LSHIFT : "<<" >
+| < PLUSASSIGN : "+=" >
+| < MINUSASSIGN : "-=" >
+| < STARASSIGN : "*=" >
+| < SLASHASSIGN : "/=" >
+| < ANDASSIGN : "&=" >
+| < ORASSIGN : "|=" >
+| < XORASSIGN : "^=" >
+| < REMASSIGN : "%=" >
+| < LSHIFTASSIGN : "<<=" >
+| < RSIGNEDSHIFTASSIGN : ">>=" >
+| < RUNSIGNEDSHIFTASSIGN : ">>>=" >
+| < ELLIPSIS : "..." >
+}
+
+/* >'s need special attention due to generics syntax. */
+TOKEN :
+{
+  < RUNSIGNEDSHIFT: ">>>" >
+  {
+     matchedToken.kind = GT;
+     matchedToken.realKind = RUNSIGNEDSHIFT;
+     input_stream.backup(2);
+  }
+| < RSIGNEDSHIFT: ">>" >
+  {
+     matchedToken.kind = GT;
+     matchedToken.realKind = RSIGNEDSHIFT;
+     input_stream.backup(1);
+  }
+| < GT: ">" >
+  {
+    matchedToken.kind = GT;
+    matchedToken.realKind = GT;
+  }
+}
+
+/* .'s need special attention due to ApsectJ syntax. */
+TOKEN :
+{
+  < DOTDOT : ".." >
+| < DOT : "." >
+}
+
+PositionString AnyIDPatternWithoutDot() :
+{
+  String id;
+  int line, column;
+}
+{
+  (
+    < IDPATTERN >
+  | < EVENT >
+  | < CREATION >
+  | < UNSYNC >
+  | < DECENT >
+  | < PERTHREAD >
+  | < SUFFIX >
+  | < BEFORE >
+  | < AFTER >
+  | < AROUND >
+  | < CALL >
+  | < EXEC >
+  | < GET >
+  | < SET >
+  | < TARGET >
+  | < WITHIN >
+  | < ARGS >
+  | < THREAD >
+  | < THREADNAME >
+  | < THREADBLOCKED >
+  | < CONDITION >
+  | < COUNTCOND >
+  | < CFLOW >
+  | < CFLOWBELOW >
+  | < RETURNING >
+  | < THROWING >
+  | < ENDPROGRAM >
+  | < ENDTHREAD >
+  | < ENDOBJECT >
+  | < STARTTHREAD >
+  )
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    id = token.image;
+  }
+  {
+    return new PositionString(line, column, id);
+  }
+}
+
+PointCut PointCut() :
+{
+  PointCut ret;
+  List < PointCut > pointcuts = new ArrayList < PointCut > ();
+}
+{
+  ret = AndPointCut()
+  {
+    pointcuts.add(ret);
+  }
+  (
+    "||" ret = AndPointCut()
+    {
+      pointcuts.add(ret);
+    }
+  )*
+  {
+    if (pointcuts.size() == 1) { return pointcuts.get(0); }
+    else return new CombinedPointCut(tokenRange(), "||", pointcuts);
+  }
+}
+
+PointCut AndPointCut() :
+{
+  PointCut ret;
+  List < PointCut > pointcuts = new ArrayList < PointCut > ();
+}
+{
+  ret = NotPointCut()
+  {
+    pointcuts.add(ret);
+  }
+  (
+    "&&" ret = NotPointCut()
+    {
+      pointcuts.add(ret);
+    }
+  )*
+  {
+    if (pointcuts.size() == 1) return pointcuts.get(0);
+    else return new CombinedPointCut(tokenRange(), "&&", pointcuts);
+  }
+}
+
+PointCut NotPointCut() :
+{
+  PointCut ret;
+}
+{
+  (
+    ret = BasePointCut()
+  |
+    (
+      "!" ret = BasePointCut()
+      {
+        ret = new NotPointCut(tokenRange(), ret);
+      }
+    )
+  )
+  {
+    return ret;
+  }
+}
+
+PointCut BasePointCut() :
+{
+  PointCut ret;
+}
+{
+  //LOOKAHEAD(1) 
+  (
+    ret = MethodPointCut()
+  | ret = FieldPointCut()
+  | ret = ThisPointCut()
+  | ret = ArgsPointCut()
+  | ret = TargetPointCut()
+  | ret = WithinPointCut()
+  | ret = ThreadPointCut()
+  | ret = ThreadNamePointCut()
+  | ret = ThreadBlockedPointCut()
+  | ret = IFPointCut()
+  | ret = ConditionPointCut()
+  | ret = CountCondPointCut()
+  | ret = CFlowPointCut()
+  | ret = IDPointCut()
+  | "(" ret = PointCut() ")"
+  | ret = EndProgramPointCut()
+  | ret = EndThreadPointCut()
+  | ret = StartThreadPointCut()
+  | ret = EndObjectPointCut()
+  | ret = HandlerPointCut()
+  | ret = EventPointCut()
+  )
+  {
+    return ret;
+  }
+}
+
+PointCut HandlerPointCut() :
+{
+  String type;
+  String specName;
+  String referenceElement;
+  String state = null;
+}
+{
+  "handler"
+  {
+    type = token.image;
+  }
+  "(" < IDPATTERN >
+  {
+    specName = token.image;
+  }
+  (
+    "." < IDPATTERN >
+    {
+      referenceElement = token.image;
+    }
+    "@" < IDPATTERN >
+    {
+      state = token.image;
+    }
+  | 
+    "@" < IDPATTERN >
+    {
+      referenceElement = specName;
+      specName = "";
+      state = token.image;
+    }
+  )
+  ")"
+  {
+    return new HandlerPointCut(tokenRange(), type, specName, referenceElement, state);
+  }
+}
+
+PointCut EventPointCut() :
+{
+  String type;
+  String specName = null;
+  String referenceElement;
+  List < String > parameters;
+}
+{
+  "event"
+  {
+    type = token.image;
+  }
+  "(" < IDPATTERN >
+  {
+    referenceElement = token.image;
+  }
+  [
+    "." < IDPATTERN >
+    {
+      specName = referenceElement;
+      referenceElement = token.image;
+    }
+  ]
+  parameters = ExtParameters() 
+  ")"
+  {
+    return new EventPointCut(tokenRange(), type, specName, referenceElement, parameters);
+  }
+}
+
+List < String > ExtParameters() :
+{
+  List < String > parameters = new ArrayList < String > ();
+}
+{
+  "("
+  [
+    < IDPATTERN >
+    {
+      parameters.add(token.image);
+    }
+    [
+      "," < IDPATTERN >
+      {
+        parameters.add(token.image);
+      }
+    ]
+  ]
+  ")"
+  {
+    return parameters;
+  }
+}
+
+PointCut MethodPointCut() :
+{
+  String type;
+  MethodPattern methodSig;
+}
+{
+  (
+    "call"
+  | "execution"
+  )
+  {
+    type = token.image;
+  }
+  "(" methodSig = MethodPattern() ")"
+  {
+    return new MethodPointCut(tokenRange(), type, methodSig);
+  }
+}
+
+PointCut FieldPointCut() :
+{
+  String type;
+  FieldPattern pattern;
+}
+{
+  (
+    "set"
+  | "get"
+  )
+  {
+    type = token.image;
+  }
+  "(" pattern = FieldPattern() ")"
+  {
+    return new FieldPointCut(tokenRange(), type, pattern);
+  }
+}
+
+PointCut ThisPointCut() :
+{
+  String type;
+  TypePattern id;
+}
+{
+  "this"
+  {
+    type = token.image;
+  }
+  "(" id = TypePattern() ")"
+  {
+    return new ThisPointCut(tokenRange(), type, id);
+  }
+}
+
+PointCut TargetPointCut() :
+{
+  String type;
+  TypePattern id;
+}
+{
+  "target"
+  {
+    type = token.image;
+  }
+  "(" id = TypePattern() ")"
+  {
+    return new TargetPointCut(tokenRange(), type, id);
+  }
+}
+
+PointCut ArgsPointCut() :
+{
+  String type;
+  List < TypePattern > parameters;
+}
+{
+  "args"
+  {
+    type = token.image;
+  }
+  parameters = ExtParameterTypes()
+  {
+    return new ArgsPointCut(tokenRange(), type, parameters);
+  }
+}
+
+PointCut WithinPointCut() :
+{
+  String type;
+  TypePattern pattern;
+  String name;
+}
+{
+  "within"
+  {
+    type = token.image;
+  }
+  "(" pattern = TypePattern() ")"
+  {
+    return new WithinPointCut(tokenRange(), type, pattern);
+  }
+}
+
+PointCut ThreadPointCut() :
+{
+  PositionString id;
+}
+{
+  "thread"
+  {
+  }
+  "(" id = AnyIdPattern() ")"
+  {
+    return new ThreadPointCut(tokenRange(), id.str);
+  }
+}
+
+PointCut ThreadNamePointCut() :
+{
+  PositionString id;
+}
+{
+  "threadName"
+  {
+  }
+  "(" id = QuotesAndAnyIdPattern() ")"
+  {
+    return new ThreadNamePointCut(tokenRange(), id.str);
+  }
+}
+
+PointCut ThreadBlockedPointCut() :
+{
+  PositionString id;
+}
+{
+  "threadBlocked"
+  {
+  }
+  "(" id = QuotesAndAnyIdPattern() ")"
+  {
+    return new ThreadBlockedPointCut(tokenRange(), id.str);
+  }
+}
+
+PointCut EndProgramPointCut() :
+{
+}
+{
+  "endProgram"
+  {
+  }
+  "(" ")"
+  {
+    return new EndProgramPointCut(tokenRange());
+  }
+}
+
+PointCut EndThreadPointCut() :
+{
+}
+{
+  "endThread"
+  {
+  }
+  "(" ")"
+  {
+    return new EndThreadPointCut(tokenRange());
+  }
+}
+
+PointCut StartThreadPointCut() :
+{
+}
+{
+  "startThread"
+  {
+  }
+  "(" ")"
+  {
+    return new StartThreadPointCut(tokenRange());
+  }
+}
+
+PointCut EndObjectPointCut() :
+{
+  TypePattern targetType;
+  PositionString id = null;
+}
+{
+  "endObject"
+  {
+  }
+  "(" targetType = TypePattern() id = AnyIdPattern() ")"
+  {
+    return new EndObjectPointCut(tokenRange(), targetType, id.str);
+  }
+}
+
+PointCut ConditionPointCut() :
+{
+  String type;
+  Expression expr;
+}
+{
+  "condition"
+  {
+    type = token.image;
+  }
+  "(" expr = Expression() ")"
+  {
+    return new ConditionPointCut(tokenRange(), type, expr);
+  }
+}
+
+PointCut CountCondPointCut() :
+{
+  String type;
+  Expression expr;
+}
+{
+  "countCond"
+  {
+    type = token.image;
+  }
+  "(" expr = Expression() ")"
+  {
+    return new CountCondPointCut(tokenRange(), type, expr);
+  }
+}
+
+PointCut CFlowPointCut() :
+{
+  PointCut p;
+  String type;
+}
+{
+  (
+    "cflow"
+  | "cflowbelow"
+  )
+  {
+    type = token.image;
+  }
+  "(" p = PointCut() ")"
+  {
+    return new CFlowPointCut(tokenRange(), type, p);
+  }
+}
+
+PointCut IFPointCut() :
+{
+  String type;
+  Expression expr;
+}
+{
+  "if"
+  {
+    type = token.image;
+  }
+  "(" expr = Expression() ")"
+  {
+    return new IFPointCut(tokenRange(), type, expr);
+  }
+}
+
+PointCut IDPointCut() :
+{
+  List < TypePattern > parameters;
+  String id;
+  PositionString name = null;
+}
+{
+  name = IdPattern()
+  {
+    id = name.str;
+  }
+  parameters = ExtParameterTypes()
+  {
+    return new IDPointCut(tokenRange(), id, parameters);
+  }
+}
+
+/* the pattern definitions come from: http://www.eclipse.org/aspectj/doc/released/progguide/semantics-pointcuts.html#pattern-summary  */
+FieldPattern FieldPattern() :
+{
+  Modifier mod = new Modifier(0, 0, 0, 0);
+  TypePattern retType = null;
+  TypePattern owner = null;
+  PositionString name = null;
+  int line =-1, column =-1;
+}
+{
+  [
+    LOOKAHEAD(ExtModifiers())
+    mod = ExtModifiers()
+    {
+    }
+  ]
+  retType = TypePattern()
+  {
+    if (line == - 1)
+    {
+    }
+  }
+  [
+    LOOKAHEAD(TypePattern() ".")
+    owner = TypePattern() "."
+  ]
+  name = AnyIdPattern()
+  {
+    return new FieldPattern(tokenRange(), mod.modifiers, mod.not_modifiers, retType, owner, name.str);
+  }
+}
+
+MethodPattern MethodPattern() :
+{
+  Modifier mod = new Modifier(0, 0, 0, 0);
+  TypePattern retType = null;
+  TypePattern owner = null;
+  PositionString name;
+  List < TypePattern > parameters;
+  List < TypePattern > throwTypes = null;
+}
+{
+  [
+    LOOKAHEAD(ExtModifiers())
+    mod = ExtModifiers()
+  ]
+  // for constructors, there is no return type
+  [
+    LOOKAHEAD(TypePattern())
+    retType = TypePattern()
+  ]
+  (
+    LOOKAHEAD("." < NEW >)
+    "." < NEW >
+    {
+      name = new PositionString(token.beginLine, token.beginColumn, token.image);
+      owner = retType;
+      retType = null;
+    }
+  |
+    [
+      LOOKAHEAD(TypePatternEndingDot()
+    | IdPatternWithDot())
+      owner = TypePatternEndingDot()
+    ]
+    name = AnyIdPattern()
+  )
+  parameters = ExtParameterTypes() [ "throws" throwTypes = TypePatterns() ]
+  {
+    return new MethodPattern(tokenRange(), mod.modifiers, mod.not_modifiers, retType, owner, name.str, parameters, throwTypes);
+  }
+}
+
+Modifier ExtModifiers() :
+{
+  int [ ] modifiers =
+  {
+    0, 0
+  }
+  ;
+  int i = 0;
+  int line =-1;
+  int column =-1;
+}
+{
+  (
+    (
+      LOOKAHEAD(2)
+
+      [
+        "!"
+        {
+          i = 1;
+          if (line == - 1)
+          {
+          }
+        }
+      ]
+      (
+        "public"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.PUBLIC, token);
+        }
+      | "static"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.STATIC, token);
+        }
+      | "protected"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.PROTECTED, token);
+        }
+      | "private"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.PRIVATE, token);
+        }
+      | "final"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.FINAL, token);
+        }
+      | "abstract"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.ABSTRACT, token);
+        }
+      | "synchronized"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.SYNCHRONIZED, token);
+        }
+      | "native"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.NATIVE, token);
+        }
+      | "transient"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.TRANSIENT, token);
+        }
+      | "volatile"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.VOLATILE, token);
+        }
+      | "strictfp"
+        {
+          if (line == - 1)
+          {
+          }
+          modifiers [ i ] = AspectJModifierSet.addModifier(modifiers [ i ], AspectJModifierSet.STRICTFP, token);
+        }
+      )
+      {
+        i = 0;
+      }
+    )+
+  )
+  {
+    return new Modifier(modifiers [ 0 ], modifiers [ 1 ], line, column);
+  }
+}
+
+List < TypePattern > ExtParameterTypes():
+{
+  List < TypePattern > parameters = new ArrayList < TypePattern > ();
+}
+{
+  "(" [ parameters = TypePatterns() ] ")"
+  {
+    return parameters;
+  }
+}
+
+List < TypePattern > TypePatterns() :
+{
+  List < TypePattern > typelist = new ArrayList < TypePattern > ();
+  TypePattern t;
+}
+{
+  t = TypeOrDotdot()
+  {
+    typelist.add(t);
+  }
+  (
+    "," t = TypeOrDotdot()
+    {
+      typelist.add(t);
+    }
+  )*
+  {
+    return typelist;
+  }
+}
+
+TypePattern TypeOrDotdot() :
+{
+  TypePattern t = null;
+}
+{
+  (
+    t = TypePattern()
+  | ".."
+    {
+      t = new WildcardParameter(tokenRange());
+    }
+  )
+  {
+    return t;
+  }
+}
+
+TypePattern TypePattern() :
+{
+  List < TypePattern > types = new ArrayList < TypePattern > ();
+  TypePattern t;
+}
+{
+  t = AndTypePattern()
+  {
+    types.add(t);
+  }
+  (
+    "||" t = AndTypePattern()
+    {
+      types.add(t);
+    }
+  )*
+  {
+    if (types.size() == 1) return t;
+    else return new CombinedTypePattern(tokenRange(), "||", types);
+  }
+}
+
+TypePattern AndTypePattern() :
+{
+  List < TypePattern > types = new ArrayList < TypePattern > ();
+  TypePattern t;
+}
+{
+  t = NotTypePattern()
+  {
+    types.add(t);
+  }
+  (
+    "&&" t = NotTypePattern()
+    {
+      types.add(t);
+    }
+  )*
+  {
+    if (types.size() == 1) return t;
+    else return new CombinedTypePattern(tokenRange(), "&&", types);
+  }
+}
+
+TypePattern NotTypePattern() :
+{
+  TypePattern t;
+  int flag =-1;
+}
+{
+  [
+    "!"
+    {
+      flag = 0;
+    }
+  ]
+  t = BaseTypePattern()
+  {
+      if (flag == -1) {
+          return t;
+      } else {
+          return new NotTypePattern(tokenRange(), t);
+      }
+  }
+}
+
+TypePattern BaseTypePattern() :
+{
+  PositionString id = null;
+  TypePattern t = null;
+  PrimitiveType type = null;
+  String s;
+}
+{
+  (
+    "("
+    t = TypePattern() ")"
+  | type = PrimitiveType()
+    {
+      s = type.toString();
+    }
+    ("[" "]"
+    {
+      s += "[]";
+    }
+    )*
+    {
+      t = new BaseTypePattern(tokenRange(), s);
+    }
+  | "void"
+    {
+      t = new BaseTypePattern(tokenRange(), "void");
+    }
+  | id = IdPattern()
+    [
+      "+"
+      {
+        id.str += "+";
+      }
+    ]
+    ("[" "]"
+    {
+      id.str += "[]";
+    }
+    )*
+  )
+  {
+    if (t == null) t = new BaseTypePattern(tokenRange(), id.str);
+    return t;
+  }
+}
+
+PositionString QuotesAndAnyIdPattern() :
+{
+  PositionString id;
+  String text;
+  int line, column;
+}
+{
+  (
+    ( <STRING_LITERAL>
+    {
+	text = token.image;
+    }
+    )
+    | ( id = AnyIdPattern()
+    {
+        text = id.str;
+    }
+    )
+  )
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    return new PositionString(line, column, text);
+  }
+}
+
+
+PositionString AnyIdPattern() :
+{
+  String id;
+  int line, column;
+}
+{
+  (
+    < IDPATTERN >
+  | < NEW >
+  | < EVENT >
+  | < CREATION >
+  | < UNSYNC >
+  | < DECENT >
+  | < PERTHREAD >
+  | < SUFFIX >
+  | < BEFORE >
+  | < AFTER >
+  | < AROUND >
+  | < CALL >
+  | < EXEC >
+  | < GET >
+  | < SET >
+  | < TARGET >
+  | < WITHIN >
+  | < ARGS >
+  | < THREAD >
+  | < THREADNAME >
+  | < THREADBLOCKED >
+  | < CONDITION >
+  | < COUNTCOND >
+  | < CFLOW >
+  | < CFLOWBELOW >
+  | < RETURNING >
+  | < THROWING >
+  | < ENDPROGRAM >
+  | < ENDTHREAD >
+  | < ENDOBJECT >
+  | < STARTTHREAD >
+  )
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    id = token.image;
+  }
+  (
+    LOOKAHEAD(2)
+    (
+      "."
+    | ".."
+    )
+    {
+      id += token.image;
+    }
+    (
+      < IDPATTERN >
+    | < NEW >
+    | < EVENT >
+    | < CREATION >
+    | < UNSYNC >
+    | < DECENT >
+    | < PERTHREAD >
+    | < SUFFIX >
+    | < BEFORE >
+    | < AFTER >
+    | < AROUND >
+    | < CALL >
+    | < EXEC >
+    | < GET >
+    | < SET >
+    | < TARGET >
+    | < WITHIN >
+    | < ARGS >
+    | < THREAD >
+    | < THREADNAME >
+    | < THREADBLOCKED >
+    | < CONDITION >
+    | < COUNTCOND >
+    | < CFLOW >
+    | < CFLOWBELOW >
+    | < RETURNING >
+    | < THROWING >
+    | < ENDPROGRAM >
+    | < ENDTHREAD >
+    | < ENDOBJECT >
+    | < STARTTHREAD >
+    )
+    {
+      id += token.image;
+    }
+  )*
+  {
+    return new PositionString(line, column, id);
+  }
+}
+
+PositionString IdPattern() :
+{
+  String id;
+  int line, column;
+}
+{
+  < IDPATTERN >
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    id = token.image;
+  }
+  (
+    LOOKAHEAD(2)
+    (
+      "."
+    | ".."
+    )
+    {
+      id += token.image;
+    }
+    < IDPATTERN >
+    {
+      id += token.image;
+    }
+  )*
+  {
+    return new PositionString(line, column, id);
+  }
+}
+
+TypePattern TypePatternEndingDot() :
+{
+  List < TypePattern > types = new ArrayList < TypePattern > ();
+  TypePattern t;
+}
+{
+  t = AndTypePattern2()
+  {
+    types.add(t);
+  }
+  (
+    "||" t = AndTypePattern2()
+    {
+      types.add(t);
+    }
+  )*
+  "."
+  {
+    if (types.size() == 1) return t;
+    else return new CombinedTypePattern(tokenRange(), "||", types);
+  }
+}
+
+TypePattern AndTypePattern2() :
+{
+  List < TypePattern > types = new ArrayList < TypePattern > ();
+  TypePattern t;
+}
+{
+  t = NotTypePattern2()
+  {
+    types.add(t);
+  }
+  (
+    "&&" t = NotTypePattern2()
+    {
+      types.add(t);
+    }
+  )*
+  {
+    if (types.size() == 1) return t;
+    else return new CombinedTypePattern(tokenRange(), "&&", types);
+  }
+}
+
+TypePattern NotTypePattern2() :
+{
+  TypePattern t;
+  int line =-1, column =-1;
+}
+{
+  [
+    "!"
+    {
+    }
+  ]
+  t = BaseTypePattern2()
+  {
+    if (line == - 1) return t;
+    else
+    {
+      new NotTypePattern(tokenRange(), t);
+    }
+  }
+}
+
+TypePattern BaseTypePattern2() :
+{
+  PositionString id = null;
+  TypePattern t = null;
+}
+{
+  (
+    "("
+    {
+    }
+    t = TypePattern() ")"
+  | id = IdPattern2()
+    [
+      "+"
+      {
+        id.str += "+";
+      }
+    ]
+    ("[" "]"
+    {
+      {
+        id.str += "[]";
+      }
+    }
+    )*
+  )
+  {
+    if (t == null) t = new BaseTypePattern(tokenRange(), id.str);
+    return t;
+  }
+}
+
+PositionString IdPattern2() :
+{
+  String id;
+  int line, column;
+}
+{
+  < IDPATTERN >
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    id = token.image;
+  }
+  (
+    LOOKAHEAD(("."
+  | "..") < IDPATTERN > ".")
+    (
+      "."
+    | ".."
+    )
+    {
+      id += token.image;
+    }
+    < IDPATTERN >
+    {
+      id += token.image;
+    }
+  )*
+  {
+    return new PositionString(line, column, id);
+  }
+}
+
+PositionString IdPatternWithDot() :
+{
+  String id;
+  int line, column;
+}
+{
+  < IDPATTERN >
+  {
+    line = token.beginLine;
+    column = token.beginColumn;
+    id = token.image;
+  }
+  (
+    "."
+  | ".."
+  )
+  {
+    id += token.image;
+  }
+  < IDPATTERN >
+  {
+    id += token.image;
+  }
+  (
+    LOOKAHEAD(("."
+  | "..") < IDPATTERN > ".")
+    (
+      "."
+    | ".."
+    )
+    {
+      id += token.image;
+    }
+    < IDPATTERN >
+    {
+      id += token.image;
+    }
+  )*
+  {
+    return new PositionString(line, column, id);
+  }
+}
+
+Expression VariableInitializer() :
+{
+  Expression ret;
+}
+{
+  (
+    ret = ArrayInitializer()
+  | ret = Expression()
+  )
+  {
+    return ret;
+  }
+}
+
+ArrayInitializerExpr ArrayInitializer() :
+{
+  NodeList values = null;
+  Expression val;
+  int line;
+  int column;
+}
+{
+  "{"
+  {
+  }
+  [
+    val = VariableInitializer()
+    {
+      values = add(values, val);
+    }
+    (
+      LOOKAHEAD(2)
+      "," val = VariableInitializer()
+      {
+        values = add(values, val);
+      }
+    )*
+  ]
+  [ "," ] "}"
+  {
+    return new ArrayInitializerExpr(tokenRange(), values);
+  }
+}
+
+ExplicitConstructorInvocationStmt ExplicitConstructorInvocation() :
+{
+  boolean isThis = false;
+  NodeList args;
+  Expression expr = null;
+  NodeList typeArgs = null;
+  int line =-1;
+}
+{
+  (
+    LOOKAHEAD([ TypeArguments() ] "this" "(")
+
+    [
+      typeArgs = TypeArguments()
+      {
+      }
+    ]
+    "this"
+    {
+      if (line == - 1)
+      {
+      }
+      isThis = true;
+    }
+    args = Arguments() ";"
+  |
+    [
+      LOOKAHEAD(PrimaryExpressionWithoutSuperSuffix() ".")
+      expr = PrimaryExpressionWithoutSuperSuffix() "."
+      {
+      }
+    ]
+    [
+      typeArgs = TypeArguments()
+      {
+        if (line == - 1)
+        {
+        }
+      }
+    ]
+    "super"
+    {
+      if (line == - 1)
+      {
+      }
+    }
+    args = Arguments() ";"
+  )
+  {
+    return new ExplicitConstructorInvocationStmt(tokenRange(), typeArgs, isThis, expr, args);
+  }
+}
+
+/*
+ * Type, name and expression syntax follows.
+ */
+Type Type() :
+{
+  Type ret;
+}
+{
+  (
+    LOOKAHEAD(2)
+    ret = ReferenceType()
+  | ret = PrimitiveType()
+  | "void"
+    {
+      ret = new VoidType(tokenRange());
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+ReferenceType ReferenceType() :
+{
+  Type type;
+  int arrayCount = 0;
+}
+{
+  (
+    type = PrimitiveType()
+    (
+      LOOKAHEAD(2)
+      "[" "]"
+      {
+        arrayCount++;
+      }
+    )+
+  | type = ClassOrInterfaceType()
+    (
+      LOOKAHEAD(2)
+      "[" "]"
+      {
+        arrayCount++;
+      }
+    )*
+  )
+  {
+  if (arrayCount > 0) {
+      return new ArrayType(type, ArrayType.Origin.TYPE, new NodeList());
+  } else {
+      return type.asReferenceType();
+  }
+}
+}
+
+ClassOrInterfaceType ClassOrInterfaceType() :
+{
+  ClassOrInterfaceType ret;
+  SimpleName name;
+  NodeList typeArgs = null;
+}
+{
+  < IDPATTERN >
+  {
+  }
+  {
+    name = new SimpleName(token.image);
+  }
+  [
+    LOOKAHEAD(2)
+    typeArgs = TypeArguments()
+  ]
+  {
+    ret = new ClassOrInterfaceType(tokenRange(), null, name, typeArgs, new NodeList());
+  }
+  (
+    LOOKAHEAD(2)
+    "." < IDPATTERN >
+    {
+      name = new SimpleName(token.image);
+    }
+    [
+      LOOKAHEAD(2)
+      typeArgs = TypeArguments()
+    ]
+    {
+      ret = new ClassOrInterfaceType(tokenRange(), ret, name, typeArgs, new NodeList());
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+NodeList TypeArguments() :
+{
+  NodeList ret = new NodeList();
+  Type type;
+}
+{
+  "<" type = TypeArgument()
+  {
+    ret.add(type);
+  }
+  (
+    "," type = TypeArgument()
+    {
+      ret.add(type);
+    }
+  )*
+  ">"
+  {
+    return ret;
+  }
+}
+
+Type TypeArgument() :
+{
+  Type ret;
+}
+{
+  (
+    ret = ReferenceType()
+  | ret = Wildcard()
+  )
+  {
+    return ret;
+  }
+}
+
+WildcardType Wildcard() :
+{
+  ReferenceType ext = null;
+  ReferenceType sup = null;
+  int line;
+  int column;
+}
+{
+  "?"
+  {
+  }
+  [
+    "extends" ext = ReferenceType()
+  | "super" sup = ReferenceType()
+  ]
+  {
+    return new WildcardType(tokenRange(), ext, sup);
+  }
+}
+
+PrimitiveType PrimitiveType() :
+{
+  PrimitiveType ret;
+  NodeList annotations = new NodeList();
+}
+{
+  (
+    "boolean"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BOOLEAN, annotations);
+    }
+  | "char"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.CHAR, annotations);
+    }
+  | "byte"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.BYTE, annotations);
+    }
+  | "short"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.SHORT, annotations);
+    }
+  | "int"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.INT, annotations);
+    }
+  | "long"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.LONG, annotations);
+    }
+  | "float"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.FLOAT, annotations);
+    }
+  | "double"
+    {
+      ret = new PrimitiveType(tokenRange(), PrimitiveType.Primitive.DOUBLE, annotations);
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+Type ResultType() :
+{
+  Type ret;
+}
+{
+  (
+    ret = Type()
+  )
+  {
+    return ret;
+  }
+}
+
+NameExpr Name() :
+/*
+ * A lookahead of 2 is required below since "Name" can be followed
+ * by a ".*" when used in the context of an "ImportDeclaration".
+ */
+{
+  NameExpr ret;
+}
+{
+  < IDPATTERN >
+  {
+    ret = new NameExpr(tokenRange(), new SimpleName(token.image));
+  }
+  (
+    LOOKAHEAD(2)
+    "." < IDPATTERN >
+    {
+//      ret = new QualifiedNameExpr(token.beginLine, token.beginColumn, ret, token.image);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+List NameList() :
+{
+  List ret = new LinkedList();
+  NameExpr name;
+}
+{
+  name = Name()
+  {
+    ret.add(name);
+  }
+  (
+    "," name = Name()
+    {
+      ret.add(name);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+/*
+ * Expression syntax follows.
+ */
+Expression Expression() :
+/*
+ * This expansion has been written this way instead of:
+ *   Assignment() | ConditionalExpression()
+ * for performance reasons.
+ * However, it is a weakening of the grammar for it allows the LHS of
+ * assignments to be any conditional expression whereas it can only be
+ * a primary expression.  Consider adding a semantic predicate to work
+ * around this.
+ */
+{
+  Expression ret;
+  AssignExpr.Operator op;
+  Expression value;
+}
+{
+  ret = ConditionalExpression()
+  [
+    LOOKAHEAD(2)
+    op = AssignmentOperator() value = Expression()
+    {
+      ret = new AssignExpr(tokenRange(), ret, value, op);
+    }
+  ]
+  {
+    return ret;
+  }
+}
+
+AssignExpr.Operator AssignmentOperator() :
+{
+  AssignExpr.Operator ret;
+}
+{
+  (
+    "="
+    {
+      ret = AssignExpr.Operator.ASSIGN;
+    }
+  | "*="
+    {
+      ret = AssignExpr.Operator.MULTIPLY;
+    }
+  | "/="
+    {
+      ret = AssignExpr.Operator.DIVIDE;
+    }
+  | "%="
+    {
+      ret = AssignExpr.Operator.REMAINDER;
+    }
+  | "+="
+    {
+      ret = AssignExpr.Operator.PLUS;
+    }
+  | "-="
+    {
+      ret = AssignExpr.Operator.MINUS;
+    }
+  | "<<="
+    {
+      ret = AssignExpr.Operator.LEFT_SHIFT;
+    }
+  | ">>="
+    {
+      ret = AssignExpr.Operator.SIGNED_RIGHT_SHIFT;
+    }
+  | ">>>="
+    {
+      ret = AssignExpr.Operator.UNSIGNED_RIGHT_SHIFT;
+    }
+  | "&="
+    {
+      ret = AssignExpr.Operator.BINARY_AND;
+    }
+  | "^="
+    {
+      ret = AssignExpr.Operator.XOR;
+    }
+  | "|="
+    {
+      ret = AssignExpr.Operator.BINARY_OR;
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+Expression ConditionalExpression() :
+{
+  Expression ret;
+  Expression left;
+  Expression right;
+}
+{
+  ret = ConditionalOrExpression()
+  [
+    "?" left = Expression() ":" right = ConditionalExpression()
+    {
+      ret = new ConditionalExpr(tokenRange(), ret, left, right);
+    }
+  ]
+  {
+    return ret;
+  }
+}
+
+Expression ConditionalOrExpression() :
+{
+  Expression ret;
+  Expression right;
+}
+{
+  ret = ConditionalAndExpression()
+  (
+    "||" right = ConditionalAndExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.OR);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression ConditionalAndExpression() :
+{
+  Expression ret;
+  Expression right;
+}
+{
+  ret = InclusiveOrExpression()
+  (
+    "&&" right = InclusiveOrExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.AND);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression InclusiveOrExpression() :
+{
+  Expression ret;
+  Expression right;
+}
+{
+  ret = ExclusiveOrExpression()
+  (
+    "|" right = ExclusiveOrExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.BINARY_OR);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression ExclusiveOrExpression() :
+{
+  Expression ret;
+  Expression right;
+}
+{
+  ret = AndExpression()
+  (
+    "^" right = AndExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.XOR);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression AndExpression() :
+{
+  Expression ret;
+  Expression right;
+}
+{
+  ret = EqualityExpression()
+  (
+    "&" right = EqualityExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, BinaryExpr.Operator.BINARY_AND);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression EqualityExpression() :
+{
+  Expression ret;
+  Expression right;
+  BinaryExpr.Operator op;
+}
+{
+  ret = InstanceOfExpression()
+  (
+    (
+      "=="
+      {
+        op = BinaryExpr.Operator.EQUALS;
+      }
+    | "!="
+      {
+        op = BinaryExpr.Operator.NOT_EQUALS;
+      }
+    )
+    right = InstanceOfExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression InstanceOfExpression() :
+{
+  Expression ret;
+  Type type;
+}
+{
+  ret = RelationalExpression()
+  [
+    "instanceof" type = Type()
+    {
+      ret = new InstanceOfExpr(tokenRange(), ret, type.asReferenceType(), null);
+    }
+  ]
+  {
+    return ret;
+  }
+}
+
+Expression RelationalExpression() :
+{
+  Expression ret;
+  Expression right;
+  BinaryExpr.Operator op;
+}
+{
+  ret = ShiftExpression()
+  (
+    (
+      "<"
+      {
+        op = BinaryExpr.Operator.LESS;
+      }
+    | ">"
+      {
+        op = BinaryExpr.Operator.GREATER;
+      }
+    | "<="
+      {
+        op = BinaryExpr.Operator.LESS_EQUALS;
+      }
+    | ">="
+      {
+        op = BinaryExpr.Operator.GREATER_EQUALS;
+      }
+    )
+    right = ShiftExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression ShiftExpression() :
+{
+  Expression ret;
+  Expression right;
+  BinaryExpr.Operator op;
+}
+{
+  ret = AdditiveExpression()
+  (
+    (
+      "<<"
+      {
+        op = BinaryExpr.Operator.LEFT_SHIFT;
+      }
+    | RSIGNEDSHIFT()
+      {
+        op = BinaryExpr.Operator.SIGNED_RIGHT_SHIFT;
+      }
+    | RUNSIGNEDSHIFT()
+      {
+        op = BinaryExpr.Operator.UNSIGNED_RIGHT_SHIFT;
+      }
+    )
+    right = AdditiveExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression AdditiveExpression() :
+{
+  Expression ret;
+  Expression right;
+  BinaryExpr.Operator op;
+}
+{
+  ret = MultiplicativeExpression()
+  (
+    (
+      "+"
+      {
+        op = BinaryExpr.Operator.PLUS;
+      }
+    | "-"
+      {
+        op = BinaryExpr.Operator.MINUS;
+      }
+    )
+    right = MultiplicativeExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression MultiplicativeExpression() :
+{
+  Expression ret;
+  Expression right;
+  BinaryExpr.Operator op;
+}
+{
+  ret = UnaryExpression()
+  (
+    (
+      "*"
+      {
+        op = BinaryExpr.Operator.MULTIPLY;
+      }
+    | "/"
+      {
+        op = BinaryExpr.Operator.DIVIDE;
+      }
+    | "%"
+      {
+        op = BinaryExpr.Operator.REMAINDER;
+      }
+    )
+    right = UnaryExpression()
+    {
+      ret = new BinaryExpr(tokenRange(), ret, right, op);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression UnaryExpression() :
+{
+  Expression ret;
+  UnaryExpr.Operator op;
+}
+{
+  (
+    (
+      "+"
+      {
+        op = UnaryExpr.Operator.PLUS;
+      }
+    | "-"
+      {
+        op = UnaryExpr.Operator.MINUS;
+      }
+    )
+    ret = UnaryExpression()
+    {
+      if (op == UnaryExpr.Operator.MINUS)
+      {
+        if (ret instanceof IntegerLiteralExpr)
+        {
+          ret = new IntegerLiteralExpr(String.valueOf(tokenRange()));
+        }
+        else if (ret instanceof LongLiteralExpr)
+        {
+          ret = new LongLiteralExpr(String.valueOf(tokenRange()));
+        }
+        else
+        {
+          ret = new UnaryExpr(tokenRange(), ret, op);
+        }
+      }
+      else
+      {
+        ret = new UnaryExpr(tokenRange(), ret, op);
+      }
+    }
+  | ret = PreIncrementExpression()
+  | ret = PreDecrementExpression()
+  | ret = UnaryExpressionNotPlusMinus()
+  )
+  {
+    return ret;
+  }
+}
+
+Expression PreIncrementExpression() :
+{
+  Expression ret;
+  int line;
+  int column;
+}
+{
+  "++"
+  {
+  }
+  ret = PrimaryExpression()
+  {
+    ret = new UnaryExpr(tokenRange(), ret, UnaryExpr.Operator.PREFIX_INCREMENT);
+  }
+  {
+    return ret;
+  }
+}
+
+Expression PreDecrementExpression() :
+{
+  Expression ret;
+  int line;
+  int column;
+}
+{
+  "--"
+  {
+  }
+  ret = PrimaryExpression()
+  {
+    ret = new UnaryExpr(tokenRange(), ret, UnaryExpr.Operator.PREFIX_DECREMENT);
+  }
+  {
+    return ret;
+  }
+}
+
+Expression UnaryExpressionNotPlusMinus() :
+{
+  Expression ret;
+  UnaryExpr.Operator op;
+}
+{
+  (
+    (
+      "~"
+      {
+        op = UnaryExpr.Operator.BITWISE_COMPLEMENT;
+      }
+    | "!"
+      {
+        op = UnaryExpr.Operator.LOGICAL_COMPLEMENT;
+      }
+    )
+    ret = UnaryExpression()
+    {
+      ret = new UnaryExpr(tokenRange(), ret, op);
+    }
+  | LOOKAHEAD(CastLookahead())
+    ret = CastExpression()
+  | ret = PostfixExpression()
+  )
+  {
+    return ret;
+  }
+}
+
+// This production is to determine lookahead only.  The LOOKAHEAD specifications
+// below are not used, but they are there just to indicate that we know about
+// this.
+void CastLookahead() :
+{}
+{
+  LOOKAHEAD("(" Type() "[")
+  "(" Type() "[" "]"
+| "(" Type() ")" UnaryExpression()
+}
+
+Expression PostfixExpression() :
+{
+  Expression ret;
+  UnaryExpr.Operator op;
+}
+{
+  ret = PrimaryExpression()
+  [
+    LOOKAHEAD(2)
+    (
+      "++"
+      {
+        op = UnaryExpr.Operator.POSTFIX_INCREMENT;
+      }
+    | "--"
+      {
+        op = UnaryExpr.Operator.POSTFIX_DECREMENT;
+      }
+    )
+    {
+      ret = new UnaryExpr(tokenRange(), ret, op);
+    }
+  ]
+  {
+    return ret;
+  }
+}
+
+Expression CastExpression() :
+{
+  Expression ret;
+  Type type;
+  int line;
+  int column;
+}
+{
+  "("
+  {
+  }
+  type = Type() ")" ret = UnaryExpression()
+  {
+    ret = new CastExpr(tokenRange(), type, ret);
+  }
+  {
+    return ret;
+  }
+}
+
+Expression PrimaryExpression() :
+{
+  Expression ret;
+  Expression inner;
+}
+{
+  ret = PrimaryPrefix()
+  (
+    LOOKAHEAD(2)
+    ret = PrimarySuffix(ret)
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression PrimaryExpressionWithoutSuperSuffix() :
+{
+  Expression ret;
+  Expression inner;
+}
+{
+  ret = PrimaryPrefix()
+  (
+    LOOKAHEAD(PrimarySuffixWithoutSuper(null))
+    ret = PrimarySuffixWithoutSuper(ret)
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression PrimaryPrefix() :
+{
+  Expression ret;
+  SimpleName name;
+  NodeList typeArgs = null;
+  NodeList args = null;
+  boolean hasArgs = false;
+  Type type;
+}
+{
+  (
+    ret = Literal()
+  | "this"
+    {
+      ret = new ThisExpr(tokenRange(), null);
+    }
+  | "super"
+    {
+      ret = new SuperExpr(tokenRange(), null);
+    }
+    "."
+    [
+      typeArgs = TypeArguments()
+      {
+      }
+    ]
+    < IDPATTERN >
+    {
+      name = new SimpleName(token.image);
+    }
+    [
+      args = Arguments()
+      {
+        hasArgs = true;
+      }
+    ]
+    {
+      ret = hasArgs ? new MethodCallExpr(tokenRange(), ret, typeArgs, name, args) : new FieldAccessExpr(tokenRange(), ret, null, name);
+    }
+  | "("
+    {
+    }
+    ret = Expression() ")"
+    {
+      ret = new EnclosedExpr(tokenRange(), ret);
+    }
+  | ret = AllocationExpression(null)
+  | LOOKAHEAD(ResultType() "." "class")
+    type = ResultType() "." "class"
+    {
+      ret = new ClassExpr(tokenRange(), type);
+    }
+  | < IDPATTERN >
+    {
+      name = new SimpleName(token.image);
+    }
+    [
+      args = Arguments()
+      {
+        hasArgs = true;
+      }
+    ]
+    {
+      ret = hasArgs ? new MethodCallExpr(tokenRange(), null, null, name, args) : new NameExpr(tokenRange(), name);
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+Expression PrimarySuffix(Expression scope) :
+{
+  Expression ret;
+}
+{
+  (
+    LOOKAHEAD(2)
+    ret = PrimarySuffixWithoutSuper(scope)
+  | "." "super"
+    {
+      ret = new SuperExpr(tokenRange(), scope.asSuperExpr().getTypeName().get());
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+Expression PrimarySuffixWithoutSuper(Expression scope) :
+{
+  Expression ret;
+  NodeList typeArgs = null;
+  NodeList args = new NodeList();
+  boolean hasArgs = false;
+  SimpleName name;
+  PositionString nameStr;
+}
+{
+  (
+    LOOKAHEAD(2)
+    "."
+    (
+      "this"
+      {
+        ret = new ThisExpr(tokenRange(), scope.asSuperExpr().getTypeName().get());
+      }
+    | ret = AllocationExpression(scope)
+    | LOOKAHEAD([ TypeArguments() ] AnyIDPatternWithoutDot())
+
+      [
+        typeArgs = TypeArguments()
+      ]
+      nameStr = AnyIDPatternWithoutDot()
+      {
+        name = new SimpleName(nameStr.str);
+      }
+      [
+        args = Arguments()
+        {
+          hasArgs = true;
+        }
+      ]
+      {
+        ret = hasArgs ? new MethodCallExpr(tokenRange(), scope, typeArgs, name, args) : new FieldAccessExpr(tokenRange(), scope, typeArgs, name);
+      }
+    )
+  | ("["
+    {
+    }
+    ret = Expression() "]"
+    {
+      ret = new ArrayAccessExpr(tokenRange(), scope, ret);
+    }
+    )
+  )
+  {
+    return ret;
+  }
+}
+
+Expression Literal() :
+{
+  Expression ret;
+}
+{
+  (
+    < INTEGER_LITERAL >
+    {
+      ret = new IntegerLiteralExpr(tokenRange(), token.image);
+    }
+  | < LONG_LITERAL >
+    {
+      ret = new LongLiteralExpr(tokenRange(), token.image);
+    }
+  | < FLOATING_POINT_LITERAL >
+    {
+      ret = new DoubleLiteralExpr(tokenRange(), token.image);
+    }
+  | < CHARACTER_LITERAL >
+    {
+      ret = new CharLiteralExpr(tokenRange(), token.image.substring(1, token.image.length() - 1));
+    }
+  | < STRING_LITERAL >
+    {
+      ret = new StringLiteralExpr(tokenRange(), token.image.substring(1, token.image.length() - 1));
+    }
+  | ret = BooleanLiteral()
+  | ret = NullLiteral()
+  )
+  {
+    return ret;
+  }
+}
+
+Expression BooleanLiteral() :
+{
+  Expression ret;
+}
+{
+  (
+    "true"
+    {
+      ret = new BooleanLiteralExpr(tokenRange(), Boolean.TRUE);
+    }
+  | "false"
+    {
+      ret = new BooleanLiteralExpr(tokenRange(), Boolean.FALSE);
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+Expression NullLiteral() :
+{}
+{
+  "null"
+  {
+    return new NullLiteralExpr(tokenRange());
+  }
+}
+
+NodeList Arguments() :
+{
+  NodeList ret = new NodeList();
+}
+{
+  "(" [ ret = ArgumentList() ] ")"
+  {
+    return ret;
+  }
+}
+
+NodeList ArgumentList() :
+{
+  NodeList ret = new NodeList();
+  Expression expr;
+}
+{
+  expr = Expression()
+  {
+    ret.add(expr);
+  }
+  (
+    "," expr = Expression()
+    {
+      ret.add(expr);
+    }
+  )*
+  {
+    return ret;
+  }
+}
+
+Expression AllocationExpression(Expression scope) :
+{
+  Expression ret;
+  Type type;
+  Object [ ] arr = null;
+  NodeList typeArgs = null;
+  NodeList anonymousBody = null;
+  NodeList args;
+}
+{
+  "new"
+  (
+    type = PrimitiveType() arr = ArrayDimsAndInits()
+    {
+        ret = new ArrayCreationExpr(tokenRange(), type, null, (ArrayInitializerExpr) arr [ 1 ]);
+    }
+  | [ typeArgs = TypeArguments() ] type = ClassOrInterfaceType()
+    (
+      arr = ArrayDimsAndInits()
+      {
+          ret = new ArrayCreationExpr(tokenRange(), type, typeArgs, (ArrayInitializerExpr) arr [ 1 ]);
+      }
+    )
+  )
+  {
+    return ret;
+  }
+}
+
+/*
+ * The third LOOKAHEAD specification below is to parse to PrimarySuffix
+ * if there is an expression between the "[...]".
+ */
+Object [ ] ArrayDimsAndInits() :
+{
+  Object [ ] ret = new Object [ 2 ];
+  Expression expr;
+  List inits = null;
+  int i = 0;
+}
+{
+  (
+    LOOKAHEAD(2)
+    (
+      LOOKAHEAD(2)
+      "[" expr = Expression()
+      {
+        inits = add(inits, expr);
+      }
+      "]"
+    )+
+    (
+      LOOKAHEAD(2)
+      "[" "]"
+      {
+        i++;
+      }
+    )*
+    {
+      ret [ 0 ] = inits;
+      ret [ 1 ] = new Integer(i);
+    }
+  | ("[" "]"
+    {
+      i++;
+    }
+    )+ expr = ArrayInitializer()
+    {
+      ret [ 0 ] = new Integer(i);
+      ret [ 1 ] = expr;
+    }
+  )
+  {
+    return ret;
+  }
+}
+
+/* We use productions to match >>>, >> and > so that we can keep the
+ * type declaration syntax with generics clean
+ */
+void RUNSIGNEDSHIFT():
+{}
+{
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                (getToken(1)).realKind == RUNSIGNEDSHIFT} )
+   ">" ">" ">"
+  )
+}
+
+void RSIGNEDSHIFT():
+{}
+{
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                (getToken(1)).realKind == RSIGNEDSHIFT} )
+  ">" ">"
+  )
+}

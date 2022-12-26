@@ -1,0 +1,28 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if DatagramSocket.setSoTimeout() is called with an invalid timeout value.
+ *
+ * The timeout parameter of DatagramSocket.setSoTimeout() must be zero or
+ * greater than 0.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/DatagramSocket.html#setSoTimeout%28int%29
+ *
+ * @severity error
+ */
+
+DatagramSocket_SoTimeout() {
+	event settimeout before(int timeout) :
+		call(void DatagramSocket.setSoTimeout(int)) && args(timeout)
+	{
+		if (timeout >= 0)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The timeout value " + timeout + " is out of range; [0 ~ ]");
+	}
+}
+

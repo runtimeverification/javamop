@@ -1,0 +1,28 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if BufferedInputStream.fill() is being called by non-synchronized methods.
+ *
+ * BufferedInputStream.fill() assumes that it is called by synchronized
+ * methods. This property warns if this requirement is not satisfied.
+ *
+ * This property is described in the comments for BufferedInputStream.fill().
+ *
+ * @severity error
+ */
+
+BufferedInputStream_SynchronizedFill(BufferedInputStream i) {
+     event fill before(BufferedInputStream i) : call(* BufferedInputStream.fill(..)) && target(i) && !cflow(call(synchronized * *.*(..))){}
+
+     ere: fill
+
+     @match {
+            RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+            RVMLogging.out.println(Level.CRITICAL, "BufferedInputStream.fill() is being called by a non-synchronized method.");
+     }
+}
+

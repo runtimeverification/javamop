@@ -1,0 +1,67 @@
+package mop;
+
+import java.io.*;
+import java.lang.reflect.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a class is serializable, its superclass is not serializable, and
+ * the class cannot access the superclass' no-arg constructor.
+ *
+ * To allow subtypes of non-serializable classes to be serialized, the subtype
+ * may assume responsibility for saving and restoring the state of the
+ * supertype's public, protected, and (if accessible) package fields. The
+ * subtype may assume this responsibility only if the class it extends has an
+ * accessible no-arg constructor to initialize the class's state. It is an
+ * error to declare a class Serializable if this is not the case.
+ * http://download.oracle.com/javase/6/docs/api/java/io/Serializable.html
+ *
+ * This property detects such error.
+ *
+ * @severity error
+ */
+Serializable_NoArgConstructor() {
+	private String getPackageName(Class cl) {
+		String s = cl.getName();
+		int i = s.lastIndexOf('[');
+		if (i >= 0)
+			s = s.substring(i + 2);
+		i = s.lastIndexOf('.');
+		return (i >= 0) ? s.substring(0, i) : "";
+	}
+
+	event staticinit after() : staticinitialization(Serializable+) {
+		org.aspectj.lang.Signature initsig = __STATICSIG;
+		Class klass = initsig.getDeclaringType();		
+
+		if (klass != null) {
+			Class nonserialzable = klass;
+			while (Serializable.class.isAssignableFrom(nonserialzable)) {
+				nonserialzable = nonserialzable.getSuperclass();
+				if (nonserialzable == null)
+					break;
+			}
+
+			if (nonserialzable != null) {
+				boolean samepackage = klass.getClassLoader() == nonserialzable.getClassLoader() &&
+					getPackageName(klass).equals(getPackageName(nonserialzable));
+
+				boolean inaccessible = true;
+				try {
+					Constructor ctor = nonserialzable.getDeclaredConstructor((Class[]) null);
+					int mod = ctor.getModifiers();
+					inaccessible = (mod & Modifier.PRIVATE) != 0 ||
+						((mod & (Modifier.PUBLIC | Modifier.PROTECTED)) == 0 && !samepackage);
+				}
+				catch (NoSuchMethodException e) {
+				}
+				if (inaccessible) {
+					RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+					RVMLogging.out.println(Level.CRITICAL, "The superclass of " + klass.getName() + " does not have an accessible no-arg constructor.");
+				}
+			}
+		}
+	}
+}
+

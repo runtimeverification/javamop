@@ -1,0 +1,36 @@
+package mop;
+
+import java.io.*;
+import java.lang.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Suggests if invalid code point or surrogate pair is used in charCount(..) or toCodePoint(..)
+ *
+ * According to the manual, those methods don't validate input.
+ * User should do this before using methods.  
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#charCount%28int%29
+ * http://docs.oracle.com/javase/6/docs/api/java/lang/Character.html#toCodePoint%28char,%20char%29
+ *
+ * @severity warning
+ */
+ 
+Character_ValidateChar() {
+    event charCount before(int codePoint): 
+        call(* Character.charCount(int)) && args(codePoint) {
+            if(!Character.isValidCodePoint(codePoint)){
+                RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+                RVMLogging.out.println(Level.CRITICAL, "The code point used in charCount(int codePoint) is not valid.");
+            }
+        }
+
+    event toCodePoint before(char high, char low): 
+        call(* Character.toCodePoint(char, char)) && args(high, low) {
+            if(!Character.isSurrogatePair(high, low)){
+                RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+                RVMLogging.out.println(Level.CRITICAL, "The surrogate pair used in toCodePoint(char high, char low) is not valid.");
+            }
+        }
+}
+

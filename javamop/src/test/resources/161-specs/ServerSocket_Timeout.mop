@@ -1,0 +1,26 @@
+package mop;
+
+import java.net.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if an invalid timeout value is set to a ServerSocket object.
+ *
+ * The timeout value must be > 0.
+ * http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html#setSoTimeout%28int%29
+ *
+ * @severity error
+ */
+ServerSocket_Timeout() {
+	event set before(int timeout) :
+		call(* ServerSocket+.setSoTimeout(int)) && args(timeout)
+	{
+		if (timeout > 0)
+			return;
+
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "An invalid timeout value " + timeout + " was set to a ServerSocket object.");
+	}
+}
+

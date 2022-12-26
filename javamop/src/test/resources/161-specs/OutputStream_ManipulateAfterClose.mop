@@ -1,0 +1,39 @@
+package mop;
+
+import java.io.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns write() or flush() after close().
+ *
+ * According to the OutputStream.close(), a closed stream cannot perform
+ * output operations and cannot be reopened in general.
+ * http://download.oracle.com/javase/6/docs/api/java/io/OutputStream.html#close%28%29
+ *
+ * ByteArrayOutputStream is an exceptional subclass in that methods in this
+ * class can be called after the stream has been closed.
+ * http://docs.oracle.com/javase/6/docs/api/java/io/ByteArrayOutputStream.html#close%28%29
+ *
+ * @severity error
+ */
+
+OutputStream_ManipulateAfterClose(OutputStream o) {
+	event manipulate before(OutputStream o) :
+		(
+			call(* OutputStream+.write*(..)) ||
+			call(* OutputStream+.flush(..))
+		) && target(o) &&
+		!target(ByteArrayOutputStream) {}
+	creation event close before(OutputStream o) :
+		call(* OutputStream+.close(..)) && target(o) && 
+		!target(ByteArrayOutputStream) {}
+
+	ere : close+ manipulate+
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "write() or flush() was invoked after close()."); 
+	}
+}
+

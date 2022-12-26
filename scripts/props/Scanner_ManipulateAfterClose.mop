@@ -1,0 +1,57 @@
+package mop;
+
+import java.util.*;
+import java.io.*;
+import java.nio.channels.*;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging;
+import com.runtimeverification.rvmonitor.java.rt.RVMLogging.Level;
+
+/**
+ * Warns if a Closeable object, used in Scanner, is used after the Scanner
+ * object is closed.
+ *
+ * A Scanner object can take a Closeable object, such as Readable, InputStream
+ * and ReadableByteChannel, and uses it as input. When the Scanner object is
+ * closed, the Closeable object is closed as well. Thus any further operations
+ * on the Closeable object is prohibited.
+ * http://docs.oracle.com/javase/6/docs/api/java/util/Scanner.html
+ *
+ * This property warns if any method invocation on the Closeable object once
+ * the object is passed to a Scanner object. This does not give false warning
+ * during the execution of Scanner because the callsite is hidden in the
+ * Scanner implementation.
+ *
+ * @severity error
+ */
+
+Scanner_ManipulateAfterClose(Scanner s, Closeable c) {
+	creation event create after(Closeable c) returning(Scanner s) :
+		(
+			call(Scanner+.new(InputStream, ..)) ||
+			call(Scanner+.new(Readable, ..)) ||
+			call(Scanner+.new(ReadableByteChannel, ..))
+		) && args(c, ..) {}
+
+	event close after(Scanner s) :
+		call(* Scanner+.close()) && target(s) &&
+		!args(ByteArrayInputStream) && !args(StringBufferInputStream) {}
+
+	event manipulate before(Closeable c) :
+		(
+			call(* InputStream+.read(..)) ||
+			call(* InputStream+.available(..)) ||
+			call(* InputStream+.reset(..)) ||
+			call(* InputStream+.skip(..)) ||
+			call(* Readable+.read(..)) ||
+			call(* ReadableByteChannel+.read(..))
+		) && target(c) &&
+		!target(ByteArrayInputStream) && !target(StringBufferInputStream) {}
+
+	ere : create close+ manipulate
+
+	@match {
+		RVMLogging.out.println(Level.CRITICAL, __DEFAULT_MESSAGE);
+		RVMLogging.out.println(Level.CRITICAL, "The source stream or reader was used after the Scanner had been closed.");
+	}
+}
+

@@ -1,0 +1,35 @@
+////Violation Test
+package rvm;
+
+import java.io.*;
+import java.util.*;
+
+// This property specifies a situation in which a
+// program writes a file after it is closed.  It
+// should be monitored using @match because the
+// pattern specifies the unsafe behavior.  
+// This property is borrowed from tracematches,
+// where it was expressed as a the regular expression
+// 'create write* close write' 
+// (see ECOOP'07 http://abc.comlab.ox.ac.uk/papers)
+
+SafeFileWriter(FileWriter f) {
+     
+   event open(FileWriter f) {} // after
+   event write(FileWriter f) {} // before
+   event close(FileWriter f) {} // after
+
+   cfg : 
+      S -> open SafeWrite close write, 
+      SafeWrite -> SafeWrite S | SafeWrite write | epsilon
+
+   @match {
+      System.out.println("write after close");
+   }
+}
+
+
+
+
+
+
