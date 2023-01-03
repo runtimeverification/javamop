@@ -1,0 +1,67 @@
+# docker build -t hw1:latest - < mopDockerfile
+
+FROM ubuntu:18.04
+
+RUN \
+  apt-get update && \
+  apt-get install -y software-properties-common && \
+# Install Git
+  apt-get install -y git && \
+# Install python
+  apt-get update && \
+  apt-get install -y python python-dev python-pip python-virtualenv && \
+  rm -rf /var/lib/apt/lists/* && \
+# Install misc
+  apt-get update && \
+  apt-get install -y sudo && \
+  apt-get install -y vim && \
+  apt-get install -y emacs && \  
+  apt-get install -y wget && \
+  apt-get install -y bc && \
+  apt-get install -y zip unzip && \
+# Install OpenJDK 8
+  apt-get install -y openjdk-8-jdk && \
+  mv /usr/lib/jvm/java-8-openjdk* /usr/lib/jvm/java-8-openjdk
+
+# Set up user (mopuser)
+RUN useradd -ms /bin/bash -c "mopuser" mopuser && echo "mopuser:docker" | chpasswd && adduser mopuser sudo
+
+USER mopuser
+
+WORKDIR /home/mopuser/
+
+# Use OpenJDK 8 when building the docker image
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk
+
+# Install Maven 3.5.4 locally for user
+RUN \
+  wget http://mirrors.ibiblio.org/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz && \
+  tar -xzf apache-maven-3.3.9-bin.tar.gz && mv apache-maven-3.3.9/ apache-maven/ && \
+  rm apache-maven-3.3.9-bin.tar.gz && \
+# Install AspectJ
+  wget https://www.cs.cornell.edu/courses/cs6156/2020fa/resources/aspectj1.8.tgz && \
+  tar -xzf aspectj1.8.tgz && rm aspectj1.8.tgz && \
+# Install RV-Monitor
+  git clone https://github.com/owolabileg/rv-monitor.git && \
+  cd rv-monitor/ && /home/mopuser/apache-maven/bin/mvn install -DskipTests -DskipDocs -fn && \
+  cd /home/mopuser && \  
+# Install JavaMOP
+  git clone https://github.com/owolabileg/javamop.git && \
+  cd javamop/ && git checkout emop && /home/mopuser/apache-maven/bin/mvn install -DskipTests && \
+  cd /home/mopuser && \
+# Set up the user's configurations
+  tail -n +10 ~/.bashrc > ~/tmp-bashrc && \
+  cp ~/tmp-bashrc ~/.bashrc && \
+  echo 'JAVAHOME=/usr/lib/jvm/java-8-openjdk' >> ~/.bashrc && \
+  echo 'export JAVA_HOME=${JAVAHOME}' >> ~/.bashrc && \
+  echo 'export M2_HOME=${HOME}/apache-maven' >> ~/.bashrc && \
+  echo 'export MAVEN_HOME=${HOME}/apache-maven' >> ~/.bashrc && \
+  echo 'ASPECTJ_DIR=${HOME}/aspectj1.8' >> ~/.bashrc && \
+  echo 'export PATH=${M2_HOME}/bin:${JAVAHOME}/bin:${ASPECTJ_DIR}/bin:${ASPECTJ_DIR}/lib/aspectjweaver.jar:${HOME}/javamop/bin:${HOME}/rv-monitor/bin:${HOME}/rv-monitor/target/release/rv-monitor/lib/rv-monitor-rt.jar:${HOME}/rv-monitor/target/release/rv-monitor/lib/rv-monitor.jar:${PATH}' >> ~/.bashrc && \
+  echo 'export CLASSPATH=${ASPECTJ_DIR}/lib/aspectjtools.jar:${ASPECTJ_DIR}/lib/aspectjrt.jar:${ASPECTJ_DIR}/lib/aspectjweaver.jar:${HOME}/rv-monitor/target/release/rv-monitor/lib/rv-monitor-rt.jar:${HOME}/rv-monitor/target/release/rv-monitor/lib/rv-monitor.jar:${CLASSPATH}' >> ~/.bashrc && \
+# Fetch the script that makes JavaMOP Java Agents and the files that it needs
+  wget https://www.cs.cornell.edu/courses/cs6156/2020fa/resources/javamop-agent-bundle.tgz && \
+  tar xf javamop-agent-bundle.tgz && rm javamop-agent-bundle.tgz && \
+  echo '===============Building a JavaMOP Java agent===========' && \
+  echo 'In the image: ${HOME}/javamop-agent-bundle/README.txt' && \
+  echo '======================================================='
