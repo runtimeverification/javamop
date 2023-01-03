@@ -16,9 +16,10 @@ We have only tested JavaMOP on:
 1. From the same directory as this README.md file, run:
 
    a. `bash scripts/install-javaparser.sh`
+   
    b. `bash scripts/integration-test.sh`
 
-   The first script installs a modified version of [JavaParser]() that this version of JavaMOP depends on. The second command runs all the tests in JavaMOP, makes a JavaMOP agent, installs the JavaMOP agent, integrates the JavaMOP agent into the [Apache Commons FileUpload]() open-source project, then monitors the tests in that project against [161 specs]. So, understanding and running `scripts/integration-test.sh` is a good way to get started with using JavaMOP.
+   The first script installs a modified version of [JavaParser](https://github.com/javaparser/javaparser.git) that this version of JavaMOP depends on. The second command runs all the tests in JavaMOP, makes a JavaMOP agent, installs the JavaMOP agent, integrates the JavaMOP agent into the [Apache Commons FileUpload](https://github.com/apache/commons-fileupload) open-source project, then monitors the tests in that project against [161 specs](https://github.com/owolabileg/property-db/tree/master/annotated-java-api/java). So, understanding and running `scripts/integration-test.sh` is a good way to get started with using JavaMOP.
 
    NOTE: We are aware of one parsing-related flaky unit test in JavaMOP. When that test fails, the run of the second script will stop. One work-around is to change `mvn clean package -DskipITs` to `mvn clean package -DskipITs -DskipTests` in `scripts/integration-test.sh`. Another work-around is to comment out all occurrences of `exit 1` in `scripts/integration-test.sh`. We plan to fix these tests soon, but please feel free to contribute a pull request if you have a patch.
 
