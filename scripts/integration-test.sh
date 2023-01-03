@@ -8,6 +8,16 @@ else
     dir=${SCRIPT_DIR}
 fi
 
+ASPECTJ_DIR=${SCRIPT_DIR}/aspectj1.8
+
+if [ ! -d ${ASPECTJ_DIR} ]; then
+    (
+        cd ${SCRIPT_DIR}
+        wget https://www.cs.cornell.edu/courses/cs6156/2020fa/resources/aspectj1.8.tgz
+        tar -xzf aspectj1.8.tgz && rm aspectj1.8.tgz
+    )
+fi
+
 function check_status() {
     local myvar=$1
     local suffix=$2
@@ -40,6 +50,10 @@ function check_reverse_status() {
 
 mop_test_status=$(grep "BUILD SUCCESS" /tmp/mop-unit-tests.txt)
 check_status "${mop_test_status}" " on mop's unit tests"
+
+export PATH=${ASPECTJ_DIR}/bin:${ASPECTJ_DIR}/lib/aspectjweaver.jar:${SCRIPT_DIR}/../javamop/bin:${SCRIPT_DIR}/../rv-monitor/bin:${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/lib/rv-monitor-rt.jar:${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/lib/rv-monitor.jar:$PATH
+
+export CLASSPATH=${ASPECTJ_DIR}/lib/aspectjtools.jar:${ASPECTJ_DIR}/lib/aspectjrt.jar:${ASPECTJ_DIR}/lib/aspectjweaver.jar:${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/lib/rv-monitor-rt.jar:${SCRIPT_DIR}/../rv-monitor/target/release/rv-monitor/lib/rv-monitor.jar:$CLASSPATH
 
 (
     rm -rf ${HOME}/.m2/repository/javamop
