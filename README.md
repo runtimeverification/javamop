@@ -13,7 +13,17 @@ We have only tested JavaMOP on:
 
 ## Setting up
 
-1. From the same directory as this README.md file, run:
+1. **INSTALLING via Docker** Ensure that you have Docker installed. Then, from the same directory as this README.md file, run:
+
+   a. `cd scripts`
+
+   b. `docker build -t mop:latest - < javamopDockerfile`
+
+   c. `docker run -it mop:latest`
+
+   d. In the Docker container, follow instructions in `$HOME/javamop-agent-bundle/README.txt` to set up a Java agent that attaches JavaMOP to running Java processes.
+
+2. **INSTALLING LOCALLY** From the same directory as this README.md file, run:
 
    a. `bash scripts/install-javaparser.sh`
    
@@ -24,6 +34,8 @@ We have only tested JavaMOP on:
    NOTE: We are aware of one parsing-related flaky unit test in JavaMOP. When that test fails, the run of the second script will stop. One work-around is to change `mvn clean package -DskipITs` to `mvn clean package -DskipITs -DskipTests` in `scripts/integration-test.sh`. Another work-around is to comment out all occurrences of `exit 1` in `scripts/integration-test.sh`. We plan to fix these tests soon, but please feel free to contribute a pull request if you have a patch.
 
 ## Contributing
+
+We are accepting issues and pull requests. We welcome all who are interested to help fix issues.
 
 
 
