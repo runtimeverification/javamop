@@ -1,7 +1,7 @@
 # JavaMOP Usage
 
 **Note:** This document assumes that you have followed all
-the instructions in (../INSTALL.md)[../INSTALL.md] and updated
+the instructions in [../INSTALL.md](../INSTALL.md) and updated
 your CLASSPATH and PATH environment variables according to the
 Prerequisites section in that file.
 In addition, be cautious whenever you modify or override the
@@ -17,8 +17,7 @@ JavaMOP currently supports two modes of use:
 
 1. Java Agent
 
-  Java [agents]
-  (http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
+  Java [agents](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html)
   make it possible to instrument programs running on the JVM. This
   approach is easy to use: AspectJ Compiler (ajc) is not needed and all
   the dependencies are contained within the agent. However, using this
@@ -52,14 +51,14 @@ monitoring task will be generated. The advice in the instrumentation
 file will call the functions provided in the generated monitoring library.
 Once JavaMOP is correctly installed, this can be achieved by running the following command:
 
-```javamop [-v] [-d <target directory>] [-merge] <properties>```
+`javamop [-v] [-d <target directory>] [-merge] <properties>`
 
-The option ```[-v]``` generates the output in verbose mode and 
-```[-d <target directory>]``` stores all output files to the 
+The option `[-v]` generates the output in verbose mode and 
+`[-d <target directory>]` stores all output files to the 
 user-specified directory which must exist prior to issuing the command
-above.  ```<properties>``` refers to one or more property (i.e. *.mop)
+above.  `<properties>` refers to one or more property (i.e. *.mop)
 files, or a directory containing such property files. By default, one
-.aj file is generated for each JavaMOP specification. When ```[-merge]```
+.aj file is generated for each JavaMOP specification. When `[-merge]`
 is set, JavaMOP will generate a combined .aj file for monitoring
 multiple properties simultaneously.
 
@@ -71,34 +70,34 @@ Please follow the instructions of [RV-Monitor's online documentation](https://ru
 To weave the target program with the generated monitoring library, run
 the following command:
 
-```ajc -1.6  -d <target directory> <aj file path> <monitor path> <java file path>```
+`ajc -1.6  -d <target directory> <aj file path> <monitor path> <java file path>`
 
-```-1.6``` indicates the output bytecode version. ```-d <target
-directory>``` specifies the directory to which the weaved code will be
+`-1.6` indicates the output bytecode version. `-d <target directory>`
+specifies the directory to which the weaved code will be
 stored. Note that you must specify the output directory explicitly so
-that ajc can put the binary code in the right place. Without ```-d```,
+that ajc can put the binary code in the right place. Without `-d`,
 ajc will output all the bytecode files in the current directory,
-failing to keep the necessary package layout. You can simply use ```-d
-.``` to output binary code in the current
-directory. ```<aj file path>``` and ```<monitor path>``` refer
+failing to keep the necessary package layout. You can simply use `-d.`
+to output binary code in the current
+directory. `<aj file path>` and `<monitor path>` refer
 to the path to the generated instrumentation file and the monitoring 
-library (in the form of .java file) respectively; ```<java file path>```
+library (in the form of .java file) respectively; `<java file path>`
 is the path to the target program (i.e the program to be weaved). 
 Given this command, ajc will instrument and compile the original 
-Java file and store the generated .class file(s) in ```<target directory>```.
+Java file and store the generated .class file(s) in `<target directory>`.
 If there is no error reported, you can directly run the weaved code in
-the ```<target directory>```.
+the `<target directory>`.
 
 #### Running the Weaved Code
 To run the weaved program, simply type:
 
-```java Main```
+`java Main`
 
 where `Main` is assumed to be the entry point to the application.
 (Don't forget to have the monitoring library on the classpath when
 running the weaved code.)
 
-##Troubleshooting
+## Troubleshooting
 
 Here we gathered some problems that you might encounter while
 using JavaMOP, along with instructions on how to
@@ -152,7 +151,7 @@ your AspectJ before applying the patch):
 below (You may need to pull to get the latest updates before you can
 perform the operation below):
 
-	``git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c``
+    `git checkout dddd1236cd21982a07f887ff7fa5d484ebc3b86c`
 
 2. Download the `stdAJC_dddd123.patch` from 
 [here](http://fsl.cs.illinois.edu/downloads/stdAJC_dddd123.patch),
@@ -160,10 +159,10 @@ and place the patch file in the above AspectJ repository's top level.
 
 3. Apply the patch by executing:
 
-	``git apply --whitespace=nowarn stdAJC_dddd123.patch``
+    `git apply --whitespace=nowarn stdAJC_dddd123.patch`
 	
 4. Build the AspectJ project using ant. You can execute the command
-``ant`` at the top level of the AspectJ repository.
+`ant` at the top level of the AspectJ repository.
 
 5. Deploy the AspectJ libraries. If the previous step is successful,
 there will be a new folder called `aj-build` appearing at the top
@@ -203,6 +202,5 @@ JavaMOP (and the files it generates) depend on certain libraries to be on your C
 
 ### I did not find a solution to my problem here, what should I do ?
 
-Open a new issue on  [JavaMOP's issues page]
-(https://github.com/runtimeverification/javamop/issues).
+Open a new issue on  [JavaMOP's issues page](https://github.com/runtimeverification/javamop/issues).
 
